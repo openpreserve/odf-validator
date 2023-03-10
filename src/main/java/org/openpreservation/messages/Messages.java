@@ -7,7 +7,7 @@ import org.openpreservation.messages.Message.Severity;
 
 /**
  * Utility class that handles creation of Message type instances, etc.
- * 
+ *
  * @author <a href="mailto:carl@openpreservation.org">Carl Wilson</a>
  *         <a href="https://github.com/carlwilson">carlwilson AT github</a>
  */
@@ -25,7 +25,7 @@ public enum Messages {
 
     /**
      * Create a new message instance with a DEFAULT_ID
-     * 
+     *
      * @param message
      *                the message of the new message
      * @return the new message instance
@@ -39,7 +39,7 @@ public enum Messages {
 
     /**
      * Create a Message instance with the give id and message value
-     * 
+     *
      * @param id
      *                the id of the new message
      * @param message
@@ -56,7 +56,7 @@ public enum Messages {
     /**
      * Create a new Message instance with the given id, message and
      * sub-message
-     * 
+     *
      * @param id
      *                   the id of the new message
      * @param message
@@ -82,7 +82,7 @@ public enum Messages {
     /**
      * Get a MessageFactory instance with the default property based
      * bundle name and the default user locale
-     * 
+     *
      * @return a new MessageFactory instance backed by the bundle property
      *         file.
      * @throws IllegalArgumentException
@@ -98,7 +98,7 @@ public enum Messages {
     /**
      * Get a MessageFactory instance with the requested property based
      * bundle name and the default user locale
-     * 
+     *
      * @param bundleName
      *                   the fully qualified resource path for the message bundle
      *                   property file
@@ -121,7 +121,7 @@ public enum Messages {
     /**
      * Get a MessageFactory instance with the requested property based
      * bundle name and a specific locale
-     * 
+     *
      * @param bundleName
      *                   the fully qualified resource path for the message bundle
      *                   property file
