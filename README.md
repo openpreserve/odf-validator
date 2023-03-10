@@ -1,5 +1,43 @@
 # ODF Validator
 
+## Quick Start
+
+### Prerequisites
+
+To run the software you'll need a [Java 8](https://www.java.com/en/download/manual.jsp) JRE or newer.
+To build the software you'll need a [Java 8](https://www.oracle.com/java/technologies/downloads/#java17) JDK or newer [Maven 3.4](https://maven.apache.org/download.cgi) or higher.
+
+### Getting the software
+
+Clone [this GitHub repository](https://github.com/opf-labs/odf-validator.git) and move into the directory:
+
+```shell
+git clone https://github.com/opf-labs/odf-validator.git
+cd odf-validator
+```
+
+### Building the software
+
+Now use Maven to build, test and package the software:
+
+```shell
+mvn clean package
+```
+
+### Running the software
+
+You can now use the accompanying shell script to run the software, for Windows user there is a batch file:
+
+```shell
+./odf-validator.bat --help
+```
+
+For Linux and MacOS users use the shell file:
+
+```shell
+./odf-validator --help
+```
+
 ## Validation Checks
 
 ### Top Level Checks
@@ -19,8 +57,8 @@
   a. The files shall be well-formed XML files in accordance with [XML1.0].
   b. The XML root element of each file shall be a `<dsig:document-signatures>` element 5.2.
   c. The files shall be valid with respect to the digital signature schema defined in appendix A.2 OpenDocument Digital Signature Schema.
-5. It shall not contain other files whose relative path begins with “META-INF/” other than those listed in B) and D), nor shall the META-INF/manifest.xml contain any implementation-defined IRIs as alternative identifications.  
-6. The files listed in (B) and (D) meet the following requirements:
+5. It shall not contain other files whose relative path begins with “META-INF/” other than those listed in (2) and (4), nor shall the META-INF/manifest.xml contain any implementation-defined IRIs as alternative identifications.  
+6. The files listed in (2) and (4) meet the following requirements:
   a. They shall be namespace-well-formed with regard to the XML Namespaces specification [xml-names].
   b. They shall conform to the xml-id specification [XML-ID].
 
@@ -67,4 +105,4 @@ Note: The purpose is to allow the type of document represented by the package to
    - `application/vnd.oasis.opendocument.spreadsheet-template`;
 8. The `<office:body>` element shall have the `<office:spreadsheet>` element as its child;
 9. All namespace prefixes used in the values of `table:formula` attributes values shall be bound to the `urn:oasis:names:tc:opendocument:xmlns:of:1.2` namespace;
-10. All table:formula attribute values shall be a conforming OpenDocument Formula expression [ODF1.3-Part-4:OpenFormula] 2.2 OpenDocument Formula Expression.
+10. All `table:formula` attribute values shall be a conforming OpenDocument Formula expression [ODF1.3-Part-4:OpenFormula] 2.2 OpenDocument Formula Expression.

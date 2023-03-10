@@ -6,7 +6,7 @@ import org.openpreservation.messages.Message.Severity;
 
 /**
  * Factory interface for Message creation
- * 
+ *
  * @author <a href="mailto:carl@openpreservation.org">Carl Wilson</a>
  *         <a href="https://github.com/carlwilson">carlwilson AT github</a>
  */
@@ -15,7 +15,7 @@ public interface MessageFactory {
 
     /**
      * Retrieve Message by unique persistent id
-     * 
+     *
      * @param id
      *                 the id of the message to be retrieved
      * @param severity
@@ -29,7 +29,7 @@ public interface MessageFactory {
 
     /**
      * Retrieve error Message by unique persistent id
-     * 
+     *
      * @param id
      *           the id of the message to be retrieved
      * @return the message with persistent id equal to id
@@ -41,7 +41,7 @@ public interface MessageFactory {
 
     /**
      * Retrieve fatal Message by unique persistent id
-     * 
+     *
      * @param id
      *           the id of the message to be retrieved
      * @return the message with persistent id equal to id
@@ -53,7 +53,7 @@ public interface MessageFactory {
 
     /**
      * Retrieve info Message by unique persistent id
-     * 
+     *
      * @param id
      *           the id of the message to be retrieved
      * @return the message with persistent id equal to id
@@ -65,7 +65,7 @@ public interface MessageFactory {
 
     /**
      * Retrieve warning Message by unique persistent id
-     * 
+     *
      * @param id
      *           the id of the message to be retrieved
      * @return the message with persistent id equal to id
@@ -76,10 +76,10 @@ public interface MessageFactory {
             throws NoSuchElementException;
 
     /**
-     * 
+     *
      * Retrieve Message by unique persistent id and format with the given
      * arguments
-     * 
+     *
      * @param id
      *                 the id of the message to be retrieved
      * @param severity
@@ -94,10 +94,10 @@ public interface MessageFactory {
             throws NoSuchElementException;
 
     /**
-     * 
+     *
      * Retrieve error Message by unique persistent id and format with the given
      * arguments
-     * 
+     *
      * @param id
      *             the id of the message to be retrieved
      * @param args
@@ -110,10 +110,10 @@ public interface MessageFactory {
             throws NoSuchElementException;
 
     /**
-     * 
+     *
      * Retrieve error Message by unique persistent id and format with the given
      * arguments
-     * 
+     *
      * @param id
      *             the id of the message to be retrieved
      * @param args
@@ -126,10 +126,10 @@ public interface MessageFactory {
             throws NoSuchElementException;
 
     /**
-     * 
+     *
      * Retrieve info Message by unique persistent id and format with the given
      * arguments
-     * 
+     *
      * @param id
      *             the id of the message to be retrieved
      * @param args
@@ -142,10 +142,10 @@ public interface MessageFactory {
             throws NoSuchElementException;
 
     /**
-     * 
+     *
      * Retrieve warning Message by unique persistent id and format with the given
      * arguments
-     * 
+     *
      * @param id
      *             the id of the message to be retrieved
      * @param args

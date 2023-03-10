@@ -1,0 +1,18 @@
+exclude: |
+  (?x)(
+    ^test-data/|
+    ^src/test/resources/|
+    ^src/main/resources/org/openpreservation/odf/schema/|
+  )
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v1.4.0
+    hooks:
+    -   id: check-byte-order-marker
+    -   id: check-case-conflict
+    -   id: check-executables-have-shebangs
+    -   id: check-merge-conflict
+    -   id: check-json
+    -   id: end-of-file-fixer
+    -   id: check-xml
+    -   id: trailing-whitespace

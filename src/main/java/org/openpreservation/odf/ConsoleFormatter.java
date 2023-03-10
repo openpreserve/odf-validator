@@ -30,6 +30,10 @@ public enum ConsoleFormatter {
         System.out.println(Ansi.AUTO.string(String.format("@|%s %s |@", colour, message)));
     }
 
+    public static void newline() {
+        System.out.println();
+    }
+
     public static void colourise(final Message message) {
         if (message.isError() || message.isFatal()) {
             colourise(message, COL_ERR);

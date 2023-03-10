@@ -1,11 +1,13 @@
 package org.openpreservation.messages;
 
+import java.util.Date;
+
 /**
  * @author <a href="mailto:carl@openpreservation.org">Carl Wilson</a>
  *         <a href="https://github.com/carlwilson">carlwilson AT github</a>
  *
  * @version 0.1
- * 
+ *
  *          Created 20 Feb 2019:16:46:19
  */
 
@@ -14,6 +16,7 @@ final class MessageImpl implements Message {
     final Severity severity;
     private final String message;
     private final String subMessage;
+    private final Date timestamp = new Date();
 
     private MessageImpl(final String id, final Severity severity, final String message, final String subMessage) {
         this.id = id;
@@ -30,6 +33,11 @@ final class MessageImpl implements Message {
     @Override
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    public Date getTimestamp() {
+        return this.timestamp;
     }
 
     @Override

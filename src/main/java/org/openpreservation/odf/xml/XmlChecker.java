@@ -28,7 +28,7 @@ import org.xml.sax.XMLReader;
 
 /**
  * Class to wrap the checking of XML files for well-formedness and validity.
- * 
+ *
  * @author <a href="mailto:carl@openpreservation.org">Carl Wilson</a>
  *
  */
