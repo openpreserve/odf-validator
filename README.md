@@ -57,7 +57,7 @@ For Linux and MacOS users use the shell file:
   a. The files shall be well-formed XML files in accordance with [XML1.0].
   b. The XML root element of each file shall be a `<dsig:document-signatures>` element 5.2.
   c. The files shall be valid with respect to the digital signature schema defined in appendix A.2 OpenDocument Digital Signature Schema.
-5. It shall not contain other files whose relative path begins with “META-INF/” other than those listed in (2) and (4), nor shall the META-INF/manifest.xml contain any implementation-defined IRIs as alternative identifications.  
+5. It shall not contain other files whose relative path begins with “META-INF/” other than those listed in (2) and (4), nor shall the META-INF/manifest.xml contain any implementation-defined IRIs as alternative identifications.
 6. The files listed in (2) and (4) meet the following requirements:
   a. They shall be namespace-well-formed with regard to the XML Namespaces specification [xml-names].
   b. They shall conform to the xml-id specification [XML-ID].
