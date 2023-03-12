@@ -39,8 +39,12 @@ public class FormatSniffer {
     public static Formats sniff(final InputStream toSniff) throws IOException {
         Checks.notNull(toSniff, "InputStream", TEST_VAR);
         try (BufferedInputStream bis = new BufferedInputStream(toSniff)) {
-            skipBom(bis);
-            return Formats.identify(readAndReset(bis, MAX_MIME_LENGTH));
+            Encodings bom = skipBom(bis);
+            Formats format = Formats.identify(readAndReset(bis, MAX_MIME_LENGTH));
+            if (bom == Encodings.NONE) {
+                return format;
+            }
+            return format.isText() ? format : Formats.UNKNOWN;
         }
     }
 
