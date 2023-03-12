@@ -23,12 +23,13 @@ public class FormatSnifferTest {
                 Formats.XML, fmt);
     }
 
+    @Test
     public void testSniffXMLNullString() {
         String nullPath = null;
         assertThrows("Null pointer exception expected",
                 NullPointerException.class,
                 () -> {
-                    OdfFormats.isXml(nullPath);
+                    FormatSniffer.sniff(nullPath);
                 });
     }
 
@@ -139,5 +140,84 @@ public class FormatSnifferTest {
         assertNotEquals(
                 String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF8_BOM_ODS, Formats.ODS, fmt),
                 Formats.ODS, fmt);
+    }
+
+    @Test
+    public void testSniffEncodingString() throws IOException {
+        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
+        Encodings enc = FormatSniffer.sniffEncoding(empty.getPath());
+        assertEquals(String.format("%s HAS encoding %s, not %s.", TestFiles.EMPTY_FODS, Encodings.NONE, enc),
+                Encodings.NONE, enc);
+    }
+
+    @Test
+    public void testSniffEncodingNullString() {
+        String nullStr = null;
+        assertThrows("Null pointer exception expected",
+                NullPointerException.class,
+                () -> {
+                    FormatSniffer.sniffEncoding(nullStr);
+                });
+    }
+
+    @Test
+    public void testSniffEncodingPath() throws URISyntaxException, IOException {
+        URL empty = ClassLoader.getSystemResource(TestFiles.FAKEMIME_TEXT);
+        Encodings enc = FormatSniffer.sniffEncoding(new File(empty.toURI()).toPath());
+        assertEquals(
+                String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.FAKEMIME_TEXT, Encodings.NONE, enc),
+                Encodings.NONE, enc);
+    }
+
+    @Test
+    public void testSniffEncodingNullPath() throws IOException {
+        Path nullPath = null;
+        assertThrows("Null pointer exception expected",
+                NullPointerException.class,
+                () -> {
+                    FormatSniffer.sniffEncoding(nullPath);
+                });
+    }
+
+    @Test
+    public void testSniffEncodingFile() throws URISyntaxException, IOException {
+        URL empty = ClassLoader.getSystemResource(TestFiles.UTF16LE_BOM);
+        Encodings enc = FormatSniffer.sniffEncoding(new File(empty.toURI()));
+        assertEquals(
+                String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF16LE_BOM, Encodings.UTF_16_LE, enc),
+                Encodings.UTF_16_LE, enc);
+    }
+
+    @Test
+    public void testSniffEncodingNullFile() throws IOException {
+        File nullFile = null;
+        assertThrows("Null pointer exception expected",
+                NullPointerException.class,
+                () -> {
+                    FormatSniffer.sniffEncoding(nullFile);
+                });
+    }
+
+    @Test
+    public void testSniffEncodingNoSuchFile() throws IOException, URISyntaxException {
+        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
+        File resFile = new File(empty.toURI().getPath());
+        File resDir = resFile.isDirectory() ? new File(resFile, "no-such-file.none")
+                : new File(resFile.getParentFile(), "no-such-file.none");
+
+        assertThrows("Null pointer exception expected",
+                FileNotFoundException.class,
+                () -> {
+                    FormatSniffer.sniffEncoding(resDir);
+                });
+    }
+
+    @Test
+    public void testSniffEncodingStream() throws IOException {
+        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_PI);
+        Encodings enc = FormatSniffer.sniffEncoding(is);
+        assertEquals(
+                String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF8_BOM_PI, Encodings.UTF_8, enc),
+                Encodings.UTF_8, enc);
     }
 }
