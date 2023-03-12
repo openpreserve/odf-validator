@@ -27,6 +27,10 @@ public enum Formats {
     static final Set<Formats> ODF = EnumSet.of(XML, ODS, OTS);
     static final Set<Formats> ZIPS = EnumSet.of(ZIP, ODS, OTS);
 
+    public boolean isText() {
+        return this == XML;
+    }
+
     public boolean isPackage() {
         return ODF_PACKAGES.contains(this);
     }
