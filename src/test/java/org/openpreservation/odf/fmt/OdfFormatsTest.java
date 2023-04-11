@@ -85,9 +85,10 @@ public class OdfFormatsTest {
     }
 
     @Test
-    public void testIsPackageString() throws IOException {
+    public void testIsPackageString() throws IOException, URISyntaxException {
         URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_ODS);
-        assertTrue(String.format("%s IS a package.", TestFiles.EMPTY_ODS), OdfFormats.isPackage(empty.getPath()));
+        assertTrue(String.format("%s IS a package.", TestFiles.EMPTY_ODS),
+                OdfFormats.isPackage(new File(empty.toURI()).getAbsolutePath()));
     }
 
     @Test
@@ -101,10 +102,10 @@ public class OdfFormatsTest {
     }
 
     @Test
-    public void testIsPackageStringNoMime() throws IOException {
+    public void testIsPackageStringNoMime() throws IOException, URISyntaxException {
         URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ODS);
         assertFalse(String.format("%s IS NOT a package.", TestFiles.NO_MIME_ODS),
-                OdfFormats.isPackage(empty.getPath()));
+                OdfFormats.isPackage(new File(empty.toURI()).getAbsolutePath()));
     }
 
     @Test
@@ -191,9 +192,10 @@ public class OdfFormatsTest {
     }
 
     @Test
-    public void testIsXMLString() throws IOException {
+    public void testIsXMLString() throws IOException, URISyntaxException {
         URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
-        assertTrue(String.format("%s IS a flat XML file.", TestFiles.EMPTY_FODS), OdfFormats.isXml(empty.getPath()));
+        assertTrue(String.format("%s IS a flat XML file.", TestFiles.EMPTY_FODS),
+                OdfFormats.isXml(new File(empty.toURI()).getAbsolutePath()));
     }
 
     @Test
