@@ -24,7 +24,9 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots install -DjacocoAgg
       - name: Run pre-commit tests
-        run: pre-commit run --all-files --verbose
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: --all-files --verbose
       - name: Test with Maven
         if: (matrix.java-version == 8)
         run: mvn --batch-mode verify -DjacocoAgg
