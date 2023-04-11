@@ -16,9 +16,9 @@ import org.junit.Test;
 
 public class FormatSnifferTest {
     @Test
-    public void testSniffXMLString() throws IOException {
+    public void testSniffXMLString() throws IOException, URISyntaxException {
         URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
-        Formats fmt = FormatSniffer.sniff(empty.getPath());
+        Formats fmt = FormatSniffer.sniff(new File(empty.toURI()).getAbsolutePath());
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.EMPTY_FODS, Formats.XML, fmt),
                 Formats.XML, fmt);
     }
@@ -143,9 +143,9 @@ public class FormatSnifferTest {
     }
 
     @Test
-    public void testSniffEncodingString() throws IOException {
+    public void testSniffEncodingString() throws IOException, URISyntaxException {
         URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
-        Encodings enc = FormatSniffer.sniffEncoding(empty.getPath());
+        Encodings enc = FormatSniffer.sniffEncoding(new File(empty.toURI()).getAbsolutePath());
         assertEquals(String.format("%s HAS encoding %s, not %s.", TestFiles.EMPTY_FODS, Encodings.NONE, enc),
                 Encodings.NONE, enc);
     }
