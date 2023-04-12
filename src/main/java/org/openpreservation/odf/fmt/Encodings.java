@@ -2,8 +2,6 @@ package org.openpreservation.odf.fmt;
 
 import java.util.Arrays;
 
-import org.openpreservation.utils.Checks;
-
 public enum Encodings {
     NONE("NONE", new byte[] {}),
     UTF_8("UTF-8", new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF }),

@@ -117,11 +117,9 @@ public class Validator {
                 XmlChecker checker = new XmlChecker();
                 XmlParseResult result = checker.parse(packageZip.getInputStream(metaInfEntry),
                         metaInfEntry.getName());
-                if (result.isWellFormed) {
-                    if (!result.isRootName(TAG_MANIFEST)) {
-                        this.messages.add(FACTORY.getError("XML-2", metaInfEntry.getName()));
-                        isValid = false;
-                    }
+                if ((result.isWellFormed) && (!result.isRootName(TAG_MANIFEST))) {
+                    this.messages.add(FACTORY.getError("XML-2", metaInfEntry.getName()));
+                    isValid = false;
                 }
             } catch (ParserConfigurationException | SAXNotRecognizedException | SAXNotSupportedException e) {
                 this.messages.add(FACTORY.getError("SYS-4", PATH_MANIFEST, e.getMessage()));
