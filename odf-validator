@@ -78,5 +78,5 @@ fi
 
 exec "$JAVACMD" -Dfile.encoding=UTF8 -XX:+IgnoreUnrecognizedVMOptions \
   -Dapp.name="ODF Validator" \
-  -jar target/sheets-validator-0.1.0-SNAPSHOT-jar-with-dependencies.jar \
+  -jar target/odf-validator-0.1.0-SNAPSHOT-jar-with-dependencies.jar \
   "$@"

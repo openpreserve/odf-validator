@@ -3,7 +3,6 @@ package org.openpreservation.odf;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,7 +21,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "odf-sheets", mixinStandardHelpOptions = true, version = "odf-sheets 0.1", description = "Validates Open Document Format spreadsheets.")
-class OdfSheets implements Callable<Integer> {
+class OdfValidator implements Callable<Integer> {
     private static final MessageFactory FACTORY = Messages.getInstance();
 
     @Parameters(paramLabel = "FILE", description = "An Open Document Format spreadsheet file to validate.")
@@ -30,7 +29,8 @@ class OdfSheets implements Callable<Integer> {
     public final MessageLog messages = new MessageLogImpl();
 
     @Override
-    public Integer call() throws SAXNotRecognizedException, SAXNotSupportedException, ParserConfigurationException, IOException {
+    public Integer call()
+            throws SAXNotRecognizedException, SAXNotSupportedException, ParserConfigurationException, IOException {
         Integer retStatus = 0;
         Validator validator = new Validator();
         for (File file : this.toValidateFiles) {
@@ -49,7 +49,7 @@ class OdfSheets implements Callable<Integer> {
     }
 
     public static void main(String[] args) {
-        int exitCode = new CommandLine(new OdfSheets()).execute(args);
+        int exitCode = new CommandLine(new OdfValidator()).execute(args);
         System.exit(exitCode);
     }
 
