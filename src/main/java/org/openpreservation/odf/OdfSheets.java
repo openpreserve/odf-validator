@@ -25,7 +25,7 @@ import picocli.CommandLine.Parameters;
 class OdfSheets implements Callable<Integer> {
     private static final MessageFactory FACTORY = Messages.getInstance();
 
-    @Parameters(paramLabel = "FILE", description = "An Open Document Format spreadsheet file to validate.")
+    @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format spreadsheet file to validate.")
     private File[] toValidateFiles;
     public final MessageLog messages = new MessageLogImpl();
 
