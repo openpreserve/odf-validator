@@ -1,5 +1,21 @@
 # ODF Validator
 
+## About
+
+[Open Preservation Foundation](https://openpreservation.org/)'s OpenDocument Format Validator (OPF ODF Validator) enables your organisation to validate the file format standard and a set of file format policy rules created for improving the preservation effort of any files saved in the OpenDocument Format.
+
+### File format support
+
+The validator currently supports validation of spreadsheets with extensions .fods, .ods and .ots.
+
+### Validation regulations references
+
+* [OASIS OpenDocument Format](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=office)
+* [OPF Spreadsheets Preservation Specification](https://github.com/opf-labs/Spreadsheets-Preservation-Specification)
+
+You may read more about the technical details of the validation checks [here](#validation-checks).
+
+
 ## Quick Start
 
 ### Prerequisites
