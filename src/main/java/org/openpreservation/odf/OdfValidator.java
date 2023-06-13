@@ -20,7 +20,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "odf-sheets", mixinStandardHelpOptions = true, version = "odf-sheets 0.1", description = "Validates Open Document Format spreadsheets.")
+@Command(name = "odf-validator", mixinStandardHelpOptions = true, version = "odf-validator 0.1", description = "Validates Open Document Format spreadsheets.")
 class OdfValidator implements Callable<Integer> {
     private static final MessageFactory FACTORY = Messages.getInstance();
 
@@ -40,12 +40,14 @@ class OdfValidator implements Callable<Integer> {
                 validator.validate(toValidate);
             }
             for (Message message : validator.messages.getMessages()) {
-                ConsoleFormatter.colourise(message);
+                this.messages.add(message);
+                /**
+                 * TODO: Output should be per file, not per message.
+                 */
+                // ConsoleFormatter.colourise(message);
             }
-            retStatus = results() > retStatus ? results() : retStatus;
-
         }
-        return retStatus;
+        return results();
     }
 
     public static void main(String[] args) {
