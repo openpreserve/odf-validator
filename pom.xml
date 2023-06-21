@@ -69,8 +69,8 @@
     <mvn.surefire.version>2.19.1</mvn.surefire.version>
     <mvn.release.version>2.5.3</mvn.release.version>
     <jacoco.version>0.8.7</jacoco.version>
-    <java.source.version>17</java.source.version>
-    <java.target.version>17</java.target.version>
+    <java.source.version>11</java.source.version>
+    <java.target.version>11</java.target.version>
     <junit.version>4.13.2</junit.version>
     <mvn.target.release>11</mvn.target.release>
     <picocli.version>4.7.0</picocli.version>
