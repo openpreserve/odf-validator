@@ -5,38 +5,46 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class MessageLogImpl implements MessageLog {
+class MessageLogImpl implements MessageLog {
     private final List<Message> messages = new ArrayList<>();
+    @Override
     public int size() {
         return this.messages.size();
     }
 
+    @Override
     public boolean isEmpty() {
         return this.messages.isEmpty();
     }
 
+    @Override
     public int add(Message message) {
         this.messages.add(message);
         return this.size();
     }
 
+    @Override
     public int add(Collection<? extends Message> messages) {
         this.messages.addAll(messages);
         return this.size();
     }
 
+    @Override
     public List<Message> getErrors() {
         return getMessages(Message.Severity.ERROR);
     }
 
+    @Override
     public List<Message> getWarnings() {
         return getMessages(Message.Severity.WARNING);
     }
 
+    @Override
     public List<Message> getInfos() {
         return getMessages(Message.Severity.INFO);
     }
 
+    @Override
     public List<Message> getMessages(Message.Severity severity) {
         List<Message> filteredList = new ArrayList<>();
         for (Message message : this.messages) {
