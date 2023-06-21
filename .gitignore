@@ -1,0 +1,21 @@
+# Ignore Maven artefacts
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.next
+release.properties
+**/pom.xml.versionsBackup
+
+# Ignore Eclipse artefacts
+**/.settings
+**/.project
+**/.classpath
+**/*.class
+**/bin
+
+# Ignore VisualCode artefacts
+**/.vscode
+
+# Ignore IntelliJ
+.idea
+*.iml
