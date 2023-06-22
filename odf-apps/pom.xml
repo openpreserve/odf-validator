@@ -30,7 +30,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.openpreservation.odf.OdfValidator</mainClass>
+              <mainClass>org.openpreservation.odf.apps.CliValidator</mainClass>
             </manifest>
           </archive>
         </configuration>
