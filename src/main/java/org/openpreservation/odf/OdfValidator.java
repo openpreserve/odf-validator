@@ -3,6 +3,8 @@ package org.openpreservation.odf;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -10,8 +12,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.MessageLogImpl;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.Validator;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -24,30 +26,21 @@ import picocli.CommandLine.Parameters;
 class OdfValidator implements Callable<Integer> {
     private static final MessageFactory FACTORY = Messages.getInstance();
 
-    @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format spreadsheet file to validate.")
+    @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format spreadsheet files to validate.")
     private File[] toValidateFiles;
-    public final MessageLog messages = new MessageLogImpl();
 
     @Override
     public Integer call()
             throws SAXNotRecognizedException, SAXNotSupportedException, ParserConfigurationException, IOException {
-        Integer retStatus = 0;
         Validator validator = new Validator();
+        final Map<Path, ValidationReport> reports = new HashMap<>();
         for (File file : this.toValidateFiles) {
             Path toValidate = file.toPath();
             ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", file.toString(), "bold"));
-            if (validator.isFile(toValidate)) {
-                validator.validate(toValidate);
-            }
-            for (Message message : validator.messages.getMessages()) {
-                this.messages.add(message);
-                /**
-                 * TODO: Output should be per file, not per message.
-                 */
-                // ConsoleFormatter.colourise(message);
-            }
+            ValidationReport report = validator.validate(toValidate);
+            reports.put(toValidate, report);
         }
-        return results();
+        return results(reports);
     }
 
     public static void main(String[] args) {
@@ -55,27 +48,42 @@ class OdfValidator implements Callable<Integer> {
         System.exit(exitCode);
     }
 
-    private Integer results() {
+    private Integer results (final Map<Path, ValidationReport> reports) {
         Integer retStatus = 0;
-        if (this.messages.isEmpty()) {
+        for (Map.Entry<Path, ValidationReport> entry : reports.entrySet()) {
+            retStatus = Math.max(retStatus, results(entry.getKey(), entry.getValue()));
+        }
+        return retStatus;
+    }
+
+    private Integer results(final Path path, final ValidationReport report) {
+        Integer retStatus = 0;
+        ConsoleFormatter.colourise(FACTORY.getInfo("APP-3", path.toString(), "bold"));
+        if (report.getMessages().isEmpty()) {
             ConsoleFormatter.info(FACTORY.getInfo("APP-2").getMessage());
         }
-        for (Message message : this.messages.getMessages()) {
-            ConsoleFormatter.colourise(message);
-            if (message.isError() || message.isFatal()) {
-                retStatus = 1;
+        int packageErrors = 0;
+        int packageWarnings = 0;
+        int packageInfos = 0;
+        for (Map.Entry<Path, MessageLog> entry : report.documentMessages.entrySet()) {
+            for (Message message : entry.getValue().getMessages()) {
+                ConsoleFormatter.colourise(entry.getKey(), message);
+                if (message.isError() || message.isFatal()) {
+                    retStatus = 1;
+                }
             }
+            packageErrors += entry.getValue().getErrors().size();
+            packageWarnings += entry.getValue().getErrors().size();
+            packageInfos += entry.getValue().getInfos().size();
         }
-        if (this.messages.hasErrors()) {
-            ConsoleFormatter.error(String.format("NOT VALID, %d errors and %d warnings found.",
-                    this.messages.getErrors().size(), this.messages.getWarnings().size()));
+        if (packageErrors > 0) {
+            ConsoleFormatter.error(String.format("NOT VALID, %d errors, %d warnings and %d info messages.",
+                    packageErrors, packageWarnings, packageInfos));
+        } else if (packageWarnings > 0) {
+                ConsoleFormatter.warn(String.format("VALID, no errors, %d warnings found and %d info messages.",
+                        packageWarnings, packageInfos));
         } else {
-            if (this.messages.hasWarnings()) {
-                ConsoleFormatter.warn(String.format("VALID, no errors and %d warnings found.",
-                        this.messages.getWarnings().size()));
-            } else {
-                ConsoleFormatter.info("VALID, no errors and no warnings found.");
-            }
+                ConsoleFormatter.info(String.format("VALID, no errors, no warnings and %d info message found.", packageInfos));
         }
         ConsoleFormatter.newline();
         return retStatus;

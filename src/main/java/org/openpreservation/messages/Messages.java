@@ -145,4 +145,8 @@ public enum Messages {
                 locale);
         return MessageFactoryImpl.getInstance(messageBundle);
     }
+
+    public static MessageLog messageLogInstance() {
+        return new MessageLogImpl();
+    }
 }
