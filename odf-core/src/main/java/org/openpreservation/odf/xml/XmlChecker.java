@@ -47,19 +47,15 @@ public class XmlChecker {
         this.nonValidatingFactory = getNonValidatingFactory();
     }
 
-    public XmlParseResult parse(final InputStream toTest, final String streamName) {
+    public XmlParseResult parse(final InputStream toTest, final Path streamName)
+            throws ParserConfigurationException, SAXException, IOException {
         final List<Message> messages = new ArrayList<>();
         ParsingHandler handler = new ParsingHandler();
         MessageHandler messageHandler = new MessageHandler();
         SAXParser parser;
         XMLReader reader;
-        try {
-            parser = nonValidatingFactory.newSAXParser();
-            reader = parser.getXMLReader();
-        } catch (ParserConfigurationException | SAXException e) {
-            messages.add(FACTORY.getFatal("SYS-4", e.getMessage()));
-            return XmlParseResult.of(messages);
-        }
+        parser = nonValidatingFactory.newSAXParser();
+        reader = parser.getXMLReader();
         reader.setContentHandler(handler);
         reader.setErrorHandler(messageHandler);
         try {
@@ -67,39 +63,27 @@ public class XmlChecker {
             messages.addAll(messageHandler.messages);
             return handler.getResult(true, messages);
         } catch (SAXParseException e) {
-            if (e.getLineNumber() == 1 && e.getColumnNumber() == 15) {
-                messages.add(FACTORY.getError("XML-4", streamName, e.getMessage()));
+            if (e.getLineNumber() == 1 && e.getColumnNumber() == 1) {
+                messages.add(FACTORY.getError("DOC-1", streamName));
             } else {
-                messages.add(FACTORY.getError("XML-3", streamName, e.getMessage()));
+                messages.add(FACTORY.getError("XML-3", e.getLineNumber(),
+                        e.getColumnNumber(), e.getMessage()));
             }
-        } catch (IOException e) {
-            messages.add(FACTORY.getFatal("SYS-2", streamName, e.getMessage()));
         } catch (SAXException e) {
-            messages.add(FACTORY.getError("XML-3", streamName, e.getMessage()));
+            messages.add(FACTORY.getError("XML-1", streamName, e.getMessage()));
         }
         return XmlParseResult.of(messages);
     }
 
-    public XmlParseResult validate(Path toValidate) {
+    public XmlParseResult validate(Path toValidate) throws IOException, SAXException {
         final List<Message> messages = new ArrayList<>();
-        Schema schema;
-        try {
-            schema = rngSchemaFactory
-                    .newSchema(new StreamSource(ClassLoader.getSystemResourceAsStream(SCHEMA_RES_PATH_ODF_13)));
-        } catch (SAXException e) {
-            messages.add(FACTORY.getFatal("SYS-3", SCHEMA_RES_PATH_ODF_13, e.getMessage()));
-            return XmlParseResult.invalid(messages);
-        }
+        Schema schema = rngSchemaFactory
+                .newSchema(new StreamSource(ClassLoader.getSystemResourceAsStream(SCHEMA_RES_PATH_ODF_13)));
         Validator validator = schema.newValidator();
         MessageHandler handler = new MessageHandler();
         validator.setErrorHandler(handler);
         boolean isValid = true;
-        try {
-            validator.validate(new StreamSource(toValidate.toFile()));
-        } catch (SAXException | IOException e) {
-            messages.add(FACTORY.getFatal("SYS-3", SCHEMA_RES_PATH_ODF_13, e.getMessage()));
-            return XmlParseResult.invalid(messages);
-        }
+        validator.validate(new StreamSource(toValidate.toFile()));
         messages.addAll(handler.messages);
         for (Message message : messages) {
             if (message.isError()) {
@@ -111,8 +95,8 @@ public class XmlChecker {
     }
 
     public XmlParseResult parse(Path toTest)
-            throws IOException {
-        return parse(Files.newInputStream(toTest), toTest.toString());
+            throws IOException, ParserConfigurationException, SAXException {
+        return parse(Files.newInputStream(toTest), toTest);
     }
 
     private static final SAXParserFactory getNonValidatingFactory()

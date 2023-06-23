@@ -1,5 +1,6 @@
-package org.openpreservation.odf;
+package org.openpreservation.odf.apps;
 
+import java.io.PrintStream;
 import java.nio.file.Path;
 
 import org.openpreservation.messages.Message;
@@ -29,7 +30,11 @@ public enum ConsoleFormatter {
     }
 
     public static final void colourise(final String message, final String colour) {
-        System.out.println(Ansi.AUTO.string(String.format("@|%s %s |@", colour, message)));
+        colourise(message, colour, System.out);
+    }
+
+    private static final void colourise(final String message, final String colour, final PrintStream out) {
+        out.println(Ansi.AUTO.string(String.format("@|%s %s |@", colour, message)));
     }
 
     public static final void newline() {
@@ -47,13 +52,13 @@ public enum ConsoleFormatter {
     public static final void colourise(final Message message, final String colour) {
         final String formatted = String.format("%s: [%s] %s", message.getId(), message.getSeverity(),
                 message.getMessage());
-        colourise(formatted, colour);
+        colourise(formatted, colour, message.isFatal() ? System.err : System.out);
     }
 
     public static final void colourise(final Path path, final Message message, final String colour) {
-        final String formatted = String.format("%s: %s [%s] %s", path, message.getId(), message.getSeverity(),
+        final String formatted = String.format("%s: %s [%s] %s", message.getId(), path, message.getSeverity(),
                 message.getMessage());
-        colourise(formatted, colour);
+        colourise(formatted, colour, message.isFatal() ? System.err : System.out);
     }
 
     private static final String colourFromMessage(final Message message) {
