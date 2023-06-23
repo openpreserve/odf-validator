@@ -1,19 +1,21 @@
 package org.openpreservation.odf.validation;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.xml.XmlChecker;
@@ -44,7 +46,7 @@ public class Validator {
             throw new FileNotFoundException("Path parameter is not a file: " + toValidate);
         }
         final ValidationReport report = new ValidationReport(toValidate);
-        if (isPackage(toValidate, report)) {
+        if (isPackage(toValidate)) {
             validatePackage(toValidate, report);
         } else {
             XmlChecker checker = new XmlChecker();
@@ -74,8 +76,7 @@ public class Validator {
         return (toCheck != null && Files.exists(toCheck) && Files.isRegularFile(toCheck));
     }
 
-    private static final boolean isPackage(final Path toCheck, final ValidationReport report) throws IOException {
-        final List<Message> messages = new ArrayList<>();
+    private static final boolean isPackage(final Path toCheck) throws IOException {
         try (ZipFile zipFile = new ZipFile(toCheck.toFile())) {
             return true;
         } catch (ZipException e) {
@@ -87,30 +88,58 @@ public class Validator {
         return false;
     }
 
-    private boolean validatePackage(final Path toValidate, final ValidationReport report) {
+    private boolean validatePackage(final Path toValidate, final ValidationReport report)
+            throws IOException {
         boolean isValid = true;
         boolean manifestFound = false;
+        boolean mimetypeFound = false;
+
+        try (FileInputStream fis = new FileInputStream(toValidate.toFile()); ZipInputStream zis = new ZipInputStream(fis)) {
+            ZipEntry entry = zis.getNextEntry();
+            if (entry.getName().equals("mimetype") && !entry.isDirectory()) {
+                mimetypeFound = true;
+
+                try (Scanner s = new Scanner(zis).useDelimiter("\\A")) {
+                    if (!StandardCharsets.US_ASCII.newEncoder().canEncode(s.hasNext() ? s.next() : "")) {
+                        report.add(Paths.get(entry.getName()), FACTORY.getError("PKG-5"));
+                        isValid = false;
+                    }
+                }
+
+                if (entry.getMethod() != ZipEntry.STORED) {
+                    report.add(Paths.get(entry.getName()), FACTORY.getError("PKG-6"));
+                }
+
+                if (entry.getExtra() != null) {
+                    report.add(Paths.get(entry.getName()), FACTORY.getError("PKG-8"));
+                }
+            }
+        }
         try (ZipFile zipFile = new ZipFile(toValidate.toFile())) {
             for (ZipEntry entry : zipFile.stream().toArray(ZipEntry[]::new)) {
                 if ((entry.getMethod() != ZipEntry.STORED) && (entry.getMethod() != ZipEntry.DEFLATED)) {
-                    report.add(toValidate, FACTORY.getError("PKG-1", entry.getName()));
+                    report.add(Paths.get(entry.getName()), FACTORY.getError("PKG-1", entry.getName()));
                     isValid = false;
                 }
-                if (entry.getName().startsWith(NAME_META_INF)) {
+                if (entry.getName().equals("mimetype") && !entry.isDirectory() && !mimetypeFound) {
+                    mimetypeFound = true;
+                    report.add(Paths.get(entry.getName()), FACTORY.getError("PKG-7"));
+                    isValid = false;
+                } else if (entry.getName().startsWith(NAME_META_INF)) {
                     if (entry.isDirectory() && !NAME_META_INF.equals(entry.getName())) {
-                        report.add(toValidate, FACTORY.getError("PKG-3", entry.getName()));
+                        report.add(Paths.get(entry.getName()), FACTORY.getError("PKG-3", entry.getName()));
                     } else if (entry.getName().equals(PATH_MANIFEST)) {
                         manifestFound = true;
                     }
                 }
             }
+            if (!mimetypeFound) {
+                report.add(toValidate, FACTORY.getWarning("PKG-2"));
+            }
             if (!manifestFound) {
                 report.add(toValidate, FACTORY.getError("PKG-4"));
                 isValid = false;
             }
-        } catch (IOException e) {
-            report.add(toValidate, FACTORY.getError("PKG-2", toValidate.toString(), e.getMessage()));
-            isValid = false;
         }
         return isValid;
     }
