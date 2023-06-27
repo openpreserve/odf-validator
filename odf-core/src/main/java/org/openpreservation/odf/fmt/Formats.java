@@ -6,18 +6,18 @@ import java.util.Set;
 import org.openpreservation.utils.Checks;
 
 public enum Formats {
-    ZIP("application/zip", EnumSet.of(Signatures.ZIP, Signatures.ZIP_EMPTY, Signatures.ZIP_SPANNED)),
-    XML("text/xml", EnumSet.of(Signatures.XML_UTF_8, Signatures.XML_UTF_16_LE, Signatures.XML_UTF_16_BE,
+    ZIP(MimeTypes.ZIP, EnumSet.of(Signatures.ZIP, Signatures.ZIP_EMPTY, Signatures.ZIP_SPANNED)),
+    XML(MimeTypes.XML, EnumSet.of(Signatures.XML_UTF_8, Signatures.XML_UTF_16_LE, Signatures.XML_UTF_16_BE,
             Signatures.XML_UTF_32_LE, Signatures.XML_UTF_32_BE)),
-    ODS("application/vnd.oasis.opendocument.spreadsheet", EnumSet.of(Signatures.ODS)),
-    OTS("application/vnd.oasis.opendocument.spreadsheet-template", EnumSet.of(Signatures.ODT)),
-    UNKNOWN("application/octet-stream", EnumSet.of(Signatures.NOMATCH));
+    ODS(MimeTypes.ODS, EnumSet.of(Signatures.ODS)),
+    OTS(MimeTypes.OTS, EnumSet.of(Signatures.ODT)),
+    UNKNOWN(MimeTypes.UNKNOWN, EnumSet.of(Signatures.NOMATCH));
 
-    public final String mime;
+    public final MimeTypes mime;
     public final String extension;
     final Set<Signatures> signatures;
 
-    private Formats(final String mime, final Set<Signatures> signatures) {
+    private Formats(final MimeTypes mime, final Set<Signatures> signatures) {
         this.mime = mime;
         this.extension = this.name().replace("UNKNOWN", "").toLowerCase();
         this.signatures = EnumSet.copyOf(signatures);
@@ -55,8 +55,9 @@ public enum Formats {
 
     public static Formats fromMime(final String mime) {
         Checks.notNull(mime, "String", "mime");
+        MimeTypes mimeType = MimeTypes.fromMime(mime);
         for (Formats f : Formats.values()) {
-            if (f.mime.equals(mime.toLowerCase())) {
+            if (f.mime == mimeType) {
                 return f;
             }
         }

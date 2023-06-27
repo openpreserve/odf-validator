@@ -17,6 +17,8 @@ import java.util.zip.ZipEntry;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.openpreservation.odf.fmt.MimeTypes;
+import org.openpreservation.odf.pkg.OdfPackages;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -25,8 +27,6 @@ import picocli.CommandLine.Parameters;
 
 @Command(name = "odf-zip", mixinStandardHelpOptions = true, version = "odf-zip 0.1", description = "Creates an ODF compliant zip from a directory.")
 class OdfPackageCreator implements Callable<Integer> {
-    private static final String MIMETYPE = "mimetype";
-    private static final String ODS_MIMETYPE = "application/vnd.oasis.opendocument.spreadsheet";
     @Option(names = { "-c",
             "--compress-mime" }, defaultValue = "false", description = "Compress mimetype entry with defalte algorithm.")
     private boolean compressMimetype;
@@ -81,7 +81,7 @@ class OdfPackageCreator implements Callable<Integer> {
                     final String name = source.relativize(file).toString();
                     // Ignore the mimetype file, it has already been handled,
                     // only copy files, no symbolic links
-                    if (name.equals(MIMETYPE) || attributes.isSymbolicLink()) {
+                    if (attributes.isSymbolicLink() || name.equals(OdfPackages.MIMETYPE)) {
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -114,27 +114,20 @@ class OdfPackageCreator implements Callable<Integer> {
 
     private static void handleMimetype(Path source, ZipArchiveOutputStream zos, final boolean compressMimetype)
             throws IOException {
-        // Adds a mimetype file to the archive, needs special handling
-        final Path mimetype = source.resolve(MIMETYPE);
+        final Path mimetype = source.resolve(OdfPackages.MIMETYPE);
         if (!Files.exists(mimetype)) {
-            // A mimetype file is supplied, add it to the archive as a deflated ascii file entry
-            byte[] mimetypeBytes = ODS_MIMETYPE.getBytes(StandardCharsets.US_ASCII);
-            ZipArchiveEntry mimetypeEntry = (compressMimetype) ? createDeflatedEntry(MIMETYPE, mimetypeBytes.length)
-                    : createStoredEntry(MIMETYPE, mimetypeBytes.length, crc(mimetypeBytes));
+            return;
+        }
+        try (FileInputStream fis = new FileInputStream(mimetype.toFile())) {
+            ZipArchiveEntry mimetypeEntry = (compressMimetype)
+                    ? createDeflatedEntry(OdfPackages.MIMETYPE, mimetype.toFile().length())
+                    : createStoredEntry(OdfPackages.MIMETYPE, Files.readAttributes(mimetype, BasicFileAttributes.class),
+                            crc(mimetype));
             zos.putArchiveEntry(mimetypeEntry);
-            zos.write(mimetypeBytes);
-        } else {
-            try (FileInputStream fis = new FileInputStream(mimetype.toFile())) {
-                ZipArchiveEntry mimetypeEntry = (compressMimetype)
-                        ? createDeflatedEntry(MIMETYPE, mimetype.toFile().length())
-                        : createStoredEntry(MIMETYPE, Files.readAttributes(mimetype, BasicFileAttributes.class),
-                                crc(mimetype));
-                zos.putArchiveEntry(mimetypeEntry);
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = fis.read(buffer)) > 0) {
-                    zos.write(buffer, 0, len);
-                }
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = fis.read(buffer)) > 0) {
+                zos.write(buffer, 0, len);
             }
         }
         zos.closeArchiveEntry();
