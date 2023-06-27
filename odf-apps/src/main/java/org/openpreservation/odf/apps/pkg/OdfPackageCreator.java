@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,13 +30,17 @@ class OdfPackageCreator implements Callable<Integer> {
     @Option(names = { "-c",
             "--compress-mime" }, defaultValue = "false", description = "Compress mimetype entry with defalte algorithm.")
     private boolean compressMimetype;
+    @Option(names = { "-m",
+            "--mime-last" }, defaultValue = "false", description = "Add the mimetype file at the end of the file, rather than the start.")
+    private boolean mimeLast;
     @Parameters(paramLabel = "FOLDERS", arity = "1..*", description = "A list of Open Document Format spreadsheet file to validate.")
     private File[] toZipFolders;
 
     @Override
     public Integer call() throws IOException {
+        // Loop over the supplied folders and pass them to the creator
         for (File folder : this.toZipFolders) {
-            zipFolder(folder.toPath(), this.compressMimetype);
+            zipFolder(folder.toPath(), this.compressMimetype, this.mimeLast);
         }
         return 0;
     }
@@ -47,25 +52,40 @@ class OdfPackageCreator implements Callable<Integer> {
      * @param source
      * @throws IOException
      */
-    public static void zipFolder(Path source, final boolean compressMimetype) throws IOException {
-
-        // get folder name as zip file name
+    public static void zipFolder(Path source, final boolean compressMimetype, final boolean mimeLast) throws IOException {
+        // The archive is the same name as the supplied directory with a .ods extension
         String zipFileName = source.getFileName().toString() + ".ods";
 
         try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(
                 new FileOutputStream(zipFileName))) {
-            handleMimetype(source, zos, compressMimetype);
+            // Special handling of the mimetype file
+            if (!mimeLast) {
+                handleMimetype(source, zos, compressMimetype);
+            }
             Files.walkFileTree(source, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    // For empty directories, we need to add an entry and continue.
+                    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(dir)) {
+                        if (!dirStream.iterator().hasNext()) {
+                            zos.putArchiveEntry(
+                                    addEntryDetails(createZipEntry(source.relativize(dir).toString() + "/", 0), attrs));
+                        }
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
                 @Override
                 public FileVisitResult visitFile(Path file,
                         BasicFileAttributes attributes) throws IOException {
-
                     final String name = source.relativize(file).toString();
+                    // Ignore the mimetype file, it has already been handled,
                     // only copy files, no symbolic links
-                    if (attributes.isSymbolicLink() || name.equals(MIMETYPE)) {
+                    if (name.equals(MIMETYPE) || attributes.isSymbolicLink()) {
                         return FileVisitResult.CONTINUE;
                     }
 
+                    // Create a deflated zip entry and add it to the archive
                     try (FileInputStream fis = new FileInputStream(file.toFile())) {
                         zos.putArchiveEntry(createDeflatedEntry(name, attributes));
                         byte[] buffer = new byte[1024];
@@ -85,14 +105,19 @@ class OdfPackageCreator implements Callable<Integer> {
                     throw exc;
                 }
             });
-
+            // Add mimetype file at the end if we want a brokend package
+            if (mimeLast) {
+                handleMimetype(source, zos, compressMimetype);
+            }
         }
     }
 
     private static void handleMimetype(Path source, ZipArchiveOutputStream zos, final boolean compressMimetype)
             throws IOException {
+        // Adds a mimetype file to the archive, needs special handling
         final Path mimetype = source.resolve(MIMETYPE);
         if (!Files.exists(mimetype)) {
+            // A mimetype file is supplied, add it to the archive as a deflated ascii file entry
             byte[] mimetypeBytes = ODS_MIMETYPE.getBytes(StandardCharsets.US_ASCII);
             ZipArchiveEntry mimetypeEntry = (compressMimetype) ? createDeflatedEntry(MIMETYPE, mimetypeBytes.length)
                     : createStoredEntry(MIMETYPE, mimetypeBytes.length, crc(mimetypeBytes));
