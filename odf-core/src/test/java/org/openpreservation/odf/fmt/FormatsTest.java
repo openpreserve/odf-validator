@@ -72,7 +72,7 @@ public class FormatsTest {
 
     @Test
     public void testFromMimeOts() {
-        assertEquals(String.format("%s IS the MIME identifier for %s", MIME_ODS, Formats.OTS),
+        assertEquals(String.format("%s IS the MIME identifier for %s", MIME_OTS, Formats.OTS),
                 Formats.OTS,
                 Formats.fromMime(MIME_OTS));
     }
@@ -125,7 +125,7 @@ public class FormatsTest {
 
     @Test
     public void testFromExtOts() {
-        assertEquals(String.format("%s IS the MIME identifier for %s", EXT_ODS, Formats.OTS),
+        assertEquals(String.format("%s IS the MIME identifier for %s", EXT_OTS, Formats.OTS),
                 Formats.OTS,
                 Formats.fromExtension(EXT_OTS));
     }
