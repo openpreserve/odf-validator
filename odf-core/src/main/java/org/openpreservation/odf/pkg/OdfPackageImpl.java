@@ -13,7 +13,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,8 +28,6 @@ import org.openpreservation.odf.xml.XmlChecker;
 import org.openpreservation.odf.xml.XmlParseResult;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 
 public class OdfPackageImpl implements OdfPackage {
     static final String MIMETYPE = "mimetype";
@@ -42,6 +43,7 @@ public class OdfPackageImpl implements OdfPackage {
     private String mimeEntry = "";
     private final Path path;
     private final ValidationReport report;
+    private final Set<Path> entryPaths = new HashSet<>();
 
     public OdfPackageImpl(final Path toValidate) {
         super();
@@ -83,6 +85,9 @@ public class OdfPackageImpl implements OdfPackage {
             // Process the zip entries in order
             while ((entry = zis.getNextEntry()) != null) {
                 entryCount++;
+                if (!entry.isDirectory()) {
+                    entryPaths.add(Paths.get(entry.getName()));
+                }
                 if ((entry.getMethod() != ZipEntry.STORED) && (entry.getMethod() != ZipEntry.DEFLATED)) {
                     // Entries SHALL be uncompressesed (Stored) or use deflate compression
                     report.add(Paths.get(entry.getName()), FACTORY.getError("PKG-1", entry.getName()));
@@ -99,6 +104,17 @@ public class OdfPackageImpl implements OdfPackage {
                     }
                 }
             }
+        }
+    }
+
+    public Set<Path> getEntryPaths() {
+        return this.entryPaths;
+    }
+
+    public InputStream getEntryStream(Path entryPath) throws IOException {
+        try (ZipFile zipFile = new ZipFile(this.path.toFile())) {
+            ZipEntry entry = zipFile.getEntry(entryPath.toString());
+            return zipFile.getInputStream(entry);
         }
     }
 

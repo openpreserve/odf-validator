@@ -1,6 +1,10 @@
 package org.openpreservation.odf.pkg;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -13,4 +17,8 @@ public interface OdfPackage {
     public boolean hasMimeEntry();
 
     public ValidationReport validate() throws IOException, ParserConfigurationException, SAXException;
+
+    public Set<Path> getEntryPaths();
+
+    public InputStream getEntryStream(Path entryPath) throws IOException;
 }
