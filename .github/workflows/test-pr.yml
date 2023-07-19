@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     name: Checkout and Build
-    runs-on: ubuntu-20.04
+    runs-on: [ubuntu-latest, windows-latest]
 
     strategy:
       matrix:
