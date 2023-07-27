@@ -6,12 +6,13 @@ on:
 
 jobs:
   build:
-    name: Checkout and Build
-    runs-on: ubuntu-20.04
-
     strategy:
       matrix:
+        os: [windows-latest, ubuntu-latest]
         java-version: [11, 17]
+
+    name: Checkout and Build
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
