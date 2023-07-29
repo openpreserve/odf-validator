@@ -22,7 +22,7 @@ public class ChecksTest {
     public void testCopyStream() throws IOException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(TEST_STRING.getBytes(StandardCharsets.UTF_8));
                 ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            Checks.copyStream(bis, bos);
+            bis.transferTo(bos);
             final String test = new String(bos.toByteArray(), StandardCharsets.UTF_8);
             assertEquals("Expected copied stream result to be equal", TEST_STRING, test);
         }

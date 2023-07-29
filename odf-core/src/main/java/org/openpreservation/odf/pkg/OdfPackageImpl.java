@@ -21,7 +21,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.odf.xml.XmlChecker;
 import org.openpreservation.odf.xml.XmlParseResult;
-import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
 public class OdfPackageImpl implements OdfPackage {
@@ -62,7 +61,7 @@ public class OdfPackageImpl implements OdfPackage {
             while ((entry = zis.getNextEntry()) != null) {
                 if (entry.getName().equals(Constants.MIMETYPE) && !entry.isDirectory()) {
                     try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-                        Checks.copyStream(zis, bos);
+                        zis.transferTo(bos);
                         this.mimeEntry = bos.toString(StandardCharsets.US_ASCII);
                     }
                 }
@@ -73,10 +72,10 @@ public class OdfPackageImpl implements OdfPackage {
         }
     }
 
-    private int copyEntryToFile(final InputStream source, final File dest) throws IOException {
+    private long copyEntryToFile(final InputStream source, final File dest) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(dest);
                 BufferedOutputStream bos = new BufferedOutputStream(fos)) {
-            return Checks.copyStream(source, bos);
+            return source.transferTo(bos);
         }
     }
 
