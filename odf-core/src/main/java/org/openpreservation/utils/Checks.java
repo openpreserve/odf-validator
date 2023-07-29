@@ -14,7 +14,7 @@ public class Checks {
 
     public static final void notNull(final Object toCheck, final String type, final String name) {
         if (toCheck == null) {
-            throw new NullPointerException(String.format(NOT_NULL, type, name));
+            throw new IllegalArgumentException(String.format(NOT_NULL, type, name));
         }
     }
 

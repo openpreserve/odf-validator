@@ -10,9 +10,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.fmt.MimeTypes;
-import org.openpreservation.odf.pkg.OdfPackage;
-import org.openpreservation.odf.pkg.OdfPackageImpl;
 import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.pkg.ValidatingParser;
 import org.openpreservation.odf.xml.XmlChecker;
 import org.openpreservation.odf.xml.XmlParseResult;
 import org.xml.sax.SAXException;
@@ -34,27 +33,27 @@ public class Validator {
             throw new FileNotFoundException("Path parameter is not a file: " + toValidate);
         }
         if (OdfPackages.isPackage(toValidate)) {
-            OdfPackage pkg = new OdfPackageImpl(toValidate);
-            return pkg.validate();
+            ValidatingParser parser = OdfPackages.getValidatingParser();
+            return parser.validatePackage(toValidate);
         }
-        ValidationReport report = new ValidationReport(toValidate);
+        ValidationReport report = new ValidationReport(toValidate.toString());
         XmlChecker checker = new XmlChecker();
         XmlParseResult result = checker.parse(toValidate);
         if (result.isWellFormed) {
             if (result.isRootName(TAG_DOC)) {
-                report.add(toValidate, FACTORY.getInfo("DOC-2", result.version));
+                report.add(toValidate.toString(), FACTORY.getInfo("DOC-2", result.version));
                 if (MimeTypes.isDocument(result.mimeType)) {
-                    report.add(toValidate, FACTORY.getInfo("DOC-3", "Document", result.mimeType));
+                    report.add(toValidate.toString(), FACTORY.getInfo("DOC-3", "Document", result.mimeType));
                 } else if (MimeTypes.isTemplate(result.mimeType)) {
-                    report.add(toValidate, FACTORY.getInfo("DOC-3", "Template", result.mimeType));
+                    report.add(toValidate.toString(), FACTORY.getInfo("DOC-3", "Template", result.mimeType));
                 } else {
-                    report.add(toValidate, FACTORY.getError("DOC-4", result.mimeType));
+                    report.add(toValidate.toString(), FACTORY.getError("DOC-4", result.mimeType));
                 }
             }
             result = checker.validate(toValidate);
-            report.add(toValidate, result.messages);
+            report.add(toValidate.toString(), result.messages);
         } else {
-            report.add(toValidate, result.messages);
+            report.add(toValidate.toString(), result.messages);
         }
         return report;
     }

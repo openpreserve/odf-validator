@@ -6,7 +6,15 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 public class OdfPackages {
-    public static final String MIMETYPE = OdfPackageImpl.MIMETYPE;
+    public static final String MIMETYPE = Constants.MIMETYPE;
+
+    private OdfPackages() {
+        throw new AssertionError("Utility class 'OdfPackages' should not be instantiated");
+    }
+
+    public static final ValidatingParser getValidatingParser() {
+        return ValidatingParserImpl.getInstance();
+    }
 
     public static final boolean isPackage(final Path toCheck) throws IOException {
         try (ZipFile zipFile = new ZipFile(toCheck.toFile())) {
