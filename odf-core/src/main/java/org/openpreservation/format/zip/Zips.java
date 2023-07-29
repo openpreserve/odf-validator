@@ -31,7 +31,7 @@ public class Zips {
                 } else {
                     Files.createDirectories(target.getParent());
                     try (OutputStream os = Files.newOutputStream(target)) {
-                        Checks.copyStream(is, os);
+                        is.transferTo(os);
                     }
                 }
             }
@@ -45,24 +45,17 @@ public class Zips {
     }
 
     public static final ZipProcessor.Factory getFactoryInstance() {
-        return new ZipProcessor.Factory() {
-            @Override
-            public ZipProcessor from(ZipEntryProcessor processor) {
-                return new ZipProcessor() {
-                    @Override
-                    public ZipArchive process(final InputStream is) throws IOException {
-                        List<ZipEntry> entries = new ArrayList<>();
-                        try (ZipInputStream zis = new ZipInputStream(is)) {
-                            ZipEntry entry;
-                            while ((entry = zis.getNextEntry()) != null) {
-                                entries.add(entry);
-                                processor.process(entry, zis);
-                            }
-                        }
-                        return ZipArchiveImpl.from(entries);
-                    }
-                };
-            };
-        };
+        return (processor -> (is -> {
+            List<ZipEntry> entries = new ArrayList<>();
+            try (ZipInputStream zis = new ZipInputStream(is)) {
+                ZipEntry entry;
+                while ((entry = zis.getNextEntry()) != null) {
+                    entries.add(entry);
+                    processor.process(entry, zis);
+                }
+            }
+            return ZipArchiveImpl.from(entries);
+        }));
     }
+
 }
