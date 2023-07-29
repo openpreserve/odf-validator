@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -17,7 +16,6 @@ import java.util.zip.ZipEntry;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.openpreservation.odf.fmt.MimeTypes;
 import org.openpreservation.odf.pkg.OdfPackages;
 
 import picocli.CommandLine;
@@ -52,7 +50,8 @@ class OdfPackageCreator implements Callable<Integer> {
      * @param source
      * @throws IOException
      */
-    public static void zipFolder(Path source, final boolean compressMimetype, final boolean mimeLast) throws IOException {
+    public static void zipFolder(Path source, final boolean compressMimetype, final boolean mimeLast)
+            throws IOException {
         // The archive is the same name as the supplied directory with a .ods extension
         String zipFileName = source.getFileName().toString() + ".ods";
 

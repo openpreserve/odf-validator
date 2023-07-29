@@ -1,9 +1,13 @@
 package org.openpreservation.odf.fmt;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -21,8 +25,8 @@ public class FormatsTest {
 
     @Test
     public void testFromMimeNull() {
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     Formats.fromMime(null);
                 });
@@ -86,7 +90,7 @@ public class FormatsTest {
 
     @Test
     public void testFromExtNull() {
-        assertThrows("Null pointer exception expected",
+        assertThrows("IllegalArgumentException expected",
                 NullPointerException.class,
                 () -> {
                     Formats.fromExtension(null);
@@ -135,5 +139,33 @@ public class FormatsTest {
         assertEquals(String.format("%s IS the MIME identifier for %s", EXT_UNK, Formats.UNKNOWN),
                 Formats.UNKNOWN,
                 Formats.fromMime(EXT_UNK));
+    }
+
+    @Test
+    public void testIsTemplate() {
+        assertFalse(MimeTypes.isTemplate(MimeTypes.fromMime(MIME_ZIP).mime));
+        assertFalse(MimeTypes.isTemplate(MimeTypes.fromMime(MIME_XML).mime));
+        assertFalse(MimeTypes.isTemplate(MimeTypes.fromMime(MIME_ODS).mime));
+        assertTrue(MimeTypes.isTemplate(MimeTypes.fromMime(MIME_OTS).mime));
+    }
+
+    @Test
+    public void testIsDocument() {
+        assertFalse(MimeTypes.isDocument(MimeTypes.fromMime(MIME_ZIP).mime));
+        assertFalse(MimeTypes.isDocument(MimeTypes.fromMime(MIME_XML).mime));
+        assertFalse(MimeTypes.isDocument(MimeTypes.fromMime(MIME_OTS).mime));
+        assertTrue(MimeTypes.isDocument(MimeTypes.fromMime(MIME_ODS).mime));
+    }
+
+    @Test
+    public void testMimeGetBytes() {
+        for (final MimeTypes mt : MimeTypes.values()) {
+            assertArrayEquals(
+                    String.format("MimeTypes %s should return %s", mt.mime,
+                            mt.mime.getBytes(StandardCharsets.US_ASCII)), mt.mime.getBytes(StandardCharsets.US_ASCII), mt.getBytes());
+            assertArrayEquals(
+                    String.format("MimeTypes %s should return %s", mt.mime,
+                            mt.mime.getBytes(StandardCharsets.UTF_8)), mt.mime.getBytes(StandardCharsets.UTF_8), mt.getBytes());
+        }
     }
 }

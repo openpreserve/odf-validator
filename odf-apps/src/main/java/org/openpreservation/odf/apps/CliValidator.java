@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -36,8 +37,7 @@ class CliValidator implements Callable<Integer> {
     private final Map<Path, MessageLog> appMessages = new HashMap<>();
 
     @Override
-    public Integer call()
-            throws SAXNotRecognizedException, SAXNotSupportedException, ParserConfigurationException, IOException {
+    public Integer call() {
         for (File file : this.toValidateFiles) {
             Path toValidate = file.toPath();
             ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", toValidate.toString()));
@@ -93,9 +93,9 @@ class CliValidator implements Callable<Integer> {
         int packageErrors = 0;
         int packageWarnings = 0;
         int packageInfos = 0;
-        for (Map.Entry<Path, MessageLog> entry : report.documentMessages.entrySet()) {
+        for (Map.Entry<String, MessageLog> entry : report.documentMessages.entrySet()) {
             for (Message message : entry.getValue().getMessages()) {
-                ConsoleFormatter.colourise(entry.getKey(), message);
+                ConsoleFormatter.colourise(Paths.get(entry.getKey()), message);
                 if (message.isError() || message.isFatal()) {
                     retStatus = 1;
                 }

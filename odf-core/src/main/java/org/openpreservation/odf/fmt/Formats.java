@@ -14,12 +14,10 @@ public enum Formats {
     UNKNOWN(MimeTypes.UNKNOWN, EnumSet.of(Signatures.NOMATCH));
 
     public final MimeTypes mime;
-    public final String extension;
     final Set<Signatures> signatures;
 
     private Formats(final MimeTypes mime, final Set<Signatures> signatures) {
         this.mime = mime;
-        this.extension = this.name().replace("UNKNOWN", "").toLowerCase();
         this.signatures = EnumSet.copyOf(signatures);
     }
 
@@ -55,7 +53,7 @@ public enum Formats {
 
     public static Formats fromMime(final String mime) {
         Checks.notNull(mime, "String", "mime");
-        MimeTypes mimeType = MimeTypes.fromMime(mime);
+        MimeTypes mimeType = MimeTypes.fromMime(mime.toLowerCase());
         for (Formats f : Formats.values()) {
             if (f.mime == mimeType) {
                 return f;
@@ -65,8 +63,9 @@ public enum Formats {
     }
 
     public static Formats fromExtension(final String ext) {
+        MimeTypes mimeType = MimeTypes.fromExtension(ext.toLowerCase());
         for (Formats f : Formats.values()) {
-            if (f.extension.equals(ext.toLowerCase())) {
+            if (f.mime == mimeType) {
                 return f;
             }
         }

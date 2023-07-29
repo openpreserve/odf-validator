@@ -26,8 +26,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffXMLNullString() {
         String nullPath = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     FormatSniffer.sniff(nullPath);
                 });
@@ -44,8 +44,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffXMLNullPath() throws IOException {
         Path nullPath = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     FormatSniffer.sniff(nullPath);
                 });
@@ -62,8 +62,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffXMLNullFile() throws IOException {
         File nullFile = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     FormatSniffer.sniff(nullFile);
                 });
@@ -76,7 +76,7 @@ public class FormatSnifferTest {
         File resDir = resFile.isDirectory() ? new File(resFile, "no-such-file.none")
                 : new File(resFile.getParentFile(), "no-such-file.none");
 
-        assertThrows("Null pointer exception expected",
+        assertThrows("IllegalArgumentException expected",
                 FileNotFoundException.class,
                 () -> {
                     FormatSniffer.sniff(resDir);
@@ -118,8 +118,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffXMLNullStream() {
         InputStream nullStream = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     FormatSniffer.sniff(nullStream);
                 });
@@ -153,8 +153,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffEncodingNullString() {
         String nullStr = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     FormatSniffer.sniffEncoding(nullStr);
                 });
@@ -172,8 +172,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffEncodingNullPath() throws IOException {
         Path nullPath = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     FormatSniffer.sniffEncoding(nullPath);
                 });
@@ -191,8 +191,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffEncodingNullFile() throws IOException {
         File nullFile = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     FormatSniffer.sniffEncoding(nullFile);
                 });
@@ -205,7 +205,7 @@ public class FormatSnifferTest {
         File resDir = resFile.isDirectory() ? new File(resFile, "no-such-file.none")
                 : new File(resFile.getParentFile(), "no-such-file.none");
 
-        assertThrows("Null pointer exception expected",
+        assertThrows("IllegalArgumentException expected",
                 FileNotFoundException.class,
                 () -> {
                     FormatSniffer.sniffEncoding(resDir);

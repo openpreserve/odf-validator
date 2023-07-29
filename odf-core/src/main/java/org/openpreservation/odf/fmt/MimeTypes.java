@@ -46,8 +46,9 @@ public enum MimeTypes {
      */
     public static MimeTypes fromExtension(final String ext) {
         Checks.notNull(ext, STRING, "ext");
+        final String match = ext.toLowerCase();
         for (MimeTypes m : MimeTypes.values()) {
-            if (m.extension.equals(ext.toLowerCase())) {
+            if (m.extension.equals(match)) {
                 return m;
             }
         }
@@ -56,8 +57,9 @@ public enum MimeTypes {
 
     public static MimeTypes fromMime(final String mime) {
         Checks.notNull(mime, STRING, "mime");
+        final String match = mime.toLowerCase();
         for (MimeTypes m : MimeTypes.values()) {
-            if (m.mime.equals(mime.toLowerCase())) {
+            if (m.mime.equals(match)) {
                 return m;
             }
         }

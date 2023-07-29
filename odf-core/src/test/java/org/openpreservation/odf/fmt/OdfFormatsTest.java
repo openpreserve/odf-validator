@@ -23,8 +23,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageNullStream() {
         InputStream nullIs = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     OdfFormats.isPackage(nullIs);
                 });
@@ -94,8 +94,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageNullString() {
         String nullStr = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     OdfFormats.isPackage(nullStr);
                 });
@@ -118,8 +118,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageNullFile() {
         File nullFile = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     OdfFormats.isPackage(nullFile);
                 });
@@ -142,8 +142,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageNullPath() {
         Path nullPath = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     OdfFormats.isPackage(nullPath);
                 });
@@ -184,8 +184,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsXMLNullStream() {
         InputStream nullPath = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     OdfFormats.isXml(nullPath);
                 });
@@ -201,8 +201,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsXMLNullString() {
         String nullStr = null;
-        assertThrows("Null pointer exception expected",
-                NullPointerException.class,
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
                 () -> {
                     OdfFormats.isXml(nullStr);
                 });
