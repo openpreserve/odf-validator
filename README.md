@@ -122,3 +122,4 @@ Note: The purpose is to allow the type of document represented by the package to
 8. The `<office:body>` element shall have the `<office:spreadsheet>` element as its child;
 9. All namespace prefixes used in the values of `table:formula` attributes values shall be bound to the `urn:oasis:names:tc:opendocument:xmlns:of:1.2` namespace;
 10. All `table:formula` attribute values shall be a conforming OpenDocument Formula expression [ODF1.3-Part-4:OpenFormula] 2.2 OpenDocument Formula Expression.
+

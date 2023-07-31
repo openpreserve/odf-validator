@@ -1,5 +1,6 @@
 package org.openpreservation.format.zip;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -8,15 +9,16 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipEntry;
 
 import org.junit.Test;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class ZipArchiveTest {
     @Test
     public void testInstantiation() {
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     ZipArchiveImpl.from(null);
                 });
@@ -33,13 +35,18 @@ public class ZipArchiveTest {
     }
 
     @Test
+    public void testEqualsContract() {
+        EqualsVerifier.forClass(ZipArchiveImpl.class).verify();
+    }
+
+    @Test
     public void testSize() {
         List<ZipEntry> entries = new ArrayList<>();
         ZipArchiveImpl archive = ZipArchiveImpl.from(new ArrayList<>());
-        assertTrue("Instantiated archive size should be zero", archive.size() == 0);
-        entries.add(new ZipEntry(""));
+        assertEquals("Instantiated archive size should be zero", archive.size(), 0);
+        entries.add(ZipEntryImpl.of(""));
         archive = ZipArchiveImpl.from(entries);
-        assertTrue("Instantiated archive size should be one", archive.size() == 1);
+        assertEquals("Instantiated archive size should be one", archive.size(), 1);
     }
 
     @Test
@@ -47,9 +54,21 @@ public class ZipArchiveTest {
         List<ZipEntry> entries = new ArrayList<>();
         ZipArchiveImpl archive = ZipArchiveImpl.from(new ArrayList<>());
         assertTrue("Retrieved ZipEntry List should be empty", archive.getZipEntries().isEmpty());
-        entries.add(new ZipEntry("test"));
+        entries.add(ZipEntryImpl.of("test"));
         archive = ZipArchiveImpl.from(entries);
         assertFalse("Retrieved ZipEntry List should NOT be empty", archive.getZipEntries().isEmpty());
+    }
+
+    @Test
+    public void testGetZipEntryNull() {
+        List<ZipEntry> entries = new ArrayList<>();
+        entries.add(ZipEntryImpl.of("test"));
+        ZipArchiveImpl archive = ZipArchiveImpl.from(entries);
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
+                () -> {
+                    archive.getZipEntry(null);
+                });
     }
 
     @Test
@@ -57,7 +76,7 @@ public class ZipArchiveTest {
         List<ZipEntry> entries = new ArrayList<>();
         ZipArchiveImpl archive = ZipArchiveImpl.from(new ArrayList<>());
         assertNull("Retrieved test entry should be null", archive.getZipEntry("test"));
-        entries.add(new ZipEntry("test"));
+        entries.add(ZipEntryImpl.of("test"));
         archive = ZipArchiveImpl.from(entries);
         assertNotNull("Retrieved test entry should NOT be null", archive.getZipEntry("test"));
     }

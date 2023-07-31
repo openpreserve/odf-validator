@@ -6,8 +6,8 @@ import java.util.List;
 public interface MessageLog {
     public int size();
     public boolean isEmpty();
-    public int add(Message message);
-    public int add(Collection<? extends Message> messages);
+    public int add(final Message message);
+    public int add(final Collection<? extends Message> messages);
     public List<Message> getErrors();
     public List<Message> getWarnings();
     public List<Message> getInfos();

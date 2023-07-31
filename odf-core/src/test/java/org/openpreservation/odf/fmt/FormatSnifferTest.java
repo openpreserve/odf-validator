@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -26,8 +26,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffXMLNullString() {
         String nullPath = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     FormatSniffer.sniff(nullPath);
                 });
@@ -44,8 +44,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffXMLNullPath() throws IOException {
         Path nullPath = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     FormatSniffer.sniff(nullPath);
                 });
@@ -62,8 +62,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffXMLNullFile() throws IOException {
         File nullFile = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     FormatSniffer.sniff(nullFile);
                 });
@@ -76,7 +76,7 @@ public class FormatSnifferTest {
         File resDir = resFile.isDirectory() ? new File(resFile, "no-such-file.none")
                 : new File(resFile.getParentFile(), "no-such-file.none");
 
-        assertThrows("IllegalArgumentException expected",
+        assertThrows("NullPointerException expected",
                 FileNotFoundException.class,
                 () -> {
                     FormatSniffer.sniff(resDir);
@@ -85,7 +85,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXMLStream() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS);
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
         Formats fmt = FormatSniffer.sniff(is);
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.EMPTY_FODS, Formats.XML, fmt),
                 Formats.XML, fmt);
@@ -93,7 +93,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXmlUtf8BomStream() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_PI);
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_PI));
         Formats fmt = FormatSniffer.sniff(is);
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF8_BOM_PI, Formats.XML, fmt),
                 Formats.XML, fmt);
@@ -101,7 +101,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXmlUtf16LEBomStream() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF16LE_BOM_PI);
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.UTF16LE_BOM_PI));
         Formats fmt = FormatSniffer.sniff(is);
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF16LE_BOM_PI, Formats.XML, fmt),
                 Formats.XML, fmt);
@@ -109,7 +109,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXmlUtf16BEBomStream() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF16BE_BOM_PI);
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.UTF16BE_BOM_PI));
         Formats fmt = FormatSniffer.sniff(is);
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF16BE_BOM_PI, Formats.XML, fmt),
                 Formats.XML, fmt);
@@ -117,9 +117,9 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXMLNullStream() {
-        InputStream nullStream = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        BufferedInputStream nullStream = null;
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     FormatSniffer.sniff(nullStream);
                 });
@@ -135,7 +135,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffBomPkgMunge() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_ODS);
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_ODS));
         Formats fmt = FormatSniffer.sniff(is);
         assertNotEquals(
                 String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF8_BOM_ODS, Formats.ODS, fmt),
@@ -153,8 +153,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffEncodingNullString() {
         String nullStr = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     FormatSniffer.sniffEncoding(nullStr);
                 });
@@ -172,8 +172,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffEncodingNullPath() throws IOException {
         Path nullPath = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     FormatSniffer.sniffEncoding(nullPath);
                 });
@@ -191,8 +191,8 @@ public class FormatSnifferTest {
     @Test
     public void testSniffEncodingNullFile() throws IOException {
         File nullFile = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     FormatSniffer.sniffEncoding(nullFile);
                 });
@@ -205,7 +205,7 @@ public class FormatSnifferTest {
         File resDir = resFile.isDirectory() ? new File(resFile, "no-such-file.none")
                 : new File(resFile.getParentFile(), "no-such-file.none");
 
-        assertThrows("IllegalArgumentException expected",
+        assertThrows("NullPointerException expected",
                 FileNotFoundException.class,
                 () -> {
                     FormatSniffer.sniffEncoding(resDir);
@@ -214,7 +214,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffEncodingStream() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_PI);
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_PI));
         Encodings enc = FormatSniffer.sniffEncoding(is);
         assertEquals(
                 String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF8_BOM_PI, Encodings.UTF_8, enc),

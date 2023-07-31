@@ -24,8 +24,13 @@ public class ValidationReport {
         this.documentMessages = documentMessages;
     }
 
+    @Override
+    public String toString() {
+        return "ValidationReport [name=" + name + ", documentMessages=" + documentMessages + "]";
+    }
+
     public boolean isValid() {
-        return documentMessages.values().stream().allMatch(m -> m.getErrors().isEmpty());        
+        return documentMessages.values().stream().allMatch(m -> m.getErrors().isEmpty());
     }
 
     public int add(final String name, final Message message) {
@@ -36,6 +41,10 @@ public class ValidationReport {
     public int add(final String name, final Collection<? extends Message> messages) {
         this.documentMessages.putIfAbsent(name, Messages.messageLogInstance());
         return this.documentMessages.get(name).add(messages);
+    }
+
+    public void addAll(final Map<String, List<Message>> messages) {
+        messages.entrySet().stream().forEach(e -> add(e.getKey(), e.getValue()));
     }
 
     public List<Message> getErrors() {
@@ -100,5 +109,36 @@ public class ValidationReport {
 
     public boolean hasInfos(final String name) {
         return documentMessages.get(name).hasInfos();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((documentMessages == null) ? 0 : documentMessages.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final ValidationReport other = (ValidationReport) obj;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (documentMessages == null) {
+            if (other.documentMessages != null)
+                return false;
+        } else if (!documentMessages.equals(other.documentMessages))
+            return false;
+        return true;
     }
 }
