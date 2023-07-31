@@ -237,12 +237,24 @@
         <artifactId>jing</artifactId>
         <version>20181101</version>
       </dependency>
+      <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-compress</artifactId>
+          <version>1.23.0</version>
+      </dependency>
       <!-- https://mvnrepository.com/artifact/junit/junit -->
       <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
           <version>4.13.2</version>
           <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>nl.jqno.equalsverifier</groupId>
+        <artifactId>equalsverifier</artifactId>
+        <version>3.15.1</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

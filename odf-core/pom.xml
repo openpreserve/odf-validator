@@ -16,12 +16,21 @@
   <description>API and library for open source validation of Open Document Format spreadsheets.</description>
 
   <dependencies>
+<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-compress</artifactId>
+    </dependency>
     <dependency>
       <groupId>io.github.relaxng</groupId>
       <artifactId>jing</artifactId>
-      <version>20181101</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/junit/junit -->
+    <dependency>
+        <groupId>nl.jqno.equalsverifier</groupId>
+        <artifactId>equalsverifier</artifactId>
+        <scope>test</scope>
+    </dependency>
     <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
