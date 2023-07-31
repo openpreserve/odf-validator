@@ -23,8 +23,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageNullStream() {
         InputStream nullIs = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     OdfFormats.isPackage(nullIs);
                 });
@@ -33,7 +33,7 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageStreamNoMime() throws IOException {
         InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.NO_MIME_ODS);
-        assertFalse(String.format("%s IS NOT a package.", TestFiles.NO_MIME_ODS), OdfFormats.isPackage(is));
+        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ODS), OdfFormats.isPackage(is));
     }
 
     @Test
@@ -94,8 +94,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageNullString() {
         String nullStr = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     OdfFormats.isPackage(nullStr);
                 });
@@ -104,7 +104,7 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageStringNoMime() throws IOException, URISyntaxException {
         URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ODS);
-        assertFalse(String.format("%s IS NOT a package.", TestFiles.NO_MIME_ODS),
+        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ODS),
                 OdfFormats.isPackage(new File(empty.toURI()).getAbsolutePath()));
     }
 
@@ -118,8 +118,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageNullFile() {
         File nullFile = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     OdfFormats.isPackage(nullFile);
                 });
@@ -128,7 +128,7 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageFileNoMime() throws URISyntaxException, IOException {
         URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ODS);
-        assertFalse(String.format("%s IS NOT a package.", TestFiles.NO_MIME_ODS),
+        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ODS),
                 OdfFormats.isPackage(new File(empty.toURI())));
     }
 
@@ -142,8 +142,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackageNullPath() {
         Path nullPath = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     OdfFormats.isPackage(nullPath);
                 });
@@ -152,7 +152,7 @@ public class OdfFormatsTest {
     @Test
     public void testIsPackagePathNoMime() throws URISyntaxException, IOException {
         URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ODS);
-        assertFalse(String.format("%s IS NOT a package.", TestFiles.NO_MIME_ODS),
+        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ODS),
                 OdfFormats.isPackage(new File(empty.toURI()).toPath()));
     }
 
@@ -184,8 +184,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsXMLNullStream() {
         InputStream nullPath = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     OdfFormats.isXml(nullPath);
                 });
@@ -201,8 +201,8 @@ public class OdfFormatsTest {
     @Test
     public void testIsXMLNullString() {
         String nullStr = null;
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     OdfFormats.isXml(nullStr);
                 });

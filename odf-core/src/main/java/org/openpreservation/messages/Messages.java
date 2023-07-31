@@ -111,8 +111,8 @@ public enum Messages {
      */
     public static MessageFactory getInstance(final String bundleName)
             throws IllegalArgumentException {
-        String odfLanguage = System.getProperty("odf.language");
-        Locale local = odfLanguage == null || odfLanguage.trim().length() == 0 ? Locale.getDefault()
+        final String odfLanguage = System.getProperty("odf.language");
+        final Locale local = odfLanguage == null || odfLanguage.trim().length() == 0 ? Locale.getDefault()
                 : Locale.forLanguageTag(odfLanguage);
 
         return getInstance(bundleName, local);
@@ -141,7 +141,7 @@ public enum Messages {
                     "bundleName cannot be null or empty");
         if (locale == null)
             throw new IllegalArgumentException("locale cannot be null.");
-        ResourceBundle messageBundle = ResourceBundle.getBundle(bundleName,
+        final ResourceBundle messageBundle = ResourceBundle.getBundle(bundleName,
                 locale);
         return MessageFactoryImpl.getInstance(messageBundle);
     }

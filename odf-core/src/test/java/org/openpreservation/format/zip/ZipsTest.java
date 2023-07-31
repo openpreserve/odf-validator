@@ -10,12 +10,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.openpreservation.odf.fmt.TestFiles;
 
 public class ZipsTest {
     @Rule
@@ -23,19 +25,19 @@ public class ZipsTest {
 
     @Test
     public void testFactoryInstance() {
-        assertNotNull("Factory should not return a null instance", Zips.getFactoryInstance());
+        assertNotNull("Factory should not return a null instance", Zips.factoryInstance());
     }
 
     @Test
     public void testExtractorInstance() throws IOException {
         assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+                NullPointerException.class,
                 () -> {
-                    Zips.getExtractorInstance(null, false);
+                    Zips.extractorInstance(null, false);
                 });
         Path tempFolder = temporaryFolder.newFolder("extInstTest").toPath();
-        assertNotNull("Extractor should not return a null instance", Zips.getExtractorInstance(tempFolder, false));
-        assertNotNull("Extractor should not return a null instance", Zips.getExtractorInstance(tempFolder, true));
+        assertNotNull("Extractor should not return a null instance", Zips.extractorInstance(tempFolder, false));
+        assertNotNull("Extractor should not return a null instance", Zips.extractorInstance(tempFolder, true));
     }
 
     @Test
@@ -45,24 +47,39 @@ public class ZipsTest {
         ZipEntry dirEntry = new ZipEntry("dir/");
         assertFalse(fileEntry.isDirectory());
         assertTrue(dirEntry.isDirectory());
-        ZipEntryProcessor dirProcessor = Zips.getExtractorInstance(tempFolder, true);
+        ZipEntryProcessor dirProcessor = Zips.extractorInstance(tempFolder, true);
         assertTrue(dirProcessor.accepts(fileEntry));
         assertTrue(dirProcessor.accepts(dirEntry));
-        ZipEntryProcessor notDirProcessor = Zips.getExtractorInstance(tempFolder, false);
+        ZipEntryProcessor notDirProcessor = Zips.extractorInstance(tempFolder, false);
         assertTrue(notDirProcessor.accepts(fileEntry));
         assertFalse(notDirProcessor.accepts(dirEntry));
     }
 
     @Test
-    public void testProcess() throws IOException, URISyntaxException {
+    public void testProcessNoDir() throws IOException, URISyntaxException {
         Path tempFolder = temporaryFolder.newFolder("emptyTestNoDirs").toPath();
-        ZipEntryProcessor notDirProcessor = Zips.getExtractorInstance(tempFolder, false);
-        ZipProcessor processor = Zips.getFactoryInstance().from(notDirProcessor);
+        ZipEntryProcessor notDirProcessor = Zips.extractorInstance(tempFolder, false);
+        ZipProcessor processor = Zips.factoryInstance().from(notDirProcessor);
         InputStream is = new FileInputStream(new File(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
         assertNotNull(is);
         ZipArchive archive = processor.process(is);
         assertNotNull("Archive should not be null", archive);
         assertTrue("Archive should not be empty", archive.size() > 0);
+        assertTrue(Files.isRegularFile(tempFolder.resolve("mimetype")));
+        assertFalse(Files.isDirectory(tempFolder.resolve("Configurations2")));
     }
 
+    @Test
+    public void testProcessDir() throws IOException, URISyntaxException {
+        Path tempFolder = temporaryFolder.newFolder("emptyTestDirs").toPath();
+        ZipEntryProcessor notDirProcessor = Zips.extractorInstance(tempFolder, true);
+        ZipProcessor processor = Zips.factoryInstance().from(notDirProcessor);
+        InputStream is = new FileInputStream(new File(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        assertNotNull(is);
+        ZipArchive archive = processor.process(is);
+        assertNotNull("Archive should not be null", archive);
+        assertTrue("Archive should not be empty", archive.size() > 0);
+        assertTrue(Files.isRegularFile(tempFolder.resolve("mimetype")));
+        assertTrue(Files.isDirectory(tempFolder.resolve("Configurations2")));
+    }
 }

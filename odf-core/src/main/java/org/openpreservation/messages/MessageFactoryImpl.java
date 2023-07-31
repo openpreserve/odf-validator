@@ -29,54 +29,54 @@ final class MessageFactoryImpl implements MessageFactory {
     }
 
     @Override
-    public Message getError(String id) throws NoSuchElementException {
+    public Message getError(final String id) throws NoSuchElementException {
         return getMessage(id, Severity.ERROR);
     }
 
     @Override
-    public Message getFatal(String id) throws NoSuchElementException {
+    public Message getFatal(final String id) throws NoSuchElementException {
         return getMessage(id, Severity.FATAL);
     }
 
     @Override
-    public Message getInfo(String id) throws NoSuchElementException {
+    public Message getInfo(final String id) throws NoSuchElementException {
         return getMessage(id, Severity.INFO);
     }
 
     @Override
-    public Message getWarning(String id) throws NoSuchElementException {
+    public Message getWarning(final String id) throws NoSuchElementException {
         return getMessage(id, Severity.WARNING);
     }
 
     @Override
-    public Message getMessage(String id, Severity severity,
-            Object... args) throws NoSuchElementException {
+    public Message getMessage(final String id, final Severity severity,
+            final Object... args) throws NoSuchElementException {
         try {
             final String message = (args == null || args.length < 1) ? this.messageBundle.getString(id)
                     : String.format(this.messageBundle.getString(id), args);
             return Messages.getMessageInstance(id, severity, message);
-        } catch (MissingResourceException ex) {
+        } catch (final MissingResourceException ex) {
             throw createEleException(id, ex);
         }
     }
 
     @Override
-    public Message getError(String id, Object... args) throws NoSuchElementException {
+    public Message getError(final String id, final Object... args) throws NoSuchElementException {
         return getMessage(id, Severity.ERROR, args);
     }
 
     @Override
-    public Message getFatal(String id, Object... args) throws NoSuchElementException {
+    public Message getFatal(final String id, final Object... args) throws NoSuchElementException {
         return getMessage(id, Severity.FATAL, args);
     }
 
     @Override
-    public Message getInfo(String id, Object... args) throws NoSuchElementException {
+    public Message getInfo(final String id, final Object... args) throws NoSuchElementException {
         return getMessage(id, Severity.INFO, args);
     }
 
     @Override
-    public Message getWarning(String id, Object... args) throws NoSuchElementException {
+    public Message getWarning(final String id, final Object... args) throws NoSuchElementException {
         return getMessage(id, Severity.WARNING, args);
     }
 

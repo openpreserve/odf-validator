@@ -5,12 +5,39 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
 public interface PackageParser {
-    public OdfPackage parsePackage(Path toParse) throws IOException, ParserConfigurationException, SAXException;
-    public OdfPackage parsePackage(File toParse) throws IOException, ParserConfigurationException, SAXException;
-    public OdfPackage parsePackage(InputStream toParse) throws IOException, ParserConfigurationException, SAXException;
+    /**
+     * Parse a system path and return an OdfPackage instance. The returned package
+     * may not be valid but is parsed leniently.
+     * 
+     * @param toParse a system path to parse, this must not be null
+     * @return the parsed ODF Package
+     * @throws IOException when there is an issue reading entries from the package zip archive
+     * @throws NullPointerException when toParse is null
+     */
+    public OdfPackage parsePackage(final Path toParse) throws IOException;
+
+    /**
+     * Parse a Java File instance and return an OdfPackage instance. The returned package
+     * may not be valid but is parsed leniently.
+     * 
+     * @param toParse a system path to parse, this must not be null
+     * @return the parsed ODF Package
+     * @throws IOException when there is an issue reading entries from the package zip archive
+     * @throws NullPointerException when toParse is null
+     */
+    public OdfPackage parsePackage(final File toParse) throws IOException;
+
+    /**
+     * Parse an InputStream and return an OdfPackage instance. The returned package
+     * may not be valid but is parsed leniently.
+     * 
+     * @param toParse a system path to parse, this must not be null
+     * @param name an identifier of some kind for the package, this must not be null
+     * @return the parsed ODF Package
+     * @throws IOException when there is an issue reading entries from the package zip archive
+     * @throws NullPointerException when toParse or name is null
+     */
+    public OdfPackage parsePackage(final InputStream toParse, final String name)
+            throws IOException;
 }

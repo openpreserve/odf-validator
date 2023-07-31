@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-class MessageLogImpl implements MessageLog {
+final class MessageLogImpl implements MessageLog {
     private final List<Message> messages = new ArrayList<>();
+
     @Override
     public int size() {
         return this.messages.size();
@@ -18,13 +19,13 @@ class MessageLogImpl implements MessageLog {
     }
 
     @Override
-    public int add(Message message) {
+    public int add(final Message message) {
         this.messages.add(message);
         return this.size();
     }
 
     @Override
-    public int add(Collection<? extends Message> messages) {
+    public int add(final Collection<? extends Message> messages) {
         this.messages.addAll(messages);
         return this.size();
     }
@@ -45,9 +46,9 @@ class MessageLogImpl implements MessageLog {
     }
 
     @Override
-    public List<Message> getMessages(Message.Severity severity) {
-        List<Message> filteredList = new ArrayList<>();
-        for (Message message : this.messages) {
+    public List<Message> getMessages(final Message.Severity severity) {
+        final List<Message> filteredList = new ArrayList<>();
+        for (final Message message : this.messages) {
             if (message.getSeverity() == severity) {
                 filteredList.add(message);
             }
@@ -61,9 +62,9 @@ class MessageLogImpl implements MessageLog {
     }
 
     @Override
-    public List<Message> getMessages(String id) {
-        List<Message> filteredList = new ArrayList<>();
-        for (Message message : this.messages) {
+    public List<Message> getMessages(final String id) {
+        final List<Message> filteredList = new ArrayList<>();
+        for (final Message message : this.messages) {
             if (message.getId().equals(id)) {
                 filteredList.add(message);
             }
@@ -86,8 +87,8 @@ class MessageLogImpl implements MessageLog {
         return containsSeverity(Message.Severity.INFO);
     }
 
-    private boolean containsSeverity(Message.Severity severity) {
-        for (Message message : this.messages) {
+    private boolean containsSeverity(final Message.Severity severity) {
+        for (final Message message : this.messages) {
             if (message.getSeverity() == severity) {
                 return true;
             }

@@ -8,95 +8,85 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import org.openpreservation.utils.Checks;
 
-public class FormatSniffer {
+public final class FormatSniffer {
     private static final int MAX_BOM_LENGTH = 4;
     private static final int MAX_MIME_LENGTH = 90;
     private static final String TEST_VAR = "toSniff";
 
     public static Formats sniff(final String toSniff) throws IOException {
-        Checks.notNull(toSniff, "String", TEST_VAR);
+        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "String", TEST_VAR));
         return sniff(Paths.get(toSniff));
     }
 
     public static Formats sniff(final Path toSniff) throws IOException {
-        Checks.notNull(toSniff, "Path", TEST_VAR);
+        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "Path", TEST_VAR));
         return sniff(toSniff.toFile());
     }
 
     public static Formats sniff(final File toSniff) throws IOException {
-        Checks.notNull(toSniff, "File", TEST_VAR);
+        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "File", TEST_VAR));
         if (!toSniff.exists()) {
             throw new FileNotFoundException("File " + toSniff.getAbsolutePath() + " does not exist.");
         }
-        try (InputStream is = new FileInputStream(toSniff)) {
-            return sniff(is);
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(toSniff))) {
+            return sniff(bis);
         }
     }
 
-    public static Formats sniff(final InputStream toSniff) throws IOException {
-        Checks.notNull(toSniff, "InputStream", TEST_VAR);
-        try (BufferedInputStream bis = new BufferedInputStream(toSniff)) {
-            Encodings bom = skipBom(bis);
-            Formats format = Formats.identify(readAndReset(bis, MAX_MIME_LENGTH));
-            if (bom == Encodings.NONE) {
-                return format;
-            }
-            return format.isText() ? format : Formats.UNKNOWN;
+    public static Formats sniff(final BufferedInputStream toSniff) throws IOException {
+        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "InputStream", TEST_VAR));
+        final Encodings bom = skipBom(toSniff);
+        final Formats format = Formats.identify(Utils.readAndReset(toSniff, MAX_MIME_LENGTH));
+        if (bom == Encodings.NONE) {
+            return format;
         }
+        return format.isText() ? format : Formats.UNKNOWN;
     }
 
     public static Encodings sniffEncoding(final String toSniff) throws IOException {
-        Checks.notNull(toSniff, "String", TEST_VAR);
+        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "String", TEST_VAR));
         return sniffEncoding(Paths.get(toSniff));
     }
 
     public static Encodings sniffEncoding(final Path toSniff) throws IOException {
-        Checks.notNull(toSniff, "Path", TEST_VAR);
+        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "Path", TEST_VAR));
         return sniffEncoding(toSniff.toFile());
     }
 
     public static Encodings sniffEncoding(final File toSniff) throws IOException {
-        Checks.notNull(toSniff, "File", TEST_VAR);
+        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "File", TEST_VAR));
         try (InputStream bis = new FileInputStream(toSniff)) {
             return sniffEncoding(bis);
         }
     }
 
     public static Encodings sniffEncoding(final InputStream toSniff) throws IOException {
-        Checks.notNull(toSniff, "InputStream", TEST_VAR);
+        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "InputStream", TEST_VAR));
         try (BufferedInputStream bis = new BufferedInputStream(toSniff)) {
             return skipBom(bis);
         }
     }
 
-    private static byte[] readAndReset(final BufferedInputStream toRead, final int numBytes) throws IOException {
-        byte[] retBytes = new byte[0];
-        toRead.mark(numBytes);
-        byte[] bytes = new byte[numBytes];
-        int read = toRead.read(bytes, 0, numBytes);
-        toRead.reset();
-        if (read > 0) {
-            retBytes = new byte[read];
-            System.arraycopy(bytes, 0, retBytes, 0, read);
-        }
-        return retBytes;
-    }
-
     private static Encodings skipBom(final BufferedInputStream toSkip) throws IOException {
-        byte[] bom = readAndReset(toSkip, MAX_BOM_LENGTH);
-        Encodings enc = Encodings.fromRepresentation(bom);
+        final byte[] bom = Utils.readAndReset(toSkip, MAX_BOM_LENGTH);
+        final Encodings enc = Encodings.fromRepresentation(bom);
         try {
-            long skipped = toSkip.skip(enc.getLength());
+            final long skipped = toSkip.skip(enc.getLength());
             if (skipped != enc.getLength()) {
                 throw new IOException(
                         String.format("BOM %s detected but failed to skip %d bytes.", enc, enc.getLength()));
             }
             return enc;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IOException("Could not skip BOM.", e);
         }
+    }
+
+    private FormatSniffer() {
+        throw new AssertionError("Utility class 'FormatSniffer' should not be instantiated");
     }
 }

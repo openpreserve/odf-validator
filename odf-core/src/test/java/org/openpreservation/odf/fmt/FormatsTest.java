@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -25,8 +24,8 @@ public class FormatsTest {
 
     @Test
     public void testFromMimeNull() {
-        assertThrows("IllegalArgumentException expected",
-                IllegalArgumentException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     Formats.fromMime(null);
                 });
@@ -39,15 +38,6 @@ public class FormatsTest {
         assertTrue(Formats.fromMime(MIME_ODS).isOdf());
         assertTrue(Formats.fromMime(MIME_OTS).isOdf());
         assertFalse(Formats.fromMime(MIME_UNK).isOdf());
-    }
-
-    @Test
-    public void testIsZip() {
-        assertTrue(Formats.fromMime(MIME_ZIP).isZip());
-        assertFalse(Formats.fromMime(MIME_XML).isZip());
-        assertTrue(Formats.fromMime(MIME_ODS).isZip());
-        assertTrue(Formats.fromMime(MIME_OTS).isZip());
-        assertFalse(Formats.fromMime(MIME_UNK).isZip());
     }
 
     @Test
@@ -90,7 +80,7 @@ public class FormatsTest {
 
     @Test
     public void testFromExtNull() {
-        assertThrows("IllegalArgumentException expected",
+        assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
                     Formats.fromExtension(null);
@@ -142,30 +132,24 @@ public class FormatsTest {
     }
 
     @Test
-    public void testIsTemplate() {
-        assertFalse(MimeTypes.isTemplate(MimeTypes.fromMime(MIME_ZIP).mime));
-        assertFalse(MimeTypes.isTemplate(MimeTypes.fromMime(MIME_XML).mime));
-        assertFalse(MimeTypes.isTemplate(MimeTypes.fromMime(MIME_ODS).mime));
-        assertTrue(MimeTypes.isTemplate(MimeTypes.fromMime(MIME_OTS).mime));
-    }
-
-    @Test
     public void testIsDocument() {
-        assertFalse(MimeTypes.isDocument(MimeTypes.fromMime(MIME_ZIP).mime));
-        assertFalse(MimeTypes.isDocument(MimeTypes.fromMime(MIME_XML).mime));
-        assertFalse(MimeTypes.isDocument(MimeTypes.fromMime(MIME_OTS).mime));
-        assertTrue(MimeTypes.isDocument(MimeTypes.fromMime(MIME_ODS).mime));
+        assertFalse(Formats.ZIP.isOdf());
+        assertTrue(Formats.XML.isOdf());
+        assertTrue(Formats.OTS.isOdf());
+        assertTrue(Formats.ODS.isOdf());
     }
 
     @Test
     public void testMimeGetBytes() {
-        for (final MimeTypes mt : MimeTypes.values()) {
+        for (final Formats fmt : Formats.values()) {
             assertArrayEquals(
-                    String.format("MimeTypes %s should return %s", mt.mime,
-                            mt.mime.getBytes(StandardCharsets.US_ASCII)), mt.mime.getBytes(StandardCharsets.US_ASCII), mt.getBytes());
+                    String.format("MimeTypes %s should return %s", fmt.mime,
+                            fmt.mime.getBytes(StandardCharsets.US_ASCII)),
+                    fmt.mime.getBytes(StandardCharsets.US_ASCII), fmt.getBytes());
             assertArrayEquals(
-                    String.format("MimeTypes %s should return %s", mt.mime,
-                            mt.mime.getBytes(StandardCharsets.UTF_8)), mt.mime.getBytes(StandardCharsets.UTF_8), mt.getBytes());
+                    String.format("MimeTypes %s should return %s", fmt.mime,
+                            fmt.mime.getBytes(StandardCharsets.UTF_8)),
+                    fmt.mime.getBytes(StandardCharsets.UTF_8), fmt.getBytes());
         }
     }
 }
