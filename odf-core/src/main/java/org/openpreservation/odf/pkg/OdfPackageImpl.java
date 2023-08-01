@@ -124,6 +124,11 @@ final class OdfPackageImpl implements OdfPackage {
     }
 
     @Override
+    public boolean hasThumbnail() {
+        return this.archive.getZipEntry(Constants.PATH_THUMBNAIL) != null;
+    }
+
+    @Override
     public ZipArchive getZipArchive() {
         return this.archive;
     }

@@ -57,6 +57,13 @@ public interface OdfPackage {
     public boolean hasManifest();
 
     /**
+     * Does the package have a preview image thumbnail?
+     * 
+     * @return true if the package has a thumbnail preview, otherwise false
+     */
+    public boolean hasThumbnail();
+
+    /**
      * Returns the details of the underlying ZIP archive for the package as a
      * ZipArchive instance.
      * 
