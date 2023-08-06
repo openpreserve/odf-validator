@@ -37,6 +37,7 @@ public enum Formats {
             OTF, ODM, OTM, OTH);
     static final Set<Formats> ODF_DOCUMENTS = EnumSet.of(XML, ODB, ODT, OTT, ODG, OTG, ODP, OTP, ODS, OTS, ODC, OTC, ODI, OTI, ODF,
             OTF, ODM, OTM, OTH);
+    static final Set<Formats> ODF_SPREADSHEETS = EnumSet.of(ODS, OTS);
     public static Formats identify(final byte[] bytes) {
         Objects.requireNonNull(bytes, String.format(Checks.NOT_NULL, "byte[]", "bytes"));
         final Signatures sig = Signatures.match(bytes);
@@ -67,6 +68,7 @@ public enum Formats {
         }
         return UNKNOWN;
     }
+
     /**
      * The String MIME type identifier
      */
@@ -90,6 +92,9 @@ public enum Formats {
     }
     public boolean isPackage() {
         return ODF_PACKAGES.contains(this);
+    }
+    public boolean isSpreadsheet() {
+        return ODF_SPREADSHEETS.contains(this);
     }
 
     public boolean isOdf() {

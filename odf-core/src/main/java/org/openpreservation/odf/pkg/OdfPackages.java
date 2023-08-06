@@ -15,6 +15,7 @@ public final class OdfPackages {
      * The ODF mimetype entry name.
      */
     public static final String MIMETYPE = Constants.MIMETYPE;
+    public static final String NAME_META = Constants.NAME_META;
 
     /**
      * Get a validating parser instance.
