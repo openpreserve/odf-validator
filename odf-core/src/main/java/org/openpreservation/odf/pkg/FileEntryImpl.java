@@ -55,6 +55,11 @@ final class FileEntryImpl implements FileEntry {
     }
 
     @Override
+    public boolean isDocument() {
+        return this.fullPath.endsWith("/");
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

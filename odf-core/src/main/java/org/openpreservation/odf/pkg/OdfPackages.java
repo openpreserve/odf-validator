@@ -18,7 +18,7 @@ public final class OdfPackages {
 
     /**
      * Get a validating parser instance.
-     * 
+     *
      * @return a validating parser instance
      * @throws ParserConfigurationException
      * @throws SAXException
@@ -29,7 +29,7 @@ public final class OdfPackages {
 
     /**
      * get a package parser instance.
-     * 
+     *
      * @return a new package parser instance
      * @throws ParserConfigurationException
      * @throws SAXException
@@ -40,7 +40,7 @@ public final class OdfPackages {
 
     /**
      * Check if a file is a valid zip file
-     * 
+     *
      * @param toCheck a path to test
      * @return true if the supplied path resolves to a valid zip file, else false.
      * @throws IOException
@@ -62,7 +62,7 @@ public final class OdfPackages {
      * Uses the format sniffer to see if the supplied path is a ZIP instance. This
      * only uses the file header bytes and doesn't parse the path to ensure the zip
      * is valid.
-     * 
+     *
      * @param toCheck a path to sniff as a zip file
      * @return true if the supplied path has a zip signature, false otherwise.
      * @throws IOException if there's an issue reading the file

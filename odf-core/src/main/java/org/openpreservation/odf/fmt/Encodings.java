@@ -47,7 +47,7 @@ public enum Encodings {
 
     /**
      * Returns the length of the Byte Order Mark in bytes
-     * 
+     *
      * @return the length of the Byte Order Mark in bytes
      */
     public int getLength() {
@@ -56,9 +56,9 @@ public enum Encodings {
 
     /**
      * Get a Byte Order Mark from the String name
-     * 
+     *
      * @param encoding the name of the encoding to retrieve
-     * 
+     *
      * @return the Endcoding with the given name, or Encoding.NONE if no match
      * @throws NullPointerException if encoding is null
      */
@@ -75,9 +75,9 @@ public enum Encodings {
 
     /**
      * Get a Byte Order Mark from the byte array representation
-     * 
+     *
      * @param bytes the byte array representation of the encoding to retrieve
-     * 
+     *
      * @return the Endcoding with the given representation, or Encoding.NONE if no match
      * @throws NullPointerException if bytes is null
      */

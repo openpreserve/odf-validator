@@ -14,33 +14,30 @@ import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openpreservation.format.xml.ParseResult;
-import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.zip.ZipArchiveCache;
 import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.format.zip.Zips;
 import org.openpreservation.odf.fmt.FormatSniffer;
 import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.xml.Metadata;
+import org.openpreservation.odf.xml.OdfXmlDocuments;
+import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
 final class PackageParserImpl implements PackageParser {
     private static String toParseConst = "toParse";
-    private final XmlParser checker;
     private String mimetype = "";
     private ZipArchiveCache cache;
-    private final Map<String, ParseResult> parseResults = new HashMap<>();
+    private final Map<String, OdfXmlDocument> xmlDocumentMap = new HashMap<>();
+    private final Map<String, Metadata> metadataMap = new HashMap<>();
     private Manifest manifest = null;
-    private Metadata metadata = null;
 
-    private PackageParserImpl()
-            throws ParserConfigurationException, SAXException {
+    private PackageParserImpl() {
         super();
-        this.checker = new XmlParser();
     }
 
-    public static final PackageParser getInstance()
-            throws ParserConfigurationException, SAXException {
+    public static final PackageParser getInstance() {
         return new PackageParserImpl();
     }
 
@@ -57,12 +54,17 @@ final class PackageParserImpl implements PackageParser {
     }
 
     private final OdfPackage parsePackage(final Path toParse, final String name) throws IOException {
-        this.mimetype = "";
-        this.parseResults.clear();
+        this.mimetype = null;
+        this.xmlDocumentMap.clear();
+        this.metadataMap.clear();
         this.manifest = null;
-        this.metadata = null;
-        final Formats format = sniff(toParse);
-        this.cache = Zips.zipArchiveCacheInstance(toParse);
+        Formats format = Formats.UNKNOWN;
+        try {
+            format = sniff(toParse);
+            this.cache = Zips.zipArchiveCacheInstance(toParse);
+        } catch (IOException e) {
+            return OdfPackageImpl.Builder.builder().name(name).format(format).archive(null).build();
+        }
         for (final ZipEntry entry : this.cache.getZipEntries()) {
             try {
                 processEntry(entry);
@@ -70,8 +72,35 @@ final class PackageParserImpl implements PackageParser {
                 throw new IOException(e);
             }
         }
-        return OdfPackageImpl.Builder.builder().name(name).archive(this.cache).format(format).mimetype(mimetype)
-                .parseResults(parseResults).manifest(manifest).metadata(metadata).build();
+        return this.makePackage(name, format);
+    }
+
+    private final OdfPackage makePackage(final String name, final Formats format) {
+        OdfPackageImpl.Builder builder = OdfPackageImpl.Builder.builder().name(name).archive(this.cache).format(format)
+                .mimetype(mimetype)
+                .manifest(manifest);
+        if (this.manifest == null) {
+            return builder.build();
+        }
+        for (FileEntry docEntry : manifest.getDocumentEntries()) {
+            builder.subDocument(docEntry.getFullPath(), makeDocument(docEntry));
+        }
+        return builder.build();
+    }
+
+    private final OdfPackageDocument makeDocument(FileEntry docEntry) {
+        OdfPackageDocumentImpl.Builder builder = OdfPackageDocumentImpl.Builder.of(docEntry);
+        final String keyPrefix = "/".equals(docEntry.getFullPath()) ? "" : docEntry.getFullPath();
+        for (final String docName : Constants.ODF_XML) {
+            final String docKey = keyPrefix + docName;
+            if (this.xmlDocumentMap.containsKey(docKey)) {
+                builder.xmlDocument(docName, this.xmlDocumentMap.get(docKey));
+            }
+            if (this.metadataMap.containsKey(docKey)) {
+                builder.metadata(this.metadataMap.get(docKey));
+            }
+        }
+        return builder.build();
     }
 
     @Override
@@ -92,7 +121,7 @@ final class PackageParserImpl implements PackageParser {
     }
 
     private final void processEntry(final ZipEntry entry)
-            throws IOException, ParserConfigurationException, SAXException {
+            throws ParserConfigurationException, SAXException, IOException {
         final String path = entry.getName();
         final String name = new File(path).getName();
         if (entry.isDirectory()) {
@@ -105,16 +134,14 @@ final class PackageParserImpl implements PackageParser {
                     StandardCharsets.UTF_8);
             return;
         }
-        if (!isOdfXml(path)) {
-            // No need to process non-ODF XML files
-            return;
-        }
-        try (InputStream is = this.cache.getEntryInputStream(path)) {
-            ParseResult result = this.checker.parse(is);
-            if (result != null) {
-                this.parseResults.put(path, result);
-                if (!result.isWellFormed()) {
-                    return;
+        if (isOdfXml(path)) {
+            try (InputStream is = this.cache.getEntryInputStream(path)) {
+                OdfXmlDocument xmlDoc = OdfXmlDocuments.xmlDocumentFrom(is);
+                if (xmlDoc != null) {
+                    this.xmlDocumentMap.put(path, xmlDoc);
+                    if (!xmlDoc.getParseResult().isWellFormed()) {
+                        return;
+                    }
                 }
             }
         }
@@ -123,15 +150,15 @@ final class PackageParserImpl implements PackageParser {
 
     private final boolean isOdfXml(final String entrypath) {
         final String name = new File(entrypath).getName();
-        return Constants.NAME_MANIFEST.equals(name) || Constants.NAME_META.equals(name)
-                || Constants.NAME_CONTENT.equals(name) || Constants.NAME_STYLES.equals(name) || Constants.NAME_MANIFEST_RDF.equals(name);
+        return Constants.ODF_XML.contains(name);
     }
 
-    private final void parseOdfXml(final String entryPath, final String entryName) throws ParserConfigurationException, SAXException, IOException {
+    private final void parseOdfXml(final String entryPath, final String entryName)
+            throws ParserConfigurationException, SAXException, IOException {
         if (Constants.PATH_MANIFEST.equals(entryPath)) {
             this.manifest = ManifestImpl.from(this.cache.getEntryInputStream(entryPath));
         } else if (Constants.NAME_META.equals(entryName)) {
-            this.metadata = MetadataImpl.from(this.cache.getEntryInputStream(entryPath));
+            this.metadataMap.put(entryPath, OdfXmlDocuments.metadataFrom(this.cache.getEntryInputStream(entryPath)));
         }
     }
 }

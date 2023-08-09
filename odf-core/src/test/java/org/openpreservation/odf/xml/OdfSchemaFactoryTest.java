@@ -6,7 +6,6 @@ import java.util.EnumSet;
 import java.util.NoSuchElementException;
 
 import org.junit.Test;
-import org.openpreservation.odf.xml.OdfSchemaFactory.Version;
 
 public class OdfSchemaFactoryTest {
     @Test

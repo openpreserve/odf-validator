@@ -175,7 +175,7 @@ public class OdfFormatsTest {
          * BOM.
          * This is edge case stuff, but it's worth understanding.
          * This may well be the answer:
-         * 
+         *
          */
         InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_PI);
         assertTrue(String.format("%s IS a flat XML file.", TestFiles.UTF8_BOM_PI), OdfFormats.isXml(is));

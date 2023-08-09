@@ -45,14 +45,14 @@ final class ManifestImpl implements Manifest {
             if ("manifest:file-entry".equals(qName)) {
                 final String fullPath = attributes.getValue("manifest:full-path");
                 final String mediaType = attributes.getValue("manifest:media-type");
-                final String version = attributes.getValue("manifest:version");
+                final String verString = attributes.getValue("manifest:version");
                 long size = -1;
                 try {
                     size = Long.parseLong(attributes.getValue("manifest:size"));
                 } catch (final NumberFormatException e) {
                     // ignore
                 }
-                this.entries.put(fullPath, FileEntryImpl.of(fullPath, mediaType, size, version));
+                this.entries.put(fullPath, FileEntryImpl.of(fullPath, mediaType, size, verString));
             } else if ("manifest:manifest".equals(qName)) {
                 this.version = attributes.getValue("manifest:version");
             }
@@ -128,6 +128,11 @@ final class ManifestImpl implements Manifest {
     public String getEntryMediaType(final String entryName) {
         final FileEntry entry = this.entries.get(entryName);
         return (entry != null) ? this.entries.get(entryName).getMediaType() : null;
+    }
+
+    @Override
+    public Set<FileEntry> getDocumentEntries() {
+        return this.entries.values().stream().filter(e -> e.isDocument()).collect(Collectors.toSet());
     }
 
     @Override

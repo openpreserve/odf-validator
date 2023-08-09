@@ -19,10 +19,10 @@ import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.ValidatingParser;
 import org.openpreservation.odf.xml.Namespaces;
-import org.openpreservation.odf.xml.OdfDocument;
-import org.openpreservation.odf.xml.OdfDocumentImpl;
+import org.openpreservation.odf.xml.OdfXmlDocument;
+import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
-import org.openpreservation.odf.xml.OdfSchemaFactory.Version;
+import org.openpreservation.odf.xml.Version;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
@@ -57,7 +57,7 @@ public class Validator {
             Version version = Version.ODF_13;
             final XmlValidator validator = new XmlValidator();
             if (parseResult.isRootName(TAG_DOC)) {
-                final OdfDocument doc = OdfDocumentImpl.of(parseResult);
+                final OdfXmlDocument doc = OdfXmlDocuments.odfXmlDocumentOf(parseResult);
                 version = Version.fromVersion(doc.getVersion());
                 report.add(toValidate.toString(), FACTORY.getInfo("DOC-2", doc.getVersion()));
                 if (Formats.fromMime(doc.getMimeType()).isPackage()) {

@@ -2,15 +2,22 @@ package org.openpreservation.odf.pkg;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.zip.ZipArchive;
 import org.openpreservation.format.zip.ZipArchiveCache;
+import org.openpreservation.odf.document.OdfDocument;
 import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class OdfPackageImpl implements OdfPackage {
 
@@ -26,13 +33,11 @@ final class OdfPackageImpl implements OdfPackage {
 
         private ZipArchiveCache archive;
         private String name;
-        private String mimetype;
-        private Formats format;
+        private String mimetype = "application/octet-stream";
+        private Formats format = Formats.UNKNOWN;
         private Manifest manifest;
 
-        private Metadata metadata;
-
-        private Map<String, ParseResult> parseResults;
+        private Map<String, OdfPackageDocument> documentMap = new HashMap<>();
 
         private Builder() {
         }
@@ -64,20 +69,28 @@ final class OdfPackageImpl implements OdfPackage {
             return this;
         }
 
-        public Builder metadata(final Metadata metadata) {
-            this.metadata = metadata;
+        public Builder documentMap(final Map<String, OdfPackageDocument> documentMap) {
+            Objects.requireNonNull(documentMap, "documentMap cannot be null");
+            this.documentMap = documentMap;
             return this;
         }
 
-        public Builder parseResults(final Map<String, ParseResult> parseResults) {
-            Objects.requireNonNull(parseResults, "parseResults cannot be null");
-            this.parseResults = parseResults;
+        public Builder document(final OdfPackageDocument document) {
+            Objects.requireNonNull(document, "document cannot be null");
+            this.documentMap.put("/", document);
+            return this;
+        }
+
+        public Builder subDocument(final String path, final OdfPackageDocument document) {
+            Objects.requireNonNull(path, "path cannot be null");
+            Objects.requireNonNull(document, "document cannot be null");
+            this.documentMap.put(path, document);
             return this;
         }
 
         public OdfPackage build() {
-            return new OdfPackageImpl(this.name, this.archive, this.format, this.mimetype, this.manifest, this.metadata,
-                    parseResults);
+            return new OdfPackageImpl(this.name, this.archive, this.format, this.mimetype, this.manifest,
+                    this.documentMap);
         }
     }
 
@@ -85,21 +98,18 @@ final class OdfPackageImpl implements OdfPackage {
     private final Formats format;
     private final String mimetype;
     private final Manifest manifest;
-    private final Metadata metadata;
     private final String name;
 
-    private final Map<String, ParseResult> parseResults;
+    private final Map<String, OdfPackageDocument> documentMap;
 
     private OdfPackageImpl(final String name, final ZipArchiveCache archive, final Formats format,
-            final String mimetype,
-            final Manifest manifest, final Metadata metadata, final Map<String, ParseResult> parseResults) {
+            final String mimetype, final Manifest manifest, final Map<String, OdfPackageDocument> documentMap) {
         super();
         this.archive = archive;
         this.format = format;
         this.mimetype = mimetype;
         this.manifest = manifest;
-        this.metadata = metadata;
-        this.parseResults = Collections.unmodifiableMap(parseResults);
+        this.documentMap = Collections.unmodifiableMap(documentMap);
         this.name = name;
     }
 
@@ -144,12 +154,7 @@ final class OdfPackageImpl implements OdfPackage {
     }
 
     @Override
-    public Metadata getMetadata() {
-        return this.metadata;
-    }
-
-    @Override
-    public Formats getFormat() {
+    public Formats getDetectedFormat() {
         return this.format;
     }
 
@@ -160,12 +165,22 @@ final class OdfPackageImpl implements OdfPackage {
 
     @Override
     public ParseResult getEntryXmlParseResult(final String path) {
-        return this.parseResults.get(path);
+        Path filePath = Paths.get(path);
+        Path parent = filePath.getParent();
+        return this.documentMap.get((parent == null) ? "/" : parent).getXmlDocument(filePath.getFileName().toString())
+                .getParseResult();
     }
 
     @Override
     public List<String> getXmlEntryPaths() {
-        return this.parseResults.keySet().stream().collect(java.util.stream.Collectors.toList());
+        List<String> paths = new ArrayList<>();
+        for (Entry<String, OdfPackageDocument> docEntry : this.documentMap.entrySet()) {
+            final String docKey = "/".equals(docEntry.getKey()) ? "" : docEntry.getKey();
+            for (Entry<String, OdfXmlDocument> xmlEntry : docEntry.getValue().getXmlDocumentMap().entrySet()) {
+                paths.add(docKey + xmlEntry.getKey());
+            }
+        }
+        return paths;
     }
 
     @Override
@@ -182,8 +197,7 @@ final class OdfPackageImpl implements OdfPackage {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((mimetype == null) ? 0 : mimetype.hashCode());
         result = prime * result + ((manifest == null) ? 0 : manifest.hashCode());
-        result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-        result = prime * result + ((parseResults == null) ? 0 : parseResults.hashCode());
+        result = prime * result + ((documentMap == null) ? 0 : documentMap.hashCode());
         return result;
     }
 
@@ -218,15 +232,10 @@ final class OdfPackageImpl implements OdfPackage {
                 return false;
         } else if (!manifest.equals(other.manifest))
             return false;
-        if (metadata == null) {
-            if (other.metadata != null)
+        if (documentMap == null) {
+            if (other.documentMap != null)
                 return false;
-        } else if (!metadata.equals(other.metadata))
-            return false;
-        if (parseResults == null) {
-            if (other.parseResults != null)
-                return false;
-        } else if (!parseResults.equals(other.parseResults))
+        } else if (!documentMap.equals(other.documentMap))
             return false;
         return true;
     }
@@ -234,6 +243,21 @@ final class OdfPackageImpl implements OdfPackage {
     @Override
     public String toString() {
         return "OdfPackageImpl [archive=" + archive + ", format=" + format + ", mimetype=" + mimetype + ", manifest="
-                + manifest + ", metadata=" + metadata + "]";
+                + manifest + "]";
+    }
+
+    @Override
+    public OdfDocument getDocument() {
+        return this.documentMap.get("/");
+    }
+
+    @Override
+    public Map<String, OdfDocument> getSubDocumentMap() {
+        return this.getSubDocumentMap();
+    }
+
+    @Override
+    public OdfDocument getSubDocument(String path) {
+        return this.documentMap.get(path);
     }
 }

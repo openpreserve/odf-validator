@@ -14,7 +14,7 @@ public interface ParseResult {
 
     /**
      * Get the namespace associated with the document's root element
-     * 
+     *
      * @return the Namespace of the document's root element
      */
     public Namespace getRootNamespace();
@@ -28,7 +28,7 @@ public interface ParseResult {
 
     /**
      * Get the root element namespace prefix
-     * 
+     *
      * @return The String namesapce prefix of the document's root element, or empty
      *         String if there is no root element NS prefix
      */
@@ -36,7 +36,7 @@ public interface ParseResult {
 
     /**
      * Get the unqualified name of the document's root element
-     * 
+     *
      * @return The String name of the document's root element, or empty String if
      *         there is no root element name
      */
@@ -44,7 +44,7 @@ public interface ParseResult {
 
     /**
      * Establish whether the document's root element name matches the supplied name
-     * 
+     *
      * @param name the name to compare with the document's root element name
      * @return true if the document's root element name matches the supplied name,
      *         otherwise false

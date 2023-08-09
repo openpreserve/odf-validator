@@ -1,4 +1,4 @@
-package org.openpreservation.odf.pkg;
+package org.openpreservation.odf.xml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -24,19 +24,19 @@ public class MetadataImpl_UserDefinedFieldImplTest {
 
     @Test
     public void testGetName() {
-        Metadata.UserDefinedField udf =  MetadataImpl.UserDefinedFieldImpl.of("name", "valueType", "value");
+        Metadata.UserDefinedField udf = MetadataImpl.UserDefinedFieldImpl.of("name", "valueType", "value");
         assertEquals("Error with retrieved name value", "name", udf.getName());
     }
 
     @Test
     public void testGetValue() {
-        Metadata.UserDefinedField udf =  MetadataImpl.UserDefinedFieldImpl.of("name", "valueType", "value");
+        Metadata.UserDefinedField udf = MetadataImpl.UserDefinedFieldImpl.of("name", "valueType", "value");
         assertEquals("Error with retrieved name value", "value", udf.getValue());
     }
 
     @Test
     public void testGetValueType() {
-        Metadata.UserDefinedField udf =  MetadataImpl.UserDefinedFieldImpl.of("name", "valueType", "value");
+        Metadata.UserDefinedField udf = MetadataImpl.UserDefinedFieldImpl.of("name", "valueType", "value");
         assertEquals("Error with retrieved name value", "valueType", udf.getValueType());
     }
 }

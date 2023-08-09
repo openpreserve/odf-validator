@@ -1,4 +1,4 @@
-package org.openpreservation.odf.pkg;
+package org.openpreservation.odf.xml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
@@ -15,7 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openpreservation.odf.pkg.Metadata.UserDefinedField;
+import org.openpreservation.odf.xml.Metadata.UserDefinedField;
 import org.xml.sax.SAXException;
 
 import nl.jqno.equalsverifier.EqualsVerifier;

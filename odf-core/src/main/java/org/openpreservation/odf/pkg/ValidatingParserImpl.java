@@ -24,7 +24,7 @@ import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.xml.Namespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
-import org.openpreservation.odf.xml.OdfSchemaFactory.Version;
+import org.openpreservation.odf.xml.Version;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
@@ -101,7 +101,9 @@ final class ValidatingParserImpl implements ValidatingParser {
         final Map<String, List<Message>> messages = new HashMap<>();
         for (final String xmlPath : odfPackage.getXmlEntryPaths()) {
             ParseResult parseResult = odfPackage.getEntryXmlParseResult(xmlPath);
-            List<Message> messageList = (parseResult.isWellFormed()) ? validateOdfXmlDocument(odfPackage, xmlPath, parseResult) : parseResult.getMessages();
+            List<Message> messageList = (parseResult.isWellFormed())
+                    ? validateOdfXmlDocument(odfPackage, xmlPath, parseResult)
+                    : parseResult.getMessages();
             messages.put(xmlPath, messageList);
         }
         return messages;
@@ -111,8 +113,9 @@ final class ValidatingParserImpl implements ValidatingParser {
             final ParseResult parseResult) {
         List<Message> messageList = new ArrayList<>();
         Namespaces ns = Namespaces.fromId(parseResult.getRootNamespace().getId());
-        Schema schema = (ns == null) ? null : SCHEMA_FACTORY.getSchema(ns,
-                getVersionFromPath(odfPackage, xmlPath));
+        Schema schema = (ns == null) ? null
+                : SCHEMA_FACTORY.getSchema(ns,
+                        getVersionFromPath(odfPackage, xmlPath));
         if (schema != null) {
             try {
                 ValidationResult validationResult = this.validator.validate(parseResult,
@@ -126,9 +129,10 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     private Version getVersionFromPath(final OdfPackage odfPackage, final String path) {
-        String version = Constants.PATH_MANIFEST.equals(path) ? odfPackage.getManifest().getVersion()
+        String ver = Constants.PATH_MANIFEST.equals(path) ? odfPackage.getManifest().getVersion()
                 : (getVersionFromParseResult(odfPackage.getEntryXmlParseResult(path)));
-        return Version.fromVersion(version);
+        Version version = Version.fromVersion(ver);
+        return (version == null) ? Version.ODF_13 : version;
     }
 
     private final String getVersionFromParseResult(final ParseResult result) {
@@ -143,7 +147,7 @@ final class ValidatingParserImpl implements ValidatingParser {
         final List<Message> messages = new ArrayList<>();
         if (odfPackage.hasMimeEntry()) {
             messages.addAll(this.validateMimeEntry(odfPackage.getZipArchive().getZipEntry(Constants.MIMETYPE),
-                    odfPackage.getFormat().isOdf()));
+                    odfPackage.getDetectedFormat().isOdf()));
             messages.add(FACTORY.getInfo("DOC-3", odfPackage.getMimeType()));
         } else {
             if (odfPackage.getManifest().getRootMediaType() != null) {

@@ -98,7 +98,7 @@ public enum Formats {
 
     /**
      * Get the MIME type as an ASCII encoded byte array.
-     * 
+     *
      * @return the ASCII encoded MIME type id as a byte array
      */
     public byte[] getBytes() {

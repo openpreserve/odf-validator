@@ -18,19 +18,6 @@ import org.xml.sax.SAXParseException;
 public class XmlValidator {
     private static final MessageFactory FACTORY = Messages.getInstance();
 
-    // public ValidationResult validate(final ParseResult parseResult, final InputStream toValidate)
-    //         throws IOException {
-    //     return validate(parseResult, toValidate, Version.ODF_13);
-    // }
-
-    // public ValidationResult validate(final ParseResult parseResult, final InputStream toValidate, final Version version)
-    //         throws IOException {
-    //     return validate(parseResult, toValidate, Namespaces.fromId(parseResult.getRootNamespace().getId()), version);
-    // }
-    // public ValidationResult validate(final ParseResult parseResult, final InputStream toValidate,
-    //         final Namespaces namespace) throws IOException {
-    //     return validate(parseResult, toValidate, namespace, OdfSchemaFactory.Version.ODF_13);
-    // }
     public ValidationResult validate(final ParseResult parseResult, final InputStream toValidate, Schema schema)
             throws IOException {
         if (!parseResult.isWellFormed()) {

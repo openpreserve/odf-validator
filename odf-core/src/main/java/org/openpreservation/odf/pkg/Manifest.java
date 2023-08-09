@@ -53,4 +53,10 @@ public interface Manifest {
      * @return the FileEntry media type for the supplied name, or null if not found.
      */
     public String getEntryMediaType(final String entryName);
+
+    /**
+     * Get the set of FileEntry objects that are documents, i.e. have a media type that is an ODF document.
+     * @return
+     */
+    public Set<FileEntry> getDocumentEntries();
 }

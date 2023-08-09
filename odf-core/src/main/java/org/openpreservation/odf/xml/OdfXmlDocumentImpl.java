@@ -1,14 +1,19 @@
 package org.openpreservation.odf.xml;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.format.xml.ParseResult;
+import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.utils.Checks;
+import org.xml.sax.SAXException;
 
-public class OdfDocumentImpl implements OdfDocument {
-    private static final String STRING = "String";
-    public static final OdfDocument of(final ParseResult parseResult) {
+final class OdfXmlDocumentImpl implements OdfXmlDocument {
+    static final OdfXmlDocumentImpl of(final ParseResult parseResult) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
         final String version = parseResult.getRootAttributeValue("office:version") != null
                 ? parseResult.getRootAttributeValue("office:version")
@@ -17,29 +22,25 @@ public class OdfDocumentImpl implements OdfDocument {
                 ? parseResult.getRootAttributeValue("office:mimetype")
                 : "";
 
-        return OdfDocumentImpl.of(parseResult.getRootNamespace(), parseResult.getRootName(),
-                mime, version);
+        return new OdfXmlDocumentImpl(parseResult, mime, version);
     }
-    static final OdfDocument of(final Namespace rootNamespace, final String rootName, final String mimeType,
-            final String version) {
-        Objects.requireNonNull(rootNamespace, String.format(Checks.NOT_NULL, "rootNamespace", "Namespace"));
-        Objects.requireNonNull(rootName, String.format(Checks.NOT_NULL, "rootElementName", STRING));
-        Objects.requireNonNull(mimeType, String.format(Checks.NOT_NULL, "mimeType", STRING));
-        Objects.requireNonNull(version, String.format(Checks.NOT_NULL, "version", STRING));
-        return new OdfDocumentImpl(rootNamespace, rootName, mimeType, version);
-    }
-    private final Namespace rootNamespace;
-    private final String rootName;
 
+    static final OdfXmlDocumentImpl from(final InputStream docStream)
+            throws ParserConfigurationException, SAXException, IOException {
+        Objects.requireNonNull(docStream, String.format(Checks.NOT_NULL, "docStream", "InputStream"));
+        final XmlParser checker = new XmlParser();
+        ParseResult result = checker.parse(docStream);
+        return OdfXmlDocumentImpl.of(result);
+    }
+
+    private final ParseResult parseResult;
     private final String mimeType;
-
     private final String version;
 
-    private OdfDocumentImpl(final Namespace rootNamespace, final String rootName, final String mimeType,
+    private OdfXmlDocumentImpl(final ParseResult parseResult, final String mimeType,
             final String version) {
         super();
-        this.rootNamespace = rootNamespace;
-        this.rootName = rootName;
+        this.parseResult = parseResult;
         this.mimeType = mimeType;
         this.version = version;
     }
@@ -66,20 +67,29 @@ public class OdfDocumentImpl implements OdfDocument {
 
     @Override
     public Namespace getRootNamespace() {
-        return this.rootNamespace;
+        return this.parseResult.getRootNamespace();
+    }
+
+    @Override
+    public String getLocalRootName() {
+        return this.parseResult.getRootName();
     }
 
     @Override
     public String getRootName() {
-        return this.rootName;
+        return String.format("%s:%s", this.getRootNamespace().getPrefix(), this.getLocalRootName());
+    }
+
+    @Override
+    public ParseResult getParseResult() {
+        return this.parseResult;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((rootNamespace == null) ? 0 : rootNamespace.hashCode());
-        result = prime * result + ((rootName == null) ? 0 : rootName.hashCode());
+        result = prime * result + ((parseResult == null) ? 0 : parseResult.hashCode());
         result = prime * result + ((mimeType == null) ? 0 : mimeType.hashCode());
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         return result;
@@ -93,16 +103,11 @@ public class OdfDocumentImpl implements OdfDocument {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final OdfDocumentImpl other = (OdfDocumentImpl) obj;
-        if (rootNamespace == null) {
-            if (other.rootNamespace != null)
+        final OdfXmlDocumentImpl other = (OdfXmlDocumentImpl) obj;
+        if (parseResult == null) {
+            if (other.parseResult != null)
                 return false;
-        } else if (!rootNamespace.equals(other.rootNamespace))
-            return false;
-        if (rootName == null) {
-            if (other.rootName != null)
-                return false;
-        } else if (!rootName.equals(other.rootName))
+        } else if (!parseResult.equals(other.parseResult))
             return false;
         if (mimeType == null) {
             if (other.mimeType != null)
@@ -119,7 +124,8 @@ public class OdfDocumentImpl implements OdfDocument {
 
     @Override
     public String toString() {
-        return "OdfDocumentImpl [rootNamespace=" + rootNamespace + ", rootName=" + rootName + ", mimeType=" + mimeType
+        return "OdfDocumentImpl [parseResult=" + this.parseResult + ", rootName=" + this.getRootName() + ", mimeType="
+                + mimeType
                 + ", version=" + version + "]";
     }
 }

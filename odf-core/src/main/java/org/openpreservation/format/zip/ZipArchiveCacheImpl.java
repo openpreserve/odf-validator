@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 final class ZipArchiveCacheImpl implements ZipArchiveCache {
     private final ZipArchive archive;
     private final Map<String, byte[]> cache;
-    
+
     private ZipArchiveCacheImpl(final ZipArchive archive, final Map<String, byte[]> cache) {
         super();
         this.archive = archive;
@@ -44,5 +44,5 @@ final class ZipArchiveCacheImpl implements ZipArchiveCache {
 
     static final ZipArchiveCacheImpl of(final ZipArchive archive, final Map<String, byte[]> cache) {
         return new ZipArchiveCacheImpl(archive, cache);
-    } 
+    }
 }

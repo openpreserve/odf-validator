@@ -9,7 +9,7 @@ public interface PackageParser {
     /**
      * Parse a system path and return an OdfPackage instance. The returned package
      * may not be valid but is parsed leniently.
-     * 
+     *
      * @param toParse a system path to parse, this must not be null
      * @return the parsed ODF Package
      * @throws IOException when there is an issue reading entries from the package zip archive
@@ -20,7 +20,7 @@ public interface PackageParser {
     /**
      * Parse a Java File instance and return an OdfPackage instance. The returned package
      * may not be valid but is parsed leniently.
-     * 
+     *
      * @param toParse a system path to parse, this must not be null
      * @return the parsed ODF Package
      * @throws IOException when there is an issue reading entries from the package zip archive
@@ -31,7 +31,7 @@ public interface PackageParser {
     /**
      * Parse an InputStream and return an OdfPackage instance. The returned package
      * may not be valid but is parsed leniently.
-     * 
+     *
      * @param toParse a system path to parse, this must not be null
      * @param name an identifier of some kind for the package, this must not be null
      * @return the parsed ODF Package

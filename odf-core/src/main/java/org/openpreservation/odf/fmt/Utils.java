@@ -9,7 +9,7 @@ public final class Utils {
 
     /**
      * see https://stackoverflow.com/a/140861
-     * 
+     *
      * @param s
      * @return
      */

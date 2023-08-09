@@ -1,5 +1,9 @@
 package org.openpreservation.odf.pkg;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public final class Constants {
     static final String MIMETYPE = "mimetype";
     static final String SIG_TERM = "signatures";
@@ -13,8 +17,14 @@ public final class Constants {
     static final String NAME_THUMBNAIL = "thumbnail.png";
     static final String PATH_THUMBNAIL = "Thumbnails/" + NAME_THUMBNAIL;
     static final String TAG_MANIFEST = "manifest";
+    static final Set<String> ODF_XML = odfXml();
 
     private Constants() {
         throw new AssertionError("Constants class is not instantiable");
+    }
+
+    private static final Set<String> odfXml() {
+        final String[] odfXml = { NAME_CONTENT, NAME_STYLES, NAME_META, NAME_MANIFEST_RDF };
+        return new HashSet<>(Arrays.asList(odfXml));
     }
 }

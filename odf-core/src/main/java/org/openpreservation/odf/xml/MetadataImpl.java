@@ -1,4 +1,4 @@
-package org.openpreservation.odf.pkg;
+package org.openpreservation.odf.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,8 +48,10 @@ final class MetadataImpl implements Metadata {
                 final Attributes attributes)
                 throws SAXException {
             super.startElement(uri, localName, qName, attributes);
-            if ("office:document-meta".equals(qName)) {
-                this.version = attributes.getValue("office:version");
+            if ("office:document".equals(qName) || "office:document-meta".equals(qName)) {
+                if (attributes.getValue("office:version") != null) {
+                    this.version = attributes.getValue("office:version");
+                }
             } else if ("office:meta".equals(qName)) {
                 this.inMeta = true;
             } else if (this.inMeta) {

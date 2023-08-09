@@ -11,18 +11,16 @@ import java.nio.file.Paths;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.TestFiles;
+import org.openpreservation.odf.xml.Metadata;
+import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.xml.sax.SAXException;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class OdfPackageTest {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void testInstantiation() {
@@ -39,7 +37,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testHasMimeEntry() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
+    public void testHasMimeEntry() throws IOException, URISyntaxException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
@@ -48,16 +46,16 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testGetFormat() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
+    public void testGetFormat() throws IOException, URISyntaxException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
-        assertEquals(Formats.ODS, pkg.getFormat());
+        assertEquals(Formats.ODS, pkg.getDetectedFormat());
         pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.NO_MIME_ODS).toURI()));
-        assertEquals(Formats.ZIP, pkg.getFormat());
+        assertEquals(Formats.ZIP, pkg.getDetectedFormat());
     }
 
     @Test
-    public void testHasManifest() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
+    public void testHasManifest() throws IOException, URISyntaxException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
         assertTrue(pkg.hasManifest());
@@ -68,7 +66,8 @@ public class OdfPackageTest {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
         Manifest manifest = pkg.getManifest();
-        Manifest expected = ManifestImpl.from(ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/pkg/manifest.xml"));
+        Manifest expected = ManifestImpl
+                .from(ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/pkg/manifest.xml"));
         assertEquals(expected, manifest);
     }
 
@@ -76,8 +75,9 @@ public class OdfPackageTest {
     public void testGetMetadata() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
-        Metadata metadata = pkg.getMetadata();
-        Metadata expected = MetadataImpl.from(ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/pkg/meta.xml"));
+        Metadata metadata = pkg.getDocument().getMetadata();
+        Metadata expected = OdfXmlDocuments
+                .metadataFrom(ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/pkg/meta.xml"));
         assertEquals(expected, metadata);
     }
 

@@ -96,7 +96,7 @@ final class ParseResultImpl implements ParseResult {
         return result;
     }
 
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj)
