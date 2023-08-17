@@ -27,4 +27,5 @@ public class TestFiles {
     final static String UTF16LE_BOM_PI = FILE_TEST_ROOT + "utf16le-bom-pi.txt";
     final static String UTF16BE_BOM_PI = FILE_TEST_ROOT + "utf16be-bom-pi.txt";
     final static String UTF8_BOM_ODS = FILE_TEST_ROOT + "utf8-bom-ods.txt";
+    public final static String DSIG_EXAMPLE = TEST_ROOT + "dsigs.odt";
 }

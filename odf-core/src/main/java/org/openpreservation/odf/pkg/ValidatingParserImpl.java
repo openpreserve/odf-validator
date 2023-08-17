@@ -123,7 +123,7 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     private Version getVersionFromPath(final OdfPackage odfPackage, final String path) {
-        String version = Constants.PATH_MANIFEST.equals(path) ? odfPackage.getManifest().getVersion()
+        String version = (Constants.PATH_MANIFEST.equals(path) || (PackageParserImpl.isDsig(path))) ? odfPackage.getManifest().getVersion()
                 : (getVersionFromParseResult(odfPackage.getEntryXmlParseResult(path)));
         return Version.fromVersion(version);
     }

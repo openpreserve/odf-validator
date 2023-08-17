@@ -105,8 +105,10 @@ final class PackageParserImpl implements PackageParser {
                     StandardCharsets.UTF_8);
             return;
         }
-        if (!isOdfXml(path)) {
-            // No need to process non-ODF XML files
+        if (isDsig(path)) {
+
+        }
+        if (!isOdfXml(path) && !isDsig(path)) {
             return;
         }
         try (InputStream is = this.cache.getEntryInputStream(path)) {
@@ -125,6 +127,13 @@ final class PackageParserImpl implements PackageParser {
         final String name = new File(entrypath).getName();
         return Constants.NAME_MANIFEST.equals(name) || Constants.NAME_META.equals(name)
                 || Constants.NAME_CONTENT.equals(name) || Constants.NAME_STYLES.equals(name) || Constants.NAME_MANIFEST_RDF.equals(name);
+    }
+
+    static final boolean isDsig(final String entrypath) {
+        if (entrypath.startsWith(Constants.NAME_META_INF)) {
+            return entrypath.contains(Constants.SIG_TERM);
+        }
+        return false;
     }
 
     private final void parseOdfXml(final String entryPath, final String entryName) throws ParserConfigurationException, SAXException, IOException {

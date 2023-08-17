@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
+import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.xml.sax.SAXException;
 
@@ -94,5 +95,14 @@ public class PackageParserTest {
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet", pkg.getMimeType());
+    }
+
+    @Test
+    public void testDsigValidation() throws ParserConfigurationException, SAXException, IOException {
+        PackageParser parser = OdfPackages.getPackageParser();
+        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.DSIG_EXAMPLE);
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_EXAMPLE);
+        ParseResult result = pkg.getEntryXmlParseResult("META-INF/documentsignatures.xml");
+        assertTrue("Package should have a well formed dsig", result.isWellFormed());
     }
 }
