@@ -86,6 +86,9 @@ final class ValidatingParserImpl implements ValidatingParser {
         } else {
             report.add(Constants.PATH_MANIFEST, validateManifest(odfPackage));
         }
+        if (!odfPackage.hasThumbnail()) {
+            report.add(Constants.PATH_THUMBNAIL, FACTORY.getWarning("PKG-18"));
+        }
         report.addAll(this.auditZipEntries(odfPackage));
         report.addAll(this.validateOdfXmlEntries(odfPackage));
         for (final Entry<String, ValidationResult> entry : this.results.entrySet()) {
