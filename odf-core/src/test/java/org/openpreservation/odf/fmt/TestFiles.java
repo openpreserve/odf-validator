@@ -1,11 +1,14 @@
 package org.openpreservation.odf.fmt;
 
 public class TestFiles {
-    final static String TEST_ROOT = "org/openpreservation/odf/fmt/";
-    final static String ZIP_TEST_ROOT = TEST_ROOT + "zip/";
-    final static String XML_TEST_ROOT = TEST_ROOT + "xml/";
-    final static String FILE_TEST_ROOT = TEST_ROOT + "files/";
+    final static String TEST_ROOT = "org/openpreservation/odf/";
+    final static String FMT_ROOT = TEST_ROOT + "fmt/";
+    final static String PKG_ROOT = TEST_ROOT + "pkg/";
+    final static String ZIP_TEST_ROOT = FMT_ROOT + "zip/";
+    final static String XML_TEST_ROOT = FMT_ROOT + "xml/";
+    final static String FILE_TEST_ROOT = FMT_ROOT + "files/";
     public final static String EMPTY_ODS = ZIP_TEST_ROOT + "empty.ods";
+    public final static String MACRO_ODS = PKG_ROOT + "macros.ods";
     public final static String NO_MIME_ODS = ZIP_TEST_ROOT + "no_mime.ods";
     public final static String EMPTY_FODS = XML_TEST_ROOT + "empty.fods";
     public final static String FLAT_NOT_WF = XML_TEST_ROOT + "flat_not_wf.fods";
