@@ -18,8 +18,8 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
         final String version = parseResult.getRootAttributeValue("office:version") != null
                 ? parseResult.getRootAttributeValue("office:version")
                 : "";
-        final String mime = parseResult.getRootAttributeValue("office:mimetype") != null
-                ? parseResult.getRootAttributeValue("office:mimetype")
+        final String mime = parseResult.getRootAttributeValue(Constants.ELENAME_MIME) != null
+                ? parseResult.getRootAttributeValue(Constants.ELENAME_MIME)
                 : "";
 
         return new OdfXmlDocumentImpl(parseResult, mime, version);

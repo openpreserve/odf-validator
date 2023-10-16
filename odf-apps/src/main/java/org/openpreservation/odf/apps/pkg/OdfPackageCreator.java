@@ -186,10 +186,4 @@ class OdfPackageCreator implements Callable<Integer> {
             return crc.getValue();
         }
     }
-
-    private static long crc(final byte[] bytes) {
-        CRC32 crc = new CRC32();
-        crc.update(bytes, 0, bytes.length);
-        return crc.getValue();
-    }
 }

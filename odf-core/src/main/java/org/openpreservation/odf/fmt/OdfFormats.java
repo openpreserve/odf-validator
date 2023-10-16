@@ -14,6 +14,9 @@ import org.openpreservation.utils.Checks;
 public final class OdfFormats {
     private static final String TO_TEST = "toTest";
 
+    public static final String MIME_UKNOWN = Constants.MIME_OCTET;
+    public static final String MIMETYPE = Constants.MIMETYPE;
+
     public static boolean isPackage(final String toTest) throws IOException {
         Objects.requireNonNull(toTest, String.format(Checks.NOT_NULL, "String", TO_TEST));
         return OdfFormats.isPackage(Paths.get(toTest).toFile());

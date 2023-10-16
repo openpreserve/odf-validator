@@ -13,6 +13,8 @@ import java.net.URL;
 import java.nio.file.Path;
 
 import org.junit.Test;
+import org.openpreservation.format.xml.Encodings;
+import org.openpreservation.format.xml.XmlTestFiles;
 
 public class FormatSnifferTest {
     @Test
@@ -93,25 +95,25 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXmlUtf8BomStream() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_PI));
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF8_BOM_PI));
         Formats fmt = FormatSniffer.sniff(is);
-        assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF8_BOM_PI, Formats.XML, fmt),
+        assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF8_BOM_PI, Formats.XML, fmt),
                 Formats.XML, fmt);
     }
 
     @Test
     public void testSniffXmlUtf16LEBomStream() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.UTF16LE_BOM_PI));
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF16LE_BOM_PI));
         Formats fmt = FormatSniffer.sniff(is);
-        assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF16LE_BOM_PI, Formats.XML, fmt),
+        assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF16LE_BOM_PI, Formats.XML, fmt),
                 Formats.XML, fmt);
     }
 
     @Test
     public void testSniffXmlUtf16BEBomStream() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.UTF16BE_BOM_PI));
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF16BE_BOM_PI));
         Formats fmt = FormatSniffer.sniff(is);
-        assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF16BE_BOM_PI, Formats.XML, fmt),
+        assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF16BE_BOM_PI, Formats.XML, fmt),
                 Formats.XML, fmt);
     }
 
@@ -135,10 +137,10 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffBomPkgMunge() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_ODS));
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF8_BOM_ODS));
         Formats fmt = FormatSniffer.sniff(is);
         assertNotEquals(
-                String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF8_BOM_ODS, Formats.ODS, fmt),
+                String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF8_BOM_ODS, Formats.ODS, fmt),
                 Formats.ODS, fmt);
     }
 
@@ -181,10 +183,10 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffEncodingFile() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.UTF16LE_BOM);
+        URL empty = ClassLoader.getSystemResource(XmlTestFiles.UTF16LE_BOM);
         Encodings enc = FormatSniffer.sniffEncoding(new File(empty.toURI()));
         assertEquals(
-                String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF16LE_BOM, Encodings.UTF_16_LE, enc),
+                String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF16LE_BOM, Encodings.UTF_16_LE, enc),
                 Encodings.UTF_16_LE, enc);
     }
 
@@ -214,10 +216,10 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffEncodingStream() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_PI));
+        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF8_BOM_PI));
         Encodings enc = FormatSniffer.sniffEncoding(is);
         assertEquals(
-                String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.UTF8_BOM_PI, Encodings.UTF_8, enc),
+                String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF8_BOM_PI, Encodings.UTF_8, enc),
                 Encodings.UTF_8, enc);
     }
 }

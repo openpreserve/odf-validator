@@ -2,10 +2,13 @@ package org.openpreservation.odf.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.xml.ParseResult;
+import org.openpreservation.odf.xml.Metadata.UserDefinedField;
 import org.xml.sax.SAXException;
 
 public final class OdfXmlDocuments {
@@ -40,6 +43,22 @@ public final class OdfXmlDocuments {
     public static final OdfXmlDocument xmlDocumentFrom(final InputStream docStream)
             throws IOException, ParserConfigurationException, SAXException {
         return OdfXmlDocumentImpl.from(docStream);
+    }
+
+    /**
+     * Instantiates a Metadata object from a version string, a Map of string values,
+     * and a List of UserDefinedFields.
+     *
+     * @param version           the version of the ODF XML Metadata block/document.
+     * @param stringValues      a Map<String, String> of the key value pairs that
+     *                          comprise the standard Metadata values.
+     * @param userDefinedFields a List<UserDefinedField> of the UserDefinedFields
+     *                          that comprise the Metadata block/document.
+     * @return a Metadata object created from the passed parameters.
+     */
+    public static final Metadata metadataOf(final String version, final Map<String, String> stringValues,
+            final List<UserDefinedField> userDefinedFields) {
+        return MetadataImpl.of(version, stringValues, userDefinedFields);
     }
 
     /**

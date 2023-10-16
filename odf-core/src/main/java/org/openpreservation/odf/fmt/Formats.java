@@ -33,10 +33,13 @@ public enum Formats {
     OTT(Constants.MIME_OTT, Constants.EXT_OTT, EnumSet.of(Signatures.OTT)),
     UNKNOWN(Constants.MIME_OCTET, "bin", EnumSet.of(Signatures.NOMATCH));
 
-    static final Set<Formats> ODF_PACKAGES = EnumSet.of(ZIP, ODB, ODT, OTT, ODG, OTG, ODP, OTP, ODS, OTS, ODC, OTC, ODI, OTI, ODF,
+    static final Set<Formats> ODF_PACKAGES = EnumSet.of(ZIP, ODB, ODT, OTT, ODG, OTG, ODP, OTP, ODS, OTS, ODC, OTC, ODI,
+            OTI, ODF,
             OTF, ODM, OTM, OTH);
-    static final Set<Formats> ODF_DOCUMENTS = EnumSet.of(XML, ODB, ODT, OTT, ODG, OTG, ODP, OTP, ODS, OTS, ODC, OTC, ODI, OTI, ODF,
+    static final Set<Formats> ODF_DOCUMENTS = EnumSet.of(XML, ODB, ODT, OTT, ODG, OTG, ODP, OTP, ODS, OTS, ODC, OTC,
+            ODI, OTI, ODF,
             OTF, ODM, OTM, OTH);
+
     public static Formats identify(final byte[] bytes) {
         Objects.requireNonNull(bytes, String.format(Checks.NOT_NULL, "byte[]", "bytes"));
         final Signatures sig = Signatures.match(bytes);
@@ -67,6 +70,7 @@ public enum Formats {
         }
         return UNKNOWN;
     }
+
     /**
      * The String MIME type identifier
      */
@@ -77,7 +81,7 @@ public enum Formats {
      */
     public final String extension;
 
-    final Set<Signatures> signatures;
+    private final Set<Signatures> signatures;
 
     private Formats(final String mime, final String extension, final Set<Signatures> signatures) {
         this.mime = mime;
@@ -88,6 +92,7 @@ public enum Formats {
     public boolean isText() {
         return this == XML;
     }
+
     public boolean isPackage() {
         return ODF_PACKAGES.contains(this);
     }

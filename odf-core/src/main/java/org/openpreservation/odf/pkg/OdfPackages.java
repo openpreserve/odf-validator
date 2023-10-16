@@ -8,13 +8,14 @@ import java.util.zip.ZipFile;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.odf.fmt.FormatSniffer;
+import org.openpreservation.odf.fmt.OdfFormats;
 import org.xml.sax.SAXException;
 
 public final class OdfPackages {
     /**
      * The ODF mimetype entry name.
      */
-    public static final String MIMETYPE = Constants.MIMETYPE;
+    public static final String MIMETYPE = OdfFormats.MIMETYPE;
 
     /**
      * Get a validating parser instance.

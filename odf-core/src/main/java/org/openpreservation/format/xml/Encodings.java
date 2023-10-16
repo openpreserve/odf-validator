@@ -1,4 +1,4 @@
-package org.openpreservation.odf.fmt;
+package org.openpreservation.format.xml;
 
 import java.util.Arrays;
 import java.util.Objects;

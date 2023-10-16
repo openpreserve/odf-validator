@@ -5,14 +5,24 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
 import org.openpreservation.messages.Message;
+import org.openpreservation.messages.Messages;
+import org.openpreservation.messages.Message.Severity;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class ParseResultTest {
+    private static final Message errorMessage = Messages.getMessageInstance("err", Severity.ERROR, "ERROR");
+    private static final Message warningMessage = Messages.getMessageInstance("wrn", Severity.WARNING, "WARNING");
+    private static final Message infoMessage = Messages.getMessageInstance("inf", Severity.INFO, "INFO");
+
+    private static final List<Message> errorList = new ArrayList<>(Arrays.asList(errorMessage, warningMessage, infoMessage));
+    private static final List<Message> noErrorList = new ArrayList<>(Arrays.asList(warningMessage, infoMessage));
+
     @Test
     public void testIInstantiation() {
         List<Attribute> attributes = new ArrayList<>();
@@ -30,6 +40,33 @@ public class ParseResultTest {
                     ParseResultImpl.of(true, XmlTestUtils.exampleNamespace, namespaces, "rootPrefix", "rootName",
                            attributes, null);
                 });
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
+                () -> {
+                    ParseResultImpl.of(XmlTestUtils.exampleNamespace, namespaces, "rootPrefix", "rootName",
+                           attributes, null);
+                });
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
+                () -> {
+                    ParseResultImpl.invertWellFormed(null);
+                });
+    }
+
+    @Test
+    public void testDetectWellFormed() {
+        ParseResult parseResult = ParseResultImpl.of(XmlTestUtils.exampleNamespace, new ArrayList<>(), "rootPrefix", "rootName", new ArrayList<>(), errorList);
+        assertFalse("ParseResult should NOT be well-formed.", parseResult.isWellFormed());
+        parseResult = ParseResultImpl.of(XmlTestUtils.exampleNamespace, new ArrayList<>(), "rootPrefix", "rootName", new ArrayList<>(), noErrorList);
+        assertTrue("ParseResult should be well-formed.", parseResult.isWellFormed());
+    }
+
+    @Test
+    public void testInvertWellFormed() {
+        ParseResult parseResult = ParseResultImpl.of(true, XmlTestUtils.exampleNamespace, new ArrayList<>(), "rootPrefix", "rootName", new ArrayList<>(), new ArrayList<>());
+        ParseResult inverted = ParseResultImpl.invertWellFormed(parseResult);
+        assertTrue("Original parse result should be well-formed.", parseResult.isWellFormed());
+        assertFalse("Inverted parse result should NOT be well-formed.", inverted.isWellFormed());
     }
 
     @Test

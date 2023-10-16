@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class Constants {
-    static final String MIMETYPE = "mimetype";
     static final String SIG_TERM = "signatures";
     static final String NAME_META_INF = "META-INF/";
     static final String NAME_MANIFEST = "manifest.xml";

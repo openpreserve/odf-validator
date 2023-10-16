@@ -110,16 +110,19 @@ final class ValidationResultImpl implements ValidationResult {
 
     static final ValidationResult of(final ParseResult parseResult, final boolean valid, final List<Message> messages) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
-        Objects.requireNonNull(valid, String.format(Checks.NOT_NULL, "valid", "boolean"));
         Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, "messages", "List<Message>"));
         return new ValidationResultImpl(parseResult, valid, messages);
     }
 
     static final ValidationResult valid(final ParseResult parseResult, final List<Message> messages) {
+        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
+        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, "messages", "List<Message>"));
         return of(parseResult, true, messages);
     }
 
     static final ValidationResult notValid(final ParseResult parseResult, final List<Message> messages) {
+        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
+        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, "messages", "List<Message>"));
         return of(parseResult, false, messages);
     }
 

@@ -1,4 +1,4 @@
-package org.openpreservation.odf.fmt;
+package org.openpreservation.format.xml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
@@ -35,12 +35,12 @@ public class EncodingsTest {
         assertNotSame(Encodings.UTF_8, Encodings.fromRepresentation(new byte[] { (byte) 0xEF, (byte) 0xBB }));
         assertNotSame(Encodings.UTF_8, Encodings.fromRepresentation(new byte[] { (byte) 0xEF }));
         assertNotSame(Encodings.UTF_8, Encodings.fromRepresentation(new byte[] {}));
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM);
+        InputStream is = ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF8_BOM);
         byte[] bytes = new byte[100];
         int read = is.read(bytes);
         assertEquals(3, read);
         assertSame(Encodings.UTF_8, Encodings.fromRepresentation(bytes));
-        is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_PI);
+        is = ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF8_BOM_PI);
         read = is.read(bytes);
         assertEquals(41, read);
         assertSame(Encodings.UTF_8, Encodings.fromRepresentation(bytes));
@@ -54,13 +54,13 @@ public class EncodingsTest {
         assertNotSame(Encodings.UTF_16_LE, Encodings.fromRepresentation(new byte[] { (byte) 0xFE, (byte) 0xFF }));
         assertNotSame(Encodings.UTF_16_LE, Encodings.fromRepresentation(new byte[] { (byte) 0xFF }));
         assertNotSame(Encodings.UTF_16_LE, Encodings.fromRepresentation(new byte[] {}));
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF16LE_BOM);
+        InputStream is = ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF16LE_BOM);
         byte[] bytes = new byte[100];
         int read = is.read(bytes);
         byte[] testBytes = new byte[read];
         System.arraycopy(bytes, 0, testBytes, 0, read);
         assertSame(Encodings.UTF_16_LE, Encodings.fromRepresentation(testBytes));
-        is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF16LE_BOM_PI);
+        is = ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF16LE_BOM_PI);
         read = is.read(bytes);
         testBytes = new byte[read];
         System.arraycopy(bytes, 0, testBytes, 0, read);
@@ -75,13 +75,13 @@ public class EncodingsTest {
         assertNotSame(Encodings.UTF_16_BE, Encodings.fromRepresentation(new byte[] { (byte) 0xFE, (byte) 0xFE }));
         assertNotSame(Encodings.UTF_16_BE, Encodings.fromRepresentation(new byte[] { (byte) 0xEF }));
         assertNotSame(Encodings.UTF_16_BE, Encodings.fromRepresentation(new byte[] {}));
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF16BE_BOM);
+        InputStream is = ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF16BE_BOM);
         byte[] bytes = new byte[100];
         int read = is.read(bytes);
         byte[] testBytes = new byte[read];
         System.arraycopy(bytes, 0, testBytes, 0, read);
         assertSame(Encodings.UTF_16_BE, Encodings.fromRepresentation(testBytes));
-        is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF16BE_BOM_PI);
+        is = ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF16BE_BOM_PI);
         read = is.read(bytes);
         testBytes = new byte[read];
         System.arraycopy(bytes, 0, testBytes, 0, read);

@@ -21,6 +21,7 @@ import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.xml.Namespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
@@ -80,7 +81,7 @@ final class ValidatingParserImpl implements ValidatingParser {
 
     private ValidationReport validate(final OdfPackage odfPackage) {
         final ValidationReport report = new ValidationReport(odfPackage.getName());
-        report.add(Constants.MIMETYPE, checkMimeEntry(odfPackage));
+        report.add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
         if (!odfPackage.hasManifest()) {
             report.add(Constants.PATH_MANIFEST, FACTORY.getError("PKG-4"));
         } else {
@@ -146,7 +147,7 @@ final class ValidatingParserImpl implements ValidatingParser {
     private final List<Message> checkMimeEntry(final OdfPackage odfPackage) {
         final List<Message> messages = new ArrayList<>();
         if (odfPackage.hasMimeEntry()) {
-            messages.addAll(this.validateMimeEntry(odfPackage.getZipArchive().getZipEntry(Constants.MIMETYPE),
+            messages.addAll(this.validateMimeEntry(odfPackage.getZipArchive().getZipEntry(OdfFormats.MIMETYPE),
                     odfPackage.getDetectedFormat().isOdf()));
             messages.add(FACTORY.getInfo("DOC-3", odfPackage.getMimeType()));
         } else {
@@ -230,13 +231,13 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     private final boolean isLegitimateManifestEntry(final String entryPath) {
-        return !(Constants.MIMETYPE.equals(entryPath)
+        return !(OdfFormats.MIMETYPE.equals(entryPath)
                 || Constants.PATH_MANIFEST.equals(entryPath)
                 || entryPath.startsWith(Constants.NAME_META_INF));
     }
 
     private final Message getManifestError(final String entryPath) {
-        if (Constants.MIMETYPE.equals(entryPath)) {
+        if (OdfFormats.MIMETYPE.equals(entryPath)) {
             return FACTORY.getError("PKG-15", entryPath);
         } else if (Constants.PATH_MANIFEST.equals(entryPath)) {
             return FACTORY.getError("PKG-14", entryPath);

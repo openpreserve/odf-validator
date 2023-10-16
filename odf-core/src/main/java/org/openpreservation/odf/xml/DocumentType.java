@@ -6,14 +6,14 @@ import java.util.Set;
 import org.openpreservation.odf.fmt.Formats;
 
 public enum DocumentType {
-    TEXT(EnumSet.of(Formats.ODT, Formats.OTT, Formats.ODM, Formats.OTM), "office:text"),
-    SPREADSHEET(EnumSet.of(Formats.ODS, Formats.OTS), "office:spreadsheet"),
-    PRESENTATION(EnumSet.of(Formats.ODP, Formats.OTP), "office:presentation"),
-    DRAWING(EnumSet.of(Formats.ODG, Formats.OTG), "office:drawing"),
-    CHART(EnumSet.of(Formats.ODC, Formats.OTC), "office:chart"),
-    IMAGE(EnumSet.of(Formats.ODI, Formats.OTI), "office:image"),
-    FORMULA(EnumSet.of(Formats.ODF, Formats.OTH), "office:formula"),
-    DATABASE(EnumSet.of(Formats.ODB), "office:database");
+    TEXT(EnumSet.of(Formats.ODT, Formats.OTT, Formats.ODM, Formats.OTM), Constants.ELENAME_TEXT),
+    SPREADSHEET(EnumSet.of(Formats.ODS, Formats.OTS), Constants.ELENAME_SPREADSHEET),
+    PRESENTATION(EnumSet.of(Formats.ODP, Formats.OTP), Constants.ELENAME_PRESENTATION),
+    DRAWING(EnumSet.of(Formats.ODG, Formats.OTG), Constants.ELENAME_DRAWING),
+    CHART(EnumSet.of(Formats.ODC, Formats.OTC), Constants.ELENAME_CHART),
+    IMAGE(EnumSet.of(Formats.ODI, Formats.OTI), Constants.ELENAME_IMAGE),
+    FORMULA(EnumSet.of(Formats.ODF, Formats.OTH), Constants.ELENAME_FORMULA),
+    DATABASE(EnumSet.of(Formats.ODB), Constants.ELENAME_DATABASE);
 
     private final EnumSet<Formats> formats;
     private final String bodyElementName;

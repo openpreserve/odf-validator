@@ -46,6 +46,7 @@ public final class Constants {
     static final String MIME_ZIP = appIdentifier(EXT_ZIP);
     static final String MIME_XML = mimeIdentiier(TEXT, EXT_XML);
     static final String MIME_OCTET = appIdentifier("octet-stream");
+
     private Constants() {
         throw new AssertionError("Utility class should not be instantiated");
     }

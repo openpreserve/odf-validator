@@ -41,7 +41,6 @@ public class AtrtributeTest {
         EqualsVerifier.forClass(AttributeImpl.class).verify();
     }
 
-
     @Test
     public void testGetIndex() {
         Attribute attribute = AttributeImpl.of(0, "qName", "value", XmlTestUtils.exampleUri, "type");

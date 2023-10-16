@@ -19,9 +19,10 @@ import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.format.zip.Zips;
 import org.openpreservation.odf.fmt.FormatSniffer;
 import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.xml.Metadata;
-import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.openpreservation.odf.xml.OdfXmlDocument;
+import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
@@ -128,7 +129,7 @@ final class PackageParserImpl implements PackageParser {
             // No need to process directories
             return;
         }
-        if (Constants.MIMETYPE.equals(path)) {
+        if (OdfFormats.MIMETYPE.equals(path)) {
             // Grab the mimetype value from the MIMETYPE file
             this.mimetype = new String(this.cache.getEntryInputStream(entry.getName()).readAllBytes(),
                     StandardCharsets.UTF_8);

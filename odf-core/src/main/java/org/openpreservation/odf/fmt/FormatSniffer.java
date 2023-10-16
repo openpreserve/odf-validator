@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+import org.openpreservation.format.xml.Encodings;
 import org.openpreservation.utils.Checks;
 
 public final class FormatSniffer {

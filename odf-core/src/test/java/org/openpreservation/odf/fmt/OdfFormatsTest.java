@@ -12,6 +12,7 @@ import java.net.URL;
 import java.nio.file.Path;
 
 import org.junit.Test;
+import org.openpreservation.format.xml.XmlTestFiles;
 
 public class OdfFormatsTest {
     @Test
@@ -177,8 +178,8 @@ public class OdfFormatsTest {
          * This may well be the answer:
          *
          */
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.UTF8_BOM_PI);
-        assertTrue(String.format("%s IS a flat XML file.", TestFiles.UTF8_BOM_PI), OdfFormats.isXml(is));
+        InputStream is = ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF8_BOM_PI);
+        assertTrue(String.format("%s IS a flat XML file.", XmlTestFiles.UTF8_BOM_PI), OdfFormats.isXml(is));
     }
 
     @Test

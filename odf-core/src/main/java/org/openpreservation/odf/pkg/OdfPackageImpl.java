@@ -17,6 +17,7 @@ import org.openpreservation.format.zip.ZipArchive;
 import org.openpreservation.format.zip.ZipArchiveCache;
 import org.openpreservation.odf.document.OdfDocument;
 import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class OdfPackageImpl implements OdfPackage {
@@ -33,7 +34,7 @@ final class OdfPackageImpl implements OdfPackage {
 
         private ZipArchiveCache archive;
         private String name;
-        private String mimetype = "application/octet-stream";
+        private String mimetype = OdfFormats.MIME_UKNOWN;
         private Formats format = Formats.UNKNOWN;
         private Manifest manifest;
 
@@ -125,7 +126,7 @@ final class OdfPackageImpl implements OdfPackage {
 
     @Override
     public boolean hasMimeEntry() {
-        return this.archive.getZipEntry(Constants.MIMETYPE) != null;
+        return this.archive.getZipEntry(OdfFormats.MIMETYPE) != null;
     }
 
     @Override
