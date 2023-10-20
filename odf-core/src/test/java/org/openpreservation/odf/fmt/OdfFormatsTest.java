@@ -33,8 +33,8 @@ public class OdfFormatsTest {
 
     @Test
     public void testIsPackageStreamNoMime() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.NO_MIME_ODS);
-        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ODS), OdfFormats.isPackage(is));
+        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.NO_MIME_ROOT_ODS);
+        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ROOT_ODS), OdfFormats.isPackage(is));
     }
 
     @Test
@@ -104,8 +104,8 @@ public class OdfFormatsTest {
 
     @Test
     public void testIsPackageStringNoMime() throws IOException, URISyntaxException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ODS);
-        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ODS),
+        URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ROOT_ODS);
+        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ROOT_ODS),
                 OdfFormats.isPackage(new File(empty.toURI()).getAbsolutePath()));
     }
 
@@ -128,8 +128,8 @@ public class OdfFormatsTest {
 
     @Test
     public void testIsPackageFileNoMime() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ODS);
-        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ODS),
+        URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ROOT_ODS);
+        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ROOT_ODS),
                 OdfFormats.isPackage(new File(empty.toURI())));
     }
 
@@ -152,8 +152,8 @@ public class OdfFormatsTest {
 
     @Test
     public void testIsPackagePathNoMime() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ODS);
-        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ODS),
+        URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ROOT_ODS);
+        assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ROOT_ODS),
                 OdfFormats.isPackage(new File(empty.toURI()).toPath()));
     }
 

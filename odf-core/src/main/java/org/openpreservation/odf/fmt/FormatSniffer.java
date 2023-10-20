@@ -19,29 +19,46 @@ public final class FormatSniffer {
     private static final String TEST_VAR = "toSniff";
 
     public static Formats sniff(final String toSniff) throws IOException {
+        return sniff(toSniff, MAX_MIME_LENGTH);
+    }
+
+    public static Formats sniff(final String toSniff, final int length) throws IOException {
         Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "String", TEST_VAR));
-        return sniff(Paths.get(toSniff));
+        return sniff(Paths.get(toSniff), length);
     }
 
     public static Formats sniff(final Path toSniff) throws IOException {
+        return sniff(toSniff, MAX_MIME_LENGTH);
+    }
+
+    public static Formats sniff(final Path toSniff, final int length) throws IOException {
         Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "Path", TEST_VAR));
-        return sniff(toSniff.toFile());
+        return sniff(toSniff.toFile(), length);
     }
 
     public static Formats sniff(final File toSniff) throws IOException {
+        return sniff(toSniff, MAX_MIME_LENGTH);
+    }
+
+    public static Formats sniff(final File toSniff, final int length) throws IOException {
         Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "File", TEST_VAR));
         if (!toSniff.exists()) {
             throw new FileNotFoundException("File " + toSniff.getAbsolutePath() + " does not exist.");
         }
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(toSniff))) {
-            return sniff(bis);
+            return sniff(bis, length);
         }
     }
 
     public static Formats sniff(final BufferedInputStream toSniff) throws IOException {
         Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "InputStream", TEST_VAR));
+        return sniff(toSniff, MAX_MIME_LENGTH);
+    }
+
+    public static Formats sniff(final BufferedInputStream toSniff, final int length) throws IOException {
+        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, "InputStream", TEST_VAR));
         final Encodings bom = skipBom(toSniff);
-        final Formats format = Formats.identify(Utils.readAndReset(toSniff, MAX_MIME_LENGTH));
+        final Formats format = Formats.identify(Utils.readAndReset(toSniff, length));
         if (bom == Encodings.NONE) {
             return format;
         }

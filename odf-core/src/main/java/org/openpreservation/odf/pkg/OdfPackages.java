@@ -8,6 +8,7 @@ import java.util.zip.ZipFile;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.odf.fmt.FormatSniffer;
+import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.xml.sax.SAXException;
 
@@ -69,7 +70,7 @@ public final class OdfPackages {
      * @throws IOException if there's an issue reading the file
      */
     public static final boolean isZip(final Path toCheck) throws IOException {
-        return FormatSniffer.sniff(toCheck).isPackage();
+        return FormatSniffer.sniff(toCheck, 10) == Formats.ZIP;
     }
 
     private OdfPackages() {

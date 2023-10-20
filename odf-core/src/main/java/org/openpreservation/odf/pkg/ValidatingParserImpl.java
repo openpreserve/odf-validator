@@ -148,10 +148,10 @@ final class ValidatingParserImpl implements ValidatingParser {
         final List<Message> messages = new ArrayList<>();
         if (odfPackage.hasMimeEntry()) {
             messages.addAll(this.validateMimeEntry(odfPackage.getZipArchive().getZipEntry(OdfFormats.MIMETYPE),
-                    odfPackage.getDetectedFormat().isOdf()));
+                    odfPackage.isMimeFirst()));
             messages.add(FACTORY.getInfo("DOC-3", odfPackage.getMimeType()));
         } else {
-            if (odfPackage.getManifest().getRootMediaType() != null) {
+            if (odfPackage.hasManifest() && odfPackage.getManifest().getRootMediaType() != null) {
                 messages.add(FACTORY.getError("PKG-10"));
             } else {
                 messages.add(FACTORY.getWarning("PKG-2"));

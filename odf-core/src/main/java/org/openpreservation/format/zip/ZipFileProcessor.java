@@ -22,6 +22,7 @@ public class ZipFileProcessor implements ZipArchiveCache {
     private final Path path;
     private final Map<String, ZipArchiveEntry> entryCache;
     private final Map<String, byte[]> byteCache = new HashMap<>();
+    private String firstEntryName = null;
 
     private ZipFileProcessor(final Path path) throws IOException {
         super();
@@ -37,12 +38,15 @@ public class ZipFileProcessor implements ZipArchiveCache {
         return new ZipFileProcessor(path);
     }
 
-    private static final Map<String, ZipArchiveEntry> cache(final Path path) throws IOException {
+    private final Map<String, ZipArchiveEntry> cache(final Path path) throws IOException {
         Map<String, ZipArchiveEntry> result = new HashMap<>();
         try (ZipFile zipFile = new ZipFile(path)) {
             Enumeration<ZipArchiveEntry> entries = zipFile.getEntriesInPhysicalOrder();
             while (entries.hasMoreElements()) {
                 ZipArchiveEntry entry = entries.nextElement();
+                if (firstEntryName == null) {
+                    firstEntryName = entry.getName();
+                }
                 result.put(entry.getName(), entry);
             }
         }
@@ -57,6 +61,10 @@ public class ZipFileProcessor implements ZipArchiveCache {
                 return ZipEntryImpl.of(t);
             }
         }).collect(Collectors.toList());
+    }
+
+    public ZipEntry getFirstEntry() {
+        return ZipEntryImpl.of(this.entryCache.get(this.firstEntryName));
     }
 
     @Override

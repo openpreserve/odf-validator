@@ -45,4 +45,9 @@ final class ZipArchiveCacheImpl implements ZipArchiveCache {
     static final ZipArchiveCacheImpl of(final ZipArchive archive, final Map<String, byte[]> cache) {
         return new ZipArchiveCacheImpl(archive, cache);
     }
+
+    @Override
+    public ZipEntry getFirstEntry() {
+        return this.archive.getFirstEntry();
+    }
 }

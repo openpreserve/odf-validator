@@ -4,6 +4,13 @@ import java.util.List;
 
 public interface ZipArchive {
     /**
+     * Returns the first physical ZipEntry in the archive.
+     *
+     * @return the first physical ZipEntry in the archive
+     */
+    public ZipEntry getFirstEntry();
+
+    /**
      * Get the list of ZipEntries in the archive
      *
      * @return an ordered list of the the ZipEntries in the archive

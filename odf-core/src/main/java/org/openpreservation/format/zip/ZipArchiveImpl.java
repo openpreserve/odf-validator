@@ -22,6 +22,11 @@ final class ZipArchiveImpl implements ZipArchive {
     }
 
     @Override
+    public ZipEntry getFirstEntry() {
+        return this.entries.stream().findFirst().orElse(null);
+    }
+
+    @Override
     public List<ZipEntry> getZipEntries() {
         return this.entries;
     }

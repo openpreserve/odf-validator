@@ -1,6 +1,9 @@
 package org.openpreservation.odf.fmt;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 
 public enum Signatures {
     NOMATCH(new byte[0]),
@@ -34,14 +37,41 @@ public enum Signatures {
 
     public static final int MAX_LENGTH = maxLength();
 
+
     public static Signatures match(final byte[] signature) {
         return match(signature, 0);
     }
+
     public static Signatures match(final byte[] bytes, final int offset) {
+        return match(bytes, offset, Arrays.asList(Signatures.values()));
+    }
+
+    public static Signatures match(final byte[] bytes, final int offset, final Collection<Signatures> sigs) {
         Signatures result = Signatures.NOMATCH;
-        for (final Signatures sig : Signatures.values()) {
+        for (final Signatures sig : sigs) {
             if (sig.isMatch(bytes, offset)) {
                 result = sig;
+            }
+        }
+        return result;
+    }
+
+    public static Set<Signatures> matchAll(final byte[] signature) {
+        return matchAll(signature, 0);
+    }
+
+    public static Set<Signatures> matchAll(final byte[] bytes, final int offset) {
+        return matchAll(bytes, offset, Arrays.asList(Signatures.values()));
+    }
+
+    private static Set<Signatures> matchAll(final byte[] bytes, final int offset, final Collection<Signatures> sigs) {
+        final Set<Signatures> result = EnumSet.noneOf(Signatures.class);
+        for (final Signatures sig : sigs) {
+            if (sig == Signatures.NOMATCH) {
+                continue;
+            }
+            if (sig.isMatch(bytes, offset)) {
+                result.add(sig);
             }
         }
         return result;

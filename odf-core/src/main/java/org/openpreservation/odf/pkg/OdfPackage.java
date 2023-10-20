@@ -52,6 +52,13 @@ public interface OdfPackage {
     public boolean hasMimeEntry();
 
     /**
+     * Is the MIMETYPE entry the first entry in the package?
+     *
+     * @return true if the MIMETYPE entry is the first entry in the package, otherwise false
+     */
+    public boolean isMimeFirst();
+
+    /**
      * Does the package have a manifest?
      *
      * @return true if the package has a manifest, otherwise false

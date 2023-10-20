@@ -9,7 +9,7 @@ import org.openpreservation.utils.Checks;
 
 public enum Formats {
     ZIP(Constants.MIME_ZIP, Constants.EXT_ZIP,
-            EnumSet.of(Signatures.ZIP)),
+            EnumSet.of(Signatures.ZIP, Signatures.ZIP_EMPTY, Signatures.ZIP_SPANNED)),
     XML(Constants.MIME_XML, Constants.EXT_XML,
             EnumSet.of(Signatures.XML_UTF_8, Signatures.XML_UTF_16_LE, Signatures.XML_UTF_16_BE,
                     Signatures.XML_UTF_32_LE, Signatures.XML_UTF_32_BE)),

@@ -2,6 +2,7 @@ package org.openpreservation.odf.pkg;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
+import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.xml.Metadata;
@@ -41,7 +43,7 @@ public class OdfPackageTest {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
-        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.NO_MIME_ODS).toURI()));
+        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.NO_MIME_ROOT_ODS).toURI()));
         assertFalse("Package should NOT have a mimetype entry", pkg.hasMimeEntry());
     }
 
@@ -50,7 +52,7 @@ public class OdfPackageTest {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
         assertEquals(Formats.ODS, pkg.getDetectedFormat());
-        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.NO_MIME_ODS).toURI()));
+        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.NO_MIME_ROOT_ODS).toURI()));
         assertEquals(Formats.ZIP, pkg.getDetectedFormat());
     }
 
@@ -59,12 +61,26 @@ public class OdfPackageTest {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
         assertTrue(pkg.hasManifest());
+        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.NO_MANIFEST_ODS).toURI()));
+        assertFalse(pkg.hasManifest());
     }
 
     @Test
     public void testGetManifest() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        Manifest manifest = pkg.getManifest();
+        Manifest expected = ManifestImpl
+                .from(ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/pkg/manifest.xml"));
+        assertEquals(expected, manifest);
+    }
+
+    @Test
+    public void testGetManifestNoMime()
+            throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
+        PackageParser parser = PackageParserImpl.getInstance();
+        OdfPackage pkg = parser
+                .parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.NO_MIME_ROOT_ODS).toURI()));
         Manifest manifest = pkg.getManifest();
         Manifest expected = ManifestImpl
                 .from(ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/pkg/manifest.xml"));
@@ -81,4 +97,31 @@ public class OdfPackageTest {
         assertEquals(expected, metadata);
     }
 
+    @Test
+    public void testIsMimeFirst() throws IOException, URISyntaxException {
+        PackageParser parser = PackageParserImpl.getInstance();
+        OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        assertTrue("MIME entry should be first", pkg.isMimeFirst());
+        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.MIME_LAST_ODS).toURI()));
+        assertFalse("MIME entry should NOT be first", pkg.isMimeFirst());
+        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.MIME_COMPRESSED_LAST_ODS).toURI()));
+        assertFalse("MIME entry should NOT be first", pkg.isMimeFirst());
+    }
+
+    @Test
+    public void testIsMimeCompressed() throws IOException, URISyntaxException {
+        PackageParser parser = PackageParserImpl.getInstance();
+        OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        ZipEntry entry = pkg.getZipArchive().getZipEntry(OdfPackages.MIMETYPE);
+        assertEquals("MIME entry should be stored", java.util.zip.ZipEntry.STORED, entry.getMethod());
+        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.MIME_COMPRESSED_ODS).toURI()));
+        entry = pkg.getZipArchive().getZipEntry(OdfPackages.MIMETYPE);
+        assertNotEquals("MIME entry should NOT be stored", java.util.zip.ZipEntry.STORED, entry.getMethod());
+        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.MIME_COMPRESSED_LAST_ODS).toURI()));
+        entry = pkg.getZipArchive().getZipEntry(OdfPackages.MIMETYPE);
+        assertNotEquals("MIME entry should be stored", java.util.zip.ZipEntry.STORED, entry.getMethod());
+        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.MIME_LAST_ODS).toURI()));
+        entry = pkg.getZipArchive().getZipEntry(OdfPackages.MIMETYPE);
+        assertEquals("MIME entry should be stored", java.util.zip.ZipEntry.STORED, entry.getMethod());
+    }
 }

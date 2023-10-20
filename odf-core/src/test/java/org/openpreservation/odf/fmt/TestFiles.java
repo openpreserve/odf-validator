@@ -3,10 +3,17 @@ package org.openpreservation.odf.fmt;
 public class TestFiles {
     final static String TEST_ROOT = "org/openpreservation/odf/fmt/";
     final static String ZIP_TEST_ROOT = TEST_ROOT + "zip/";
+    final static String PKG_TEST_ROOT = TEST_ROOT + "pkg/";
+    final static String MIME_TEST_ROOT = PKG_TEST_ROOT + "mimetype/";
+    final static String MANIFEST_TEST_ROOT = PKG_TEST_ROOT + "manifest/";
     final static String XML_TEST_ROOT = TEST_ROOT + "xml/";
     final static String FILE_TEST_ROOT = TEST_ROOT + "files/";
     public final static String EMPTY_ODS = ZIP_TEST_ROOT + "empty.ods";
-    public final static String NO_MIME_ODS = ZIP_TEST_ROOT + "no_mime.ods";
+    public final static String NO_MIME_ROOT_ODS = MIME_TEST_ROOT + "no_mime_root.ods";
+    public final static String MIME_LAST_ODS = MIME_TEST_ROOT + "mime_last.ods";
+    public final static String MIME_COMPRESSED_ODS = MIME_TEST_ROOT + "mime_compressed.ods";
+    public final static String MIME_COMPRESSED_LAST_ODS = MIME_TEST_ROOT + "mime_compressed_last.ods";
+    public final static String NO_MANIFEST_ODS = MANIFEST_TEST_ROOT + "no_manifest.ods";
     public final static String EMPTY_FODS = XML_TEST_ROOT + "empty.fods";
     public final static String FLAT_NOT_WF = XML_TEST_ROOT + "flat_not_wf.fods";
     public final static String FLAT_NOT_VALID = XML_TEST_ROOT + "flat_not_valid.fods";

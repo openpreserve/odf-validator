@@ -1,5 +1,6 @@
 package org.openpreservation.format.zip;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
@@ -18,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.openpreservation.odf.fmt.TestFiles;
+import org.openpreservation.odf.pkg.OdfPackages;
 
 public class ZipsTest {
     @Rule
@@ -81,5 +83,6 @@ public class ZipsTest {
         assertTrue("Archive should not be empty", archive.size() > 0);
         assertTrue(Files.isRegularFile(tempFolder.resolve("mimetype")));
         assertTrue(Files.isDirectory(tempFolder.resolve("Configurations2")));
+        assertEquals("First entry name should be mimetype", OdfPackages.MIMETYPE, archive.getFirstEntry().getName());
     }
 }

@@ -130,6 +130,11 @@ final class OdfPackageImpl implements OdfPackage {
     }
 
     @Override
+    public boolean isMimeFirst() {
+        return this.archive.getFirstEntry().getName().equals(OdfFormats.MIMETYPE);
+    }
+
+    @Override
     public boolean hasManifest() {
         return this.archive.getZipEntry(Constants.PATH_MANIFEST) != null;
     }
