@@ -1,6 +1,7 @@
 package org.openpreservation.odf.xml;
 
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openpreservation.odf.fmt.Formats;
@@ -32,6 +33,7 @@ public enum DocumentType {
     }
 
     public static DocumentType getTypeByFormat(final Formats format) {
+        Objects.requireNonNull(format, "format must not be null");
         for (final DocumentType type : DocumentType.values()) {
             if (type.getFormats().contains(format)) {
                 return type;
@@ -41,8 +43,11 @@ public enum DocumentType {
     }
 
     public static DocumentType getTypeByBodyElement(final String bodyElementName) {
+        Objects.requireNonNull(bodyElementName, "bodyElementName must not be null");
+        final String searchTerm = (bodyElementName.toLowerCase().startsWith("office:") ? bodyElementName
+                : Constants.officePrefix(bodyElementName));
         for (final DocumentType type : DocumentType.values()) {
-            if (type.bodyElementName.equals(bodyElementName)) {
+            if (type.bodyElementName.equals(searchTerm)) {
                 return type;
             }
         }
@@ -50,6 +55,7 @@ public enum DocumentType {
     }
 
     public static DocumentType getTypeByMimeString(final String mimeString) {
+        Objects.requireNonNull(mimeString, "mimeString must not be null");
         for (final DocumentType type : DocumentType.values()) {
             for (final Formats format : type.getFormats()) {
                 if (format.mime.equals(mimeString)) {

@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.zip.ZipArchive;
-import org.openpreservation.odf.document.OdfDocument;
 import org.openpreservation.odf.fmt.Formats;
 
 public interface OdfPackage {

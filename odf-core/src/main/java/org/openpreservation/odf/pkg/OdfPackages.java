@@ -36,7 +36,7 @@ public final class OdfPackages {
      * @throws ParserConfigurationException
      * @throws SAXException
      */
-    public static final PackageParser getPackageParser() throws ParserConfigurationException, SAXException {
+    public static final PackageParser getPackageParser() {
         return PackageParserImpl.getInstance();
     }
 

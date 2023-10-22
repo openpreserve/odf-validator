@@ -15,7 +15,6 @@ import java.util.Objects;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.zip.ZipArchive;
 import org.openpreservation.format.zip.ZipArchiveCache;
-import org.openpreservation.odf.document.OdfDocument;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.xml.OdfXmlDocument;

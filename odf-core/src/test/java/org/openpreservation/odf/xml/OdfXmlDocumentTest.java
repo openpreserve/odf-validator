@@ -49,4 +49,11 @@ public class OdfXmlDocumentTest {
         assertEquals("office", odfDocument.getRootNamespace().getPrefix());
         assertEquals("document", odfDocument.getLocalRootName());
     }
+
+    @Test
+    public void testGetRootName() throws IOException {
+        ParseResult parseResult = xmlParser.parse(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
+        OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
+        assertEquals("office:document", odfDocument.getRootName());
+    }
 }
