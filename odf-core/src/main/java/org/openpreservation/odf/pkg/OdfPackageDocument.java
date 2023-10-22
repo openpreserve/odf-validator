@@ -21,4 +21,11 @@ public interface OdfPackageDocument extends OdfDocument {
      * @return the XML document for the supplied path.
      */
     public OdfXmlDocument getXmlDocument(String path);
+
+    /**
+     * Returns the manifest file entry for the package document.
+     *
+     * @return the documents manifest file entry.
+     */
+    public FileEntry getFileEntry();
 }

@@ -253,17 +253,17 @@ final class OdfPackageImpl implements OdfPackage {
     }
 
     @Override
-    public OdfDocument getDocument() {
+    public OdfPackageDocument getDocument() {
         return this.documentMap.get("/");
     }
 
     @Override
-    public Map<String, OdfDocument> getSubDocumentMap() {
+    public Map<String, OdfPackageDocument> getSubDocumentMap() {
         return this.getSubDocumentMap();
     }
 
     @Override
-    public OdfDocument getSubDocument(String path) {
+    public OdfPackageDocument getSubDocument(String path) {
         return this.documentMap.get(path);
     }
 }

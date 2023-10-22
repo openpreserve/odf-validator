@@ -1,5 +1,6 @@
 package org.openpreservation.odf.pkg;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,7 @@ final class OdfPackageDocumentImpl implements OdfPackageDocument {
             return new OdfPackageDocumentImpl(this.entry, this.xmlDocumentMap, this.metadata);
         }
     }
+
     private final FileEntry entry;
     private final Map<String, OdfXmlDocument> xmlDocumentMap;
     private final Metadata metadata;
@@ -63,7 +65,8 @@ final class OdfPackageDocumentImpl implements OdfPackageDocument {
         this(entry, xmlDocumentMap, null);
     }
 
-    private OdfPackageDocumentImpl(final FileEntry entry, final Map<String, OdfXmlDocument> xmlDocumentMap, Metadata metadata) {
+    private OdfPackageDocumentImpl(final FileEntry entry, final Map<String, OdfXmlDocument> xmlDocumentMap,
+            Metadata metadata) {
         super();
         this.entry = entry;
         this.xmlDocumentMap = Collections.unmodifiableMap(xmlDocumentMap);
@@ -92,6 +95,11 @@ final class OdfPackageDocumentImpl implements OdfPackageDocument {
     @Override
     public DocumentType getDocumentType() {
         return DocumentType.getTypeByMimeString(this.entry.getMediaType());
+    }
+
+    @Override
+    public FileEntry getFileEntry() {
+        return this.entry;
     }
 
     @Override

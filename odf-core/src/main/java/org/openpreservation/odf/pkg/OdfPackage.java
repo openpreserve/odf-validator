@@ -54,7 +54,8 @@ public interface OdfPackage {
     /**
      * Is the MIMETYPE entry the first entry in the package?
      *
-     * @return true if the MIMETYPE entry is the first entry in the package, otherwise false
+     * @return true if the MIMETYPE entry is the first entry in the package,
+     *         otherwise false
      */
     public boolean isMimeFirst();
 
@@ -130,7 +131,7 @@ public interface OdfPackage {
      *
      * @return the root document of the ODF Package
      */
-    public OdfDocument getDocument();
+    public OdfPackageDocument getDocument();
 
     /**
      * Get the Map of OdfDocument objects for the package, this is the root document
@@ -138,7 +139,7 @@ public interface OdfPackage {
      *
      * @return the Map of OdfDocument Sub-Documents for the package.
      */
-    public Map<String, OdfDocument> getSubDocumentMap();
+    public Map<String, OdfPackageDocument> getSubDocumentMap();
 
     /**
      * Get the OdfDocument for any sub-document in the package.
@@ -146,5 +147,5 @@ public interface OdfPackage {
      * @param path the internal path to the sub-document
      * @return the OdfDocument for the sub-document
      */
-    public OdfDocument getSubDocument(final String path);
+    public OdfPackageDocument getSubDocument(final String path);
 }
