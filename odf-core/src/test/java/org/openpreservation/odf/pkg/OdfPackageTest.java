@@ -124,4 +124,13 @@ public class OdfPackageTest {
         entry = pkg.getZipArchive().getZipEntry(OdfPackages.MIMETYPE);
         assertEquals("MIME entry should be stored", java.util.zip.ZipEntry.STORED, entry.getMethod());
     }
+
+    @Test
+    public void testHasThumbnail() throws IOException, URISyntaxException {
+        PackageParser parser = PackageParserImpl.getInstance();
+        OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        assertTrue("Package should have a thumbnail", pkg.hasThumbnail());
+        pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.NO_THUMBNAIL_ODS).toURI()));
+        assertFalse("Package should NOT have a thumbnail", pkg.hasThumbnail());
+    }
 }

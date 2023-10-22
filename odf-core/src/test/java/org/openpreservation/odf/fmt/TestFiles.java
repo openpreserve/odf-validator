@@ -6,6 +6,7 @@ public class TestFiles {
     final static String PKG_TEST_ROOT = TEST_ROOT + "pkg/";
     final static String MIME_TEST_ROOT = PKG_TEST_ROOT + "mimetype/";
     final static String MANIFEST_TEST_ROOT = PKG_TEST_ROOT + "manifest/";
+    final static String THUMBNAIL_TEST_ROOT = PKG_TEST_ROOT + "thumbnail/";
     final static String XML_TEST_ROOT = TEST_ROOT + "xml/";
     final static String FILE_TEST_ROOT = TEST_ROOT + "files/";
     public final static String EMPTY_ODS = ZIP_TEST_ROOT + "empty.ods";
@@ -14,6 +15,7 @@ public class TestFiles {
     public final static String MIME_COMPRESSED_ODS = MIME_TEST_ROOT + "mime_compressed.ods";
     public final static String MIME_COMPRESSED_LAST_ODS = MIME_TEST_ROOT + "mime_compressed_last.ods";
     public final static String NO_MANIFEST_ODS = MANIFEST_TEST_ROOT + "no_manifest.ods";
+    public final static String NO_THUMBNAIL_ODS = THUMBNAIL_TEST_ROOT + "fingernail.ods";
     public final static String EMPTY_FODS = XML_TEST_ROOT + "empty.fods";
     public final static String FLAT_NOT_WF = XML_TEST_ROOT + "flat_not_wf.fods";
     public final static String FLAT_NOT_VALID = XML_TEST_ROOT + "flat_not_valid.fods";
