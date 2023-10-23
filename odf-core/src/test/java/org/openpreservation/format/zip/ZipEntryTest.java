@@ -28,9 +28,9 @@ public class ZipEntryTest {
                     ZipEntryImpl.of(null, 0, 0, 0, 0, false, null);
                 });
     }
+
     @Test
     public void testEqualsContract() {
         EqualsVerifier.forClass(ZipEntryImpl.class).verify();
     }
-
 }

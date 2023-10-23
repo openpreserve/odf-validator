@@ -29,12 +29,18 @@ public class ZipFileProcessorTest {
                 () -> {
                     ZipFileProcessor.of(null);
                 });
-        Path path = Paths.get("test");
-        assertFalse("Path should not exist", Files.exists(path));
+        Path missing = Paths.get("test");
+        assertFalse("Path should not exist", Files.exists(missing));
         assertThrows("IllegalArgumentException expected",
                 IllegalArgumentException.class,
                 () -> {
-                    ZipFileProcessor.of(path);
+                    ZipFileProcessor.of(missing);
+                });
+        Path dir = Paths.get(".");
+        assertThrows("IllegalArgumentException expected",
+                IllegalArgumentException.class,
+                () -> {
+                    ZipFileProcessor.of(dir);
                 });
         ZipFileProcessor processor = ZipFileProcessor.of(Paths.get(empty.getPath()));
         assertNotNull("Instantiated processor should not be null.", processor);
@@ -116,5 +122,14 @@ public class ZipFileProcessorTest {
             String mimetype = bos.toString();
             assertEquals("Mimetype string should id a spreadsheet.", "application/vnd.oasis.opendocument.spreadsheet", mimetype);
         }
+    }
+
+    @Test
+    public void testGetEntryInputStream() throws IOException {
+        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(Paths.get(empty.getPath()));
+        InputStream is = processor.getEntryInputStream("mimetype");
+        assertNotNull("Cached entry stream should not be null.", is);
+        InputStream nullStream = processor.getEntryInputStream("notThere");
+        assertNull("Cached entry stream should be null.", nullStream);
     }
 }

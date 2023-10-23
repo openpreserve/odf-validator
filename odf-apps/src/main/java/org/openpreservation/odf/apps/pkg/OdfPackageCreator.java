@@ -168,9 +168,7 @@ class OdfPackageCreator implements Callable<Integer> {
     }
 
     private static ZipArchiveEntry addEntryDetails(final ZipArchiveEntry zipEntry, final BasicFileAttributes attrs) {
-        zipEntry.setCreationTime(attrs.creationTime());
-        zipEntry.setLastAccessTime(attrs.lastAccessTime());
-        zipEntry.setLastModifiedTime(attrs.lastModifiedTime());
+        zipEntry.setTime(attrs.lastModifiedTime());
         zipEntry.setSize(attrs.size());
         return zipEntry;
     }
