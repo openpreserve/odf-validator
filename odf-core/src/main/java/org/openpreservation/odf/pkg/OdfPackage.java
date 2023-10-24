@@ -138,7 +138,7 @@ public interface OdfPackage {
      *
      * @return the Map of OdfDocument Sub-Documents for the package.
      */
-    public Map<String, OdfPackageDocument> getSubDocumentMap();
+    public Map<String, OdfPackageDocument> getDocumentMap();
 
     /**
      * Get the OdfDocument for any sub-document in the package.

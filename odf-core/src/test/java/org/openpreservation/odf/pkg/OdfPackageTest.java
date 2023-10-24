@@ -3,9 +3,11 @@ package org.openpreservation.odf.pkg;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -36,6 +38,20 @@ public class OdfPackageTest {
     @Test
     public void testEqualsContract() {
         EqualsVerifier.forClass(OdfPackageImpl.class).verify();
+    }
+
+    @Test
+    public void testWellFormedZip() throws IOException, URISyntaxException {
+        PackageParser parser = PackageParserImpl.getInstance();
+        OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        assertTrue("Package should be a well formed zip", pkg.isWellFormedZip());
+    }
+
+    @Test
+    public void testGetName() throws IOException, URISyntaxException {
+        PackageParser parser = PackageParserImpl.getInstance();
+        OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        assertEquals("Package name should be passed String", new File(TestFiles.EMPTY_ODS).getName(), pkg.getName());
     }
 
     @Test
@@ -132,5 +148,36 @@ public class OdfPackageTest {
         assertTrue("Package should have a thumbnail", pkg.hasThumbnail());
         pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.NO_THUMBNAIL_ODS).toURI()));
         assertFalse("Package should NOT have a thumbnail", pkg.hasThumbnail());
+    }
+
+    @Test
+    public void testXmlEntryPaths() throws IOException, URISyntaxException {
+        PackageParser parser = PackageParserImpl.getInstance();
+        OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        assertEquals("Package should have 6 XML entries", 6, pkg.getXmlEntryPaths().size());
+        assertTrue("Package should have a styles.xml entry", pkg.getXmlEntryPaths().contains("styles.xml"));
+        assertTrue("Package should have a content.xml entry", pkg.getXmlEntryPaths().contains("content.xml"));
+        assertTrue("Package should have a meta.xml entry", pkg.getXmlEntryPaths().contains("meta.xml"));
+        assertTrue("Package should have a settings.xml entry", pkg.getXmlEntryPaths().contains("settings.xml"));
+    }
+
+    @Test
+    public void testXmlParseResults() throws IOException, URISyntaxException {
+        PackageParser parser = PackageParserImpl.getInstance();
+        OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        for (String entryPath: pkg.getXmlEntryPaths()) {
+            assertNotNull("Package should have a parse result for " + entryPath, pkg.getEntryXmlParseResult(entryPath));
+            assertNotNull("Package should have an XML input stream for " + entryPath, pkg.getEntryXmlStream(entryPath));
+        }
+    }
+
+    @Test
+    public void testgetEntryStream() throws IOException, URISyntaxException {
+        PackageParser parser = PackageParserImpl.getInstance();
+        OdfPackage pkg = parser.parsePackage(Paths.get(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        for (FileEntry manifestEntry: pkg.getManifest().getEntries()) {
+            if (!manifestEntry.isDocument())
+                assertNotNull("Package should have an entry stream for " + manifestEntry.getFullPath(), pkg.getEntryStream(manifestEntry));
+        }
     }
 }

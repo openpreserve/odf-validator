@@ -70,19 +70,7 @@ final class OdfPackageImpl implements OdfPackage {
             return this;
         }
 
-        public Builder documentMap(final Map<String, OdfPackageDocument> documentMap) {
-            Objects.requireNonNull(documentMap, "documentMap cannot be null");
-            this.documentMap = documentMap;
-            return this;
-        }
-
-        public Builder document(final OdfPackageDocument document) {
-            Objects.requireNonNull(document, "document cannot be null");
-            this.documentMap.put("/", document);
-            return this;
-        }
-
-        public Builder subDocument(final String path, final OdfPackageDocument document) {
+        public Builder document(final String path, final OdfPackageDocument document) {
             Objects.requireNonNull(path, "path cannot be null");
             Objects.requireNonNull(document, "document cannot be null");
             this.documentMap.put(path, document);
@@ -279,8 +267,8 @@ final class OdfPackageImpl implements OdfPackage {
     }
 
     @Override
-    public Map<String, OdfPackageDocument> getSubDocumentMap() {
-        return this.getSubDocumentMap();
+    public Map<String, OdfPackageDocument> getDocumentMap() {
+        return this.documentMap;
     }
 
     @Override

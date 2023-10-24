@@ -83,7 +83,7 @@ final class PackageParserImpl implements PackageParser {
             return builder.build();
         }
         for (FileEntry docEntry : manifest.getDocumentEntries()) {
-            builder.subDocument(docEntry.getFullPath(), makeDocument(docEntry));
+            builder.document(docEntry.getFullPath(), makeDocument(docEntry));
         }
         for (Entry<String, OdfXmlDocument> docEntry : this.xmlDocumentMap.entrySet()) {
             if (isMetaInf(docEntry.getKey())) {

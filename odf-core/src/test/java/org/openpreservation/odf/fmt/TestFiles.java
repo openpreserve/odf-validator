@@ -6,6 +6,7 @@ public class TestFiles {
     final static String PKG_TEST_ROOT = TEST_ROOT + "pkg/";
     final static String MIME_TEST_ROOT = PKG_TEST_ROOT + "mimetype/";
     final static String MANIFEST_TEST_ROOT = PKG_TEST_ROOT + "manifest/";
+    final static String DOCUMENT_TEST_ROOT = PKG_TEST_ROOT + "document/";
     final static String THUMBNAIL_TEST_ROOT = PKG_TEST_ROOT + "thumbnail/";
     final static String XML_TEST_ROOT = TEST_ROOT + "xml/";
     final static String FILE_TEST_ROOT = TEST_ROOT + "files/";
@@ -22,6 +23,7 @@ public class TestFiles {
     public final static String FLAT_NO_VERSION = XML_TEST_ROOT + "no_version.fods";
     public final static String FLAT_NO_MIME = XML_TEST_ROOT + "no_mimetype.fods";
     public final static String EMPTY = FILE_TEST_ROOT + "empty.file";
+    public final static String STYLES_ONLY_DOC = DOCUMENT_TEST_ROOT + "styles_only_doc.ods";
     final static String K_TEXT = FILE_TEST_ROOT + "k.txt";
     final static String P_TEXT = FILE_TEST_ROOT + "p.txt";
     final static String PK_TEXT = FILE_TEST_ROOT + "pk.txt";

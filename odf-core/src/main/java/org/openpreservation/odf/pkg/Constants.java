@@ -11,6 +11,7 @@ public final class Constants {
     static final String PATH_MANIFEST = NAME_META_INF + NAME_MANIFEST;
     static final String NAME_CONTENT = "content.xml";
     static final String NAME_STYLES = "styles.xml";
+    static final String NAME_SETTINGS = "settings.xml";
     static final String NAME_META = "meta.xml";
     static final String NAME_MANIFEST_RDF = "manifest.rdf";
     static final String NAME_THUMBNAIL = "thumbnail.png";
@@ -23,7 +24,7 @@ public final class Constants {
     }
 
     private static final Set<String> odfXml() {
-        final String[] odfXml = { NAME_CONTENT, NAME_STYLES, NAME_META, NAME_MANIFEST_RDF };
+        final String[] odfXml = { NAME_CONTENT, NAME_STYLES, NAME_META, NAME_SETTINGS, NAME_MANIFEST_RDF };
         return new HashSet<>(Arrays.asList(odfXml));
     }
 }
