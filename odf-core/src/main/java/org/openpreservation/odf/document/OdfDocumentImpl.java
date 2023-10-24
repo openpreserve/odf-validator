@@ -48,7 +48,6 @@ final class OdfDocumentImpl implements OdfDocument {
     }
 
     private final OdfXmlDocument xmlDocument;
-
     private final Metadata metadata;
 
     private OdfDocumentImpl(final OdfXmlDocument xmlDocument, final Metadata metadata) {

@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,7 +21,6 @@ import org.openpreservation.format.zip.Zips;
 import org.openpreservation.odf.fmt.FormatSniffer;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.OdfFormats;
-import org.openpreservation.odf.xml.Metadata;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.openpreservation.utils.Checks;
@@ -31,7 +31,6 @@ final class PackageParserImpl implements PackageParser {
     private String mimetype = "";
     private ZipArchiveCache cache;
     private final Map<String, OdfXmlDocument> xmlDocumentMap = new HashMap<>();
-    private final Map<String, Metadata> metadataMap = new HashMap<>();
     private Manifest manifest = null;
 
     private PackageParserImpl() {
@@ -57,7 +56,6 @@ final class PackageParserImpl implements PackageParser {
     private final OdfPackage parsePackage(final Path toParse, final String name) throws IOException {
         this.mimetype = null;
         this.xmlDocumentMap.clear();
-        this.metadataMap.clear();
         this.manifest = null;
         Formats format = Formats.UNKNOWN;
         try {
@@ -66,17 +64,18 @@ final class PackageParserImpl implements PackageParser {
         } catch (IOException e) {
             return OdfPackageImpl.Builder.builder().name(name).format(format).archive(null).build();
         }
-        for (final ZipEntry entry : this.cache.getZipEntries()) {
-            try {
+        try {
+            for (final ZipEntry entry : this.cache.getZipEntries()) {
                 processEntry(entry);
-            } catch (ParserConfigurationException | SAXException e) {
-                throw new IOException(e);
             }
+            return this.makePackage(name, format);
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new IOException(e);
         }
-        return this.makePackage(name, format);
     }
 
-    private final OdfPackage makePackage(final String name, final Formats format) {
+    private final OdfPackage makePackage(final String name, final Formats format)
+            throws ParserConfigurationException, SAXException, IOException {
         OdfPackageImpl.Builder builder = OdfPackageImpl.Builder.builder().name(name).archive(this.cache).format(format)
                 .mimetype(mimetype)
                 .manifest(manifest);
@@ -86,19 +85,26 @@ final class PackageParserImpl implements PackageParser {
         for (FileEntry docEntry : manifest.getDocumentEntries()) {
             builder.subDocument(docEntry.getFullPath(), makeDocument(docEntry));
         }
+        for (Entry<String, OdfXmlDocument> docEntry : this.xmlDocumentMap.entrySet()) {
+            if (isMetaInf(docEntry.getKey())) {
+                builder.metaInf(docEntry.getKey(), docEntry.getValue().getParseResult());
+            }
+        }
+
         return builder.build();
     }
 
-    private final OdfPackageDocument makeDocument(FileEntry docEntry) {
+    private final OdfPackageDocument makeDocument(FileEntry docEntry)
+            throws ParserConfigurationException, SAXException, IOException {
         OdfPackageDocumentImpl.Builder builder = OdfPackageDocumentImpl.Builder.of(docEntry);
         final String keyPrefix = "/".equals(docEntry.getFullPath()) ? "" : docEntry.getFullPath();
         for (final String docName : Constants.ODF_XML) {
             final String docKey = keyPrefix + docName;
             if (this.xmlDocumentMap.containsKey(docKey)) {
                 builder.xmlDocument(docName, this.xmlDocumentMap.get(docKey));
-            }
-            if (this.metadataMap.containsKey(docKey)) {
-                builder.metadata(this.metadataMap.get(docKey));
+                if (Constants.NAME_META.equals(docName)) {
+                    builder.metadata(this.cache.getEntryInputStream(docKey));
+                }
             }
         }
         return builder.build();
@@ -124,7 +130,6 @@ final class PackageParserImpl implements PackageParser {
     private final void processEntry(final ZipEntry entry)
             throws ParserConfigurationException, SAXException, IOException {
         final String path = entry.getName();
-        final String name = new File(path).getName();
         if (entry.isDirectory()) {
             // No need to process directories
             return;
@@ -135,31 +140,37 @@ final class PackageParserImpl implements PackageParser {
                     StandardCharsets.UTF_8);
             return;
         }
-        if (isOdfXml(path)) {
-            try (InputStream is = this.cache.getEntryInputStream(path)) {
-                OdfXmlDocument xmlDoc = OdfXmlDocuments.xmlDocumentFrom(is);
-                if (xmlDoc != null) {
-                    this.xmlDocumentMap.put(path, xmlDoc);
-                    if (!xmlDoc.getParseResult().isWellFormed()) {
-                        return;
-                    }
-                }
+        if (!isOdfXml(path) && !isMetaInf(path)) {
+            return;
+        }
+        try (InputStream is = this.cache.getEntryInputStream(path)) {
+            OdfXmlDocument xmlDoc = OdfXmlDocuments.xmlDocumentFrom(is);
+            if (xmlDoc != null) {
+                this.xmlDocumentMap.put(path, xmlDoc);
             }
         }
-        this.parseOdfXml(path, name);
+        this.parseOdfXml(path);
     }
 
     private final boolean isOdfXml(final String entrypath) {
-        final String name = new File(entrypath).getName();
-        return Constants.ODF_XML.contains(name);
+        return Constants.ODF_XML.contains(new File(entrypath).getName());
     }
 
-    private final void parseOdfXml(final String entryPath, final String entryName)
+    static final boolean isDsig(final String entrypath) {
+        if (isMetaInf(entrypath)) {
+            return entrypath.contains(Constants.SIG_TERM);
+        }
+        return false;
+    }
+
+    static final boolean isMetaInf(final String entrypath) {
+        return entrypath.startsWith(Constants.NAME_META_INF);
+    }
+
+    private final void parseOdfXml(final String entryPath)
             throws ParserConfigurationException, SAXException, IOException {
         if (Constants.PATH_MANIFEST.equals(entryPath)) {
             this.manifest = ManifestImpl.from(this.cache.getEntryInputStream(entryPath));
-        } else if (Constants.NAME_META.equals(entryName)) {
-            this.metadataMap.put(entryPath, OdfXmlDocuments.metadataFrom(this.cache.getEntryInputStream(entryPath)));
         }
     }
 }

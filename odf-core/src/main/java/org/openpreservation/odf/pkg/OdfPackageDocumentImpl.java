@@ -1,14 +1,20 @@
 package org.openpreservation.odf.pkg;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.openpreservation.odf.xml.DocumentType;
 import org.openpreservation.odf.xml.Metadata;
 import org.openpreservation.odf.xml.OdfXmlDocument;
+import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.openpreservation.odf.xml.Version;
+import org.xml.sax.SAXException;
 
 final class OdfPackageDocumentImpl implements OdfPackageDocument {
     static final class Builder {
@@ -34,12 +40,14 @@ final class OdfPackageDocumentImpl implements OdfPackageDocument {
             return this;
         }
 
-        public Builder metadata(Metadata metadata) {
-            this.metadata = metadata;
+        public Builder metadata(final InputStream metadataStream) throws ParserConfigurationException, SAXException, IOException {
+            Objects.requireNonNull(metadataStream, "metadataStream cannot be null");
+            this.metadata = OdfXmlDocuments.metadataFrom(metadataStream);
             return this;
         }
 
-        public Builder xmlDocumentMap(Map<String, OdfXmlDocument> xmlDocumentMap) {
+        public Builder xmlDocumentMap(final Map<String, OdfXmlDocument> xmlDocumentMap) {
+            Objects.requireNonNull(xmlDocumentMap, "xmlDocumentMap cannot be null");
             this.xmlDocumentMap = xmlDocumentMap;
             return this;
         }

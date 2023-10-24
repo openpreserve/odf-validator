@@ -28,4 +28,5 @@ public class TestFiles {
     public final static String FAKEMIME_TEXT = FILE_TEST_ROOT + "mimefake.txt";
     final static String MIMESID_ODS = FILE_TEST_ROOT + "mimesig-ods.txt";
     final static String MIMESID_OTS = FILE_TEST_ROOT + "mimesig-ots.txt";
+    public final static String DSIG_EXAMPLE = TEST_ROOT + "dsigs.odt";
 }

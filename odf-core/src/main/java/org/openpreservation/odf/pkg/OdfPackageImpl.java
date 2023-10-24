@@ -38,6 +38,7 @@ final class OdfPackageImpl implements OdfPackage {
         private Manifest manifest;
 
         private Map<String, OdfPackageDocument> documentMap = new HashMap<>();
+        private Map<String, ParseResult> metaInfMap = new HashMap<>();
 
         private Builder() {
         }
@@ -88,9 +89,16 @@ final class OdfPackageImpl implements OdfPackage {
             return this;
         }
 
+        public Builder metaInf(final String path, final ParseResult parseResult) {
+            Objects.requireNonNull(path, "path cannot be null");
+            Objects.requireNonNull(parseResult, "parseResult cannot be null");
+            this.metaInfMap.put(path, parseResult);
+            return this;
+        }
+
         public OdfPackage build() {
             return new OdfPackageImpl(this.name, this.archive, this.format, this.mimetype, this.manifest,
-                    this.documentMap);
+                    this.documentMap, this.metaInfMap);
         }
     }
 
@@ -101,15 +109,17 @@ final class OdfPackageImpl implements OdfPackage {
     private final String name;
 
     private final Map<String, OdfPackageDocument> documentMap;
+    private final Map<String, ParseResult> metaInfMap;
 
     private OdfPackageImpl(final String name, final ZipArchiveCache archive, final Formats format,
-            final String mimetype, final Manifest manifest, final Map<String, OdfPackageDocument> documentMap) {
+            final String mimetype, final Manifest manifest, final Map<String, OdfPackageDocument> documentMap, final Map<String, ParseResult> metaInfMap) {
         super();
         this.archive = archive;
         this.format = format;
         this.mimetype = mimetype;
         this.manifest = manifest;
         this.documentMap = Collections.unmodifiableMap(documentMap);
+        this.metaInfMap = Collections.unmodifiableMap(metaInfMap);
         this.name = name;
     }
 
@@ -171,6 +181,9 @@ final class OdfPackageImpl implements OdfPackage {
     @Override
     public ParseResult getEntryXmlParseResult(final String path) {
         Path filePath = Paths.get(path);
+        if (PackageParserImpl.isMetaInf(filePath.toString())) {
+            return this.metaInfMap.get(filePath.toString());
+        }
         Path parent = filePath.getParent();
         return this.documentMap.get((parent == null) ? "/" : parent).getXmlDocument(filePath.getFileName().toString())
                 .getParseResult();
@@ -179,6 +192,9 @@ final class OdfPackageImpl implements OdfPackage {
     @Override
     public List<String> getXmlEntryPaths() {
         List<String> paths = new ArrayList<>();
+        for (Entry<String, ParseResult> metaEntry : this.metaInfMap.entrySet()) {
+            paths.add(metaEntry.getKey());
+        }
         for (Entry<String, OdfPackageDocument> docEntry : this.documentMap.entrySet()) {
             final String docKey = "/".equals(docEntry.getKey()) ? "" : docEntry.getKey();
             for (Entry<String, OdfXmlDocument> xmlEntry : docEntry.getValue().getXmlDocumentMap().entrySet()) {
@@ -203,6 +219,7 @@ final class OdfPackageImpl implements OdfPackage {
         result = prime * result + ((mimetype == null) ? 0 : mimetype.hashCode());
         result = prime * result + ((manifest == null) ? 0 : manifest.hashCode());
         result = prime * result + ((documentMap == null) ? 0 : documentMap.hashCode());
+        result = prime * result + ((metaInfMap == null) ? 0 : metaInfMap.hashCode());
         return result;
     }
 
@@ -241,6 +258,11 @@ final class OdfPackageImpl implements OdfPackage {
             if (other.documentMap != null)
                 return false;
         } else if (!documentMap.equals(other.documentMap))
+            return false;
+        if (metaInfMap == null) {
+            if (other.metaInfMap != null)
+                return false;
+        } else if (!metaInfMap.equals(other.metaInfMap))
             return false;
         return true;
     }
