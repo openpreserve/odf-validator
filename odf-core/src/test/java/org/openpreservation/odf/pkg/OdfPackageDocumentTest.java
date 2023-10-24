@@ -2,6 +2,7 @@ package org.openpreservation.odf.pkg;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,9 @@ public class OdfPackageDocumentTest {
         assertNotNull("Document should not be null", doc);
         assertEquals("Document should have a root entry name", "/", doc.getFileEntry().getFullPath());
         assertEquals("Document mediatype should be equal to mimetype entry", pkg.getMimeType(), doc.getFileEntry().getMediaType());
+        assertNotNull(doc.getXmlDocument("styles.xml"));
+        assertNotNull(doc.getXmlDocument("content.xml"));
+        assertEquals(doc.getXmlDocument("content.xml"), doc.getXmlDocument());
     }
 
     @Test
@@ -34,5 +38,8 @@ public class OdfPackageDocumentTest {
         assertNotNull("Document should not be null", subDoc);
         assertEquals("Document should have a root entry name", "Configurations2/", subDoc.getFileEntry().getFullPath());
         assertEquals("Document mediatype should be equal to mimetype entry", "application/vnd.sun.xml.ui.configuration", subDoc.getFileEntry().getMediaType());
+        assertNull(subDoc.getXmlDocument("styles.xml"));
+        assertNull(subDoc.getXmlDocument("content.xml"));
+        assertNull(subDoc.getXmlDocument());
     }
 }
