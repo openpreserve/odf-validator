@@ -1,4 +1,4 @@
-package org.openpreservation.odf.pkg;
+package org.openpreservation.odf.validation;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,12 @@ import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.fmt.OdfFormats;
-import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.pkg.Constants;
+import org.openpreservation.odf.pkg.FileEntry;
+import org.openpreservation.odf.pkg.Manifest;
+import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.xml.Namespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
 import org.openpreservation.odf.xml.Version;
@@ -83,12 +88,12 @@ final class ValidatingParserImpl implements ValidatingParser {
         final ValidationReport report = new ValidationReport(odfPackage.getName());
         report.add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
         if (!odfPackage.hasManifest()) {
-            report.add(Constants.PATH_MANIFEST, FACTORY.getError("PKG-4"));
+            report.add(OdfPackages.PATH_MANIFEST, FACTORY.getError("PKG-4"));
         } else {
-            report.add(Constants.PATH_MANIFEST, validateManifest(odfPackage));
+            report.add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));
         }
         if (!odfPackage.hasThumbnail()) {
-            report.add(Constants.PATH_THUMBNAIL, FACTORY.getWarning("PKG-18"));
+            report.add(OdfPackages.PATH_THUMBNAIL, FACTORY.getWarning("PKG-18"));
         }
         report.addAll(this.auditZipEntries(odfPackage));
         report.addAll(this.validateOdfXmlEntries(odfPackage));
@@ -130,7 +135,7 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     private Version getVersionFromPath(final OdfPackage odfPackage, final String path) {
-        String version = (Constants.PATH_MANIFEST.equals(path) || (PackageParserImpl.isDsig(path))) ? odfPackage.getManifest().getVersion()
+        String version = (OdfPackages.PATH_MANIFEST.equals(path) || (OdfPackages.isDsig(path))) ? odfPackage.getManifest().getVersion()
                 : (getVersionFromParseResult(odfPackage.getEntryXmlParseResult(path)));
         return (version == null) ? Version.ODF_13 : Version.fromVersion(version);
     }
@@ -176,14 +181,22 @@ final class ValidatingParserImpl implements ValidatingParser {
     private List<Message> validateManifest(final OdfPackage odfPackage) {
         final List<Message> messages = new ArrayList<>();
         Manifest manifest = odfPackage.getManifest();
-        if (manifest.getRootMediaType() != null && odfPackage.hasMimeEntry()
-                && !manifest.getRootMediaType().equals(odfPackage.getMimeType())) {
+        if (manifest.getEntry("/") == null) {
+            if (!odfPackage.hasMimeEntry()) {
+                messages.add(FACTORY.getWarning("PKG-19"));
+            } else {
+                messages.add(FACTORY.getError("PKG-11"));
+            }
+        } else if (!hasManifestRootMime(manifest) || (odfPackage.hasMimeEntry()
+                && !manifest.getRootMediaType().equals(odfPackage.getMimeType()))) {
             messages.add(FACTORY.getError("PKG-12", manifest.getRootMediaType(), odfPackage.getMimeType()));
-        } else if (manifest.getRootMediaType() == null && odfPackage.hasMimeEntry()) {
-            messages.add(FACTORY.getWarning("PKG-11"));
         }
         messages.addAll(checkManifestEntries(odfPackage));
         return messages;
+    }
+
+    private boolean hasManifestRootMime(final Manifest manifest) {
+        return manifest.getRootMediaType() != null;
     }
 
     private List<Message> checkManifestEntries(final OdfPackage odfPackage) {
@@ -214,8 +227,8 @@ final class ValidatingParserImpl implements ValidatingParser {
                 // Entries SHALL be uncompressesed (Stored) or use deflate compression
                 messages.add(FACTORY.getError("PKG-1", zipEntry.getName()));
             }
-            if (zipEntry.getName().startsWith(Constants.NAME_META_INF)
-                    && (zipEntry.isDirectory() && !Constants.NAME_META_INF.equals(zipEntry.getName()))) {
+            if (zipEntry.getName().startsWith(OdfPackages.NAME_META_INF)
+                    && (zipEntry.isDirectory() && !OdfPackages.NAME_META_INF.equals(zipEntry.getName()))) {
                 messages.add(FACTORY.getError("PKG-3", zipEntry.getName()));
             }
             if (zipEntry.isDirectory() || !isLegitimateManifestEntry(zipEntry.getName())) {
@@ -231,16 +244,16 @@ final class ValidatingParserImpl implements ValidatingParser {
 
     private final boolean isLegitimateManifestEntry(final String entryPath) {
         return !(OdfFormats.MIMETYPE.equals(entryPath)
-                || Constants.PATH_MANIFEST.equals(entryPath)
-                || entryPath.startsWith(Constants.NAME_META_INF));
+                || OdfPackages.PATH_MANIFEST.equals(entryPath)
+                || entryPath.startsWith(OdfPackages.NAME_META_INF));
     }
 
     private final Message getManifestError(final String entryPath) {
         if (OdfFormats.MIMETYPE.equals(entryPath)) {
             return FACTORY.getError("PKG-15", entryPath);
-        } else if (Constants.PATH_MANIFEST.equals(entryPath)) {
+        } else if (OdfPackages.PATH_MANIFEST.equals(entryPath)) {
             return FACTORY.getError("PKG-14", entryPath);
-        } else if (entryPath.startsWith(Constants.NAME_META_INF)) {
+        } else if (entryPath.startsWith(OdfPackages.NAME_META_INF)) {
             return FACTORY.getInfo("PKG-13", entryPath);
         }
         return null;

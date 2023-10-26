@@ -22,11 +22,6 @@ public class ZipEntryTest {
                 () -> {
                     ZipEntryImpl.of(entry);
                 });
-        assertThrows("NullPointerException expected",
-                NullPointerException.class,
-                () -> {
-                    ZipEntryImpl.of(null, 0, 0, 0, 0, false, null);
-                });
     }
 
     @Test

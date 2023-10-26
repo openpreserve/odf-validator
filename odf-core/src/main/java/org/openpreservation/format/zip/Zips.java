@@ -74,4 +74,10 @@ public final class Zips {
         }
         return ZipFileProcessor.of(path);
     }
+
+    public static final ZipEntry zipEntryInstance(final String name, final int size, final int compressedSize, int crc32,
+            int method, final boolean isDirectory, final byte[] extra) {
+        Objects.requireNonNull(name, String.format(Checks.NOT_NULL, "String", "name"));
+        return ZipEntryImpl.of(name, size, compressedSize, crc32, method, isDirectory, extra);
+    }
 }

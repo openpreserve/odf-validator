@@ -17,17 +17,9 @@ public final class OdfPackages {
      * The ODF mimetype entry name.
      */
     public static final String MIMETYPE = OdfFormats.MIMETYPE;
-
-    /**
-     * Get a validating parser instance.
-     *
-     * @return a validating parser instance
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     */
-    public static final ValidatingParser getValidatingParser() throws ParserConfigurationException, SAXException {
-        return ValidatingParserImpl.getInstance();
-    }
+    public static final String PATH_MANIFEST = Constants.PATH_MANIFEST;
+    public static final String NAME_META_INF = Constants.NAME_META_INF;
+    public static final String PATH_THUMBNAIL = Constants.PATH_THUMBNAIL;
 
     /**
      * get a package parser instance.
@@ -51,7 +43,6 @@ public final class OdfPackages {
         try (ZipFile zipFile = new ZipFile(toCheck.toFile())) {
             return true;
         } catch (final ZipException e) {
-            e.printStackTrace();
             /**
              * No need to report this as an error as it simply means that the file is not a
              * ZIP
@@ -71,6 +62,16 @@ public final class OdfPackages {
      */
     public static final boolean isZip(final Path toCheck) throws IOException {
         return FormatSniffer.sniff(toCheck, 10) == Formats.ZIP;
+    }
+
+    /**
+     * Check if the given path is an ODF spec complian dsig path.
+     *
+     * @param path the path to check
+     * @return true if the path is a valid dsig path, else false
+     */
+    public static final boolean isDsig(final String path) {
+        return PackageParserImpl.isDsig(path);
     }
 
     private OdfPackages() {

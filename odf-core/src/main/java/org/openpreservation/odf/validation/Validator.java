@@ -17,7 +17,6 @@ import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.ValidatingParser;
 import org.openpreservation.odf.xml.Namespaces;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
@@ -46,7 +45,7 @@ public class Validator {
             throw new FileNotFoundException("Path parameter is not a file: " + toValidate);
         }
         if (OdfPackages.isZip(toValidate)) {
-            ValidatingParser parser = OdfPackages.getValidatingParser();
+            ValidatingParser parser = Validators.getValidatingParser();
             OdfPackage pckg = parser.parsePackage(toValidate);
             return parser.validatePackage(pckg);
         }

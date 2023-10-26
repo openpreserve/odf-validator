@@ -62,7 +62,7 @@ final class PackageParserImpl implements PackageParser {
             format = sniff(toParse);
             this.cache = Zips.zipArchiveCacheInstance(toParse);
         } catch (IOException e) {
-            return OdfPackageImpl.Builder.builder().name(name).format(format).archive(null).build();
+            return OdfPackageImpl.Builder.builder().name(name).format(format).build();
         }
         try {
             for (final ZipEntry entry : this.cache.getZipEntries()) {

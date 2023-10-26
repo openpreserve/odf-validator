@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -40,6 +41,17 @@ public class ZipsTest {
         Path tempFolder = temporaryFolder.newFolder("extInstTest").toPath();
         assertNotNull("Extractor should not return a null instance", Zips.extractorInstance(tempFolder, false));
         assertNotNull("Extractor should not return a null instance", Zips.extractorInstance(tempFolder, true));
+    }
+
+    @Test
+    public void testZipEntryInstance() {
+    final String name = null;
+    byte[] extra = new byte[0];
+    assertThrows("NullPointerException expected",
+            NullPointerException.class,
+            () -> {
+                ZipEntryImpl.of(name, 0, 0, 0, 0, false, extra);
+            });
     }
 
     @Test

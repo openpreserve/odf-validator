@@ -1,8 +1,9 @@
-package org.openpreservation.odf.pkg;
+package org.openpreservation.odf.validation;
 
 import java.io.IOException;
 
-import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.PackageParser;
 
 public interface ValidatingParser extends PackageParser {
     /**

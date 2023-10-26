@@ -12,10 +12,26 @@ public class TestFiles {
     final static String FILE_TEST_ROOT = TEST_ROOT + "files/";
     public final static String EMPTY_ODS = ZIP_TEST_ROOT + "empty.ods";
     public final static String NO_MIME_ROOT_ODS = MIME_TEST_ROOT + "no_mime_root.ods";
+    public final static String NO_MIME_NO_ROOT_ODS = MIME_TEST_ROOT + "no_mime_no_root.ods";
+    public final static String BADLY_FORMED_PKG = PKG_TEST_ROOT + "badly_formed.ods";
+    public final static String MIME_EXTRA_ODS = MIME_TEST_ROOT + "mime_extra.ods";
     public final static String MIME_LAST_ODS = MIME_TEST_ROOT + "mime_last.ods";
     public final static String MIME_COMPRESSED_ODS = MIME_TEST_ROOT + "mime_compressed.ods";
     public final static String MIME_COMPRESSED_LAST_ODS = MIME_TEST_ROOT + "mime_compressed_last.ods";
     public final static String NO_MANIFEST_ODS = MANIFEST_TEST_ROOT + "no_manifest.ods";
+    public final static String MANIFEST_ROOT_NO_MIME_ODS = MANIFEST_TEST_ROOT + "manifest_root_no_mime.ods";
+    public final static String MANIFEST_DIFF_MIME_ODS = MANIFEST_TEST_ROOT + "different_valid_mimes.ods";
+    public final static String MANIFEST_RAND_MIMETYPE_ODS = MANIFEST_TEST_ROOT + "different_rand_mimetype.ods";
+    public final static String MANIFEST_RAND_ROOT_MIME_ODS = MANIFEST_TEST_ROOT + "different_rand_mime_manifest.ods";
+    public final static String MANIFEST_NO_ROOT_MIME_ODS = MANIFEST_TEST_ROOT + "no_root_mime.ods";
+    public final static String MANIFEST_EMPTY_ROOT_MIME_ODS = MANIFEST_TEST_ROOT + "empty_root_mime.ods";
+    public final static String MANIFEST_NO_ROOT_MIMETYPE_ODS = MANIFEST_TEST_ROOT + "no_root_with_mimetype.ods";
+    public final static String MANIFEST_ENTRY_ODS = MANIFEST_TEST_ROOT + "manifest_entry.ods";
+    public final static String MANIFEST_MISSING_ENTRY_ODS = MANIFEST_TEST_ROOT + "manifest_missing_entry.ods";
+    public final static String MANIFEST_MISSING_XML_ENTRY_ODS = MANIFEST_TEST_ROOT + "manifest_missing_xml_entry.ods";
+    public final static String MISSING_FILE_ODS = MANIFEST_TEST_ROOT + "missing_file.ods";
+    public final static String MIMETYPE_ENTRY_ODS = MANIFEST_TEST_ROOT + "mimetype_entry.ods";
+    public final static String METAINF_ENTRY_ODT = MANIFEST_TEST_ROOT + "metainf_entry.odt";
     public final static String NO_THUMBNAIL_ODS = THUMBNAIL_TEST_ROOT + "fingernail.ods";
     public final static String EMPTY_FODS = XML_TEST_ROOT + "empty.fods";
     public final static String FLAT_NOT_WF = XML_TEST_ROOT + "flat_not_wf.fods";
@@ -28,7 +44,7 @@ public class TestFiles {
     final static String P_TEXT = FILE_TEST_ROOT + "p.txt";
     final static String PK_TEXT = FILE_TEST_ROOT + "pk.txt";
     public final static String FAKEMIME_TEXT = FILE_TEST_ROOT + "mimefake.txt";
-    final static String MIMESID_ODS = FILE_TEST_ROOT + "mimesig-ods.txt";
-    final static String MIMESID_OTS = FILE_TEST_ROOT + "mimesig-ots.txt";
+    final static String MIMESIG_ODS = FILE_TEST_ROOT + "mimesig-ods.txt";
+    final static String MIMESIG_OTS = FILE_TEST_ROOT + "mimesig-ots.txt";
     public final static String DSIG_EXAMPLE = TEST_ROOT + "dsigs.odt";
 }

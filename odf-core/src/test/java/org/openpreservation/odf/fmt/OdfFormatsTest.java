@@ -75,14 +75,14 @@ public class OdfFormatsTest {
 
     @Test
     public void testIsPackageStreamOdsMime() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.MIMESID_ODS);
-        assertTrue(String.format("%s IS an ods package.", TestFiles.MIMESID_ODS), OdfFormats.isPackage(is));
+        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.MIMESIG_ODS);
+        assertTrue(String.format("%s IS an ods package.", TestFiles.MIMESIG_ODS), OdfFormats.isPackage(is));
     }
 
     @Test
     public void testIsPackageStreamOtsMime() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.MIMESID_OTS);
-        assertTrue(String.format("%s IS an ots package.", TestFiles.MIMESID_OTS), OdfFormats.isPackage(is));
+        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.MIMESIG_OTS);
+        assertTrue(String.format("%s IS an ots package.", TestFiles.MIMESIG_OTS), OdfFormats.isPackage(is));
     }
 
     @Test
