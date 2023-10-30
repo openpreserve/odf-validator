@@ -173,7 +173,8 @@ final class OdfPackageImpl implements OdfPackage {
             return this.metaInfMap.get(filePath.toString());
         }
         Path parent = filePath.getParent();
-        return this.documentMap.get((parent == null) ? "/" : parent).getXmlDocument(filePath.getFileName().toString())
+        OdfPackageDocument doc = this.documentMap.get((parent == null) ? "/" : parent.toString());
+        return (doc == null) ? null : doc.getXmlDocument(filePath.getFileName().toString())
                 .getParseResult();
     }
 

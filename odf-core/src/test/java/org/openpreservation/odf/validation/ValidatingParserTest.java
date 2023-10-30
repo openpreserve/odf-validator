@@ -307,4 +307,21 @@ public class ValidatingParserTest {
         assertTrue("NO_THUMBNAIL_ODS should be valid", report.isValid());
         assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-18")).count() > 0);
     }
+
+    @Test
+    public void testNoEmbeddedWord() throws ParserConfigurationException, SAXException, IOException {
+        ValidatingParser parser = Validators.getValidatingParser();
+        OdfPackage pkg = parser.parsePackage(ClassLoader.getSystemResourceAsStream(TestFiles.EMBEDDED_WORD), TestFiles.EMBEDDED_WORD);
+        ValidationReport report = parser.validatePackage(pkg);
+        assertTrue("EMBEDDED_WORD should be valid", report.isValid());
+    }
+
+    @Test
+    public void testPasswordEncrypted() throws ParserConfigurationException, SAXException, IOException {
+        ValidatingParser parser = Validators.getValidatingParser();
+        OdfPackage pkg = parser.parsePackage(ClassLoader.getSystemResourceAsStream(TestFiles.ENCRYPTED_PASSWORDS), TestFiles.ENCRYPTED_PASSWORDS);
+        ValidationReport report = parser.validatePackage(pkg);
+        assertFalse("ENCRYPTED_PASSWORDS should NOT be valid", report.isValid());
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("XML-3")).count() > 0);
+    }
 }

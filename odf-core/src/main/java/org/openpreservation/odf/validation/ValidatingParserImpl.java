@@ -22,7 +22,6 @@ import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.fmt.OdfFormats;
-import org.openpreservation.odf.pkg.Constants;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.Manifest;
 import org.openpreservation.odf.pkg.OdfPackage;
@@ -107,6 +106,9 @@ final class ValidatingParserImpl implements ValidatingParser {
         final Map<String, List<Message>> messages = new HashMap<>();
         for (final String xmlPath : odfPackage.getXmlEntryPaths()) {
             ParseResult parseResult = odfPackage.getEntryXmlParseResult(xmlPath);
+            if (parseResult == null) {
+                continue;
+            }
             List<Message> messageList = (parseResult.isWellFormed())
                     ? validateOdfXmlDocument(odfPackage, xmlPath, parseResult)
                     : parseResult.getMessages();

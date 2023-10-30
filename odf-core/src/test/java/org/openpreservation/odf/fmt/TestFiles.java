@@ -8,6 +8,8 @@ public class TestFiles {
     final static String MANIFEST_TEST_ROOT = PKG_TEST_ROOT + "manifest/";
     final static String DOCUMENT_TEST_ROOT = PKG_TEST_ROOT + "document/";
     final static String THUMBNAIL_TEST_ROOT = PKG_TEST_ROOT + "thumbnail/";
+    final static String EMBEDDED_TEST_ROOT = PKG_TEST_ROOT + "embedded/";
+    final static String ENCRYPTED_TEST_ROOT = PKG_TEST_ROOT + "encrypted/";
     final static String XML_TEST_ROOT = TEST_ROOT + "xml/";
     final static String FILE_TEST_ROOT = TEST_ROOT + "files/";
     public final static String EMPTY_ODS = ZIP_TEST_ROOT + "empty.ods";
@@ -33,6 +35,8 @@ public class TestFiles {
     public final static String MIMETYPE_ENTRY_ODS = MANIFEST_TEST_ROOT + "mimetype_entry.ods";
     public final static String METAINF_ENTRY_ODT = MANIFEST_TEST_ROOT + "metainf_entry.odt";
     public final static String NO_THUMBNAIL_ODS = THUMBNAIL_TEST_ROOT + "fingernail.ods";
+    public final static String EMBEDDED_WORD = EMBEDDED_TEST_ROOT + "WithEmbeddedwordDoc.ods";
+    public final static String ENCRYPTED_PASSWORDS = ENCRYPTED_TEST_ROOT + "WithPassword.ods";
     public final static String EMPTY_FODS = XML_TEST_ROOT + "empty.fods";
     public final static String FLAT_NOT_WF = XML_TEST_ROOT + "flat_not_wf.fods";
     public final static String FLAT_NOT_VALID = XML_TEST_ROOT + "flat_not_valid.fods";
