@@ -100,6 +100,6 @@ public class PackageParserTest {
         InputStream is = TestFiles.DSIG_EXAMPLE.openStream();
         OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_EXAMPLE.toString());
         ParseResult result = pkg.getEntryXmlParseResult("META-INF" + File.separator + "documentsignatures.xml");
-        assertTrue("Package should have a well formed dsig", result.isWellFormed());
+        assertTrue("Package should have a well formed dsig for META-INF" + File.separator + "documentsignatures.xml" , result.isWellFormed());
     }
 }
