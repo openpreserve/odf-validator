@@ -169,8 +169,8 @@ final class OdfPackageImpl implements OdfPackage {
     @Override
     public ParseResult getEntryXmlParseResult(final String path) {
         Path filePath = Paths.get(path);
-        if (PackageParserImpl.isMetaInf(filePath.toString())) {
-            return this.metaInfMap.get(filePath.toString());
+        if (PackageParserImpl.isMetaInf(path)) {
+            return this.metaInfMap.get(path);
         }
         Path parent = filePath.getParent();
         OdfPackageDocument doc = this.documentMap.get((parent == null) ? "/" : parent.toString());
