@@ -99,7 +99,8 @@ public class PackageParserTest {
         PackageParser parser = OdfPackages.getPackageParser();
         InputStream is = TestFiles.DSIG_EXAMPLE.openStream();
         OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_EXAMPLE.toString());
-        ParseResult result = pkg.getEntryXmlParseResult("META-INF" + File.separator + "documentsignatures.xml");
-        assertTrue("Package should have a well formed dsig for META-INF" + File.separator + "documentsignatures.xml" , result.isWellFormed());
+        ParseResult result = pkg.getEntryXmlParseResult("META-INF/documentsignatures.xml");
+        assertNotNull("Dsig file META-INF/documentsignatures.xml result should not be null" , result);
+        assertTrue("Package should have a well formed dsig for META-INF/documentsignatures.xml" , result.isWellFormed());
     }
 }
