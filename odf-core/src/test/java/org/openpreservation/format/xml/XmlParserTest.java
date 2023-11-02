@@ -19,7 +19,7 @@ public class XmlParserTest {
     @Test
     public void testParseWF() throws ParserConfigurationException, SAXException, IOException {
         XmlParser xmlChecker = new XmlParser();
-        ParseResult result = xmlChecker.parse(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
+        ParseResult result = xmlChecker.parse(TestFiles.EMPTY_FODS.openStream());
         assertNotNull("Parse result is not null", result);
         assertTrue("Parse result should be well formed", result.isWellFormed());
         assertFalse("Parse result should have root name", result.getRootName().isBlank());
@@ -33,7 +33,7 @@ public class XmlParserTest {
     @Test
     public void testParseNotWF() throws ParserConfigurationException, SAXException, IOException {
         XmlParser xmlChecker = new XmlParser();
-        ParseResult result = xmlChecker.parse(ClassLoader.getSystemResourceAsStream(TestFiles.FLAT_NOT_WF));
+        ParseResult result = xmlChecker.parse(TestFiles.FLAT_NOT_WF.openStream());
         assertNotNull("Parse result is not null", result);
         assertFalse("Parse result should NOT be well formed", result.isWellFormed());
         assertFalse("Parse result should have root name", result.getRootName().isBlank());
@@ -47,7 +47,7 @@ public class XmlParserTest {
     @Test
     public void testParseNotValid() throws ParserConfigurationException, SAXException, IOException {
         XmlParser xmlChecker = new XmlParser();
-        ParseResult result = xmlChecker.parse(ClassLoader.getSystemResourceAsStream(TestFiles.FLAT_NOT_VALID));
+        ParseResult result = xmlChecker.parse(TestFiles.FLAT_NOT_VALID.openStream());
         assertNotNull("Parse result is not null", result);
         assertTrue("Parse result should be well formed", result.isWellFormed());
         assertFalse("Parse result should have root name", result.getRootName().isBlank());
@@ -61,7 +61,7 @@ public class XmlParserTest {
     @Test
     public void testParseNotXML() throws ParserConfigurationException, SAXException, IOException {
         XmlParser xmlChecker = new XmlParser();
-        ParseResult result = xmlChecker.parse(ClassLoader.getSystemResourceAsStream(TestFiles.FAKEMIME_TEXT));
+        ParseResult result = xmlChecker.parse(TestFiles.FAKEMIME_TEXT.openStream());
         assertNotNull("Parse result is not null", result);
         assertFalse("Parse result should NOT be well formed", result.isWellFormed());
         assertTrue("Parse result should NOT have root name", result.getRootName().isBlank());
@@ -75,7 +75,7 @@ public class XmlParserTest {
     @Test
     public void testParseNoVersion() throws ParserConfigurationException, SAXException, IOException {
         XmlParser xmlChecker = new XmlParser();
-        ParseResult result = xmlChecker.parse(ClassLoader.getSystemResourceAsStream(TestFiles.FLAT_NO_VERSION));
+        ParseResult result = xmlChecker.parse(TestFiles.FLAT_NO_VERSION.openStream());
         assertNotNull("Parse result is not null", result);
         assertTrue("Parse result should be well formed", result.isWellFormed());
         assertFalse("Parse result should have root name", result.getRootName().isEmpty());
@@ -90,7 +90,7 @@ public class XmlParserTest {
     @Test
     public void testParseNoMime() throws ParserConfigurationException, SAXException, IOException {
         XmlParser xmlChecker = new XmlParser();
-        ParseResult result = xmlChecker.parse(ClassLoader.getSystemResourceAsStream(TestFiles.FLAT_NO_MIME));
+        ParseResult result = xmlChecker.parse(TestFiles.FLAT_NO_MIME.openStream());
         assertNotNull("Parse result is not null", result);
         assertFalse("Parse result should have root name", result.getRootName().isBlank());
         assertTrue("Parse result should be well formed", result.isWellFormed());
@@ -105,7 +105,7 @@ public class XmlParserTest {
     @Test
     public void testParseEmpty() throws ParserConfigurationException, SAXException, IOException {
         XmlParser xmlChecker = new XmlParser();
-        ParseResult result = xmlChecker.parse(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY));
+        ParseResult result = xmlChecker.parse(TestFiles.EMPTY.openStream());
         assertNotNull("Parse result is not null", result);
         assertFalse("Parse result should NOT be well formed", result.isWellFormed());
         assertTrue("Parse result should NOT have root name", result.getRootName().isBlank());

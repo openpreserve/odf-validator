@@ -33,7 +33,7 @@ public class OdfDocumentTest {
     List<UserDefinedField> userDefinedFields = new ArrayList<>();
     Metadata metadata = OdfXmlDocuments.metadataOf("", stringValues, userDefinedFields);
     OdfXmlDocument odfDocument = OdfXmlDocuments
-            .xmlDocumentFrom(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
+            .xmlDocumentFrom(TestFiles.EMPTY_FODS.openStream());
 
     public OdfDocumentTest() throws IOException, ParserConfigurationException, SAXException {
     }
@@ -76,16 +76,16 @@ public class OdfDocumentTest {
                 () -> {
                     OdfDocumentImpl.from(null);
                 });
-        Metadata md = OdfXmlDocuments.metadataFrom(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
-        OdfDocument doc = OdfDocumentImpl.from(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
+        Metadata md = OdfXmlDocuments.metadataFrom(TestFiles.EMPTY_FODS.openStream());
+        OdfDocument doc = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
         assertEquals("Expected synthetic metadata parsed copy and parsed from document ", md, doc.getMetadata());
     }
 
     @Test
     public void testOfDocument() throws IOException, ParserConfigurationException, SAXException {
-        Metadata md = OdfXmlDocuments.metadataFrom(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
-        OdfXmlDocument xmlDoc = OdfXmlDocuments.xmlDocumentFrom(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
-        OdfDocument docFrom = OdfDocumentImpl.from(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
+        Metadata md = OdfXmlDocuments.metadataFrom(TestFiles.EMPTY_FODS.openStream());
+        OdfXmlDocument xmlDoc = OdfXmlDocuments.xmlDocumentFrom(TestFiles.EMPTY_FODS.openStream());
+        OdfDocument docFrom = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
         OdfDocument docOf = OdfDocumentImpl.of(xmlDoc, md);
         assertEquals("Expected synthetic metadata parsed copy and parsed from document ", docOf.getMetadata(), docFrom.getMetadata());
         assertEquals("Expectd synthetic document and parsed document to be equal", xmlDoc, docFrom.getXmlDocument());
@@ -94,9 +94,9 @@ public class OdfDocumentTest {
     @Test
     public void testOfResult() throws IOException, ParserConfigurationException, SAXException {
         XmlParser parser = new XmlParser();
-        Metadata md = OdfXmlDocuments.metadataFrom(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
-        ParseResult result = parser.parse(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
-        OdfDocument docFrom = OdfDocumentImpl.from(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
+        Metadata md = OdfXmlDocuments.metadataFrom(TestFiles.EMPTY_FODS.openStream());
+        ParseResult result = parser.parse(TestFiles.EMPTY_FODS.openStream());
+        OdfDocument docFrom = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
         OdfDocument docOf = OdfDocumentImpl.of(result, md);
         assertEquals("Expected synthetic metadata parsed copy and parsed from document ", docOf.getMetadata(), docFrom.getMetadata());
     }

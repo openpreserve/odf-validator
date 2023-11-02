@@ -20,8 +20,8 @@ public class OdfPackageDocumentTest {
     @Test
     public void testParseDocument() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_ODS);
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS);
+        InputStream is = TestFiles.EMPTY_ODS.openStream();
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS.toString());
         OdfPackageDocument doc = pkg.getDocument();
         assertNotNull("Document should not be null", doc);
         assertEquals("Document should have a root entry name", "/", doc.getFileEntry().getFullPath());
@@ -37,8 +37,8 @@ public class OdfPackageDocumentTest {
     @Test
     public void testParseSubDocument() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_ODS);
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS);
+        InputStream is = TestFiles.EMPTY_ODS.openStream();
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS.toString());
         OdfPackageDocument subDoc = pkg.getSubDocument("Configurations2/");
         assertNotNull("Document should not be null", subDoc);
         assertEquals("Document should have a root entry name", "Configurations2/", subDoc.getFileEntry().getFullPath());
@@ -54,8 +54,8 @@ public class OdfPackageDocumentTest {
     @Test
     public void testParseStylesDocument() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.STYLES_ONLY_DOC);
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.STYLES_ONLY_DOC);
+        InputStream is = TestFiles.STYLES_ONLY_DOC.openStream();
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.STYLES_ONLY_DOC.toString());
         OdfPackageDocument doc = pkg.getDocument();
         assertNotNull("Document should not be null", doc);
         assertEquals("Document should have a root entry name", "/", doc.getFileEntry().getFullPath());

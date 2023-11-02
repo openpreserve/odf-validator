@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -17,7 +16,7 @@ import org.openpreservation.format.xml.XmlTestFiles;
 public class OdfFormatsTest {
     @Test
     public void testIsPackageStream() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_ODS);
+        InputStream is = TestFiles.EMPTY_ODS.openStream();
         assertTrue(String.format("%s IS a package.", TestFiles.EMPTY_ODS), OdfFormats.isPackage(is));
     }
 
@@ -33,63 +32,62 @@ public class OdfFormatsTest {
 
     @Test
     public void testIsPackageStreamNoMime() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.NO_MIME_ROOT_ODS);
+        InputStream is = TestFiles.NO_MIME_ROOT_ODS.openStream();
         assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ROOT_ODS), OdfFormats.isPackage(is));
     }
 
     @Test
     public void testIsPackageStreamFlat() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS);
+        InputStream is = TestFiles.EMPTY_FODS.openStream();
         assertFalse(String.format("%s IS NOT a package.", TestFiles.EMPTY_FODS), OdfFormats.isPackage(is));
     }
 
     @Test
     public void testIsPackageStreamEmpty() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY);
+        InputStream is = TestFiles.EMPTY.openStream();
         assertFalse(String.format("%s IS NOT a package.", TestFiles.EMPTY), OdfFormats.isPackage(is));
     }
 
     @Test
     public void testIsPackageStreamP() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.P_TEXT);
+        InputStream is = TestFiles.P_TEXT.openStream();
         assertFalse(String.format("%s IS NOT a package.", TestFiles.P_TEXT), OdfFormats.isPackage(is));
     }
 
     @Test
     public void testIsPackageStreamK() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.K_TEXT);
+        InputStream is = TestFiles.K_TEXT.openStream();
         assertFalse(String.format("%s IS NOT a package.", TestFiles.K_TEXT), OdfFormats.isPackage(is));
     }
 
     @Test
     public void testIsPackageStreamPK() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.PK_TEXT);
+        InputStream is = TestFiles.PK_TEXT.openStream();
         assertFalse(String.format("%s IS NOT a package.", TestFiles.PK_TEXT), OdfFormats.isPackage(is));
     }
 
     @Test
     public void testIsPackageStreamFakeMime() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.FAKEMIME_TEXT);
+        InputStream is = TestFiles.FAKEMIME_TEXT.openStream();
         assertFalse(String.format("%s IS NOT a package.", TestFiles.FAKEMIME_TEXT), OdfFormats.isPackage(is));
     }
 
     @Test
     public void testIsPackageStreamOdsMime() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.MIMESIG_ODS);
+        InputStream is = TestFiles.MIMESIG_ODS.openStream();
         assertTrue(String.format("%s IS an ods package.", TestFiles.MIMESIG_ODS), OdfFormats.isPackage(is));
     }
 
     @Test
     public void testIsPackageStreamOtsMime() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.MIMESIG_OTS);
+        InputStream is = TestFiles.MIMESIG_OTS.openStream();
         assertTrue(String.format("%s IS an ots package.", TestFiles.MIMESIG_OTS), OdfFormats.isPackage(is));
     }
 
     @Test
     public void testIsPackageString() throws IOException, URISyntaxException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_ODS);
         assertTrue(String.format("%s IS a package.", TestFiles.EMPTY_ODS),
-                OdfFormats.isPackage(new File(empty.toURI()).getAbsolutePath()));
+                OdfFormats.isPackage(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
     }
 
     @Test
@@ -104,16 +102,14 @@ public class OdfFormatsTest {
 
     @Test
     public void testIsPackageStringNoMime() throws IOException, URISyntaxException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ROOT_ODS);
         assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ROOT_ODS),
-                OdfFormats.isPackage(new File(empty.toURI()).getAbsolutePath()));
+                OdfFormats.isPackage(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()).getAbsolutePath()));
     }
 
     @Test
     public void testIsPackageFile() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_ODS);
         assertTrue(String.format("%s IS a package.", TestFiles.EMPTY_ODS),
-                OdfFormats.isPackage(new File(empty.toURI())));
+                OdfFormats.isPackage(new File(TestFiles.EMPTY_ODS.toURI())));
     }
 
     @Test
@@ -128,16 +124,14 @@ public class OdfFormatsTest {
 
     @Test
     public void testIsPackageFileNoMime() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ROOT_ODS);
         assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ROOT_ODS),
-                OdfFormats.isPackage(new File(empty.toURI())));
+                OdfFormats.isPackage(new File(TestFiles.NO_MIME_ROOT_ODS.toURI())));
     }
 
     @Test
     public void testIsPackagePath() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_ODS);
         assertTrue(String.format("%s IS a package.", TestFiles.EMPTY_ODS),
-                OdfFormats.isPackage(new File(empty.toURI()).toPath()));
+                OdfFormats.isPackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath()));
     }
 
     @Test
@@ -152,20 +146,19 @@ public class OdfFormatsTest {
 
     @Test
     public void testIsPackagePathNoMime() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.NO_MIME_ROOT_ODS);
         assertTrue(String.format("%s IS a package.", TestFiles.NO_MIME_ROOT_ODS),
-                OdfFormats.isPackage(new File(empty.toURI()).toPath()));
+                OdfFormats.isPackage(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()).toPath()));
     }
 
     @Test
     public void testIsXMLStream() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS);
+        InputStream is = TestFiles.EMPTY_FODS.openStream();
         assertTrue(String.format("%s IS a flat XML file.", TestFiles.EMPTY_FODS), OdfFormats.isXml(is));
     }
 
     @Test
     public void testIsXMLEmptyStream() throws IOException {
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY);
+        InputStream is = TestFiles.EMPTY.openStream();
         assertFalse(String.format("%s IS NOT a flat XML file.", TestFiles.EMPTY), OdfFormats.isXml(is));
     }
 
@@ -178,7 +171,7 @@ public class OdfFormatsTest {
          * This may well be the answer:
          *
          */
-        InputStream is = ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF8_BOM_PI);
+        InputStream is = XmlTestFiles.UTF8_BOM_PI.openStream();
         assertTrue(String.format("%s IS a flat XML file.", XmlTestFiles.UTF8_BOM_PI), OdfFormats.isXml(is));
     }
 
@@ -194,9 +187,8 @@ public class OdfFormatsTest {
 
     @Test
     public void testIsXMLString() throws IOException, URISyntaxException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
         assertTrue(String.format("%s IS a flat XML file.", TestFiles.EMPTY_FODS),
-                OdfFormats.isXml(new File(empty.toURI()).getAbsolutePath()));
+                OdfFormats.isXml(new File(TestFiles.EMPTY_FODS.toURI()).getAbsolutePath()));
     }
 
     @Test

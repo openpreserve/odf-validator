@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -50,14 +49,14 @@ public class PackageParserTest {
     }
 
     @Test
-    public void testParseNullStream() throws ParserConfigurationException, SAXException {
+    public void testParseNullStream() throws ParserConfigurationException, SAXException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
                     parser.parsePackage(null, "name");
                 });
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_ODS);
+        InputStream is = TestFiles.EMPTY_ODS.openStream();
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
@@ -68,8 +67,7 @@ public class PackageParserTest {
     @Test
     public void testParsePackagePath() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        URL resourceUrl = ClassLoader.getSystemResource(TestFiles.EMPTY_ODS);
-        Path path = Paths.get(resourceUrl.toURI());
+        Path path = Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath());
         OdfPackage pkg = parser.parsePackage(path);
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
@@ -79,8 +77,7 @@ public class PackageParserTest {
     @Test
     public void testParsePackageFile() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        URL resourceUrl = ClassLoader.getSystemResource(TestFiles.EMPTY_ODS);
-        File file = new File(resourceUrl.toURI());
+        File file = new File(TestFiles.EMPTY_ODS.toURI());
         OdfPackage pkg = parser.parsePackage(file);
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
@@ -90,8 +87,8 @@ public class PackageParserTest {
     @Test
     public void testParsePackageStream() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_ODS);
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS);
+        InputStream is = TestFiles.EMPTY_ODS.openStream();
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS.toString());
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet", pkg.getMimeType());
@@ -100,8 +97,8 @@ public class PackageParserTest {
     @Test
     public void testDsigValidation() throws ParserConfigurationException, SAXException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        InputStream is = ClassLoader.getSystemResourceAsStream(TestFiles.DSIG_EXAMPLE);
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_EXAMPLE);
+        InputStream is = TestFiles.DSIG_EXAMPLE.openStream();
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_EXAMPLE.toString());
         ParseResult result = pkg.getEntryXmlParseResult("META-INF/documentsignatures.xml");
         assertTrue("Package should have a well formed dsig", result.isWellFormed());
     }

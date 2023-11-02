@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -19,8 +18,7 @@ import org.openpreservation.format.xml.XmlTestFiles;
 public class FormatSnifferTest {
     @Test
     public void testSniffXMLString() throws IOException, URISyntaxException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
-        Formats fmt = FormatSniffer.sniff(new File(empty.toURI()).getAbsolutePath());
+        Formats fmt = FormatSniffer.sniff(new File(TestFiles.EMPTY_FODS.toURI()).getAbsolutePath());
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.EMPTY_FODS, Formats.XML, fmt),
                 Formats.XML, fmt);
     }
@@ -37,8 +35,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXMLPath() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
-        Formats fmt = FormatSniffer.sniff(new File(empty.toURI()).toPath());
+        Formats fmt = FormatSniffer.sniff(new File(TestFiles.EMPTY_FODS.toURI()).toPath());
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.EMPTY_FODS, Formats.XML, fmt),
                 Formats.XML, fmt);
     }
@@ -55,8 +52,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXMLFile() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
-        Formats fmt = FormatSniffer.sniff(new File(empty.toURI()));
+        Formats fmt = FormatSniffer.sniff(new File(TestFiles.EMPTY_FODS.toURI()));
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.EMPTY_FODS, Formats.XML, fmt),
                 Formats.XML, fmt);
     }
@@ -73,8 +69,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXMLNoSuchFile() throws IOException, URISyntaxException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
-        File resFile = new File(empty.toURI().getPath());
+        File resFile = new File(TestFiles.EMPTY_ODS.toURI().getPath());
         File resDir = resFile.isDirectory() ? new File(resFile, "no-such-file.none")
                 : new File(resFile.getParentFile(), "no-such-file.none");
 
@@ -87,7 +82,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXMLStream() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
+        BufferedInputStream is = new BufferedInputStream(TestFiles.EMPTY_FODS.openStream());
         Formats fmt = FormatSniffer.sniff(is);
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.EMPTY_FODS, Formats.XML, fmt),
                 Formats.XML, fmt);
@@ -95,7 +90,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXmlUtf8BomStream() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF8_BOM_PI));
+        BufferedInputStream is = new BufferedInputStream(XmlTestFiles.UTF8_BOM_PI.openStream());
         Formats fmt = FormatSniffer.sniff(is);
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF8_BOM_PI, Formats.XML, fmt),
                 Formats.XML, fmt);
@@ -103,7 +98,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXmlUtf16LEBomStream() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF16LE_BOM_PI));
+        BufferedInputStream is = new BufferedInputStream(XmlTestFiles.UTF16LE_BOM_PI.openStream());
         Formats fmt = FormatSniffer.sniff(is);
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF16LE_BOM_PI, Formats.XML, fmt),
                 Formats.XML, fmt);
@@ -111,7 +106,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffXmlUtf16BEBomStream() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF16BE_BOM_PI));
+        BufferedInputStream is = new BufferedInputStream(XmlTestFiles.UTF16BE_BOM_PI.openStream());
         Formats fmt = FormatSniffer.sniff(is);
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF16BE_BOM_PI, Formats.XML, fmt),
                 Formats.XML, fmt);
@@ -129,15 +124,14 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffPackageString() throws IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_ODS);
-        Formats fmt = FormatSniffer.sniff(new File(empty.getPath()));
+        Formats fmt = FormatSniffer.sniff(new File(TestFiles.EMPTY_ODS.getPath()));
         assertEquals(String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.EMPTY_ODS, Formats.ODS, fmt),
                 Formats.ODS, fmt);
     }
 
     @Test
     public void testSniffBomPkgMunge() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF8_BOM_ODS));
+        BufferedInputStream is = new BufferedInputStream(XmlTestFiles.UTF8_BOM_ODS.openStream());
         Formats fmt = FormatSniffer.sniff(is);
         assertNotEquals(
                 String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF8_BOM_ODS, Formats.ODS, fmt),
@@ -146,8 +140,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffEncodingString() throws IOException, URISyntaxException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
-        Encodings enc = FormatSniffer.sniffEncoding(new File(empty.toURI()).getAbsolutePath());
+        Encodings enc = FormatSniffer.sniffEncoding(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath());
         assertEquals(String.format("%s HAS encoding %s, not %s.", TestFiles.EMPTY_FODS, Encodings.NONE, enc),
                 Encodings.NONE, enc);
     }
@@ -164,8 +157,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffEncodingPath() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.FAKEMIME_TEXT);
-        Encodings enc = FormatSniffer.sniffEncoding(new File(empty.toURI()).toPath());
+        Encodings enc = FormatSniffer.sniffEncoding(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         assertEquals(
                 String.format("%s SHOULD sniff as format %s, not %s.", TestFiles.FAKEMIME_TEXT, Encodings.NONE, enc),
                 Encodings.NONE, enc);
@@ -183,8 +175,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffEncodingFile() throws URISyntaxException, IOException {
-        URL empty = ClassLoader.getSystemResource(XmlTestFiles.UTF16LE_BOM);
-        Encodings enc = FormatSniffer.sniffEncoding(new File(empty.toURI()));
+        Encodings enc = FormatSniffer.sniffEncoding(new File(XmlTestFiles.UTF16LE_BOM.toURI()));
         assertEquals(
                 String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF16LE_BOM, Encodings.UTF_16_LE, enc),
                 Encodings.UTF_16_LE, enc);
@@ -202,8 +193,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffEncodingNoSuchFile() throws IOException, URISyntaxException {
-        URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_FODS);
-        File resFile = new File(empty.toURI().getPath());
+        File resFile = new File(TestFiles.EMPTY_ODS.toURI().getPath());
         File resDir = resFile.isDirectory() ? new File(resFile, "no-such-file.none")
                 : new File(resFile.getParentFile(), "no-such-file.none");
 
@@ -216,7 +206,7 @@ public class FormatSnifferTest {
 
     @Test
     public void testSniffEncodingStream() throws IOException {
-        BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(XmlTestFiles.UTF8_BOM_PI));
+        BufferedInputStream is = new BufferedInputStream(XmlTestFiles.UTF8_BOM_PI.openStream());
         Encodings enc = FormatSniffer.sniffEncoding(is);
         assertEquals(
                 String.format("%s SHOULD sniff as format %s, not %s.", XmlTestFiles.UTF8_BOM_PI, Encodings.UTF_8, enc),

@@ -1,5 +1,6 @@
 package org.openpreservation.format.zip;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -65,6 +66,11 @@ public final class Zips {
         Objects.requireNonNull(archive, String.format(Checks.NOT_NULL, "ZipArchive", "archive"));
         Objects.requireNonNull(cache, String.format(Checks.NOT_NULL, "Map<String, byte[]>", "cache"));
         return ZipArchiveCacheImpl.of(archive, cache);
+    }
+
+    public static final ZipArchiveCache zipArchiveCacheInstance(final File file) throws IOException {
+        Objects.requireNonNull(file, String.format(Checks.NOT_NULL, "File", "file"));
+        return ZipFileProcessor.of(file.toPath());
     }
 
     public static final ZipArchiveCache zipArchiveCacheInstance(final Path path) throws IOException {
