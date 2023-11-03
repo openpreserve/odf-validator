@@ -10,6 +10,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -152,12 +154,16 @@ public class OdfPackageTest {
     @Test
     public void testXmlEntryPaths() throws IOException, URISyntaxException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
-        assertEquals("Package should have 6 XML entries", 6, pkg.getXmlEntryPaths().size());
-        assertTrue("Package should have a styles.xml entry", pkg.getXmlEntryPaths().contains("styles.xml"));
-        assertTrue("Package should have a content.xml entry", pkg.getXmlEntryPaths().contains("content.xml"));
-        assertTrue("Package should have a meta.xml entry", pkg.getXmlEntryPaths().contains("meta.xml"));
-        assertTrue("Package should have a settings.xml entry", pkg.getXmlEntryPaths().contains("settings.xml"));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.DSIG_EXAMPLE.toURI()));
+        final List<String> entryPaths = Collections.unmodifiableList(pkg.getXmlEntryPaths());
+        assertEquals("Package should have 7 XML entries", 7, entryPaths.size());
+        assertTrue("Package should have a styles.xml entry", entryPaths.contains("styles.xml"));
+        assertTrue("Package should have a content.xml entry", entryPaths.contains("content.xml"));
+        assertTrue("Package should have a meta.xml entry", entryPaths.contains("meta.xml"));
+        assertTrue("Package should have a settings.xml entry", entryPaths.contains("settings.xml"));
+        assertTrue("Package should have a settings.xml entry", entryPaths.contains("manifest.rdf"));
+        assertTrue("Package should have a settings.xml entry", entryPaths.contains("META-INF/manifest.xml"));
+        assertTrue("Package should have a settings.xml entry", entryPaths.contains("META-INF/documentsignatures.xml"));
     }
 
     @Test
