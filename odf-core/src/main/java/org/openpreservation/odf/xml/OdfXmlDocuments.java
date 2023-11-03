@@ -2,12 +2,15 @@ package org.openpreservation.odf.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.xml.ParseResult;
+import org.openpreservation.odf.fmt.FormatSniffer;
+import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.xml.Metadata.UserDefinedField;
 import org.xml.sax.SAXException;
 
@@ -80,4 +83,14 @@ public final class OdfXmlDocuments {
         return MetadataImpl.from(metaStream);
     }
 
+    /**
+     * Determines whether the supplied path is an XML document or not.
+     *
+     * @param toCheck a Java Path for the file to check
+     * @return true if the supplied path is an XML document, false otherwise.
+     * @throws IOException when there is an error reading the file.
+     */
+    public static final boolean isXml(final Path toCheck) throws IOException {
+        return FormatSniffer.sniff(toCheck, Formats.XML.getMaxSignatureLength()) == Formats.XML;
+    }
 }

@@ -101,6 +101,17 @@ public enum Formats {
         return ODF_DOCUMENTS.contains(this);
     }
 
+    public int getSignatureCount() {
+        return signatures.size();
+    }
+
+    public int getMaxSignatureLength() {
+        int max = 0;
+        for (final Signatures s : signatures) {
+            max = Math.max(max, s.getLength());
+        }
+        return max;
+    }
     /**
      * Get the MIME type as an ASCII encoded byte array.
      *

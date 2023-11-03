@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -48,6 +49,7 @@ public class XmlParser {
 
     public ParseResult parse(final InputStream toTest)
             throws IOException {
+        Objects.requireNonNull(toTest, "Parameter toTest can not be null.");
         final List<Message> messages = new ArrayList<>();
         ParsingHandler handler = new ParsingHandler();
         MessageHandler messageHandler = new MessageHandler();
@@ -68,6 +70,7 @@ public class XmlParser {
 
     public ParseResult parse(Path toTest)
             throws IOException {
+        Objects.requireNonNull(toTest, "Parameter toTest can not be null.");
         return parse(Files.newInputStream(toTest));
     }
 

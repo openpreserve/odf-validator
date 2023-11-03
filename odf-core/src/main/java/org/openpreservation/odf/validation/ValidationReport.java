@@ -14,14 +14,22 @@ public class ValidationReport {
     final String name;
     public final Map<String, MessageLog> documentMessages;
 
-    public ValidationReport(final String name) {
+    private ValidationReport(final String name) {
         this(name, new HashMap<>());
     }
 
-    public ValidationReport(final String name, final Map<String, MessageLog> documentMessages) {
+    private ValidationReport(final String name, final Map<String, MessageLog> documentMessages) {
         super();
         this.name = name;
         this.documentMessages = documentMessages;
+    }
+
+    static final ValidationReport of(final String name) {
+        return new ValidationReport(name);
+    }
+
+    static final ValidationReport of(final String name, final Map<String, MessageLog> documentMessages) {
+        return new ValidationReport(name, documentMessages);
     }
 
     @Override
