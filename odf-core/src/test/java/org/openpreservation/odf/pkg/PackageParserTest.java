@@ -95,10 +95,10 @@ public class PackageParserTest {
     }
 
     @Test
-    public void testDsigValidation() throws ParserConfigurationException, SAXException, IOException {
+    public void testDsigParsing() throws ParserConfigurationException, SAXException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        InputStream is = TestFiles.DSIG_EXAMPLE.openStream();
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_EXAMPLE.toString());
+        InputStream is = TestFiles.DSIG_INVALID.openStream();
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_INVALID.toString());
         ParseResult result = pkg.getEntryXmlParseResult("META-INF/documentsignatures.xml");
         assertNotNull("Dsig file META-INF/documentsignatures.xml result should not be null" , result);
         assertTrue("Package should have a well formed dsig for META-INF/documentsignatures.xml" , result.isWellFormed());

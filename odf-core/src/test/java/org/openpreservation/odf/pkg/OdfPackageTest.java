@@ -154,7 +154,7 @@ public class OdfPackageTest {
     @Test
     public void testXmlEntryPaths() throws IOException, URISyntaxException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.DSIG_EXAMPLE.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.DSIG_INVALID.toURI()));
         final List<String> entryPaths = Collections.unmodifiableList(pkg.getXmlEntryPaths());
         assertEquals("Package should have 7 XML entries", 7, entryPaths.size());
         assertTrue("Package should have a styles.xml entry", entryPaths.contains("styles.xml"));

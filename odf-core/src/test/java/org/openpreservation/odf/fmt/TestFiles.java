@@ -12,6 +12,7 @@ public class TestFiles {
     final static String THUMBNAIL_TEST_ROOT = PKG_TEST_ROOT + "thumbnail/";
     final static String EMBEDDED_TEST_ROOT = PKG_TEST_ROOT + "embedded/";
     final static String ENCRYPTED_TEST_ROOT = PKG_TEST_ROOT + "encrypted/";
+    final static String DSIG_TEST_ROOT = PKG_TEST_ROOT + "dsigs/";
     final static String XML_TEST_ROOT = TEST_ROOT + "xml/";
     final static String FILE_TEST_ROOT = TEST_ROOT + "files/";
     public final static URL EMPTY_ODS = ClassLoader.getSystemResource(ZIP_TEST_ROOT + "empty.ods");
@@ -52,5 +53,7 @@ public class TestFiles {
     public final static URL FAKEMIME_TEXT = ClassLoader.getSystemResource(FILE_TEST_ROOT + "mimefake.txt");
     final static URL MIMESIG_ODS = ClassLoader.getSystemResource(FILE_TEST_ROOT + "mimesig-ods.txt");
     final static URL MIMESIG_OTS = ClassLoader.getSystemResource(FILE_TEST_ROOT + "mimesig-ots.txt");
-    public final static URL DSIG_EXAMPLE = ClassLoader.getSystemResource(TEST_ROOT + "dsigs.odt");
+    public final static URL DSIG_INVALID = ClassLoader.getSystemResource(DSIG_TEST_ROOT + "dsigs.odt");
+    public final static URL DSIG_VALID = ClassLoader.getSystemResource(DSIG_TEST_ROOT + "dsigs-valid.ods");
+    public final static URL DSIG_BADNAME = ClassLoader.getSystemResource(DSIG_TEST_ROOT + "bad_dsig_name.ods");
 }

@@ -60,8 +60,8 @@ final class ValidatingParserImpl implements ValidatingParser {
     public ValidationReport validatePackage(final OdfPackage toValidate) {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, TO_VALIDATE, "OdfPackage"));
         this.results.clear();
-        final ValidationReport report = ValidationReport.of(toValidate.getName());
         if (!toValidate.isWellFormedZip()) {
+            final ValidationReport report = ValidationReport.of(toValidate.getName());
             report.add(toValidate.getName(), FACTORY.getError("PKG-9"));
             return report;
         }
@@ -177,6 +177,7 @@ final class ValidatingParserImpl implements ValidatingParser {
         if (mimeEntry.getExtra() != null && mimeEntry.getExtra().length > 0) {
             messages.add(FACTORY.getError("PKG-8"));
         }
+
         return messages;
     }
 
@@ -230,8 +231,10 @@ final class ValidatingParserImpl implements ValidatingParser {
                 messages.add(FACTORY.getError("PKG-1", zipEntry.getName()));
             }
             if (zipEntry.getName().startsWith(OdfPackages.NAME_META_INF)
-                    && (zipEntry.isDirectory() && !OdfPackages.NAME_META_INF.equals(zipEntry.getName()))) {
+                    && (!zipEntry.isDirectory() && !OdfPackages.PATH_MANIFEST.equals(zipEntry.getName())
+                    && !OdfPackages.isDsig(zipEntry.getName()))) {
                 messages.add(FACTORY.getError("PKG-3", zipEntry.getName()));
+                messageMap.put(zipEntry.getName(), messages);
             }
             if (zipEntry.isDirectory() || !isLegitimateManifestEntry(zipEntry.getName())) {
                 continue;

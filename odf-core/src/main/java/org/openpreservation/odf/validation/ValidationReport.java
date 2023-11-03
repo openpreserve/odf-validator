@@ -9,27 +9,41 @@ import java.util.stream.Collectors;
 import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.document.OpenDocument;
 
 public class ValidationReport {
     final String name;
+    public final OpenDocument document;
     public final Map<String, MessageLog> documentMessages;
 
     private ValidationReport(final String name) {
-        this(name, new HashMap<>());
+        this(name, null);
     }
 
-    private ValidationReport(final String name, final Map<String, MessageLog> documentMessages) {
+    private ValidationReport(final String name, final OpenDocument document) {
+        this(name, document, new HashMap<>());
+    }
+
+    private ValidationReport(final String name, final OpenDocument document, final Map<String, MessageLog> documentMessages) {
         super();
         this.name = name;
+        this.document = document;
         this.documentMessages = documentMessages;
     }
 
     static final ValidationReport of(final String name) {
         return new ValidationReport(name);
     }
+    static final ValidationReport of(final String name, final OpenDocument document) {
+        return new ValidationReport(name, document);
+    }
 
     static final ValidationReport of(final String name, final Map<String, MessageLog> documentMessages) {
-        return new ValidationReport(name, documentMessages);
+        return new ValidationReport(name, null, documentMessages);
+    }
+
+    static final ValidationReport of(final String name, final OpenDocument document, final Map<String, MessageLog> documentMessages) {
+        return new ValidationReport(name, document, documentMessages);
     }
 
     @Override
