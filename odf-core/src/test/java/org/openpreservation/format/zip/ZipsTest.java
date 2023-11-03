@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -74,7 +73,7 @@ public class ZipsTest {
         Path tempFolder = temporaryFolder.newFolder("emptyTestNoDirs").toPath();
         ZipEntryProcessor notDirProcessor = Zips.extractorInstance(tempFolder, false);
         ZipProcessor processor = Zips.factoryInstance().from(notDirProcessor);
-        InputStream is = new FileInputStream(new File(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        InputStream is = new FileInputStream(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull(is);
         ZipArchive archive = processor.process(is);
         assertNotNull("Archive should not be null", archive);
@@ -88,7 +87,7 @@ public class ZipsTest {
         Path tempFolder = temporaryFolder.newFolder("emptyTestDirs").toPath();
         ZipEntryProcessor notDirProcessor = Zips.extractorInstance(tempFolder, true);
         ZipProcessor processor = Zips.factoryInstance().from(notDirProcessor);
-        InputStream is = new FileInputStream(new File(ClassLoader.getSystemResource(TestFiles.EMPTY_ODS).toURI()));
+        InputStream is = new FileInputStream(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull(is);
         ZipArchive archive = processor.process(is);
         assertNotNull("Archive should not be null", archive);

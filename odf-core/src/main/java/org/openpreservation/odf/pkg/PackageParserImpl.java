@@ -75,7 +75,7 @@ final class PackageParserImpl implements PackageParser {
     }
 
     private final OdfPackage makePackage(final String name, final Formats format)
-            throws ParserConfigurationException, SAXException, IOException {
+            throws ParserConfigurationException, IOException, SAXException {
         OdfPackageImpl.Builder builder = OdfPackageImpl.Builder.builder().name(name).archive(this.cache).format(format)
                 .mimetype(mimetype)
                 .manifest(manifest);
@@ -95,14 +95,14 @@ final class PackageParserImpl implements PackageParser {
     }
 
     private final OdfPackageDocument makeDocument(FileEntry docEntry)
-            throws ParserConfigurationException, SAXException, IOException {
+            throws ParserConfigurationException, IOException, SAXException {
         OdfPackageDocumentImpl.Builder builder = OdfPackageDocumentImpl.Builder.of(docEntry);
         final String keyPrefix = "/".equals(docEntry.getFullPath()) ? "" : docEntry.getFullPath();
         for (final String docName : Constants.ODF_XML) {
             final String docKey = keyPrefix + docName;
             if (this.xmlDocumentMap.containsKey(docKey)) {
                 builder.xmlDocument(docName, this.xmlDocumentMap.get(docKey));
-                if (Constants.NAME_META.equals(docName)) {
+                if (Constants.NAME_META.equals(docName) && this.xmlDocumentMap.get(docKey).getParseResult().isWellFormed()) {
                     builder.metadata(this.cache.getEntryInputStream(docKey));
                 }
             }

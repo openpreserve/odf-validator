@@ -40,7 +40,7 @@ public class OdfXmlDocumentTest {
 
     @Test
     public void testParseValid() throws IOException {
-        ParseResult parseResult = xmlParser.parse(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
+        ParseResult parseResult = xmlParser.parse(TestFiles.EMPTY_FODS.openStream());
         OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
         assertNotNull(odfDocument);
         assertEquals("application/vnd.oasis.opendocument.spreadsheet", odfDocument.getMimeType());
@@ -53,7 +53,7 @@ public class OdfXmlDocumentTest {
 
     @Test
     public void testGetRootName() throws IOException {
-        ParseResult parseResult = xmlParser.parse(ClassLoader.getSystemResourceAsStream(TestFiles.EMPTY_FODS));
+        ParseResult parseResult = xmlParser.parse(TestFiles.EMPTY_FODS.openStream());
         OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
         assertEquals("office:document", odfDocument.getRootName());
     }
@@ -61,7 +61,7 @@ public class OdfXmlDocumentTest {
 
     @Test
     public void testParseInvalid() throws IOException {
-        ParseResult parseResult = xmlParser.parse(ClassLoader.getSystemResourceAsStream(TestFiles.FLAT_NOT_VALID));
+        ParseResult parseResult = xmlParser.parse(TestFiles.FLAT_NOT_VALID.openStream());
         OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
         assertNotNull(odfDocument);
         assertTrue("File should have a MIME type", odfDocument.hasMimeType());
@@ -74,7 +74,7 @@ public class OdfXmlDocumentTest {
    
     @Test
     public void testParseNoMimetype() throws IOException {
-        ParseResult parseResult = xmlParser.parse(ClassLoader.getSystemResourceAsStream(TestFiles.FLAT_NO_MIME));
+        ParseResult parseResult = xmlParser.parse(TestFiles.FLAT_NO_MIME.openStream());
         OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
         assertNotNull(odfDocument);
         assertFalse("File should NOT have a mimetype", odfDocument.hasMimeType());
@@ -87,7 +87,7 @@ public class OdfXmlDocumentTest {
 
     @Test
     public void testParseNoVersion() throws IOException {
-        ParseResult parseResult = xmlParser.parse(ClassLoader.getSystemResourceAsStream(TestFiles.FLAT_NO_VERSION));
+        ParseResult parseResult = xmlParser.parse(TestFiles.FLAT_NO_VERSION.openStream());
         OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
         assertNotNull(odfDocument);
         assertTrue("File should have a MIME type", odfDocument.hasMimeType());

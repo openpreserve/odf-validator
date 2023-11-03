@@ -8,9 +8,10 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,14 +21,20 @@ import org.junit.Test;
 import org.openpreservation.odf.fmt.TestFiles;
 
 public class ZipFileProcessorTest {
-    private static final URL empty = ClassLoader.getSystemResource(TestFiles.EMPTY_ODS);
 
     @Test
-    public void testInstantiation() throws IOException {
+    public void testInstantiation() throws IOException, URISyntaxException {
+        File nullFile = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    ZipFileProcessor.of(null);
+                    ZipFileProcessor.of(nullFile);
+                });
+        Path nullPath = null;
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
+                () -> {
+                    ZipFileProcessor.of(nullPath);
                 });
         Path missing = Paths.get("test");
         assertFalse("Path should not exist", Files.exists(missing));
@@ -42,16 +49,23 @@ public class ZipFileProcessorTest {
                 () -> {
                     ZipFileProcessor.of(dir);
                 });
-        ZipFileProcessor processor = ZipFileProcessor.of(Paths.get(empty.getPath()));
+        ZipFileProcessor processor = ZipFileProcessor.of(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull("Instantiated processor should not be null.", processor);
     }
 
     @Test
-    public void testInstantiationZips() throws IOException {
+    public void testInstantiationZips() throws IOException, URISyntaxException {
+        File nullFile = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    Zips.zipArchiveCacheInstance(null);
+                    Zips.zipArchiveCacheInstance(nullFile);
+                });
+        Path nullPath = null;
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
+                () -> {
+                    Zips.zipArchiveCacheInstance(nullPath);
                 });
         Path path = Paths.get("test");
         assertFalse("Path should not exist", Files.exists(path));
@@ -60,20 +74,20 @@ public class ZipFileProcessorTest {
                 () -> {
                     Zips.zipArchiveCacheInstance(path);
                 });
-        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(Paths.get(empty.getPath()));
+        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull("Instantiated processor should not be null.", processor);
     }
 
     @Test
-    public void testSize() throws IOException {
-        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(Paths.get(empty.getPath()));
+    public void testSize() throws IOException, URISyntaxException {
+        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull("Instantiated processor should not be null.", processor);
         assertTrue("Size should be greater than 0", processor.size() > 0);
     }
 
     @Test
-    public void testGetZipEntries() throws IOException {
-        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(Paths.get(empty.getPath()));
+    public void testGetZipEntries() throws IOException, URISyntaxException {
+        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
         List<ZipEntry> entries = processor.getZipEntries();
         assertNotNull("Retrieved entries should not be null", entries);
         assertFalse("Retrieved entries should not be empty", entries.isEmpty());
@@ -85,8 +99,8 @@ public class ZipFileProcessorTest {
     }
 
     @Test
-    public void testGetZipEntryNull() throws IOException {
-        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(Paths.get(empty.getPath()));
+    public void testGetZipEntryNull() throws IOException, URISyntaxException {
+        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
@@ -95,15 +109,15 @@ public class ZipFileProcessorTest {
     }
 
     @Test
-    public void testGetZipEntry() throws IOException {
-        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(Paths.get(empty.getPath()));
+    public void testGetZipEntry() throws IOException, URISyntaxException {
+        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNull("Retrieved test entry should be null", processor.getZipEntry("test"));
         assertNotNull("Retrieved settings.xml entry should NOT be null", processor.getZipEntry("settings.xml"));
     }
 
     @Test
-    public void testGetCachedEntryNames() throws IOException {
-        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(Paths.get(empty.getPath()));
+    public void testGetCachedEntryNames() throws IOException, URISyntaxException {
+        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
         List<String> entries = processor.getCachedEntryNames();
         assertNotNull("Cached entries should be an empty list", entries);
         assertTrue("Cached entries should be an empty list", entries.isEmpty());
@@ -113,8 +127,8 @@ public class ZipFileProcessorTest {
     }
 
     @Test
-    public void testGetCachedEntry() throws IOException {
-        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(Paths.get(empty.getPath()));
+    public void testGetCachedEntry() throws IOException, URISyntaxException {
+        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
         InputStream is = processor.getEntryInputStream("mimetype");
         assertNotNull("Cached entry stream should be not be null.", is);
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
@@ -125,8 +139,8 @@ public class ZipFileProcessorTest {
     }
 
     @Test
-    public void testGetEntryInputStream() throws IOException {
-        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(Paths.get(empty.getPath()));
+    public void testGetEntryInputStream() throws IOException, URISyntaxException {
+        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
         InputStream is = processor.getEntryInputStream("mimetype");
         assertNotNull("Cached entry stream should not be null.", is);
         InputStream nullStream = processor.getEntryInputStream("notThere");
