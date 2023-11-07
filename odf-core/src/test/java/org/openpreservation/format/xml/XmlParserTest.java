@@ -4,9 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -15,6 +20,21 @@ import org.openpreservation.odf.fmt.TestFiles;
 import org.xml.sax.SAXException;
 
 public class XmlParserTest {
+    public void testParseNull() throws ParserConfigurationException, SAXException {
+        XmlParser xmlChecker = new XmlParser();
+        InputStream nullStream = null;
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
+                () -> {
+                    xmlChecker.parse(nullStream);
+                });
+        Path nullPath = null;
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
+                () -> {
+                    xmlChecker.parse(nullPath);
+                });
+    }
 
     @Test
     public void testParseWF() throws ParserConfigurationException, SAXException, IOException {
@@ -103,9 +123,9 @@ public class XmlParserTest {
     }
 
     @Test
-    public void testParseEmpty() throws ParserConfigurationException, SAXException, IOException {
+    public void testParseEmptyByPath() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
         XmlParser xmlChecker = new XmlParser();
-        ParseResult result = xmlChecker.parse(TestFiles.EMPTY.openStream());
+        ParseResult result = xmlChecker.parse(new File(TestFiles.EMPTY.toURI()).toPath());
         assertNotNull("Parse result is not null", result);
         assertFalse("Parse result should NOT be well formed", result.isWellFormed());
         assertTrue("Parse result should NOT have root name", result.getRootName().isBlank());

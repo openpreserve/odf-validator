@@ -61,7 +61,7 @@ public final class OdfPackages {
      * @throws IOException if there's an issue reading the file
      */
     public static final boolean isZip(final Path toCheck) throws IOException {
-        return FormatSniffer.sniff(toCheck, 10) == Formats.ZIP;
+        return FormatSniffer.sniff(toCheck, Formats.ZIP.getMaxSignatureLength()) == Formats.ZIP;
     }
 
     /**
