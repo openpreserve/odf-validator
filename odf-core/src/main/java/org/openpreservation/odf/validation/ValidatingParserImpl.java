@@ -21,6 +21,7 @@ import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.document.Documents;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.Manifest;
@@ -84,7 +85,7 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     private ValidationReport validate(final OdfPackage odfPackage) {
-        final ValidationReport report = ValidationReport.of(odfPackage.getName());
+        final ValidationReport report = ValidationReport.of(odfPackage.getName(), Documents.openDocumentOf(odfPackage));
         report.add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
         if (!odfPackage.hasManifest()) {
             report.add(OdfPackages.PATH_MANIFEST, FACTORY.getError("PKG-4"));

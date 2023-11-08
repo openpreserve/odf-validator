@@ -1,5 +1,6 @@
 package org.openpreservation.odf.validation;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,6 +15,7 @@ import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.xml.XmlValidator;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.document.Documents;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
@@ -33,9 +35,45 @@ public class Validator {
         super();
     }
 
+    public ValidationReport validateSpreadsheet(final Path toValidate) throws ParserConfigurationException, IOException, SAXException {
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", "toValidate"));
+        return validateSingleFormat(toValidate, Formats.ODS);
+    }
+
+    public ValidationReport validateSpreadsheet(final File toValidate) throws ParserConfigurationException, IOException, SAXException {
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", "toValidate"));
+        return validateSingleFormat(toValidate, Formats.ODS);
+    }
+
+    public ValidationReport validateSingleFormat(final File toValidate, final Formats legal) throws ParserConfigurationException, IOException, SAXException {
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "File", "toValidate"));
+        Objects.requireNonNull(legal, String.format(Checks.NOT_NULL, "Formats", "legal"));
+        return validateSingleFormat(toValidate.toPath(), legal);
+    }
+
+    public ValidationReport validateSingleFormat(final Path toValidate, final Formats legal) throws ParserConfigurationException, IOException, SAXException {
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", "toValidate"));
+        Objects.requireNonNull(legal, String.format(Checks.NOT_NULL, "Formats", "legal"));
+        ValidationReport report = validate(toValidate);
+        if (report.document == null || report.document.getFormat() == null) {
+            report.add(toValidate.toString(), FACTORY.getError("DOC-6"));
+        } else {
+            Formats detectedFmt = report.document.getFormat();
+            if (detectedFmt != legal) {
+                report.add(toValidate.toString(), FACTORY.getError("DOC-7", legal.mime, detectedFmt.mime));
+            }
+        }
+        return report;
+    }
+
+    public ValidationReport validate(final File toValidate) throws ParserConfigurationException, IOException, SAXException {
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "File", "toValidate"));
+        return validate(toValidate.toPath());
+    }
+
     public ValidationReport validate(final Path toValidate)
             throws ParserConfigurationException, IOException, SAXException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "String", "toValidate"));
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", "toValidate"));
 
         // Check if the path exists and is not a directory
         existingFileCheck(toValidate);
@@ -69,9 +107,9 @@ public class Validator {
             return parser.validatePackage(pckg);
     }
     private ValidationReport validateOpenDocumentXml(final Path toValidate) throws ParserConfigurationException, SAXException, IOException {
-        final ValidationReport report = ValidationReport.of(toValidate.toString());
         final XmlParser checker = new XmlParser();
         ParseResult parseResult = checker.parse(toValidate);
+        final ValidationReport report = (parseResult.isWellFormed()) ? ValidationReport.of(toValidate.toString(), Documents.openDocumentOf(Documents.odfDocumentOf(parseResult))) : ValidationReport.of(toValidate.toString());
         if (parseResult.isWellFormed()) {
             Version version = Version.ODF_13;
             final XmlValidator validator = new XmlValidator();

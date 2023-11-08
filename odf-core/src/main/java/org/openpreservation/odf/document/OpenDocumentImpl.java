@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackageDocument;
 
@@ -57,6 +58,11 @@ final class OpenDocumentImpl implements OpenDocument {
     @Override
     public OdfPackage getPackage() {
         return this.pkg;
+    }
+
+    @Override
+    public Formats getFormat() {
+        return (this.isPackage()) ? this.pkg.getDetectedFormat() : Formats.fromMime(this.document.getXmlDocument().getMimeType());
     }
 
     @Override

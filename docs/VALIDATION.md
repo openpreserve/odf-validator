@@ -25,6 +25,8 @@ All files contained in the Zip file shall be non compressed (STORED) or compress
 
 ### PKG-3
 
+An OpenDocument package SHALL only contain the "META-INF/manifest.xml" and files containg the term "signatures" in their name in the "META-INF" folder. File %s does not meet this criteria.
+
 It (an OpenDocument package) may contain files whose relative paths begin with “META-INF/” and whose names contain the string “signatures”. These file shall meet the following requirements:
 
 * D.1: The files shall be well-formed XML files in accordance with [XML1.0].
@@ -32,14 +34,6 @@ It (an OpenDocument package) may contain files whose relative paths begin with �
 * D.2: The XML root element of each file shall be a <dsig:document-signatures> element 5.2.
 
 * D.3: The files shall be valid with respect to the digital signature schema defined in appendix A.2 OpenDocument Digital Signature Schema.
-
-TODO: This needs expanding to cover digital signature file validation. It appears that sub-directories are valid if they contain digital signature files.
-
-Should the presence of empty directories below META-INF be considered an error?
-
-ALL files that don't contain the string "signatures" should be a validation error.
-
-Any files that contain the string "signatures" should be checked against D1-D3. This is implemented but the reporting logic needs to be improved.
 
 ### PKG-9 (Error)
 
