@@ -77,13 +77,12 @@ final class PackageParserImpl implements PackageParser {
     private final OdfPackage makePackage(final String name, final Formats format)
             throws ParserConfigurationException, IOException, SAXException {
         OdfPackageImpl.Builder builder = OdfPackageImpl.Builder.builder().name(name).archive(this.cache).format(format)
-                .mimetype(mimetype)
-                .manifest(manifest);
-        if (this.manifest == null) {
-            return builder.build();
-        }
-        for (FileEntry docEntry : manifest.getDocumentEntries()) {
-            builder.document(docEntry.getFullPath(), makeDocument(docEntry));
+                .mimetype(mimetype);
+        if (this.manifest != null) {
+            builder.manifest(manifest);
+            for (FileEntry docEntry : manifest.getDocumentEntries()) {
+                builder.document(docEntry.getFullPath(), makeDocument(docEntry));
+            }
         }
         for (Entry<String, OdfXmlDocument> docEntry : this.xmlDocumentMap.entrySet()) {
             if (isMetaInf(docEntry.getKey())) {
@@ -147,9 +146,11 @@ final class PackageParserImpl implements PackageParser {
             OdfXmlDocument xmlDoc = OdfXmlDocuments.xmlDocumentFrom(is);
             if (xmlDoc != null) {
                 this.xmlDocumentMap.put(path, xmlDoc);
+                if (xmlDoc.getParseResult().isWellFormed()) {
+                    this.parseOdfXml(path);
+                }
             }
         }
-        this.parseOdfXml(path);
     }
 
     private final boolean isOdfXml(final String entrypath) {

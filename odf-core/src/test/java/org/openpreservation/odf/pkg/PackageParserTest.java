@@ -1,6 +1,7 @@
 package org.openpreservation.odf.pkg;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -102,5 +103,15 @@ public class PackageParserTest {
         ParseResult result = pkg.getEntryXmlParseResult("META-INF/documentsignatures.xml");
         assertNotNull("Dsig file META-INF/documentsignatures.xml result should not be null" , result);
         assertTrue("Package should have a well formed dsig for META-INF/documentsignatures.xml" , result.isWellFormed());
+    }
+
+    @Test
+    public void testManifestNotWF() throws IOException {
+        PackageParser parser = OdfPackages.getPackageParser();
+        InputStream is = TestFiles.MANIFEST_NOT_WF.openStream();
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.MANIFEST_NOT_WF.toString());
+        ParseResult result = pkg.getEntryXmlParseResult("META-INF/manifest.xml");
+        assertNotNull("Dsig file META-INF/documentsignatures.xml result should not be null" , result);
+        assertFalse("Package should NOT have a well formed META-INF/manifest.xml" , result.isWellFormed());
     }
 }
