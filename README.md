@@ -17,6 +17,8 @@ You may read more about the technical details of the validation checks [here](do
 
 ## Quick Start
 
+For developer instructions with Maven locations and examples please see [DEVELOPER.md](docs/DEVELOPER.md).
+
 ### Prerequisites
 
 To run the software you'll need a [Java 8](https://www.java.com/en/download/manual.jsp) JRE or newer.
