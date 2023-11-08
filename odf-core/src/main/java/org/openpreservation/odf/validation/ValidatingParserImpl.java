@@ -185,22 +185,24 @@ final class ValidatingParserImpl implements ValidatingParser {
     private List<Message> validateManifest(final OdfPackage odfPackage) {
         final List<Message> messages = new ArrayList<>();
         Manifest manifest = odfPackage.getManifest();
-        if (manifest.getEntry("/") == null) {
+        if (manifest != null && manifest.getEntry("/") == null) {
             if (!odfPackage.hasMimeEntry()) {
                 messages.add(FACTORY.getWarning("PKG-19"));
             } else {
                 messages.add(FACTORY.getError("PKG-11"));
             }
-        } else if (!hasManifestRootMime(manifest) || (odfPackage.hasMimeEntry()
+        } else if (hasManifestRootMime(manifest) && (odfPackage.hasMimeEntry()
                 && !manifest.getRootMediaType().equals(odfPackage.getMimeType()))) {
             messages.add(FACTORY.getError("PKG-12", manifest.getRootMediaType(), odfPackage.getMimeType()));
         }
-        messages.addAll(checkManifestEntries(odfPackage));
+        if (manifest != null) {
+            messages.addAll(checkManifestEntries(odfPackage));
+        }
         return messages;
     }
 
     private boolean hasManifestRootMime(final Manifest manifest) {
-        return manifest.getRootMediaType() != null;
+        return manifest != null && manifest.getRootMediaType() != null;
     }
 
     private List<Message> checkManifestEntries(final OdfPackage odfPackage) {
