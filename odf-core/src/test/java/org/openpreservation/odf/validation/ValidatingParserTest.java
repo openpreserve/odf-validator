@@ -17,8 +17,11 @@ import java.nio.file.Paths;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
+import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.pkg.PackageParser;
 import org.xml.sax.SAXException;
 
 public class ValidatingParserTest {
@@ -323,5 +326,33 @@ public class ValidatingParserTest {
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("ENCRYPTED_PASSWORDS should NOT be valid", report.isValid());
         assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("XML-3")).count() > 0);
+    }
+
+    @Test
+    public void testDsigValid() throws ParserConfigurationException, SAXException, IOException {
+        ValidatingParser parser = Validators.getValidatingParser();
+        InputStream is = TestFiles.DSIG_VALID.openStream();
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_VALID.toString());
+        ValidationReport report = parser.validatePackage(pkg);
+        assertTrue("Package should be be valid" , report.isValid());
+    }
+
+    @Test
+    public void testDsigInvalid() throws ParserConfigurationException, SAXException, IOException {
+        ValidatingParser parser = Validators.getValidatingParser();
+        InputStream is = TestFiles.DSIG_INVALID.openStream();
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_INVALID.toString());
+        ValidationReport report = parser.validatePackage(pkg);
+        assertFalse("Package should be NOT be valid, dsig file has bad version" , report.isValid());
+    }
+
+    @Test
+    public void testDsigInvalidBadName() throws ParserConfigurationException, SAXException, IOException {
+        ValidatingParser parser = Validators.getValidatingParser();
+        InputStream is = TestFiles.DSIG_BADNAME.openStream();
+        OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_BADNAME.toString());
+        ValidationReport report = parser.validatePackage(pkg);
+        assertFalse("Package should be NOT be valid, badly named META-INF file." , report.isValid());
+        assertEquals(1, report.getMessages().stream().filter(m -> m.getId().equals("PKG-3")).count());
     }
 }

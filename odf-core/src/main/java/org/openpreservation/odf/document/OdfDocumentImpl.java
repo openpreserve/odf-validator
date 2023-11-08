@@ -22,10 +22,16 @@ final class OdfDocumentImpl implements OdfDocument {
         Objects.requireNonNull(metadata, "Metadata parameter metadata cannot be null");
         return new OdfDocumentImpl(xmlDocument, metadata);
     }
+
     static final OdfDocument of(final ParseResult parseResult, final Metadata metadata) {
         Objects.requireNonNull(parseResult, "ParseResult parameter parseResult cannot be null");
         Objects.requireNonNull(metadata, "Metadata parameter metadata cannot be null");
         return new OdfDocumentImpl(OdfXmlDocuments.odfXmlDocumentOf(parseResult), metadata);
+    }
+
+    static final OdfDocument of(final ParseResult parseResult) {
+        Objects.requireNonNull(parseResult, "ParseResult parameter parseResult cannot be null");
+        return new OdfDocumentImpl(OdfXmlDocuments.odfXmlDocumentOf(parseResult));
     }
 
     static final OdfDocument from(final InputStream docStream)
@@ -49,6 +55,10 @@ final class OdfDocumentImpl implements OdfDocument {
 
     private final OdfXmlDocument xmlDocument;
     private final Metadata metadata;
+
+    private OdfDocumentImpl(final OdfXmlDocument xmlDocument) {
+        this(xmlDocument, null);
+    }
 
     private OdfDocumentImpl(final OdfXmlDocument xmlDocument, final Metadata metadata) {
         super();

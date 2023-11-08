@@ -2,6 +2,7 @@ package org.openpreservation.odf.document;
 
 import java.util.Collection;
 
+import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.OdfPackage;
 
 public interface OpenDocument {
@@ -43,4 +44,6 @@ public interface OpenDocument {
      * @return the ODF Package for the OpenDocument
      */
     public OdfPackage getPackage();
+
+    public Formats getFormat();
 }
