@@ -115,7 +115,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.FAKEMIME_TEXT.openStream(), TestFiles.FAKEMIME_TEXT.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("FAKEMIME should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-9")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-1")).count() > 0);
     }
 
     @Test
@@ -124,9 +124,9 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.BADLY_FORMED_PKG.openStream(), TestFiles.BADLY_FORMED_PKG.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("BADLY_FORMED_PKG should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-2")).count() > 0);
         assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-4")).count() > 0);
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-18")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-3")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-7")).count() > 0);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.NO_MANIFEST_ODS.openStream(), TestFiles.NO_MANIFEST_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("NO_MANIFEST_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-4")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-3")).count() > 0);
     }
 
     @Test
@@ -144,7 +144,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_ROOT_NO_MIME_ODS.openStream(), TestFiles.MANIFEST_ROOT_NO_MIME_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_ROOT_NO_MIME_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-10")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-4")).count() > 0);
     }
 
     @Test
@@ -153,7 +153,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_RAND_MIMETYPE_ODS.openStream(), TestFiles.MANIFEST_RAND_MIMETYPE_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_RAND_MIMETYPE_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-12")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-5")).count() > 0);
     }
 
     @Test
@@ -162,7 +162,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_RAND_ROOT_MIME_ODS.openStream(), TestFiles.MANIFEST_RAND_ROOT_MIME_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_RAND_ROOT_MIME_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-12")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-5")).count() > 0);
     }
 
     @Test
@@ -171,7 +171,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_DIFF_MIME_ODS.openStream(), TestFiles.MANIFEST_DIFF_MIME_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_DIFF_MIME_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-12")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-5")).count() > 0);
     }
 
     @Test
@@ -180,7 +180,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_EMPTY_ROOT_MIME_ODS.openStream(), TestFiles.MANIFEST_EMPTY_ROOT_MIME_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_EMPTY_ROOT_MIME_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-12")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-5")).count() > 0);
     }
 
     @Test
@@ -189,7 +189,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_ENTRY_ODS.openStream(), TestFiles.MANIFEST_ENTRY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_ENTRY_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-14")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-2")).count() > 0);
     }
 
     @Test
@@ -198,7 +198,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MIMETYPE_ENTRY_ODS.openStream(), TestFiles.MIMETYPE_ENTRY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MIMETYPE_ENTRY_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-15")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-3")).count() > 0);
     }
 
     @Test
@@ -207,7 +207,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.METAINF_ENTRY_ODT.openStream(), TestFiles.METAINF_ENTRY_ODT.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("METAINF_ENTRY_ODT should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-13")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-6")).count() > 0);
     }
 
     @Test
@@ -216,7 +216,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_MISSING_ENTRY_ODS.openStream(), TestFiles.MANIFEST_MISSING_ENTRY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_MISSING_ENTRY_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-17")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-4")).count() > 0);
     }
 
     @Test
@@ -225,7 +225,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_MISSING_XML_ENTRY_ODS.openStream(), TestFiles.MANIFEST_MISSING_XML_ENTRY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_MISSING_XML_ENTRY_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-17")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-4")).count() > 0);
     }
 
     @Test
@@ -234,7 +234,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MISSING_FILE_ODS.openStream(), TestFiles.MISSING_FILE_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MISSING_FILE_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-16")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-1")).count() > 0);
     }
 
     @Test
@@ -243,7 +243,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.NO_MIME_ROOT_ODS.openStream(), TestFiles.NO_MIME_ROOT_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("NO_MIME_ROOT_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-10")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-4")).count() > 0);
     }
 
     @Test
@@ -252,7 +252,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_NO_ROOT_MIMETYPE_ODS.openStream(), TestFiles.MANIFEST_NO_ROOT_MIMETYPE_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_NO_ROOT_MIMETYPE_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-11")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-5")).count() > 0);
     }
 
     @Test
@@ -261,8 +261,8 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.NO_MIME_NO_ROOT_ODS.openStream(), TestFiles.NO_MIME_NO_ROOT_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertTrue("NO_MIME_NO_ROOT_ODS should be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-2")).count() > 0);
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-19")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-4")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-7")).count() > 0);
     }
 
     @Test
@@ -271,7 +271,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MIME_LAST_ODS.openStream(), TestFiles.MIME_LAST_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MIME_LAST_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-7")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-1")).count() > 0);
     }
 
     @Test
@@ -280,7 +280,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MIME_COMPRESSED_ODS.openStream(), TestFiles.MIME_COMPRESSED_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MIME_COMPRESSED_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-6")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-2")).count() > 0);
     }
 
     @Test
@@ -289,8 +289,8 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MIME_COMPRESSED_LAST_ODS.openStream(), TestFiles.MIME_COMPRESSED_LAST_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MIME_COMPRESSED_LAST_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-7")).count() > 0);
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-6")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-1")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-2")).count() > 0);
     }
 
     @Test
@@ -299,7 +299,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MIME_EXTRA_ODS.openStream(), TestFiles.MIME_EXTRA_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MIME_EXTRA_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-8")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-3")).count() > 0);
     }
 
     @Test
@@ -308,7 +308,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.NO_THUMBNAIL_ODS.openStream(), TestFiles.NO_THUMBNAIL_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertTrue("NO_THUMBNAIL_ODS should be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-18")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-7")).count() > 0);
     }
 
     @Test
@@ -353,6 +353,6 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_BADNAME.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("Package should be NOT be valid, badly named META-INF file." , report.isValid());
-        assertEquals(1, report.getMessages().stream().filter(m -> m.getId().equals("PKG-3")).count());
+        assertEquals(1, report.getMessages().stream().filter(m -> m.getId().equals("PKG-5")).count());
     }
 }

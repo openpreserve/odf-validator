@@ -63,7 +63,7 @@ final class ValidatingParserImpl implements ValidatingParser {
         this.results.clear();
         if (!toValidate.isWellFormedZip()) {
             final ValidationReport report = ValidationReport.of(toValidate.getName());
-            report.add(toValidate.getName(), FACTORY.getError("PKG-9"));
+            report.add(toValidate.getName(), FACTORY.getError("PKG-1"));
             return report;
         }
         return validate(toValidate);
@@ -88,12 +88,12 @@ final class ValidatingParserImpl implements ValidatingParser {
         final ValidationReport report = ValidationReport.of(odfPackage.getName(), Documents.openDocumentOf(odfPackage));
         report.add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
         if (!odfPackage.hasManifest()) {
-            report.add(OdfPackages.PATH_MANIFEST, FACTORY.getError("PKG-4"));
+            report.add(OdfPackages.PATH_MANIFEST, FACTORY.getError("PKG-3"));
         } else {
             report.add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));
         }
         if (!odfPackage.hasThumbnail()) {
-            report.add(OdfPackages.PATH_THUMBNAIL, FACTORY.getWarning("PKG-18"));
+            report.add(OdfPackages.PATH_THUMBNAIL, FACTORY.getWarning("PKG-7"));
         }
         report.addAll(this.auditZipEntries(odfPackage));
         report.addAll(this.validateOdfXmlEntries(odfPackage));
@@ -159,9 +159,9 @@ final class ValidatingParserImpl implements ValidatingParser {
             messages.add(FACTORY.getInfo("DOC-3", odfPackage.getMimeType()));
         } else {
             if (odfPackage.hasManifest() && odfPackage.getManifest().getRootMediaType() != null) {
-                messages.add(FACTORY.getError("PKG-10"));
+                messages.add(FACTORY.getError("MIM-4"));
             } else {
-                messages.add(FACTORY.getWarning("PKG-2"));
+                messages.add(FACTORY.getWarning("PKG-4"));
             }
         }
         return messages;
@@ -170,13 +170,13 @@ final class ValidatingParserImpl implements ValidatingParser {
     private final List<Message> validateMimeEntry(final ZipEntry mimeEntry, final boolean isFirst) {
         final List<Message> messages = new ArrayList<>();
         if (!isFirst) {
-            messages.add(FACTORY.getError("PKG-7"));
+            messages.add(FACTORY.getError("MIM-1"));
         }
         if (mimeEntry.getMethod() != java.util.zip.ZipEntry.STORED) {
-            messages.add(FACTORY.getError("PKG-6"));
+            messages.add(FACTORY.getError("MIM-2"));
         }
         if (mimeEntry.getExtra() != null && mimeEntry.getExtra().length > 0) {
-            messages.add(FACTORY.getError("PKG-8"));
+            messages.add(FACTORY.getError("MIM-3"));
         }
 
         return messages;
@@ -187,13 +187,13 @@ final class ValidatingParserImpl implements ValidatingParser {
         Manifest manifest = odfPackage.getManifest();
         if (manifest != null && manifest.getEntry("/") == null) {
             if (!odfPackage.hasMimeEntry()) {
-                messages.add(FACTORY.getWarning("PKG-19"));
+                messages.add(FACTORY.getWarning("MAN-7"));
             } else {
-                messages.add(FACTORY.getError("PKG-11"));
+                messages.add(FACTORY.getError("MAN-5"));
             }
         } else if (hasManifestRootMime(manifest) && (odfPackage.hasMimeEntry()
                 && !manifest.getRootMediaType().equals(odfPackage.getMimeType()))) {
-            messages.add(FACTORY.getError("PKG-12", manifest.getRootMediaType(), odfPackage.getMimeType()));
+            messages.add(FACTORY.getError("MIM-5", manifest.getRootMediaType(), odfPackage.getMimeType()));
         }
         if (manifest != null) {
             messages.addAll(checkManifestEntries(odfPackage));
@@ -216,7 +216,7 @@ final class ValidatingParserImpl implements ValidatingParser {
             } else {
                 ZipEntry zipEntry = odfPackage.getZipArchive().getZipEntry(entryPath);
                 if (zipEntry == null) {
-                    messages.add(FACTORY.getError("PKG-16", entryPath));
+                    messages.add(FACTORY.getError("MAN-1", entryPath));
                 }
             }
         }
@@ -231,19 +231,19 @@ final class ValidatingParserImpl implements ValidatingParser {
             if ((zipEntry.getMethod() != java.util.zip.ZipEntry.STORED)
                     && (zipEntry.getMethod() != java.util.zip.ZipEntry.DEFLATED)) {
                 // Entries SHALL be uncompressesed (Stored) or use deflate compression
-                messages.add(FACTORY.getError("PKG-1", zipEntry.getName()));
+                messages.add(FACTORY.getError("PKG-2", zipEntry.getName()));
             }
             if (zipEntry.getName().startsWith(OdfPackages.NAME_META_INF)
                     && (!zipEntry.isDirectory() && !OdfPackages.PATH_MANIFEST.equals(zipEntry.getName())
                     && !OdfPackages.isDsig(zipEntry.getName()))) {
-                messages.add(FACTORY.getError("PKG-3", zipEntry.getName()));
+                messages.add(FACTORY.getError("PKG-5", zipEntry.getName()));
                 messageMap.put(zipEntry.getName(), messages);
             }
             if (zipEntry.isDirectory() || !isLegitimateManifestEntry(zipEntry.getName())) {
                 continue;
             }
             if (manifest != null && odfPackage.getManifest().getEntry(zipEntry.getName()) == null) {
-                messages.add(FACTORY.getError("PKG-17", zipEntry.getName()));
+                messages.add(FACTORY.getError("MAN-4", zipEntry.getName()));
             }
             messageMap.put(zipEntry.getName(), messages);
         }
@@ -258,11 +258,11 @@ final class ValidatingParserImpl implements ValidatingParser {
 
     private final Message getManifestError(final String entryPath) {
         if (OdfFormats.MIMETYPE.equals(entryPath)) {
-            return FACTORY.getError("PKG-15", entryPath);
+            return FACTORY.getError("MAN-3", entryPath);
         } else if (OdfPackages.PATH_MANIFEST.equals(entryPath)) {
-            return FACTORY.getError("PKG-14", entryPath);
+            return FACTORY.getError("MAN-2", entryPath);
         } else if (entryPath.startsWith(OdfPackages.NAME_META_INF)) {
-            return FACTORY.getInfo("PKG-13", entryPath);
+            return FACTORY.getInfo("MAN-6", entryPath);
         }
         return null;
     }

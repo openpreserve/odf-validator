@@ -17,13 +17,13 @@ Note the applied check is not a full parse of the file, simply a test of the fir
 
 ## Package Checks
 
-### PKG-1 (Error)
+### PKG-2 (Error)
 
 All files contained in the Zip file shall be non compressed (STORED) or compressed using the “deflate” (DEFLATED) algorithm. Zip entry `<entry-name>` is compressed with an unknown algorithm.
 
 All files contained in the Zip file shall be non compressed (STORED) or compressed using the “deflate” (DEFLATED) algorithm. See item A in [Section 2.2.1 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_2_2_1_OpenDocument_Package).
 
-### PKG-3
+### PKG-5
 
 An OpenDocument package SHALL only contain the "META-INF/manifest.xml" and files containg the term "signatures" in their name in the "META-INF" folder. File %s does not meet this criteria.
 
@@ -35,7 +35,7 @@ It (an OpenDocument package) may contain files whose relative paths begin with �
 
 * D.3: The files shall be valid with respect to the digital signature schema defined in appendix A.2 OpenDocument Digital Signature Schema.
 
-### PKG-9 (Error)
+### PKG-1 (Error)
 
 An OpenDocument package SHALL be a well formed Zip Archive.
 
@@ -45,7 +45,7 @@ See [Section 2.2.1 of the ODF Schema Specification](https://docs.oasis-open.org/
 
 It shall be a Zip file, as defined by [ZIP]. This is detected via a full parse of the package zip file. If an error occurs when reading the zip file or one of it's entries, this error is reported.
 
-### PKG-18 (Warning)
+### PKG-7 (Warning)
 
 An OpenDocument package SHOULD contain a preview image Thumbnails/thumbnail.png.
 
@@ -63,13 +63,13 @@ c. The XML file shall be valid with respect to the manifest schema defined in ap
 
 Note that the Manifest file is subject to XML validation checks, see [XML Validation](#xml-validation) below.
 
-### PKG-4 (Error)
+### PKG-3 (Error)
 
 An OpenDocument package SHALL contain a file “META-INF/manifest.xml”.
 
 See item B in [Section 2.2.1 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_2_2_1_OpenDocument_Package).
 
-### PKG-11 (Error)
+### MAN-5 (Error)
 
 An OpenDocument package manifest SHALL contain a root \"/\" entry if a mimetype file is present.
 
@@ -77,15 +77,15 @@ The “META-INF/manifest.xml” file should contain a <manifest:file-entry> elem
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
-### PKG-12 (Error)
+### MIM-5 (Error)
 
-PKG-12 = An OpenDocument package manifest root \"/\" entry's mimetype value SHALL be equal to the value in the mimetype file if present.
+An OpenDocument package manifest root \"/\" entry's mimetype value SHALL be equal to the value in the mimetype file if present.
 
 If the file named “META-INF/manifest.xml” contains a `<manifest:file-entry>` element whose manifest:full-path attribute has the value "/", then a "mimetype" file shall exist, and the content of the “mimetype” file shall be equal to the value of the `manifest:media-type` attribute of that element.
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
-### PKG-13 (Info)
+### MAN-6 (Info)
 
 The OpenDocument package manifest NEED NOT contain entries for file paths starting with META-INF/, %s.
 
@@ -93,7 +93,7 @@ The “META-INF/manifest.xml” file need not contain <manifest:file-entry> elem
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
-### PKG-14 (Error)
+### MAN-2 (Error)
 
 An OpenDocument package manifest SHALL NOT contain a file entry for itself.
 
@@ -101,7 +101,7 @@ The file shall not contain <manifest:file-entry> elements whose manifest:full-pa
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
-### PKG-15 (Error)
+### MAN-3 (Error)
 
 An OpenDocument package manifest SHALL NOT contain a file entry the mimetype file.
 
@@ -109,7 +109,7 @@ The file shall not contain <manifest:file-entry> elements whose manifest:full-pa
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
-### PKG-16 (Error)
+### MAN-1 (Error)
 
 The manifest SHALL contain an entry for every file in the package, manifest file entry %s has no corresponding zip entry.
 
@@ -117,7 +117,7 @@ For all files contained in a package, with exception of the “mimetype” file 
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
-### PKG-17 (Error)
+### MAN-4 (Error)
 
 The manifest SHALL contain an entry for every file in the package, zip entry `<entry-name>` has no corresponding manifest file entry.
 
@@ -125,17 +125,17 @@ For all files contained in a package, with exception of the “mimetype” file 
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
-### PKG-19 (Warning)
+### MAN-7 (Warning)
 
 An OpenDocument package SHOULD contain a <manifest:file-entry> element whose manifest:full-path attribute has the value \"/\"".
 
-### PKG-20 (Warning)
+### MAN-8 (Warning)
 
 For directories, the manifest file should contain a <manifest:file-entry> element only if a directory contains a document or a sub document.
 
 TODO: Discuss sub-document identification and use of sub-documents by ODF applications.
 
-### PKG-21 (Warning)
+### MAN-9 (Warning)
 
 A directory for administrative or convenience purposes, such as a directory that contains various unrelated image files, should not have an entry in the manifest file.
 
@@ -143,15 +143,15 @@ A directory for administrative or convenience purposes, such as a directory that
 
 If a MIME media type for a document exists, then an OpenDocument package SHOULD contain a file with name “mimetype”.
 
-### PKG-2 (Warning)
+### PKG-4 (Warning)
 
 An OpenDocument package SHOULD contain a file “mimetype”.
 
 See item C in [Section 2.2.1 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_2_2_1_OpenDocument_Package). See also See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
-This may become a SHALL depending on the contents of the `manifest.xml` file, see PKG-10 below.
+This may become a SHALL depending on the contents of the `manifest.xml` file, see MIM-4 below.
 
-### PKG-5
+### MIM-6
 
 The content of the "mimetype" file SHALL be ASCII encoded.
 
@@ -171,7 +171,7 @@ This mechanism can only work IF the mimetype file is ASCII/UTF-8/UTF-7 encoded w
 
 Whether this constitutes grounds for a specific validation check, or whether such a check is implementable is the question.
 
-### PKG-6 (Error)
+### MIM-2 (Error)
 
 The "mimetype" file SHALL NOT be compressed.
 
@@ -179,7 +179,7 @@ The “mimetype” file shall be the first file of the zip file. It shall not be
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
-### PKG-7 (Error)
+### MIM-1 (Error)
 
 The “mimetype” file SHALL be the first file of the zip file.
 
@@ -187,7 +187,7 @@ The “mimetype” file shall be the first file of the zip file. It shall not be
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
-### PKG-8 (Error)
+### MIM-3 (Error)
 
 The “mimetype” file SHALL NOT use an 'extra field' in its header.
 
@@ -195,7 +195,7 @@ The “mimetype” file shall be the first file of the zip file. It shall not be
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
-### PKG-10 (Error)
+### MIM-4 (Error)
 
 An OpenDocument package manifest SHALL contain a mimetype file IF a root "/" entry is present.
 
