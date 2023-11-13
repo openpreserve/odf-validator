@@ -12,14 +12,13 @@ import java.util.concurrent.Callable;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.messages.Message;
+import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.Validator;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -49,13 +48,9 @@ class CliValidator implements Callable<Integer> {
     private ValidationReport validatePath(final Path toValidate) {
         try {
             return validator.validate(toValidate);
-        } catch (FileNotFoundException e) {
-            this.logMessage(toValidate, FACTORY.getError("APP-2", toValidate.toString()));
-        } catch (SAXNotRecognizedException | SAXNotSupportedException | ParserConfigurationException | IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SAXException e) {
-            // TODO Auto-generated catch block
+        } catch (IllegalArgumentException | FileNotFoundException e) {
+            this.logMessage(toValidate, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
         return null;
