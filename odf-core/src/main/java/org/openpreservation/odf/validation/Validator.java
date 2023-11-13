@@ -106,6 +106,7 @@ public class Validator {
             OdfPackage pckg = parser.parsePackage(toValidate);
             return parser.validatePackage(pckg);
     }
+
     private ValidationReport validateOpenDocumentXml(final Path toValidate) throws ParserConfigurationException, SAXException, IOException {
         final XmlParser checker = new XmlParser();
         ParseResult parseResult = checker.parse(toValidate);

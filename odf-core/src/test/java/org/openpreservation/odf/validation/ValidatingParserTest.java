@@ -17,11 +17,8 @@ import java.nio.file.Paths;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
-import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
-import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.PackageParser;
 import org.xml.sax.SAXException;
 
 public class ValidatingParserTest {
