@@ -87,7 +87,12 @@ final class ParseResultImpl implements ParseResult {
 
     @Override
     public boolean isRootName(final String name) {
-        return this.rootName != null && !this.rootName.isBlank() && this.rootName.equals(name);
+        Objects.requireNonNull(name, "String parameter name cannot be null.");
+        if (this.rootName == null || (name.contains(":") && this.rootPrefix == null)) {
+            return false;
+        }
+        String match = (name.contains(":")) ? String.format("%s:%s", this.rootPrefix, this.rootName) : this.rootName;
+        return match.equals(name);
     }
 
     @Override

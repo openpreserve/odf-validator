@@ -77,13 +77,17 @@ public class ParseResultTest {
     @Test
     public void testIsRootNameNull() {
         ParseResult parseResult = ParseResultImpl.of(true, XmlTestUtils.exampleNamespace, new ArrayList<>(), "rootPrefix", null, new ArrayList<>(), new ArrayList<>());
-        assertFalse("Null String should not match root name.", parseResult.isRootName(null));
+            assertThrows("NullPointerException expected",
+            NullPointerException.class,
+            () -> {
+                parseResult.isRootName(null);
+            });
     }
 
     @Test
     public void testIsRootNameEmpty() {
         ParseResult parseResult = ParseResultImpl.of(true, XmlTestUtils.exampleNamespace, new ArrayList<>(), "rootPrefix", "", new ArrayList<>(), new ArrayList<>());
-        assertFalse("Empty String should not match root name.", parseResult.isRootName(""));
+        assertTrue("Empty String should match root name.", parseResult.isRootName(""));
     }
 
     @Test
