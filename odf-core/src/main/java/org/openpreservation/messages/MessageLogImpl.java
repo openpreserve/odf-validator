@@ -4,10 +4,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 final class MessageLogImpl implements MessageLog {
-    private final List<Message> messages = new ArrayList<>();
+    private final List<Message> messages;
 
+    private MessageLogImpl() {
+        this(new ArrayList<>());
+    }
+
+    private MessageLogImpl(final List<Message> messages) {
+        super();
+        this.messages = new ArrayList<>(messages);
+    }
+
+    static final MessageLog of() {
+        return new MessageLogImpl();
+    }
+
+    static final MessageLog of(final List<Message> messages) {
+        return new MessageLogImpl(messages);
+    }
+    
     @Override
     public int size() {
         return this.messages.size();
@@ -47,13 +65,7 @@ final class MessageLogImpl implements MessageLog {
 
     @Override
     public List<Message> getMessages(final Message.Severity severity) {
-        final List<Message> filteredList = new ArrayList<>();
-        for (final Message message : this.messages) {
-            if (message.getSeverity() == severity) {
-                filteredList.add(message);
-            }
-        }
-        return Collections.unmodifiableList(filteredList);
+        return this.messages.stream().filter(m -> m.getSeverity() == severity).collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -63,13 +75,7 @@ final class MessageLogImpl implements MessageLog {
 
     @Override
     public List<Message> getMessages(final String id) {
-        final List<Message> filteredList = new ArrayList<>();
-        for (final Message message : this.messages) {
-            if (message.getId().equals(id)) {
-                filteredList.add(message);
-            }
-        }
-        return Collections.unmodifiableList(filteredList);
+        return this.messages.stream().filter(m -> m.getId().equals(id)).collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -88,11 +94,6 @@ final class MessageLogImpl implements MessageLog {
     }
 
     private boolean containsSeverity(final Message.Severity severity) {
-        for (final Message message : this.messages) {
-            if (message.getSeverity() == severity) {
-                return true;
-            }
-        }
-        return false;
+        return this.messages.stream().anyMatch((m -> m.getSeverity() == severity));
     }
 }

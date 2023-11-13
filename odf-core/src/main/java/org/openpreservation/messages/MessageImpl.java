@@ -97,10 +97,12 @@ final class MessageImpl implements Message {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.severity == null) ? 0 : this.severity.hashCode());
         result = prime * result
                 + ((this.message == null) ? 0 : this.message.hashCode());
         result = prime * result
                 + ((this.subMessage == null) ? 0 : this.subMessage.hashCode());
+        result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
         return result;
     }
 
@@ -126,6 +128,13 @@ final class MessageImpl implements Message {
         } else if (!this.id.equals(other.id)) {
             return false;
         }
+        if (this.severity == null) {
+            if (other.severity != null) {
+                return false;
+            }
+        } else if (!this.severity.equals(other.severity)) {
+            return false;
+        }
         if (this.message == null) {
             if (other.message != null) {
                 return false;
@@ -138,6 +147,13 @@ final class MessageImpl implements Message {
                 return false;
             }
         } else if (!this.subMessage.equals(other.subMessage)) {
+            return false;
+        }
+        if (this.timestamp == null) {
+            if (other.timestamp != null) {
+                return false;
+            }
+        } else if (!this.timestamp.equals(other.timestamp)) {
             return false;
         }
         return true;
