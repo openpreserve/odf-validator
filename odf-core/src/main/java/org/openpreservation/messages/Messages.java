@@ -1,5 +1,6 @@
 package org.openpreservation.messages;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -147,6 +148,10 @@ public enum Messages {
     }
 
     public static MessageLog messageLogInstance() {
-        return new MessageLogImpl();
+        return MessageLogImpl.of();
+    }
+
+    public static MessageLog messageLogInstance(final List<Message> messages) {
+        return MessageLogImpl.of(messages);
     }
 }

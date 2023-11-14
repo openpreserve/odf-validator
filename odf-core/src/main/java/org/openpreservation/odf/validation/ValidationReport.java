@@ -11,7 +11,7 @@ import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 
-public class ValidationReport {
+public final class ValidationReport {
     final String name;
     public final OpenDocument document;
     public final Map<String, MessageLog> documentMessages;
@@ -139,6 +139,7 @@ public class ValidationReport {
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((documentMessages == null) ? 0 : documentMessages.hashCode());
+        result = prime * result + ((document == null) ? 0 : document.hashCode());
         return result;
     }
 
@@ -160,6 +161,11 @@ public class ValidationReport {
             if (other.documentMessages != null)
                 return false;
         } else if (!documentMessages.equals(other.documentMessages))
+            return false;
+        if (document == null) {
+            if (other.document != null)
+                return false;
+        } else if (!document.equals(other.document))
             return false;
         return true;
     }
