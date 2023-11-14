@@ -68,8 +68,7 @@ public class PackageParserTest {
     @Test
     public void testParsePackagePath() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        Path path = Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath());
-        OdfPackage pkg = parser.parsePackage(path);
+        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet", pkg.getMimeType());
@@ -78,8 +77,7 @@ public class PackageParserTest {
     @Test
     public void testParsePackageFile() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        File file = new File(TestFiles.EMPTY_ODS.toURI());
-        OdfPackage pkg = parser.parsePackage(file);
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet", pkg.getMimeType());
@@ -88,8 +86,7 @@ public class PackageParserTest {
     @Test
     public void testParsePackageStream() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        InputStream is = TestFiles.EMPTY_ODS.openStream();
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS.toString());
+        OdfPackage pkg = parser.parsePackage(TestFiles.EMPTY_ODS.openStream(), TestFiles.EMPTY_ODS.toString());
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet", pkg.getMimeType());
@@ -98,8 +95,7 @@ public class PackageParserTest {
     @Test
     public void testDsigParsing() throws ParserConfigurationException, SAXException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        InputStream is = TestFiles.DSIG_INVALID.openStream();
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_INVALID.toString());
+        OdfPackage pkg = parser.parsePackage(TestFiles.DSIG_INVALID.openStream(), TestFiles.DSIG_INVALID.toString());
         ParseResult result = pkg.getEntryXmlParseResult("META-INF/documentsignatures.xml");
         assertNotNull("Dsig file META-INF/documentsignatures.xml result should not be null" , result);
         assertTrue("Package should have a well formed dsig for META-INF/documentsignatures.xml" , result.isWellFormed());
@@ -108,8 +104,7 @@ public class PackageParserTest {
     @Test
     public void testManifestNotWF() throws IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        InputStream is = TestFiles.MANIFEST_NOT_WF.openStream();
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.MANIFEST_NOT_WF.toString());
+        OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_NOT_WF.openStream(), TestFiles.MANIFEST_NOT_WF.toString());
         ParseResult result = pkg.getEntryXmlParseResult("META-INF/manifest.xml");
         assertNotNull("Dsig file META-INF/documentsignatures.xml result should not be null" , result);
         assertFalse("Package should NOT have a well formed META-INF/manifest.xml" , result.isWellFormed());
