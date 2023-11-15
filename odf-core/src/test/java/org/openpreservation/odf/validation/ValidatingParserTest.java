@@ -58,9 +58,7 @@ public class ValidatingParserTest {
     @Test
     public void testParseFile() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
         ValidatingParser parser = Validators.getValidatingParser();
-        URL resourceUrl = TestFiles.EMPTY_ODS;
-        File file = new File(resourceUrl.toURI());
-        OdfPackage pkg = parser.parsePackage(file);
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet", pkg.getMimeType());
@@ -91,8 +89,7 @@ public class ValidatingParserTest {
     @Test
     public void testParseStream() throws ParserConfigurationException, SAXException, IOException {
         ValidatingParser parser = Validators.getValidatingParser();
-        InputStream is = TestFiles.EMPTY_ODS.openStream();
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS.toString());
+        OdfPackage pkg = parser.parsePackage(TestFiles.EMPTY_ODS.openStream(), TestFiles.EMPTY_ODS.toString());
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet", pkg.getMimeType());

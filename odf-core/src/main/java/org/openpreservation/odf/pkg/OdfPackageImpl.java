@@ -123,22 +123,22 @@ final class OdfPackageImpl implements OdfPackage {
 
     @Override
     public boolean hasMimeEntry() {
-        return this.archive.getZipEntry(OdfFormats.MIMETYPE) != null;
+        return (this.archive != null) && this.archive.getZipEntry(OdfFormats.MIMETYPE) != null;
     }
 
     @Override
     public boolean isMimeFirst() {
-        return this.archive.getFirstEntry().getName().equals(OdfFormats.MIMETYPE);
+        return (this.archive != null) && this.archive.getFirstEntry().getName().equals(OdfFormats.MIMETYPE);
     }
 
     @Override
     public boolean hasManifest() {
-        return this.archive.getZipEntry(Constants.PATH_MANIFEST) != null;
+        return (this.archive != null) && this.archive.getZipEntry(Constants.PATH_MANIFEST) != null;
     }
 
     @Override
     public boolean hasThumbnail() {
-        return this.archive.getZipEntry(Constants.PATH_THUMBNAIL) != null;
+        return (this.archive != null) && this.archive.getZipEntry(Constants.PATH_THUMBNAIL) != null;
     }
 
     @Override
@@ -163,7 +163,7 @@ final class OdfPackageImpl implements OdfPackage {
 
     @Override
     public InputStream getEntryXmlStream(final String path) throws IOException {
-        return this.archive.getEntryInputStream(path);
+        return (this.archive != null) ? this.archive.getEntryInputStream(path) : null;
     }
 
     @Override
@@ -195,7 +195,7 @@ final class OdfPackageImpl implements OdfPackage {
 
     @Override
     public InputStream getEntryStream(final FileEntry entry) throws IOException {
-        return this.archive.getEntryInputStream(entry.getFullPath());
+        return (this.archive != null) ? this.archive.getEntryInputStream(entry.getFullPath()) : null;
     }
 
     @Override
