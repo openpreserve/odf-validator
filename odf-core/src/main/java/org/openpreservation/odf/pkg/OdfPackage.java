@@ -147,4 +147,18 @@ public interface OdfPackage {
      * @return the OdfDocument for the sub-document
      */
     public OdfPackageDocument getSubDocument(final String path);
+
+    /**
+     * Retrieve the Map of String path keys and ParseResult values for files below the META-INF directory.
+     *
+     * @return the Map of META-INF file parse results.
+     */
+    public Map<String, ParseResult> getMetaInfMap();
+
+    /**
+     * Returns true if the META-INF directory or sub-directories contain files with the term "signatures" in their name.
+     *
+     * @return the Map of META-INF file parse results.
+     */
+    public boolean hasDsigEntries();
 }
