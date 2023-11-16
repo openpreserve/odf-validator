@@ -9,9 +9,9 @@ import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 
-final class PackageMimeTypeRule extends AbstractRule {
+final class ExtensionMimeTypeRule extends AbstractRule {
 
-    private PackageMimeTypeRule(String id, String name, String description) {
+    private ExtensionMimeTypeRule(String id, String name, String description) {
         super(id, name, description);
     }
 
@@ -24,13 +24,19 @@ final class PackageMimeTypeRule extends AbstractRule {
     public MessageLog check(OdfPackage odfPackage) throws IOException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         MessageLog messageLog = Messages.messageLogInstance();
-        if (!odfPackage.hasMimeEntry()) {
-            messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(), this.getDescription()));
+        if (!odfPackage.hasMimeEntry()
+                || !"application/vnd.oasis.opendocument.spreadsheet".equals(odfPackage.getMimeType())
+                || !odfPackage.getName().endsWith(".ods")) {
+            messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
+                    this.getDescription()));
         }
         return messageLog;
     }
 
-    static final PackageMimeTypeRule getInstance() {
-        return new PackageMimeTypeRule("ODF_3", "Package mimetype entry", "An ODF package MUST have a mimetype entry as specified in the Section 3.3 of the ODF specification v1.3.");
+    static final ExtensionMimeTypeRule getInstance() {
+        return new ExtensionMimeTypeRule("ODF_4", "Extension and MIME type",
+                "The MIME type value MUST be: \"application/vnd.oasis.opendocument.spreadsheet\" and the file extension MUST be \".ods\"."
+                        + //
+                        "");
     }
 }
