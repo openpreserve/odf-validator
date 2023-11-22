@@ -36,4 +36,11 @@ public interface FileEntry {
      * @return true if the file entry is a document entry, otherwise false.
      */
     public boolean isDocument();
+
+    /**
+     * Is the file entry encrypted?
+     * 
+     * @return true if the file entry is encrypted, otherwise false.
+     */
+    public boolean isEncrypted();
 }

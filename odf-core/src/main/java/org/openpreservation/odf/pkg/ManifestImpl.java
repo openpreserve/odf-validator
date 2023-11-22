@@ -23,7 +23,11 @@ import org.xml.sax.helpers.DefaultHandler;
 final class ManifestImpl implements Manifest {
     private static final class ManifestHandler extends DefaultHandler {
         private String version = "";
-
+        private String currentFullPath = "";
+        private String currentMediaType = "";
+        private String currentVersion = "";
+        private boolean isEncrypted = false;
+        private long currentSize = -1;
         private final Map<String, FileEntry> entries = new HashMap<>();
 
         public ManifestImpl getManifest() {
@@ -43,18 +47,29 @@ final class ManifestImpl implements Manifest {
                 throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             if ("manifest:file-entry".equals(qName)) {
-                final String fullPath = attributes.getValue("manifest:full-path");
-                final String mediaType = attributes.getValue("manifest:media-type");
-                final String verString = attributes.getValue("manifest:version");
-                long size = -1;
+                this.currentFullPath = attributes.getValue("manifest:full-path");
+                this.currentMediaType = attributes.getValue("manifest:media-type");
+                this.currentVersion = attributes.getValue("manifest:version");
+                this.currentSize = -1;
+                this.isEncrypted = false;
                 try {
-                    size = Long.parseLong(attributes.getValue("manifest:size"));
+                    this.currentSize = Long.parseLong(attributes.getValue("manifest:size"));
                 } catch (final NumberFormatException e) {
                     // ignore
                 }
-                this.entries.put(fullPath, FileEntryImpl.of(fullPath, mediaType, size, verString));
             } else if ("manifest:manifest".equals(qName)) {
                 this.version = attributes.getValue("manifest:version");
+            } else if ("manifest:encryption-data".equals(qName)) {
+                this.isEncrypted = true;
+            }
+        }
+
+        @Override
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+            super.endElement(uri, localName, qName);
+            if ("manifest:file-entry".equals(qName)) {
+                this.entries.put(this.currentFullPath, FileEntryImpl.of(this.currentFullPath, this.currentMediaType,
+                        this.currentSize, currentVersion, this.isEncrypted));
             }
         }
     }
