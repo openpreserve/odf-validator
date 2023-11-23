@@ -6,13 +6,12 @@ import java.util.Objects;
 import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
-import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 
-final class EncryptionRule extends AbstractRule {
+final class SubDocumentRule extends AbstractRule {
 
-    private EncryptionRule(String id, String name, String description) {
+    private SubDocumentRule(String id, String name, String description) {
         super(id, name, description);
     }
 
@@ -25,20 +24,15 @@ final class EncryptionRule extends AbstractRule {
     public MessageLog check(OdfPackage odfPackage) throws IOException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         MessageLog messageLog = Messages.messageLogInstance();
-        if (!odfPackage.hasManifest()) {
-            return messageLog;
-        }
-        for (FileEntry entry : odfPackage.getManifest().getEntries()) {
-            if (entry.isEncrypted()) {
-                messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
-                        this.getDescription()));
-            }
+        if (odfPackage.hasManifest() && odfPackage.getManifest().getDocumentEntries().size() > 1) {
+            messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
+                    this.getDescription()));
         }
         return messageLog;
     }
 
-    static final EncryptionRule getInstance() {
-        return new EncryptionRule("ODF_1", "Encryption",
-                "The package MUST NOT contain any encrypted entries.");
+    static final SubDocumentRule getInstance() {
+        return new SubDocumentRule("ODF_10", "Sub Documents",
+                "The package MUST NOT contain sub documents.");
     }
 }
