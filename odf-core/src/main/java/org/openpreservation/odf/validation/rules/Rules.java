@@ -10,6 +10,10 @@ public class Rules {
         throw new AssertionError("Utility class must not be instantiated");
     }
 
+    public static final Rule odf1() {
+        return EncryptionRule.getInstance();
+    }
+
     public static final Rule odf2() throws ParserConfigurationException, SAXException {
         return ValidPackageRule.getInstance();
     }
