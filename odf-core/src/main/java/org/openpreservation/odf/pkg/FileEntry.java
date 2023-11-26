@@ -39,7 +39,7 @@ public interface FileEntry {
 
     /**
      * Is the file entry encrypted?
-     * 
+     *
      * @return true if the file entry is encrypted, otherwise false.
      */
     public boolean isEncrypted();

@@ -29,4 +29,8 @@ public class Rules {
     public static final Rule odf9() {
         return DigitalSignaturesRule.getInstance();
     }
+
+    public static final Rule odf10() {
+        return SubDocumentRule.getInstance();
+    }
 }
