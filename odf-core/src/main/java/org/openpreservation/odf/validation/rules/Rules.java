@@ -14,7 +14,11 @@ public class Rules {
         return ValidPackageRule.getInstance();
     }
 
-    public static final Rule odf3() throws ParserConfigurationException, SAXException {
+    public static final Rule odf3() {
         return PackageMimeTypeRule.getInstance();
+    }
+
+    public static final Rule odf4() {
+        return ExtensionMimeTypeRule.getInstance();
     }
 }
