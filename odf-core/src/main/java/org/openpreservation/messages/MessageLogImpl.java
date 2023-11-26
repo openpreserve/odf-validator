@@ -25,7 +25,7 @@ final class MessageLogImpl implements MessageLog {
     static final MessageLog of(final List<Message> messages) {
         return new MessageLogImpl(messages);
     }
-    
+
     @Override
     public int size() {
         return this.messages.size();
