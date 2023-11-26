@@ -21,4 +21,8 @@ public class Rules {
     public static final Rule odf4() {
         return ExtensionMimeTypeRule.getInstance();
     }
+
+    public static final Rule odf9() {
+        return DigitalSignaturesRule.getInstance();
+    }
 }

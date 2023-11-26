@@ -15,6 +15,7 @@ import java.util.Objects;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.zip.ZipArchive;
 import org.openpreservation.format.zip.ZipArchiveCache;
+import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.xml.OdfXmlDocument;
@@ -275,5 +276,23 @@ final class OdfPackageImpl implements OdfPackage {
     @Override
     public OdfPackageDocument getSubDocument(String path) {
         return this.documentMap.get(path);
+    }
+
+    @Override
+    public Map<String, ParseResult> getMetaInfMap() {
+        return Collections.unmodifiableMap(this.metaInfMap);
+    }
+
+    @Override
+    public boolean hasDsigEntries() {
+        if (this.archive == null) {
+            return false;
+        }
+        for (ZipEntry entry : this.archive.getZipEntries()) {
+            if (PackageParserImpl.isDsig(entry.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
