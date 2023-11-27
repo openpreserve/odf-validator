@@ -11,19 +11,19 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class DigitalSignaturesRule extends AbstractRule {
 
-    private DigitalSignaturesRule(String id, String name, String description) {
-        super(id, name, description);
+    private DigitalSignaturesRule(final String id, final String name, final String description, final boolean isPrerequisite) {
+        super(id, name, description, isPrerequisite);
     }
 
     @Override
-    public MessageLog check(OdfXmlDocument document) {
+    public MessageLog check(final OdfXmlDocument document) {
         throw new UnsupportedOperationException("Unimplemented method 'check'");
     }
 
     @Override
-    public MessageLog check(OdfPackage odfPackage) throws IOException {
+    public MessageLog check(final OdfPackage odfPackage) throws IOException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
-        MessageLog messageLog = Messages.messageLogInstance();
+        final MessageLog messageLog = Messages.messageLogInstance();
         if (odfPackage.hasDsigEntries()) {
             messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
                     this.getDescription()));
@@ -33,6 +33,6 @@ final class DigitalSignaturesRule extends AbstractRule {
 
     static final DigitalSignaturesRule getInstance() {
         return new DigitalSignaturesRule("ODF_9", "Digital Signatures",
-                "The package MUST NOT contain any digital signatures.");
+                "The package MUST NOT contain any digital signatures.", false);
     }
 }

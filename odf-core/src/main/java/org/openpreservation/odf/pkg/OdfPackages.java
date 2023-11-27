@@ -74,6 +74,10 @@ public final class OdfPackages {
         return PackageParserImpl.isDsig(path);
     }
 
+    public static final boolean isOdfXml(final String entrypath) {
+        return PackageParserImpl.isOdfXml(entrypath);
+    }
+
     private OdfPackages() {
         throw new AssertionError("Utility class 'OdfPackages' should not be instantiated");
     }

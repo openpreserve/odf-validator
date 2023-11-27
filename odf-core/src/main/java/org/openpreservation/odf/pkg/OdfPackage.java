@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.zip.ZipArchive;
@@ -114,6 +115,15 @@ public interface OdfPackage {
      *         documents
      */
     public List<String> getXmlEntryPaths();
+
+    /**
+     * Get the paths to all of the identified ODF XML documents in the package,
+     * including content, styles, metadata and the manifest
+     *
+     * @return a List of all of the String internal paths to the packge ODF XML
+     *         documents
+     */
+    public Set<FileEntry> getXmlEntries();
 
     /**
      * Get the InputStream for any item from the document's Manifest

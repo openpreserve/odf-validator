@@ -12,33 +12,33 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class EncryptionRule extends AbstractRule {
 
-    private EncryptionRule(String id, String name, String description) {
-        super(id, name, description);
+    static final EncryptionRule getInstance() {
+        return new EncryptionRule("ODF_1", "Encryption",
+                "The package MUST NOT contain any encrypted entries.", true);
+    }
+
+    private EncryptionRule(final String id, final String name, final String description, final boolean isPrerequisite) {
+        super(id, name, description, isPrerequisite);
     }
 
     @Override
-    public MessageLog check(OdfXmlDocument document) {
+    public MessageLog check(final OdfXmlDocument document) {
         throw new UnsupportedOperationException("Unimplemented method 'check'");
     }
 
     @Override
-    public MessageLog check(OdfPackage odfPackage) throws IOException {
+    public MessageLog check(final OdfPackage odfPackage) throws IOException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
-        MessageLog messageLog = Messages.messageLogInstance();
+        final MessageLog messageLog = Messages.messageLogInstance();
         if (!odfPackage.hasManifest()) {
             return messageLog;
         }
-        for (FileEntry entry : odfPackage.getManifest().getEntries()) {
+        for (final FileEntry entry : odfPackage.getManifest().getEntries()) {
             if (entry.isEncrypted()) {
                 messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
                         this.getDescription()));
             }
         }
         return messageLog;
-    }
-
-    static final EncryptionRule getInstance() {
-        return new EncryptionRule("ODF_1", "Encryption",
-                "The package MUST NOT contain any encrypted entries.");
     }
 }
