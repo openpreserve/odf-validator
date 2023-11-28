@@ -7,6 +7,7 @@ import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class SubDocumentRule extends AbstractRule {
@@ -30,7 +31,7 @@ final class SubDocumentRule extends AbstractRule {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
         if (odfPackage.hasManifest() && odfPackage.getManifest().getDocumentEntries().size() > 1) {
-            messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
+            messageLog.add(OdfPackages.PATH_MANIFEST, Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
                     this.getDescription()));
         }
         return messageLog;

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -65,10 +66,12 @@ class CliValidator implements Callable<Integer> {
         Integer retStatus = 0;
         for (Map.Entry<Path, ValidationReport> entry : validationReports.entrySet()) {
             if (this.appMessages.containsKey(entry.getKey())) {
-                for (Message message : this.appMessages.get(entry.getKey()).getMessages()) {
-                    ConsoleFormatter.colourise(message);
-                    if (message.isError() || message.isFatal()) {
-                        retStatus = 1;
+                for (List<Message> messages : this.appMessages.get(entry.getKey()).getMessages().values()) {
+                    for (Message message : messages) {
+                        ConsoleFormatter.colourise(message);
+                        if (message.isError() || message.isFatal()) {
+                            retStatus = 1;
+                        }
                     }
                 }
             }
@@ -85,29 +88,23 @@ class CliValidator implements Callable<Integer> {
         if (report.getMessages().isEmpty()) {
             ConsoleFormatter.info(FACTORY.getInfo("APP-3").getMessage());
         }
-        int packageErrors = 0;
-        int packageWarnings = 0;
-        int packageInfos = 0;
-        for (Map.Entry<String, MessageLog> entry : report.documentMessages.entrySet()) {
-            for (Message message : entry.getValue().getMessages()) {
+        for (Map.Entry<String, List<Message>> entry : report.documentMessages.getMessages().entrySet()) {
+            for (Message message : entry.getValue()) {
                 ConsoleFormatter.colourise(Paths.get(entry.getKey()), message);
                 if (message.isError() || message.isFatal()) {
                     retStatus = 1;
                 }
             }
-            packageErrors += entry.getValue().getErrors().size();
-            packageWarnings += entry.getValue().getWarnings().size();
-            packageInfos += entry.getValue().getInfos().size();
         }
-        if (packageErrors > 0) {
+        if (report.documentMessages.hasErrors()) {
             ConsoleFormatter.error(String.format("NOT VALID, %d errors, %d warnings and %d info messages.",
-                    packageErrors, packageWarnings, packageInfos));
-        } else if (packageWarnings > 0) {
+                    report.documentMessages.getErrorCount(), report.documentMessages.getWarningCount(), report.documentMessages.getInfoCount()));
+        } else if (report.documentMessages.hasWarnings()) {
             ConsoleFormatter.warn(String.format("VALID, no errors, %d warnings found and %d info messages.",
-                    packageWarnings, packageInfos));
+                    report.documentMessages.getWarningCount(), report.documentMessages.getInfoCount()));
         } else {
             ConsoleFormatter
-                    .info(String.format("VALID, no errors, no warnings and %d info message found.", packageInfos));
+                    .info(String.format("VALID, no errors, no warnings and %d info message found.", report.documentMessages.getInfoCount()));
         }
         ConsoleFormatter.newline();
         return retStatus;
@@ -115,6 +112,6 @@ class CliValidator implements Callable<Integer> {
 
     private final void logMessage(final Path path, final Message message) {
         this.appMessages.putIfAbsent(path, Messages.messageLogInstance());
-        this.appMessages.get(path).add(message);
+        this.appMessages.get(path).add(path.toString(), message);
     }
 }

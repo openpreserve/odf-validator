@@ -7,6 +7,7 @@ import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class DigitalSignaturesRule extends AbstractRule {
@@ -25,8 +26,12 @@ final class DigitalSignaturesRule extends AbstractRule {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
         if (odfPackage.hasDsigEntries()) {
-            messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
-                    this.getDescription()));
+            for (final String path : odfPackage.getMetaInfMap().keySet()) {
+                if (OdfPackages.isDsig(path)) {
+                    messageLog.add(path, Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
+                            this.getDescription()));
+                }
+            }
         }
         return messageLog;
     }
