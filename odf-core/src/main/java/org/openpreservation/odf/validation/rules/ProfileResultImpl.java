@@ -1,36 +1,42 @@
 package org.openpreservation.odf.validation.rules;
 
-import java.util.List;
-import java.util.Map;
-
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.validation.ProfileResult;
 import org.openpreservation.odf.validation.ValidationReport;
 
 final class ProfileResultImpl implements ProfileResult {
+    private final String id;
+    private final ValidationReport validationReport;
+    private final MessageLog profileMessages;
+
+    private ProfileResultImpl(final String id, final ValidationReport validationReport, final MessageLog profileMessages) {
+        super();
+        this.id = id;
+        this.validationReport = validationReport;
+        this.profileMessages = profileMessages;
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
     @Override
     public ValidationReport getValidationReport() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getValidationReport'");
+        return this.validationReport;
     }
 
     @Override
-    public Map<String, MessageLog> getPackageMessageLogMap() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPackageMessageLogMap'");
+    public MessageLog getProfileMessages() {
+        return this.profileMessages;
     }
 
     @Override
-    public MessageLog getMessageLogForPath(final String path) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMessageLogForPath'");
+    public boolean isValid() {
+        return !this.getProfileMessages().hasErrors();
     }
 
-    @Override
-    public List<String> getLogPaths() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getLogPaths'");
+    static final ProfileResultImpl of(final String id, final ValidationReport validationReport, final MessageLog profileMessages) {
+        return new ProfileResultImpl(id, validationReport, profileMessages);
     }
-    
 }

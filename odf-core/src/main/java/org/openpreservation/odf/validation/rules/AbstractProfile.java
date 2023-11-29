@@ -2,7 +2,7 @@ package org.openpreservation.odf.validation.rules;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
@@ -15,14 +15,14 @@ abstract class AbstractProfile implements Profile {
     final String id;
     final String name;
     final String description;
-    final SortedSet<Rule> rules;
+    final Set<Rule> rules;
 
-    AbstractProfile(final String id, final String name, final String description, final SortedSet<Rule> rules) {
+    AbstractProfile(final String id, final String name, final String description, final Set<Rule> rules) {
         super();
         this.id = id;
         this.name = name;
         this.description = description;
-        this.rules = Collections.unmodifiableSortedSet(rules);
+        this.rules = Collections.unmodifiableSet(rules);
     }
 
     @Override
@@ -41,8 +41,8 @@ abstract class AbstractProfile implements Profile {
     }
 
     @Override
-    public SortedSet<Rule> getRules() {
-        return Collections.unmodifiableSortedSet(this.rules);
+    public Set<Rule> getRules() {
+        return Collections.unmodifiableSet(this.rules);
     }
 
     @Override
