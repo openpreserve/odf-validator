@@ -33,8 +33,8 @@ class ValidPackageRule extends AbstractRule {
         MessageLog messageLog = Messages.messageLogInstance();
         ValidationReport validationReport = validatingParser.validatePackage(odfPackage);
         if (!validationReport.isValid()) {
-            messageLog.add(validationReport.getMessages());
-            messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(), this.getDescription()));
+            messageLog.add(odfPackage.getName(), validationReport.getMessages());
+            messageLog.add(odfPackage.getName(), Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(), this.getDescription()));
         }
         return messageLog;
     }

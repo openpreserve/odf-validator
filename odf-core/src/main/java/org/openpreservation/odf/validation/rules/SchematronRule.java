@@ -49,7 +49,7 @@ final class SchematronRule extends AbstractRule {
             try (InputStream is = odfPackage.getEntryStream(entry)) {
                 final SchematronOutputType schResult = this.schematron.applySchematronValidationToSVRL(new StreamSource(is));
                 for (final AbstractSVRLMessage result : SVRLHelper.getAllFailedAssertionsAndSuccessfulReports(schResult)) {
-                    messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
+                    messageLog.add(entry.getFullPath(), Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
                 result.getText()));
                 }
             } catch (final Exception e) {

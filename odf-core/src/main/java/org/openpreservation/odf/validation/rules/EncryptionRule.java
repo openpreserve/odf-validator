@@ -35,7 +35,7 @@ final class EncryptionRule extends AbstractRule {
         }
         for (final FileEntry entry : odfPackage.getManifest().getEntries()) {
             if (entry.isEncrypted()) {
-                messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
+                messageLog.add(entry.getFullPath(), Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
                         this.getDescription()));
             }
         }

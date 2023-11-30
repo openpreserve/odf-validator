@@ -151,7 +151,7 @@ public enum Messages {
         return MessageLogImpl.of();
     }
 
-    public static MessageLog messageLogInstance(final List<Message> messages) {
-        return MessageLogImpl.of(messages);
+    public static MessageLog messageLogInstance(final String path, final List<Message> messages) {
+        return MessageLogImpl.of(path, messages);
     }
 }

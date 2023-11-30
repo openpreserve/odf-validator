@@ -3,79 +3,94 @@ package org.openpreservation.messages;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 final class MessageLogImpl implements MessageLog {
-    private final List<Message> messages;
-
-    private MessageLogImpl() {
-        this(new ArrayList<>());
-    }
-
-    private MessageLogImpl(final List<Message> messages) {
-        super();
-        this.messages = new ArrayList<>(messages);
-    }
-
     static final MessageLog of() {
         return new MessageLogImpl();
     }
 
-    static final MessageLog of(final List<Message> messages) {
-        return new MessageLogImpl(messages);
+    static final MessageLog of(final String path, final List<Message> messages) {
+        final Map<String, List<Message>> messageMap = new HashMap<>();
+        messageMap.put(path, messages);
+        return new MessageLogImpl(messageMap);
+    }
+
+    private final Map<String, List<Message>> messageMap;
+
+    private MessageLogImpl() {
+        this(new HashMap<>());
+    }
+
+    private MessageLogImpl(final Map<String, List<Message>> messageMap) {
+        super();
+        this.messageMap = new HashMap<>(messageMap);
     }
 
     @Override
     public int size() {
-        return this.messages.size();
+        return this.messageMap.values().stream().mapToInt(List::size).sum();
     }
 
     @Override
     public boolean isEmpty() {
-        return this.messages.isEmpty();
+        return this.size() == 0;
     }
 
     @Override
-    public int add(final Message message) {
-        this.messages.add(message);
+    public int add(final String path, final Message message) {
+        messageMap.putIfAbsent(path, new ArrayList<>());
+        this.messageMap.get(path).add(message);
         return this.size();
     }
 
     @Override
-    public int add(final Collection<? extends Message> messages) {
-        this.messages.addAll(messages);
+    public int add(final String path, final Collection<? extends Message> messages) {
+        if (!messages.isEmpty()) {
+            messageMap.putIfAbsent(path, new ArrayList<>());
+            this.messageMap.get(path).addAll(messages);
+        }
         return this.size();
     }
 
     @Override
-    public List<Message> getErrors() {
-        return getMessages(Message.Severity.ERROR);
+    public Map<String, List<Message>> getErrors() {
+        return getMessagesBySeverity(Message.Severity.ERROR);
     }
 
     @Override
-    public List<Message> getWarnings() {
-        return getMessages(Message.Severity.WARNING);
+    public Map<String, List<Message>> getWarnings() {
+        return getMessagesBySeverity(Message.Severity.WARNING);
     }
 
     @Override
-    public List<Message> getInfos() {
-        return getMessages(Message.Severity.INFO);
+    public Map<String, List<Message>> getInfos() {
+        return getMessagesBySeverity(Message.Severity.INFO);
     }
 
     @Override
-    public List<Message> getMessages(final Message.Severity severity) {
-        return this.messages.stream().filter(m -> m.getSeverity() == severity).collect(Collectors.toUnmodifiableList());
+    public Map<String, List<Message>> getMessagesBySeverity(final Message.Severity severity) {
+        return this.messageMap.entrySet().stream()
+                .collect(Collectors.toMap(Entry::getKey,
+                        e -> e.getValue().stream().filter(m -> m.getSeverity().equals(severity))
+                                .collect(Collectors.toUnmodifiableList())))
+                .entrySet().stream().filter(e -> !e.getValue().isEmpty())
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     @Override
-    public List<Message> getMessages() {
-        return Collections.unmodifiableList(this.messages);
+    public Map<String, List<Message>> getMessages() {
+        return Collections.unmodifiableMap(this.messageMap);
     }
 
     @Override
-    public List<Message> getMessages(final String id) {
-        return this.messages.stream().filter(m -> m.getId().equals(id)).collect(Collectors.toUnmodifiableList());
+    public Map<String, List<Message>> getMessagesById(final String id) {
+        return this.messageMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey,
+                e -> e.getValue().stream().filter(m -> m.getId().equals(id)).collect(Collectors.toUnmodifiableList())));
     }
 
     @Override
@@ -93,7 +108,33 @@ final class MessageLogImpl implements MessageLog {
         return containsSeverity(Message.Severity.INFO);
     }
 
+    @Override
+    public List<Message> getMessagesForPath(final String path) {
+        return Collections.unmodifiableList(this.messageMap.getOrDefault(path, new ArrayList<>()));
+    }
+
     private boolean containsSeverity(final Message.Severity severity) {
-        return this.messages.stream().anyMatch((m -> m.getSeverity() == severity));
+        return this.getMessagesBySeverity(severity).size() > 0;
+    }
+
+    @Override
+    public int add(Map<String, List<Message>> messages) {
+        messages.forEach(this::add);
+        return this.size();
+    }
+
+    @Override
+    public int getErrorCount() {
+        return this.getErrors().values().stream().mapToInt(List::size).sum();
+    }
+
+    @Override
+    public int getWarningCount() {
+        return this.getWarnings().values().stream().mapToInt(List::size).sum();
+    }
+
+    @Override
+    public int getInfoCount() {
+        return this.getInfos().values().stream().mapToInt(List::size).sum();
     }
 }
