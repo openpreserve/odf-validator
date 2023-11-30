@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.zip.ZipArchive;
@@ -116,6 +117,15 @@ public interface OdfPackage {
     public List<String> getXmlEntryPaths();
 
     /**
+     * Get the paths to all of the identified ODF XML documents in the package,
+     * including content, styles, metadata and the manifest
+     *
+     * @return a List of all of the String internal paths to the packge ODF XML
+     *         documents
+     */
+    public Set<FileEntry> getXmlEntries();
+
+    /**
      * Get the InputStream for any item from the document's Manifest
      *
      * @param entry the Manifest FileEntry to get the InputStream for
@@ -147,4 +157,18 @@ public interface OdfPackage {
      * @return the OdfDocument for the sub-document
      */
     public OdfPackageDocument getSubDocument(final String path);
+
+    /**
+     * Retrieve the Map of String path keys and ParseResult values for files below the META-INF directory.
+     *
+     * @return the Map of META-INF file parse results.
+     */
+    public Map<String, ParseResult> getMetaInfMap();
+
+    /**
+     * Returns true if the META-INF directory or sub-directories contain files with the term "signatures" in their name.
+     *
+     * @return the Map of META-INF file parse results.
+     */
+    public boolean hasDsigEntries();
 }

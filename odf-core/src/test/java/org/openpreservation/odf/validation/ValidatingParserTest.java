@@ -17,11 +17,8 @@ import java.nio.file.Paths;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
-import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
-import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.PackageParser;
 import org.xml.sax.SAXException;
 
 public class ValidatingParserTest {
@@ -61,9 +58,7 @@ public class ValidatingParserTest {
     @Test
     public void testParseFile() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
         ValidatingParser parser = Validators.getValidatingParser();
-        URL resourceUrl = TestFiles.EMPTY_ODS;
-        File file = new File(resourceUrl.toURI());
-        OdfPackage pkg = parser.parsePackage(file);
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet", pkg.getMimeType());
@@ -94,8 +89,7 @@ public class ValidatingParserTest {
     @Test
     public void testParseStream() throws ParserConfigurationException, SAXException, IOException {
         ValidatingParser parser = Validators.getValidatingParser();
-        InputStream is = TestFiles.EMPTY_ODS.openStream();
-        OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS.toString());
+        OdfPackage pkg = parser.parsePackage(TestFiles.EMPTY_ODS.openStream(), TestFiles.EMPTY_ODS.toString());
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet", pkg.getMimeType());
@@ -216,7 +210,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_MISSING_ENTRY_ODS.openStream(), TestFiles.MANIFEST_MISSING_ENTRY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_MISSING_ENTRY_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-4")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-1")).count() > 0);
     }
 
     @Test
@@ -225,7 +219,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_MISSING_XML_ENTRY_ODS.openStream(), TestFiles.MANIFEST_MISSING_XML_ENTRY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MANIFEST_MISSING_XML_ENTRY_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-4")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-1")).count() > 0);
     }
 
     @Test
@@ -234,7 +228,7 @@ public class ValidatingParserTest {
         OdfPackage pkg = parser.parsePackage(TestFiles.MISSING_FILE_ODS.openStream(), TestFiles.MISSING_FILE_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
         assertFalse("MISSING_FILE_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-1")).count() > 0);
+        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-4")).count() > 0);
     }
 
     @Test

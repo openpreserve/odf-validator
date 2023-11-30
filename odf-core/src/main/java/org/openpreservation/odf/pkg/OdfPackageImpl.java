@@ -7,14 +7,17 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.zip.ZipArchive;
 import org.openpreservation.format.zip.ZipArchiveCache;
+import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.xml.OdfXmlDocument;
@@ -123,22 +126,22 @@ final class OdfPackageImpl implements OdfPackage {
 
     @Override
     public boolean hasMimeEntry() {
-        return this.archive.getZipEntry(OdfFormats.MIMETYPE) != null;
+        return (this.archive != null) && this.archive.getZipEntry(OdfFormats.MIMETYPE) != null;
     }
 
     @Override
     public boolean isMimeFirst() {
-        return this.archive.getFirstEntry().getName().equals(OdfFormats.MIMETYPE);
+        return (this.archive != null) && this.archive.getFirstEntry().getName().equals(OdfFormats.MIMETYPE);
     }
 
     @Override
     public boolean hasManifest() {
-        return this.archive.getZipEntry(Constants.PATH_MANIFEST) != null;
+        return (this.archive != null) && this.archive.getZipEntry(Constants.PATH_MANIFEST) != null && this.manifest != null;
     }
 
     @Override
     public boolean hasThumbnail() {
-        return this.archive.getZipEntry(Constants.PATH_THUMBNAIL) != null;
+        return (this.archive != null) && this.archive.getZipEntry(Constants.PATH_THUMBNAIL) != null;
     }
 
     @Override
@@ -163,7 +166,7 @@ final class OdfPackageImpl implements OdfPackage {
 
     @Override
     public InputStream getEntryXmlStream(final String path) throws IOException {
-        return this.archive.getEntryInputStream(path);
+        return (this.archive != null) ? this.archive.getEntryInputStream(path) : null;
     }
 
     @Override
@@ -194,8 +197,17 @@ final class OdfPackageImpl implements OdfPackage {
     }
 
     @Override
+    public Set<FileEntry> getXmlEntries() {
+        Set<FileEntry> entries = new HashSet<>();
+        for (FileEntry entry : this.manifest.getEntriesByMediaType("text/xml")) {
+            entries.add(entry);
+        }
+        return entries;
+    }
+
+    @Override
     public InputStream getEntryStream(final FileEntry entry) throws IOException {
-        return this.archive.getEntryInputStream(entry.getFullPath());
+        return (this.archive != null) ? this.archive.getEntryInputStream(entry.getFullPath()) : null;
     }
 
     @Override
@@ -275,5 +287,23 @@ final class OdfPackageImpl implements OdfPackage {
     @Override
     public OdfPackageDocument getSubDocument(String path) {
         return this.documentMap.get(path);
+    }
+
+    @Override
+    public Map<String, ParseResult> getMetaInfMap() {
+        return Collections.unmodifiableMap(this.metaInfMap);
+    }
+
+    @Override
+    public boolean hasDsigEntries() {
+        if (this.archive == null) {
+            return false;
+        }
+        for (ZipEntry entry : this.archive.getZipEntries()) {
+            if (PackageParserImpl.isDsig(entry.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

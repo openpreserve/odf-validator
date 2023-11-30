@@ -45,5 +45,11 @@ public interface OpenDocument {
      */
     public OdfPackage getPackage();
 
+    /**
+     * Get the format of the OpenDocument, this will be the declared format of the package
+     * or the parsed format of a single document.
+     *
+     * @return the format of the OpenDocument
+     */
     public Formats getFormat();
 }

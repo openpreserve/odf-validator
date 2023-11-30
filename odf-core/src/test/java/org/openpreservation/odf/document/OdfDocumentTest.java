@@ -4,21 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
 import org.openpreservation.format.xml.ParseResult;
-import org.openpreservation.format.xml.ValidationResults;
 import org.openpreservation.format.xml.XmlParser;
-import org.openpreservation.format.xml.XmlTestUtils;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.xml.Metadata;
-import org.openpreservation.odf.xml.Metadata.UserDefinedField;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.xml.sax.SAXException;
@@ -26,15 +19,7 @@ import org.xml.sax.SAXException;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class OdfDocumentTest {
-    private static ParseResult parseResult = ValidationResults.parseResultOf(true, XmlTestUtils.exampleNamespace,
-            new ArrayList<>(),
-            "prefix", "name", new ArrayList<>(), new ArrayList<>());
-    Map<String, String> stringValues = new HashMap<>();
-    List<UserDefinedField> userDefinedFields = new ArrayList<>();
-    Metadata metadata = OdfXmlDocuments.metadataOf("", stringValues, userDefinedFields);
-    OdfXmlDocument odfDocument = OdfXmlDocuments
-            .xmlDocumentFrom(TestFiles.EMPTY_FODS.openStream());
-
+    private Utils utils = new Utils();
     public OdfDocumentTest() throws IOException, ParserConfigurationException, SAXException {
     }
 
@@ -45,22 +30,22 @@ public class OdfDocumentTest {
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    OdfDocumentImpl.of(nullDoc, metadata);
+                    OdfDocumentImpl.of(nullDoc, utils.metadata);
                 });
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    OdfDocumentImpl.of(odfDocument, null);
+                    OdfDocumentImpl.of(utils.odfDocument, null);
                 });
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    OdfDocumentImpl.of(nullResult, metadata);
+                    OdfDocumentImpl.of(nullResult, utils.metadata);
                 });
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    OdfDocumentImpl.of(parseResult, null);
+                    OdfDocumentImpl.of(utils.parseResult, null);
                 });
     }
 

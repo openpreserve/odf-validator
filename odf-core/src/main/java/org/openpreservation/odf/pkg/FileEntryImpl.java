@@ -11,27 +11,29 @@ final class FileEntryImpl implements FileEntry {
     static final FileEntryImpl of(final String fullPath, final String mediaType) {
         return FileEntryImpl.of(fullPath, mediaType, -1, null);
     }
+    static final FileEntryImpl of(final String fullPath, final String mediaType, final long size, final String version) {
+        return FileEntryImpl.of(fullPath, mediaType, size, version, false);
+    }
     static final FileEntryImpl of(final String fullPath, final String mediaType, final long size,
-            final String version) {
+            final String version, final boolean isEncrypted) {
         Objects.requireNonNull(fullPath, String.format(Checks.NOT_NULL, "fullPath", "String"));
         if (fullPath.isBlank()) {
             throw new IllegalArgumentException(String.format(Checks.NOT_EMPTY, "fullPath"));
         }
-        return new FileEntryImpl(fullPath, mediaType, size, version);
+        return new FileEntryImpl(fullPath, mediaType, size, version, isEncrypted);
     }
     private final String fullPath;
-
     private final String mediaType;
-
     private final long size;
-
     private final String version;
+    private final Boolean isEncrypted;
 
-    private FileEntryImpl(final String fullPath, final String mediaType, final long size, final String version) {
+    private FileEntryImpl(final String fullPath, final String mediaType, final long size, final String version, final boolean isEncrypted) {
         this.fullPath = fullPath;
         this.mediaType = mediaType;
         this.size = size;
         this.version = version;
+        this.isEncrypted = isEncrypted;
     }
 
     @Override
@@ -60,6 +62,11 @@ final class FileEntryImpl implements FileEntry {
     }
 
     @Override
+    public boolean isEncrypted() {
+        return this.isEncrypted;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -67,6 +74,7 @@ final class FileEntryImpl implements FileEntry {
         result = prime * result + ((mediaType == null) ? 0 : mediaType.hashCode());
         result = prime * result + (int) (size ^ (size >>> 32));
         result = prime * result + ((version == null) ? 0 : version.hashCode());
+        result = prime * result + ((isEncrypted == null) ? 0 : isEncrypted.hashCode());
         return result;
     }
 
@@ -95,6 +103,11 @@ final class FileEntryImpl implements FileEntry {
             if (other.version != null)
                 return false;
         } else if (!version.equals(other.version))
+            return false;
+        if (isEncrypted == null) {
+            if (other.isEncrypted != null)
+                return false;
+        } else if (!isEncrypted.equals(other.isEncrypted))
             return false;
         return true;
     }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -16,12 +17,18 @@ import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.pkg.PackageParser;
+import org.openpreservation.odf.validation.Profile;
+import org.openpreservation.odf.validation.ProfileResult;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.Validator;
+import org.openpreservation.odf.validation.rules.Rules;
 import org.xml.sax.SAXException;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "odf-validator", mixinStandardHelpOptions = true, version = "odf-validator 0.1", description = "Validates Open Document Format spreadsheets.")
@@ -29,18 +36,28 @@ class CliValidator implements Callable<Integer> {
     private static final MessageFactory FACTORY = Messages
             .getInstance("org.openpreservation.odf.apps.messages.Messages");
 
+    @Option(names = {"-p", "--profile"}, description = "Validate using extended Spreadsheet preservation profile.")
+    private boolean profileFlag;
     @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format spreadsheet files to validate.")
     private File[] toValidateFiles;
     private final Validator validator = new Validator();
+    private final Profile dnaProfile = Rules.getDnaProfile();
     private final Map<Path, ValidationReport> validationReports = new HashMap<>();
+    private final Map<Path, ProfileResult> profileResults = new HashMap<>();
     private final Map<Path, MessageLog> appMessages = new HashMap<>();
+    private final PackageParser parser = OdfPackages.getPackageParser();
 
     @Override
     public Integer call() {
         for (File file : this.toValidateFiles) {
             Path toValidate = file.toPath();
-            ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", toValidate.toString()));
-            validationReports.put(toValidate, validatePath(toValidate));
+            if (this.profileFlag) {
+                ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", toValidate.toString()));
+                profileResults.put(toValidate, profilePath(toValidate));
+            } else {
+                ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", toValidate.toString()));
+                validationReports.put(toValidate, validatePath(toValidate));
+            }
         }
         return results();
     }
@@ -56,6 +73,15 @@ class CliValidator implements Callable<Integer> {
         return null;
     }
 
+    private ProfileResult profilePath(final Path toProfile) {
+        try {
+            return dnaProfile.check(parser.parsePackage(toProfile));
+        } catch (IllegalArgumentException | IOException e) {
+            this.logMessage(toProfile, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         int exitCode = new CommandLine(new CliValidator()).execute(args);
         System.exit(exitCode);
@@ -65,10 +91,27 @@ class CliValidator implements Callable<Integer> {
         Integer retStatus = 0;
         for (Map.Entry<Path, ValidationReport> entry : validationReports.entrySet()) {
             if (this.appMessages.containsKey(entry.getKey())) {
-                for (Message message : this.appMessages.get(entry.getKey()).getMessages()) {
-                    ConsoleFormatter.colourise(message);
-                    if (message.isError() || message.isFatal()) {
-                        retStatus = 1;
+                for (List<Message> messages : this.appMessages.get(entry.getKey()).getMessages().values()) {
+                    for (Message message : messages) {
+                        ConsoleFormatter.colourise(message);
+                        if (message.isError() || message.isFatal()) {
+                            retStatus = 1;
+                        }
+                    }
+                }
+            }
+            if (entry.getValue() != null) {
+                retStatus = Math.max(retStatus, results(entry.getKey(), entry.getValue()));
+            }
+        }
+        for (Map.Entry<Path, ProfileResult> entry : profileResults.entrySet()) {
+            if (this.appMessages.containsKey(entry.getKey())) {
+                for (List<Message> messages : this.appMessages.get(entry.getKey()).getMessages().values()) {
+                    for (Message message : messages) {
+                        ConsoleFormatter.colourise(message);
+                        if (message.isError() || message.isFatal()) {
+                            retStatus = 1;
+                        }
                     }
                 }
             }
@@ -85,36 +128,58 @@ class CliValidator implements Callable<Integer> {
         if (report.getMessages().isEmpty()) {
             ConsoleFormatter.info(FACTORY.getInfo("APP-3").getMessage());
         }
-        int packageErrors = 0;
-        int packageWarnings = 0;
-        int packageInfos = 0;
-        for (Map.Entry<String, MessageLog> entry : report.documentMessages.entrySet()) {
-            for (Message message : entry.getValue().getMessages()) {
+        for (Map.Entry<String, List<Message>> entry : report.documentMessages.getMessages().entrySet()) {
+            for (Message message : entry.getValue()) {
                 ConsoleFormatter.colourise(Paths.get(entry.getKey()), message);
                 if (message.isError() || message.isFatal()) {
                     retStatus = 1;
                 }
             }
-            packageErrors += entry.getValue().getErrors().size();
-            packageWarnings += entry.getValue().getWarnings().size();
-            packageInfos += entry.getValue().getInfos().size();
         }
-        if (packageErrors > 0) {
+        if (report.documentMessages.hasErrors()) {
             ConsoleFormatter.error(String.format("NOT VALID, %d errors, %d warnings and %d info messages.",
-                    packageErrors, packageWarnings, packageInfos));
-        } else if (packageWarnings > 0) {
+                    report.documentMessages.getErrorCount(), report.documentMessages.getWarningCount(), report.documentMessages.getInfoCount()));
+        } else if (report.documentMessages.hasWarnings()) {
             ConsoleFormatter.warn(String.format("VALID, no errors, %d warnings found and %d info messages.",
-                    packageWarnings, packageInfos));
+                    report.documentMessages.getWarningCount(), report.documentMessages.getInfoCount()));
         } else {
             ConsoleFormatter
-                    .info(String.format("VALID, no errors, no warnings and %d info message found.", packageInfos));
+                    .info(String.format("VALID, no errors, no warnings and %d info message found.", report.documentMessages.getInfoCount()));
         }
         ConsoleFormatter.newline();
         return retStatus;
     }
 
+    private Integer results(final Path path, final ProfileResult report) {
+        Integer retStatus = 0;
+        ConsoleFormatter.colourise(FACTORY.getInfo("APP-5", this.dnaProfile.getName(), path.toString(), "bold"));
+        for (Map.Entry<String, List<Message>> entry : report.getProfileMessages().getMessages().entrySet()) {
+            for (Message message : entry.getValue()) {
+                ConsoleFormatter.colourise(Paths.get(entry.getKey()), message);
+                if (message.isError() || message.isFatal()) {
+                    retStatus = 1;
+                }
+            }
+        }
+        if (report.getProfileMessages().hasErrors()) {
+            ConsoleFormatter.error(String.format("NOT VALID, %d errors, %d warnings and %d info messages.",
+                   report.getProfileMessages().getErrorCount(), report.getProfileMessages().getWarningCount(), report.getProfileMessages().getInfoCount()));
+        } else if (report.getProfileMessages().hasWarnings()) {
+            ConsoleFormatter.warn(String.format("VALID, no errors, %d warnings found and %d info messages.",
+                    report.getProfileMessages().getWarningCount(), report.getProfileMessages().getInfoCount()));
+        } else {
+            ConsoleFormatter
+                    .info(String.format("VALID, no errors, no warnings and %d info message found.", report.getProfileMessages().getInfoCount()));
+        }
+        ConsoleFormatter.newline();
+        if (report.getValidationReport() != null) {
+            retStatus = Math.max(retStatus, results(path, report.getValidationReport()));            
+        }
+        return retStatus;
+    }
+
     private final void logMessage(final Path path, final Message message) {
         this.appMessages.putIfAbsent(path, Messages.messageLogInstance());
-        this.appMessages.get(path).add(message);
+        this.appMessages.get(path).add(path.toString(), message);
     }
 }

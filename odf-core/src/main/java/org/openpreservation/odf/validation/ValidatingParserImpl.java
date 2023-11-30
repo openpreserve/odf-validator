@@ -216,7 +216,7 @@ final class ValidatingParserImpl implements ValidatingParser {
             } else {
                 ZipEntry zipEntry = odfPackage.getZipArchive().getZipEntry(entryPath);
                 if (zipEntry == null) {
-                    messages.add(FACTORY.getError("MAN-1", entryPath));
+                    messages.add(FACTORY.getError("MAN-4", entryPath));
                 }
             }
         }
@@ -243,7 +243,7 @@ final class ValidatingParserImpl implements ValidatingParser {
                 continue;
             }
             if (manifest != null && odfPackage.getManifest().getEntry(zipEntry.getName()) == null) {
-                messages.add(FACTORY.getError("MAN-4", zipEntry.getName()));
+                messages.add(FACTORY.getError("MAN-1", zipEntry.getName()));
             }
             messageMap.put(zipEntry.getName(), messages);
         }

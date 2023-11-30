@@ -153,7 +153,7 @@ final class PackageParserImpl implements PackageParser {
         }
     }
 
-    private final boolean isOdfXml(final String entrypath) {
+    static final boolean isOdfXml(final String entrypath) {
         return Constants.ODF_XML.contains(new File(entrypath).getName());
     }
 

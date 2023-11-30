@@ -14,6 +14,7 @@ public class TestFiles {
     final static String ENCRYPTED_TEST_ROOT = PKG_TEST_ROOT + "encrypted/";
     final static String DSIG_TEST_ROOT = PKG_TEST_ROOT + "dsigs/";
     final static String INVALID_PKG_ROOT = PKG_TEST_ROOT + "invalid/";
+    final static String RULES_ROOT = PKG_TEST_ROOT + "rules/";
     final static String XML_TEST_ROOT = TEST_ROOT + "xml/";
     final static String FILE_TEST_ROOT = TEST_ROOT + "files/";
     public final static URL EMPTY_ODS = ClassLoader.getSystemResource(ZIP_TEST_ROOT + "empty.ods");
@@ -58,4 +59,10 @@ public class TestFiles {
     public final static URL DSIG_VALID = ClassLoader.getSystemResource(DSIG_TEST_ROOT + "dsigs-valid.ods");
     public final static URL DSIG_BADNAME = ClassLoader.getSystemResource(DSIG_TEST_ROOT + "bad_dsig_name.ods");
     public final static URL MANIFEST_NOT_WF = ClassLoader.getSystemResource(INVALID_PKG_ROOT + "manifest_not_wf.ods");
+    public final static URL ODF4_BAD_EXT = ClassLoader.getSystemResource(RULES_ROOT + "bad_ext_odf4.ext");
+    public final static URL ODF4_BAD_MIME = ClassLoader.getSystemResource(RULES_ROOT + "template_sheet_ext_odf4.ods");
+    public final static URL SCHEMATRON_CHECKER_XML = ClassLoader.getSystemResource(RULES_ROOT + "schematron_checker.xml");
+    public final static URL SCHEMATRON_CHECKER_ODS = ClassLoader.getSystemResource(RULES_ROOT + "schematron_checker.ods");
+    public final static URL MACRO_XML = ClassLoader.getSystemResource(RULES_ROOT + "macro.xml");
+    public final static URL MACRO_PACKAGE = ClassLoader.getSystemResource(RULES_ROOT + "macro.ods");
 }

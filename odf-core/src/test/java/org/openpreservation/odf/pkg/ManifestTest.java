@@ -132,4 +132,34 @@ public class ManifestTest {
         assertNull("Media type for non existing entry should be null",
                 manifest.getEntryMediaType("Thumbnails/thumbnail.pngx"));
     }
+
+    @Test
+    public void testEncryptedDocument() throws ParserConfigurationException, SAXException, IOException {
+        InputStream is = ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/fmt/xml/manifest-encrypted.xml");
+        Manifest manifest = ManifestImpl.from(is);
+        assertEquals("Manifest version should be 1.3", "1.3", manifest.getVersion());
+        assertEquals("The file should contain 7 file entries", 7, manifest.getEntryCount());
+        assertEquals("The file should contain 4 XML file entries", 4,
+                manifest.getEntriesByMediaType("text/xml").size());
+        assertEquals("application/vnd.oasis.opendocument.spreadsheet", manifest.getRootMediaType());
+        assertEquals("Root version should be 1.3", "1.3", manifest.getRootVersion());
+        manifest.getEntriesByMediaType("text/xml").forEach(entry -> {
+            assertTrue("Entry should be encrypted", entry.isEncrypted());
+        });
+    }
+
+    @Test
+    public void testNotEncryptedDocument() throws ParserConfigurationException, SAXException, IOException {
+        InputStream is = ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/fmt/xml/manifest.xml");
+        Manifest manifest = ManifestImpl.from(is);
+        assertEquals("Manifest version should be 1.3", "1.3", manifest.getVersion());
+        assertEquals("The file should contain 8 file entries", 8, manifest.getEntryCount());
+        assertEquals("The file should contain 4 XML file entries", 4,
+                manifest.getEntriesByMediaType("text/xml").size());
+        assertEquals("application/vnd.oasis.opendocument.spreadsheet", manifest.getRootMediaType());
+        assertEquals("Root version should be 1.3", "1.3", manifest.getRootVersion());
+        manifest.getEntriesByMediaType("text/xml").forEach(entry -> {
+            assertFalse("Entry should NOT be encrypted", entry.isEncrypted());
+        });
+    }
 }
