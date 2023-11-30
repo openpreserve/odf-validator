@@ -11,19 +11,26 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class ExtensionMimeTypeRule extends AbstractRule {
 
-    private ExtensionMimeTypeRule(String id, String name, String description) {
-        super(id, name, description);
+    static final ExtensionMimeTypeRule getInstance() {
+        return new ExtensionMimeTypeRule("ODF_4", "Extension and MIME type",
+                "The MIME type value MUST be: \"application/vnd.oasis.opendocument.spreadsheet\" and the file extension MUST be \".ods\"."
+                        + //
+                        "", false);
+    }
+
+    private ExtensionMimeTypeRule(final String id, final String name, final String description, final boolean isPrerequisite) {
+        super(id, name, description, isPrerequisite);
     }
 
     @Override
-    public MessageLog check(OdfXmlDocument document) {
+    public MessageLog check(final OdfXmlDocument document) {
         throw new UnsupportedOperationException("Unimplemented method 'check'");
     }
 
     @Override
-    public MessageLog check(OdfPackage odfPackage) throws IOException {
+    public MessageLog check(final OdfPackage odfPackage) throws IOException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
-        MessageLog messageLog = Messages.messageLogInstance();
+        final MessageLog messageLog = Messages.messageLogInstance();
         if (!odfPackage.hasMimeEntry()
                 || !"application/vnd.oasis.opendocument.spreadsheet".equals(odfPackage.getMimeType())
                 || !odfPackage.getName().endsWith(".ods")) {
@@ -31,12 +38,5 @@ final class ExtensionMimeTypeRule extends AbstractRule {
                     this.getDescription()));
         }
         return messageLog;
-    }
-
-    static final ExtensionMimeTypeRule getInstance() {
-        return new ExtensionMimeTypeRule("ODF_4", "Extension and MIME type",
-                "The MIME type value MUST be: \"application/vnd.oasis.opendocument.spreadsheet\" and the file extension MUST be \".ods\"."
-                        + //
-                        "");
     }
 }

@@ -11,28 +11,28 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class SubDocumentRule extends AbstractRule {
 
-    private SubDocumentRule(String id, String name, String description) {
-        super(id, name, description);
+    static final SubDocumentRule getInstance() {
+        return new SubDocumentRule("ODF_10", "Sub Documents",
+                "The package MUST NOT contain sub documents.", false);
+    }
+
+    private SubDocumentRule(final String id, final String name, final String description, final boolean isPrerequisite) {
+        super(id, name, description, isPrerequisite);
     }
 
     @Override
-    public MessageLog check(OdfXmlDocument document) {
+    public MessageLog check(final OdfXmlDocument document) {
         throw new UnsupportedOperationException("Unimplemented method 'check'");
     }
 
     @Override
-    public MessageLog check(OdfPackage odfPackage) throws IOException {
+    public MessageLog check(final OdfPackage odfPackage) throws IOException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
-        MessageLog messageLog = Messages.messageLogInstance();
+        final MessageLog messageLog = Messages.messageLogInstance();
         if (odfPackage.hasManifest() && odfPackage.getManifest().getDocumentEntries().size() > 1) {
             messageLog.add(Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
                     this.getDescription()));
         }
         return messageLog;
-    }
-
-    static final SubDocumentRule getInstance() {
-        return new SubDocumentRule("ODF_10", "Sub Documents",
-                "The package MUST NOT contain sub documents.");
     }
 }

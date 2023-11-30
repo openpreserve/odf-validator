@@ -7,10 +7,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.zip.ZipArchive;
@@ -192,6 +194,15 @@ final class OdfPackageImpl implements OdfPackage {
             }
         }
         return paths;
+    }
+
+    @Override
+    public Set<FileEntry> getXmlEntries() {
+        Set<FileEntry> entries = new HashSet<>();
+        for (FileEntry entry : this.manifest.getEntriesByMediaType("text/xml")) {
+            entries.add(entry);
+        }
+        return entries;
     }
 
     @Override

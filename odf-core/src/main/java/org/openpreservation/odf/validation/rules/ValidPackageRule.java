@@ -18,8 +18,8 @@ import org.xml.sax.SAXException;
 class ValidPackageRule extends AbstractRule {
     private final ValidatingParser validatingParser = Validators.getValidatingParser();
 
-    private ValidPackageRule(String id, String name, String description) throws ParserConfigurationException, SAXException {
-        super(id, name, description);
+    private ValidPackageRule(String id, String name, String description, final boolean isPrerequisite) throws ParserConfigurationException, SAXException {
+        super(id, name, description, isPrerequisite);
     }
 
     @Override
@@ -40,6 +40,6 @@ class ValidPackageRule extends AbstractRule {
     }
 
     static final ValidPackageRule getInstance() throws ParserConfigurationException, SAXException {
-        return new ValidPackageRule("ODF_2", "Standard Compliance", "The file MUST comply with the standard \"OASIS Open Document Format for Office Applications (OpenDocument) v1.3\".");
+        return new ValidPackageRule("ODF_2", "Standard Compliance", "The file MUST comply with the standard \"OASIS Open Document Format for Office Applications (OpenDocument) v1.3\".", true);
     }
 }
