@@ -136,7 +136,7 @@ final class OdfPackageImpl implements OdfPackage {
 
     @Override
     public boolean hasManifest() {
-        return (this.archive != null) && this.archive.getZipEntry(Constants.PATH_MANIFEST) != null;
+        return (this.archive != null) && this.archive.getZipEntry(Constants.PATH_MANIFEST) != null && this.manifest != null;
     }
 
     @Override
