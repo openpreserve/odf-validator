@@ -17,6 +17,7 @@ import org.xml.sax.SAXException;
 
 class ValidPackageRule extends AbstractRule {
     private final ValidatingParser validatingParser = Validators.getValidatingParser();
+    private ValidationReport validationReport;
 
     private ValidPackageRule(String id, String name, String description, final boolean isPrerequisite) throws ParserConfigurationException, SAXException {
         super(id, name, description, isPrerequisite);
@@ -31,12 +32,15 @@ class ValidPackageRule extends AbstractRule {
     public MessageLog check(OdfPackage odfPackage) throws IOException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         MessageLog messageLog = Messages.messageLogInstance();
-        ValidationReport validationReport = validatingParser.validatePackage(odfPackage);
-        if (!validationReport.isValid()) {
-            messageLog.add(odfPackage.getName(), validationReport.getMessages());
+        this.validationReport = this.validatingParser.validatePackage(odfPackage);
+        if (!this.validationReport.isValid()) {
             messageLog.add(odfPackage.getName(), Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(), this.getDescription()));
         }
         return messageLog;
+    }
+
+    public final ValidationReport getValidationReport() {
+        return this.validationReport;
     }
 
     static final ValidPackageRule getInstance() throws ParserConfigurationException, SAXException {

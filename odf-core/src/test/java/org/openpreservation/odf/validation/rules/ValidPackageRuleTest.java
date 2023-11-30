@@ -28,7 +28,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 public class ValidPackageRuleTest {
     @Test
     public void testEqualsContract() {
-        EqualsVerifier.forClass(ValidPackageRule.class).withIgnoredFields("validatingParser").verify();
+        EqualsVerifier.forClass(ValidPackageRule.class).withIgnoredFields("validatingParser", "validationReport").verify();
     }
 
     @Test
