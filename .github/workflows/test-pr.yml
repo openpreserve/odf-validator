@@ -33,7 +33,7 @@ jobs:
         run: mvn --batch-mode verify -DjacocoAgg
       - name: Test build package on Windows
         if: (matrix.os == 'windows-latest')
-        run: mvn --batch-mode package -DjacocoAgg && ls -alh ./odf-apps/target && ./odf-validator.bat --version
+        run: mvn --batch-mode package -DjacocoAgg && ./odf-validator.bat --version
       - name: Test build package on Ubuntu
         if: (matrix.os == 'ubuntu-latest')
-        run: mvn --batch-mode package -DjacocoAgg && ls -alh ./odf-apps/target && ./odf-validator --version
+        run: mvn --batch-mode package -DjacocoAgg && ./odf-validator --version
