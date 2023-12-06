@@ -227,6 +227,31 @@
           <goals>deploy</goals>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <!--  Copy izpack resources -->
+            <id>verapdf-scripts</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+
+            <configuration>
+              <outputDirectory>./</outputDirectory>
+              <resources>
+                <resource>
+                  <!--  Filter batch file copy to replace version number with current version number. -->
+                  <directory>src/main/resources/org/openpreservation/odf/batch</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
