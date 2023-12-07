@@ -8,6 +8,7 @@ import java.util.Objects;
 import javax.xml.transform.stream.StreamSource;
 
 import org.openpreservation.messages.Message;
+import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.FileEntry;
@@ -21,14 +22,16 @@ import com.helger.schematron.svrl.SVRLHelper;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 
 final class SchematronRule extends AbstractRule {
-    static final SchematronRule getInstance(final String id, final String name, final String description, final boolean isPrerequisite, final URL schematronLoc) {
-        return new SchematronRule(id, name, description, isPrerequisite, schematronLoc);
+    static final SchematronRule getInstance(final String id, final String name, final String description,
+            final Severity severity, final boolean isPrerequisite, final URL schematronLoc) {
+        return new SchematronRule(id, name, description, severity, isPrerequisite, schematronLoc);
     }
 
     final SchematronResourcePure schematron;
 
-    private SchematronRule(final String id, final String name, final String description, final boolean isPrerequisite, final URL schematronLoc) {
-        super(id, name, description, isPrerequisite);
+    private SchematronRule(final String id, final String name, final String description, final Severity severity,
+            final boolean isPrerequisite, final URL schematronLoc) {
+        super(id, name, description, severity, isPrerequisite);
         Objects.requireNonNull(schematronLoc, "schematronLoc must not be null");
         this.schematron = SchematronResourcePure.fromURL(schematronLoc);
     }
@@ -48,10 +51,13 @@ final class SchematronRule extends AbstractRule {
                 continue;
             }
             try (InputStream is = odfPackage.getEntryStream(entry)) {
-                final SchematronOutputType schResult = this.schematron.applySchematronValidationToSVRL(new StreamSource(is));
-                for (final AbstractSVRLMessage result : SVRLHelper.getAllFailedAssertionsAndSuccessfulReports(schResult)) {
-                    messageLog.add(entry.getFullPath(), Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
-                result.getText()));
+                final SchematronOutputType schResult = this.schematron
+                        .applySchematronValidationToSVRL(new StreamSource(is));
+                for (final AbstractSVRLMessage result : SVRLHelper
+                        .getAllFailedAssertionsAndSuccessfulReports(schResult)) {
+                    messageLog.add(entry.getFullPath(),
+                            Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
+                                    result.getText()));
                 }
             } catch (final Exception e) {
                 throw new IOException(e);
