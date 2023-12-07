@@ -48,13 +48,17 @@ final class PackageParserImpl implements PackageParser {
         return entrypath.startsWith(Constants.NAME_META_INF);
     }
 
-    private String mimetype = "";
-
+    private static final Formats sniff(final Path toSniff) throws IOException {
+        try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(toSniff))) {
+            return FormatSniffer.sniff(bis);
+        }
+    }
     private ZipArchiveCache cache;
+    private Formats format = Formats.UNKNOWN;
+    private String mimetype = "";
+    private Manifest manifest = null;
 
     private final Map<String, OdfXmlDocument> xmlDocumentMap = new HashMap<>();
-
-    private Manifest manifest = null;
 
     private PackageParserImpl() {
         super();
@@ -83,41 +87,67 @@ final class PackageParserImpl implements PackageParser {
         }
     }
 
-    private static final Formats sniff(final Path toSniff) throws IOException {
-        try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(toSniff))) {
-            return FormatSniffer.sniff(bis);
-        }
-    }
-
     private final OdfPackage parsePackage(final Path toParse, final String name) throws IOException {
         this.initialise();
-        Formats format = Formats.UNKNOWN;
         try {
-            format = sniff(toParse);
+            this.format = sniff(toParse);
             this.cache = Zips.zipArchiveCacheInstance(toParse);
         } catch (final IOException e) {
-            return OdfPackageImpl.Builder.builder().name(name).format(format).build();
+            // Simply catch the exception and return a sparsely populated OdfPackage
+            return OdfPackageImpl.Builder.builder().name(name).format(this.format).build();
         }
         try {
-            for (final ZipEntry entry : this.cache.getZipEntries()) {
-                processEntry(entry);
-            }
-            return this.makePackage(name, format);
+            this.processZipEntries();
+            return this.makePackage(name);
         } catch (ParserConfigurationException | SAXException e) {
             throw new IOException(e);
         }
     }
 
+    private final void processZipEntries() throws ParserConfigurationException, SAXException, IOException {
+        for (final ZipEntry entry : this.cache.getZipEntries()) {
+            processEntry(entry);
+        }
+    }
+
+    private final void processEntry(final ZipEntry entry)
+            throws ParserConfigurationException, SAXException, IOException {
+        final String path = entry.getName();
+        if (entry.isDirectory()) {
+            // No need to process directories
+            return;
+        }
+        if (OdfFormats.MIMETYPE.equals(path)) {
+            // Grab the mimetype value from the MIMETYPE file
+            this.mimetype = new String(this.cache.getEntryInputStream(entry.getName()).readAllBytes(),
+                    StandardCharsets.UTF_8);
+            return;
+        }
+        if (!isOdfXml(path) && !isMetaInf(path)) {
+            return;
+        }
+        try (InputStream is = this.cache.getEntryInputStream(path)) {
+            final OdfXmlDocument xmlDoc = OdfXmlDocuments.xmlDocumentFrom(is);
+            if (xmlDoc != null) {
+                this.xmlDocumentMap.put(path, xmlDoc);
+                if (xmlDoc.getParseResult().isWellFormed() && Constants.PATH_MANIFEST.equals(path)) {
+                    this.manifest = ManifestImpl.from(this.cache.getEntryInputStream(path));
+                }
+            }
+        }
+    }
+
     private final void initialise() {
+        this.format = Formats.UNKNOWN;
         this.mimetype = null;
         this.xmlDocumentMap.clear();
         this.manifest = null;
     }
 
-    private final OdfPackage makePackage(final String name, final Formats format)
+    private final OdfPackage makePackage(final String name)
             throws ParserConfigurationException, IOException, SAXException {
         final OdfPackageImpl.Builder builder = OdfPackageImpl.Builder.builder().name(name).archive(this.cache)
-                .format(format)
+                .format(this.format)
                 .mimetype(mimetype);
         if (this.manifest != null) {
             builder.manifest(manifest);
@@ -151,37 +181,4 @@ final class PackageParserImpl implements PackageParser {
         return builder.build();
     }
 
-    private final void processEntry(final ZipEntry entry)
-            throws ParserConfigurationException, SAXException, IOException {
-        final String path = entry.getName();
-        if (entry.isDirectory()) {
-            // No need to process directories
-            return;
-        }
-        if (OdfFormats.MIMETYPE.equals(path)) {
-            // Grab the mimetype value from the MIMETYPE file
-            this.mimetype = new String(this.cache.getEntryInputStream(entry.getName()).readAllBytes(),
-                    StandardCharsets.UTF_8);
-            return;
-        }
-        if (!isOdfXml(path) && !isMetaInf(path)) {
-            return;
-        }
-        try (InputStream is = this.cache.getEntryInputStream(path)) {
-            final OdfXmlDocument xmlDoc = OdfXmlDocuments.xmlDocumentFrom(is);
-            if (xmlDoc != null) {
-                this.xmlDocumentMap.put(path, xmlDoc);
-                if (xmlDoc.getParseResult().isWellFormed()) {
-                    this.parseOdfXml(path);
-                }
-            }
-        }
-    }
-
-    private final void parseOdfXml(final String entryPath)
-            throws ParserConfigurationException, SAXException, IOException {
-        if (Constants.PATH_MANIFEST.equals(entryPath)) {
-            this.manifest = ManifestImpl.from(this.cache.getEntryInputStream(entryPath));
-        }
-    }
 }
