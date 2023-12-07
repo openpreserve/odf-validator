@@ -109,6 +109,11 @@ final class ManifestImpl implements Manifest {
     }
 
     @Override
+    public boolean hasRootMediaType() {
+        return this.hasRoot;
+    }
+
+    @Override
     public String getRootMediaType() {
         return this.hasRoot ? this.getEntry("/").getMediaType() : null;
     }
@@ -132,6 +137,11 @@ final class ManifestImpl implements Manifest {
     public Set<FileEntry> getEntriesByMediaType(final String mediaType) {
         return this.entries.values().stream().filter(e -> e.getMediaType().equals(mediaType))
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<FileEntry> getEncryptedEntries() {
+        return this.entries.values().stream().filter(e -> e.isEncrypted()).collect(Collectors.toSet());
     }
 
     @Override

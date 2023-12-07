@@ -72,6 +72,11 @@ public final class ZipEntryImpl implements ZipEntry {
     }
 
     @Override
+    public boolean isStored() {
+        return this.getMethod() == java.util.zip.ZipEntry.STORED;
+    }
+
+    @Override
     public int getMethod() {
         return this.method;
     }
@@ -134,5 +139,4 @@ public final class ZipEntryImpl implements ZipEntry {
         return "ZipEntryImpl [name=" + name + ", size=" + size + ", compressedSize=" + compressedSize + ", crc=" + crc
                 + ", method=" + method + ", isDirectory=" + isDirectory + "]";
     }
-
 }

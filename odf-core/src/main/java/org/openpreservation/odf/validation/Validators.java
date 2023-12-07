@@ -25,7 +25,7 @@ public class Validators {
      * @return true if the compression method is valid, else false
      */
     public static boolean isCompressionValid(final ZipEntry entry) {
-        return entry.getMethod() == java.util.zip.ZipEntry.STORED || entry.getMethod() == java.util.zip.ZipEntry.DEFLATED;
+        return ValidatingParserImpl.isCompressionValid(entry);
     }
 
     private Validators() {

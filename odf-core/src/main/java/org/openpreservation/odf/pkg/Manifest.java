@@ -10,6 +10,12 @@ public interface Manifest {
     public String getVersion();
 
     /**
+     * Find out whether the manifest has a FileEntry with the full path attribute "/".
+     * @return true if a root element .
+     */
+    public boolean hasRootMediaType();
+
+    /**
      * Get the declared media type of the Manifest from the root "/" element.
      * @return the declared media type of the Manifest.
      */
@@ -39,6 +45,13 @@ public interface Manifest {
      * @return the Set of FileEntry objects that have the supplied media type.
      */
     public Set<FileEntry> getEntriesByMediaType(final String mediaType);
+
+    /**
+     * Get the Set of FileEntry objects fior all manifest entries with encryption XML data.
+     * @param mediaType the media type to filter the entries by.
+     * @return the Set of FileEntry objects that have encryption XML data.
+     */
+    public Set<FileEntry> getEncryptedEntries();
 
     /**
      * Get a manifest entry by name
