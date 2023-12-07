@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
 class ValidPackageRule extends AbstractRule {
     static final ValidPackageRule getInstance(final Severity severity)
             throws ParserConfigurationException, SAXException {
-        return new ValidPackageRule("ODF_2", "Standard Compliance",
+        return new ValidPackageRule("POL_2", "Standard Compliance",
                 "The file MUST comply with the standard \"OASIS Open Document Format for Office Applications (OpenDocument) v1.3\".",
                 severity, true);
     }

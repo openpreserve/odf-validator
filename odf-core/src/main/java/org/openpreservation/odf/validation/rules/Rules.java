@@ -40,19 +40,19 @@ public class Rules {
     }
 
     public static final Rule odf5() {
-        return SchematronRule.getInstance("ODF_5", "External data check",
+        return SchematronRule.getInstance("POL_5", "External data check",
                 "The file MUST NOT have any references to external data.", Severity.INFO, false,
                 ClassLoader.getSystemResource(ODF5_SCHEMATRON));
     }
 
     public static final Rule odf7() {
-        return SchematronRule.getInstance("ODF_7", "Content check",
+        return SchematronRule.getInstance("POL_7", "Content check",
                 "The file MUST have values or objects in at least one cell.", Severity.INFO, false,
                 ClassLoader.getSystemResource(ODF7_SCHEMATRON));
     }
 
     public static final Rule odf8() {
-        return SchematronRule.getInstance("ODF_8", "Macros check",
+        return SchematronRule.getInstance("POL_8", "Macros check",
                 "The file MUST NOT contain any macros.", Severity.ERROR, false,
                 ClassLoader.getSystemResource(ODF8_SCHEMATRON));
     }

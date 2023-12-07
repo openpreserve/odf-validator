@@ -13,7 +13,7 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 final class EncryptionRule extends AbstractRule {
 
     static final EncryptionRule getInstance(final Severity severity) {
-        return new EncryptionRule("ODF_1", "Encryption",
+        return new EncryptionRule("POL_1", "Encryption",
                 "The package MUST NOT contain any encrypted entries.", severity, true);
     }
 

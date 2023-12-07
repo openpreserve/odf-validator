@@ -68,7 +68,7 @@ public class PackageMimeTypeRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_FODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("Document XML should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_3")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_3")).count() > 0).count());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class PackageMimeTypeRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.BADLY_FORMED_PKG.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("Badly formed package should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_3")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_3")).count() > 0).count());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class PackageMimeTypeRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("No mimetype with root entry (invalid) return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_3")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_3")).count() > 0).count());
     }
 
     @Test
@@ -103,7 +103,7 @@ public class PackageMimeTypeRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("No mimetype with no root entry (valid) should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_3")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_3")).count() > 0).count());
     }
 }
 

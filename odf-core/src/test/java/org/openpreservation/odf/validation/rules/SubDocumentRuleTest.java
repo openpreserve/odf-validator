@@ -61,7 +61,7 @@ public class SubDocumentRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("Valid Package should not return errors", results.hasWarnings());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_10")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_10")).count() > 0).count());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class SubDocumentRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.MIME_EXTRA_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertFalse("Invalid extra headers for contains an empty subdocument.", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_10")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_10")).count() > 0).count());
     }
 
     @Test
@@ -95,6 +95,6 @@ public class SubDocumentRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.DSIG_VALID.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("File contains an empty sub document.", results.hasWarnings());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_10")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_10")).count() > 0).count());
     }
 }

@@ -92,6 +92,6 @@ public class EncryptionRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.ENCRYPTED_PASSWORDS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("File contains valid digital signatures.", results.hasErrors());
-        assertEquals(5, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_1")).count() > 0).count());
+        assertEquals(5, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_1")).count() > 0).count());
     }
 }

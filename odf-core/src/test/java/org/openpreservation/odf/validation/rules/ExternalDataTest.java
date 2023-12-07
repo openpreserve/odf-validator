@@ -84,7 +84,7 @@ public class ExternalDataTest {
         MessageLog messages = odf5.check(pkg);
         assertNotNull(messages);
         assertEquals(1, messages.getErrors().size());
-        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_5")).count() > 0).count());
+        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_5")).count() > 0).count());
     }
 
     @Test

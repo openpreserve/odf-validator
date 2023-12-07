@@ -13,7 +13,7 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 final class ExtensionMimeTypeRule extends AbstractRule {
 
     static final ExtensionMimeTypeRule getInstance(final Severity severity) {
-        return new ExtensionMimeTypeRule("ODF_4", "Extension and MIME type",
+        return new ExtensionMimeTypeRule("POL_4", "Extension and MIME type",
                 "The MIME type value MUST be: \"application/vnd.oasis.opendocument.spreadsheet\" and the file extension MUST be \".ods\"."
                         + //
                         "",
