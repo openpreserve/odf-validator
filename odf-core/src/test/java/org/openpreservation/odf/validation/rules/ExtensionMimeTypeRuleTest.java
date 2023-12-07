@@ -69,7 +69,7 @@ public class ExtensionMimeTypeRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_FODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("Document XML should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_4")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class ExtensionMimeTypeRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.BADLY_FORMED_PKG.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("Badly formed package should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_4")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ExtensionMimeTypeRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.DSIG_INVALID.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("DSIG file has wrong MIME and extension", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_4")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ExtensionMimeTypeRuleTest {
         assertEquals("Package should have spreadsheet MIME value", Formats.ODS.mime, pkg.getMimeType());
         MessageLog results = rule.check(pkg);
         assertTrue("Bad extension only but should be invalid", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_4")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
     }
 
     @Test
@@ -116,6 +116,6 @@ public class ExtensionMimeTypeRuleTest {
         assertTrue("Package should have spreadsheet extension.", pkg.getName().endsWith(Formats.ODS.extension));
         MessageLog results = rule.check(pkg);
         assertTrue("Bad extension only but should be invalid", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_4")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
     }
 }

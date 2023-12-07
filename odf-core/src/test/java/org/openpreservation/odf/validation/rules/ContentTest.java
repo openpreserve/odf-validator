@@ -84,7 +84,7 @@ public class ContentTest {
         MessageLog messages = odf7.check(pkg);
         assertNotNull(messages);
         assertEquals(1, messages.getErrors().size());
-        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_7")).count() > 0).count());
+        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_7")).count() > 0).count());
     }
 
     @Test

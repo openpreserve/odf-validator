@@ -13,7 +13,7 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 final class DigitalSignaturesRule extends AbstractRule {
 
     static final DigitalSignaturesRule getInstance(final Severity severity) {
-        return new DigitalSignaturesRule("ODF_9", "Digital Signatures",
+        return new DigitalSignaturesRule("POL_9", "Digital Signatures",
                 "The package MUST NOT contain any digital signatures.", severity, false);
     }
 

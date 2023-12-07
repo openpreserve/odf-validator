@@ -74,7 +74,7 @@ public class ValidPackageRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_FODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("Document XML should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_2")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_2")).count() > 0).count());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ValidPackageRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.BADLY_FORMED_PKG.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("Document XML should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_2")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_2")).count() > 0).count());
     }
 
     @Test
@@ -94,6 +94,6 @@ public class ValidPackageRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.MIME_EXTRA_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("Document XML should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_2")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_2")).count() > 0).count());
     }
 }
