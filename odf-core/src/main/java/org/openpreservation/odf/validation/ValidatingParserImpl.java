@@ -87,11 +87,7 @@ final class ValidatingParserImpl implements ValidatingParser {
     private ValidationReport validate(final OdfPackage odfPackage) {
         final ValidationReport report = ValidationReport.of(odfPackage.getName(), Documents.openDocumentOf(odfPackage));
         report.add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
-        if (!odfPackage.hasManifest()) {
-            report.add(OdfPackages.PATH_MANIFEST, FACTORY.getError("PKG-3"));
-        } else {
-            report.add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));
-        }
+        report.add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));
         if (!odfPackage.hasThumbnail()) {
             report.add(OdfPackages.PATH_THUMBNAIL, FACTORY.getWarning("PKG-7"));
         }
