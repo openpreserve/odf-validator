@@ -29,6 +29,7 @@ final class SchematronRule extends AbstractRule {
 
     private SchematronRule(final String id, final String name, final String description, final boolean isPrerequisite, final URL schematronLoc) {
         super(id, name, description, isPrerequisite);
+        Objects.requireNonNull(schematronLoc, "schematronLoc must not be null");
         this.schematron = SchematronResourcePure.fromURL(schematronLoc);
     }
 
