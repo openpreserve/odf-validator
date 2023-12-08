@@ -34,15 +34,15 @@ See item E in [Section 2.2.1 of the ODF Schema Specification](https://docs.oasis
 
 An OpenDocument Package SHALL be a well formed Zip Archive.
 
-It shall be a Zip file as defined in PKWARE Inc. Zip APPNOTE Version 6.2.0, <http://www.pkware.com/support/application-note-archives>, 2004.
+It SHALL be a Zip file as defined in PKWARE Inc. Zip APPNOTE Version 6.2.0, <http://www.pkware.com/support/application-note-archives>, 2004.
 
 See [Section 2.2.1 of the ODF Schema Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part3-schema/OpenDocument-v1.3-os-part3-schema.html#a_2_2_1_OpenDocument_Document).
 
 ### PKG-2 (Error)
 
-All files contained in the Zip file shall be non compressed (STORED) or compressed using the “deflate” (DEFLATED) algorithm. Zip entry `<entry-name>` is compressed with an unknown algorithm.
+All files contained in the Zip file SHALL be non compressed (STORED) or compressed using the “deflate” (DEFLATED) algorithm. Zip entry `<entry-name>` is compressed with an unknown algorithm.
 
-All files contained in the Zip file shall be non compressed (STORED) or compressed using the “deflate” (DEFLATED) algorithm. See item A in [Section 2.2.1 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_2_2_1_OpenDocument_Package).
+All files contained in the Zip file SHALL be non compressed (STORED) or compressed using the “deflate” (DEFLATED) algorithm. See item A in [Section 2.2.1 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_2_2_1_OpenDocument_Package).
 
 ### PKG-3 (Error)
 
@@ -62,31 +62,31 @@ This may become a SHALL depending on the contents of the `manifest.xml` file, se
 
 An OpenDocument Package SHALL only contain the `META-INF/manifest.xml` and files containg the term "signatures" in their name in the `META-INF/` folder. File entry `<entryName>` does not meet this criteria.
 
-It (an OpenDocument Package) may contain files whose relative paths begin with “META-INF/” and whose names contain the string “signatures”. These file shall meet the following requirements:
+It (an OpenDocument Package) MAY contain files whose relative paths begin with “META-INF/” and whose names contain the string “signatures”. These file SHALL meet the following requirements:
 
-* D.1: The files shall be well-formed XML files in accordance with [XML1.0].
-* D.2: The XML root element of each file shall be a <dsig:document-signatures> element 5.2.
-* D.3: The files shall be valid with respect to the digital signature schema defined in appendix A.2 OpenDocument Digital Signature Schema.
+* D.1: The files SHALL be well-formed XML files in accordance with [XML1.0].
+* D.2: The XML root element of each file SHALL be a <dsig:document-signatures> element 5.2.
+* D.3: The files SHALL be valid with respect to the digital signature schema defined in appendix A.2 OpenDocument Digital Signature Schema.
 
 ### PKG-7 (Warning)
 
 An OpenDocument Package SHOULD contain a preview image Thumbnails/thumbnail.png.
 
-Unless a document is encrypted, package producers should generate a preview image of the document that is contained in the package. The preview image shall be contained in a file named “Thumbnails/thumbnail.png”.
+Unless a document is encrypted, package producers SHOULD generate a preview image of the document that is contained in the package. The preview image SHALL be contained in a file named “Thumbnails/thumbnail.png”.
 
 See [Section 3.8 of the ODF Schema Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_8_Preview_Image).
 
 ### PKG-8 (Error)
 
-Encrypted file entries shall be flagged as "STORED" rather than "DEFLATED" in the zip file's central directory. Zip entry `<entryName>` is encrypted and flagged as "DEFLATED".
+Encrypted file entries SHALL be flagged as "STORED" rather than "DEFLATED" in the zip file's central directory. Zip entry `<entryName>` is encrypted and flagged as "DEFLATED".
 
 ## Manifest Validation
 
-An OpenDocument Package SHALL contain a file “META-INF/manifest.xml”. This file shall meet the following requirements:
+An OpenDocument Package SHALL contain a file “META-INF/manifest.xml”. This file SHALL meet the following requirements:
 
-a. The file shall be a well formed XML document in accordance with the [XML1.0] specification.
-b. The XML root element of the file shall be a `<manifest:manifest>` element 4.2.
-c. The XML file shall be valid with respect to the manifest schema defined in appendix A.1 OpenDocument Manifest Schema.
+a. The file SHALL be a well formed XML document in accordance with the [XML1.0] specification.
+b. The XML root element of the file SHALL be a `<manifest:manifest>` element 4.2.
+c. The XML file SHALL be valid with respect to the manifest schema defined in appendix A.1 OpenDocument Manifest Schema.
 
 Note that the Manifest file is subject to XML validation checks, see [XML Validation](#xml-validation) below.
 
@@ -94,7 +94,7 @@ Note that the Manifest file is subject to XML validation checks, see [XML Valida
 
 The manifest SHALL contain an entry for every file in the package, zip entry `<entry-name>` has no corresponding manifest file entry.
 
-For all files contained in a package, with exception of the “mimetype” file and files whose relative path starts with “META-INF/”, the “META-INF/manifest.xml” file shall contain exactly one `<manifest:file-entry>` element whose `manifest:full-path` attribute's value references the file.
+For all files contained in a package, with exception of the “mimetype” file and files whose relative path starts with “META-INF/”, the “META-INF/manifest.xml” file SHALL contain exactly one `<manifest:file-entry>` element whose `manifest:full-path` attribute's value references the file.
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
@@ -102,7 +102,7 @@ See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/o
 
 An OpenDocument Package manifest SHALL NOT contain a file entry for itself.
 
-The file shall not contain <manifest:file-entry> elements whose manifest:full-path attribute value references the “META-INF/manifest.xml” file itself or the “mimetype” file.
+The file SHALL NOT contain <manifest:file-entry> elements whose manifest:full-path attribute value references the “META-INF/manifest.xml” file itself or the “mimetype” file.
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
@@ -110,7 +110,7 @@ See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/o
 
 An OpenDocument Package manifest SHALL NOT contain a file entry the mimetype file.
 
-The file shall not contain <manifest:file-entry> elements whose manifest:full-path attribute value references the “META-INF/manifest.xml” file itself or the “mimetype” file.
+The file SHALL NOT contain <manifest:file-entry> elements whose manifest:full-path attribute value references the “META-INF/manifest.xml” file itself or the “mimetype” file.
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
@@ -118,7 +118,7 @@ See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/o
 
 The manifest SHALL contain an entry for every file in the package, manifest file entry %s has no corresponding zip entry.
 
-For all files contained in a package, with exception of the “mimetype” file and files whose relative path starts with “META-INF/”, the “META-INF/manifest.xml” file shall contain exactly one `<manifest:file-entry>` element whose `manifest:full-path` attribute's value references the file.
+For all files contained in a package, with exception of the “mimetype” file and files whose relative path starts with “META-INF/”, the “META-INF/manifest.xml” file SHALL contain exactly one `<manifest:file-entry>` element whose `manifest:full-path` attribute's value references the file.
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
@@ -126,7 +126,7 @@ See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/o
 
 An OpenDocument Package manifest SHALL contain a root \"/\" entry if a mimetype file is present.
 
-The “META-INF/manifest.xml” file should contain a <manifest:file-entry> element whose manifest:full-path attribute has the value "/". This element specifies information regarding the document stored in the root of the package. This entry shall exist if the package contains a file "mimetype"
+The “META-INF/manifest.xml” file SHOULD contain a <manifest:file-entry> element whose manifest:full-path attribute has the value "/". This element specifies information regarding the document stored in the root of the package. This entry SHALL exist if the package contains a file "mimetype"
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
@@ -142,19 +142,19 @@ See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/o
 
 An OpenDocument Package SHOULD contain a `<manifest:file-entry>` element whose manifest:full-path attribute has the value \"/\"".
 
-The “META-INF/manifest.xml” file should contain a `<manifest:file-entry>` element whose `manifest:full-path` attribute has the value "/". This element specifies information regarding the document stored in the root of the package. This entry shall exist if the package contains a file "mimetype"
+The “META-INF/manifest.xml” file SHOULD contain a `<manifest:file-entry>` element whose `manifest:full-path` attribute has the value "/". This element specifies information regarding the document stored in the root of the package. This entry SHALL exist if the package contains a file "mimetype"
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
 ### MAN-8 (Warning)
 
-For directories, the manifest file should contain a `<manifest:file-entry>` element only if a directory contains a document or a sub document.
+For directories, the manifest file SHOULD contain a `<manifest:file-entry>` element only if a directory contains a document or a sub document.
 
 See [Section 4.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_4_3__manifest_file-entry_).
 
 ### MAN-9 (Warning)
 
-A directory for administrative or convenience purposes, such as a directory that contains various unrelated image files, should not have an entry in the manifest file.
+A directory for administrative or convenience purposes, such as a directory that contains various unrelated image files, SHOULD NOT have an entry in the manifest file.
 
 See [Section 3.2 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_2_Manifest).
 
@@ -166,7 +166,7 @@ If a MIME media type for a document exists, then an OpenDocument Package SHOULD 
 
 The `mimetype` file SHALL be the first file of the zip file.
 
-The `mimetype` file shall be the first file of the zip file. It shall not be compressed, and it shall not use an 'extra field' in its header.
+The `mimetype` file SHALL be the first file of the zip file. It SHALL NOT be compressed, and it SHALL NOT use an 'extra field' in its header.
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
@@ -174,7 +174,7 @@ See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/o
 
 The "mimetype" file SHALL NOT be compressed.
 
-The “mimetype” file shall be the first file of the zip file. It shall not be compressed, and it shall not use an 'extra field' in its header.
+The “mimetype” file SHALL be the first file of the zip file. It SHALL NOT be compressed, and it SHALL NOT use an 'extra field' in its header.
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
@@ -182,7 +182,7 @@ See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/o
 
 The “mimetype” file SHALL NOT use an 'extra field' in its header.
 
-The “mimetype” file shall be the first file of the zip file. It shall not be compressed, and it shall not use an 'extra field' in its header.
+The “mimetype” file SHALL be the first file of the zip file. It SHALL NOT be compressed, and it SHALL NOT use an 'extra field' in its header.
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type). See <https://users.cs.jmu.edu/buchhofp/forensics/formats/pkzip.html#localheader>.
 
@@ -190,7 +190,7 @@ See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/o
 
 An OpenDocument Package manifest SHALL contain a mimetype file IF a root "/" entry is present.
 
-If the file named “META-INF/manifest.xml” contains a `<manifest:file-entry>` element whose `manifest:full-path` attribute has the value "/", then a "mimetype" file shall exist
+If the file named “META-INF/manifest.xml” contains a `<manifest:file-entry>` element whose `manifest:full-path` attribute has the value "/", then a "mimetype" file SHALL exist
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
@@ -198,7 +198,7 @@ See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/o
 
 An OpenDocument Package manifest root \"/\" entry's mimetype value SHALL be equal to the value read from the mimetype file if present.
 
-If the file named “META-INF/manifest.xml” contains a `<manifest:file-entry>` element whose manifest:full-path attribute has the value "/", then a "mimetype" file shall exist, and the content of the “mimetype” file shall be equal to the value of the `manifest:media-type` attribute of that element.
+If the file named “META-INF/manifest.xml” contains a `<manifest:file-entry>` element whose manifest:full-path attribute has the value "/", then a "mimetype" file SHALL exist, and the content of the “mimetype” file SHALL be equal to the value of the `manifest:media-type` attribute of that element.
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
@@ -206,7 +206,7 @@ See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/o
 
 The content of the "mimetype" file SHALL be ASCII encoded.
 
-If a MIME media type for a document exists, then an OpenDocument Package should contain a file with name “mimetype”. The content of this file shall be the ASCII encoded MIME media type associated with the document.
+If a MIME media type for a document exists, then an OpenDocument Package SHOULD contain a file with name “mimetype”. The content of this file SHALL be the ASCII encoded MIME media type associated with the document.
 
 See [Section 3.3 of the ODF Package Specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part2-packages/OpenDocument-v1.3-os-part2-packages.html#a_3_3_MIME_Media_Type).
 
@@ -224,18 +224,18 @@ Whether this constitutes grounds for a specific validation check, or whether suc
 
 ## XML Validation
 
-1. File shall be a well formed XML document.
-2. File shall conform to the XML Namespaces specification [XML-Names].
-3. File shall conform to the xml-id Version 1.0 specification [XML-ID].
-4. The XML root element shall be `<office:document>`.
-5. The document shall validate agains the the ODF 1.3 schema.
-6. If a `style:condition`, `table:condition`, `table:expression`, `table:formula` or `text:formula` attribute value begins with a namespace prefix bound to namespace  `urn:oasis:names:tc:opendocument:xmlns:of:1.3`, the syntax and semantics of the attribute value portions that are expressions determined by the prefix shall conform to Part4 of this specification. If a `style:condition`, `table:condition`, `table:expression`, `table:formula` or `text:formula` attribute value has no namespace prefix, the attribute value portions that are expressions determined by a prefix shall conform as if there were a prefix bound to namespace `urn:oasis:names:tc:opendocument:xmlns:of:1.3`.
-7. A spreadsheet's root `<office:document>` element shall have an `office:mimetype` attribute with value:
+1. File SHALL be a well formed XML document.
+2. File SHALL conform to the XML Namespaces specification [XML-Names].
+3. File SHALL conform to the xml-id Version 1.0 specification [XML-ID].
+4. The XML root element SHALL be `<office:document>`.
+5. The document SHALL validate agains the the ODF 1.3 schema.
+6. If a `style:condition`, `table:condition`, `table:expression`, `table:formula` or `text:formula` attribute value begins with a namespace prefix bound to namespace  `urn:oasis:names:tc:opendocument:xmlns:of:1.3`, the syntax and semantics of the attribute value portions that are expressions determined by the prefix SHALL conform to Part4 of this specification. If a `style:condition`, `table:condition`, `table:expression`, `table:formula` or `text:formula` attribute value has no namespace prefix, the attribute value portions that are expressions determined by a prefix SHALL conform as if there were a prefix bound to namespace `urn:oasis:names:tc:opendocument:xmlns:of:1.3`.
+7. A spreadsheet's root `<office:document>` element SHALL have an `office:mimetype` attribute with value:
    * `application/vnd.oasis.opendocument.spreadsheet`; or
    * `application/vnd.oasis.opendocument.spreadsheet-template`;
-8. The `<office:body>` element shall have the `<office:spreadsheet>` element as its child;
-9. All namespace prefixes used in the values of `table:formula` attributes values shall be bound to the `urn:oasis:names:tc:opendocument:xmlns:of:1.2` namespace;
-10. All `table:formula` attribute values shall be a conforming OpenDocument Formula expression [ODF1.3-Part-4:OpenFormula] 2.2 OpenDocument Formula Expression.
+8. The `<office:body>` element SHALL have the `<office:spreadsheet>` element as its child;
+9. All namespace prefixes used in the values of `table:formula` attributes values SHALL be bound to the `urn:oasis:names:tc:opendocument:xmlns:of:1.2` namespace;
+10. All `table:formula` attribute values SHALL be a conforming OpenDocument Formula expression [ODF1.3-Part-4:OpenFormula] 2.2 OpenDocument Formula Expression.
 
 ### XML-1
 
@@ -245,7 +245,7 @@ A low level XML parsing exception has occurred for a file that was expected to b
 
 ### XML-2
 
-Root element of XML file %s, must be %s but found value %s.
+Root element of XML file %s, SHALL be %s but found value %s.
 
 ### XML-3
 
