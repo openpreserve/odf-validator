@@ -2,19 +2,23 @@ package org.openpreservation.odf.validation.rules;
 
 import java.util.Objects;
 
+import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.odf.validation.Rule;
 
 abstract class AbstractRule implements Rule {
     final String id;
     final String name;
     final String description;
+    final Severity severity;
     final Boolean isPrerequisite;
 
-    AbstractRule(final String id, final String name, final String description, final boolean isPrerequisite) {
+    AbstractRule(final String id, final String name, final String description, final Severity severity,
+            final boolean isPrerequisite) {
         super();
         this.id = id;
         this.name = name;
         this.description = description;
+        this.severity = severity;
         this.isPrerequisite = Boolean.valueOf(isPrerequisite);
     }
 
@@ -34,13 +38,18 @@ abstract class AbstractRule implements Rule {
     }
 
     @Override
+    public Severity getSeverity() {
+        return this.severity;
+    }
+
+    @Override
     public boolean isPrerequisite() {
         return this.isPrerequisite.booleanValue();
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(id, name, description, isPrerequisite);
+        return Objects.hash(id, name, description, severity, isPrerequisite);
     }
 
     @Override
@@ -52,6 +61,7 @@ abstract class AbstractRule implements Rule {
         final AbstractRule other = (AbstractRule) obj;
         return Objects.equals(id, other.id) && Objects.equals(name, other.name)
                 && Objects.equals(description, other.description)
+                && Objects.equals(severity, other.severity)
                 && Objects.equals(isPrerequisite, other.isPrerequisite);
     }
 }

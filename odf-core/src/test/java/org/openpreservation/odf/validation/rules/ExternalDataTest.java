@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -56,7 +57,9 @@ public class ExternalDataTest {
     @Test
     public void testSchematronExternalDataFail() throws Exception {
         final SchematronResourcePure schematron = ((SchematronRule) Rules.odf5()).schematron;
-        final SchematronOutputType schResult = schematron.applySchematronValidationToSVRL(new URLResource(TestFiles.SCHEMATRON_CHECKER_XML));
+        final URL resource = TestFiles.SCHEMATRON_CHECKER_XML;
+        assertNotNull(resource);
+        final SchematronOutputType schResult = schematron.applySchematronValidationToSVRL(new URLResource(resource));
         assertNotNull(schResult);
         List<AbstractSVRLMessage> results = SVRLHelper.getAllFailedAssertionsAndSuccessfulReports(schResult);
         assertEquals(1, results.size());
@@ -65,7 +68,9 @@ public class ExternalDataTest {
     @Test
     public void testSchematronExternalDataPass() throws Exception {
         final SchematronResourcePure schematron = ((SchematronRule) Rules.odf5()).schematron;
-        final SchematronOutputType schResult = schematron.applySchematronValidationToSVRL(new URLResource(ClassLoader.getSystemResource("org/openpreservation/odf/fmt/xml/content.xml")));
+        final URL resource = ClassLoader.getSystemResource("org/openpreservation/odf/fmt/xml/content.xml");
+        assertNotNull(resource);
+        final SchematronOutputType schResult = schematron.applySchematronValidationToSVRL(new URLResource(resource));
         assertNotNull(schResult);
         List<AbstractSVRLMessage> results = SVRLHelper.getAllFailedAssertionsAndSuccessfulReports(schResult);
         assertEquals(0, results.size());
@@ -79,7 +84,7 @@ public class ExternalDataTest {
         MessageLog messages = odf5.check(pkg);
         assertNotNull(messages);
         assertEquals(1, messages.getErrors().size());
-        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_5")).count() > 0).count());
+        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_5")).count() > 0).count());
     }
 
     @Test

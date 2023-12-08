@@ -23,6 +23,7 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class PackageMimeTypeRuleTest {
+    private final Rule rule = Rules.odf3();
     @Test
     public void testEqualsContract() {
         EqualsVerifier.forClass(PackageMimeTypeRule.class).verify();
@@ -30,13 +31,11 @@ public class PackageMimeTypeRuleTest {
 
     @Test
     public void testGetInstance() {
-        Rule rule = PackageMimeTypeRule.getInstance();
         assertNotNull("Returned Rule should not be null", rule);
     }
 
     @Test
     public void testCheckNullXmlDoc() {
-        Rule rule = PackageMimeTypeRule.getInstance();
         OdfXmlDocument nullDoc = null;
         assertThrows("UnsupportedOperationException expected",
         UnsupportedOperationException.class,
@@ -47,7 +46,6 @@ public class PackageMimeTypeRuleTest {
 
     @Test
     public void testCheckNullPackage() {
-        Rule rule = PackageMimeTypeRule.getInstance();
         OdfPackage nullPkg = null;
         assertThrows("NullPointerException expected",
         NullPointerException.class,
@@ -60,7 +58,6 @@ public class PackageMimeTypeRuleTest {
     public void testCheckValidPackage() throws IOException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
-        Rule rule = PackageMimeTypeRule.getInstance();
         MessageLog results = rule.check(pkg);
         assertFalse("Valid Package should not return errors", results.hasErrors());
     }
@@ -69,27 +66,24 @@ public class PackageMimeTypeRuleTest {
     public void testCheckNotZipPackage() throws IOException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_FODS.toURI()).getAbsolutePath()));
-        Rule rule = PackageMimeTypeRule.getInstance();
         MessageLog results = rule.check(pkg);
         assertTrue("Document XML should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_3")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_3")).count() > 0).count());
     }
 
     @Test
     public void testCheckNotWellFormedPackage() throws IOException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.BADLY_FORMED_PKG.toURI()).getAbsolutePath()));
-        Rule rule = Rules.odf3();
         MessageLog results = rule.check(pkg);
         assertTrue("Badly formed package should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_3")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_3")).count() > 0).count());
     }
 
     @Test
     public void testCheckInvalidPackage() throws IOException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.MIME_EXTRA_ODS.toURI()).getAbsolutePath()));
-        Rule rule = PackageMimeTypeRule.getInstance();
         MessageLog results = rule.check(pkg);
         assertFalse("Invalid extra headers for mimetype is OK.", results.hasErrors());
     }
@@ -98,20 +92,18 @@ public class PackageMimeTypeRuleTest {
     public void testCheckNoMimePackage() throws IOException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()).getAbsolutePath()));
-        Rule rule = PackageMimeTypeRule.getInstance();
         MessageLog results = rule.check(pkg);
         assertTrue("No mimetype with root entry (invalid) return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_3")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_3")).count() > 0).count());
     }
 
     @Test
     public void testCheckNoMimeNoRootPackage() throws IOException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).getAbsolutePath()));
-        Rule rule = PackageMimeTypeRule.getInstance();
         MessageLog results = rule.check(pkg);
         assertTrue("No mimetype with no root entry (valid) should return errors", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("ODF_3")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_3")).count() > 0).count());
     }
 }
 

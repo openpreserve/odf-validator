@@ -2,11 +2,15 @@
 
 ## ODF Specification Errors
 
+### Document Errors
+
+
+
 ### Package Errors
 
 | Ref | Detection |
 |-----|-------------|
-| PKG-1 | An OpenDocument package SHALL be a well formed Zip Archive.<br/>This is effectively left to the zip library, if exceptions are rasied they are trapped and this error is raised. |
+| PKG-1 | An OpenDocument package SHALL be a well formed Zip Archive.<br/>This is detected via a full parse of the package zip file. If an exception is raised when reading the zip file or one of it's entries, this error is reported. |
 PKG-2 | All files contained in the Zip file shall be non compressed (STORED) or compressed using the "deflate" (DEFLATED) algorithm. Zip entry %s is compressed with an unknown algorithm.<br/>The zip library is used to examine the compression algorithm used, if it's outside of the prescribed values, this error is raised. |
 PKG-3 | An OpenDocument package SHALL contain a file "META-INF/manifest.xml".<br/>Simply check whether such a zip entry exists. |
 PKG-4 | An OpenDocument package SHOULD contain a file "mimetype".<br/>Simply check whether such a zip entry exists. |
