@@ -11,7 +11,7 @@
 | Ref | Detection |
 |-----|-------------|
 | PKG-1 | An OpenDocument package SHALL be a well formed Zip Archive.<br/>This is detected via a full parse of the package zip file. If an exception is raised when reading the zip file or one of it's entries, this error is reported. |
-PKG-2 | All files contained in the Zip file shall be non compressed (STORED) or compressed using the "deflate" (DEFLATED) algorithm. Zip entry %s is compressed with an unknown algorithm.<br/>The zip library is used to examine the compression algorithm used, if it's outside of the prescribed values, this error is raised. |
+PKG-2 | All files contained in the Zip file SHALL be non compressed (STORED) or compressed using the "deflate" (DEFLATED) algorithm. Zip entry %s is compressed with an unknown algorithm.<br/>The zip library is used to examine the compression algorithm used, if it's outside of the prescribed values, this error is raised. |
 PKG-3 | An OpenDocument package SHALL contain a file "META-INF/manifest.xml".<br/>Simply check whether such a zip entry exists. |
 PKG-4 | An OpenDocument package SHOULD contain a file "mimetype".<br/>Simply check whether such a zip entry exists. |
 PKG-5 | An OpenDocument package SHALL only contain the "META-INF/manifest.xml" and files containg the term "signatures" in their name in the "META-INF" folder. File %s does not meet this criteria.<br/>Each zip entry is examined. If a file is found below `META-INF/` that is not `manifest.xml` and whose name does not contain the term "signatures" this error is raised. |
@@ -29,8 +29,8 @@ PKG-7 | An OpenDocument package SHOULD contain a preview image Thumbnails/thumbn
 | MAN-5 | An OpenDocument package manifest SHALL contain a <manifest:file-entry> element whose manifest:full-path attribute has the value \"/\" if a mimetype file is present.<br/>This rule checks that a `META-INF/manifest.xml` `<manifest:file-entry>` element with a `manifest:full-path` attribute value `/` exists. IF it doesn't AND a `mimetype` entry exists this error is fired, if a `mimetype` entry does not exist then the warning `MAN-7` is fired instead. |
 | MAN-6 | The OpenDocument package manifest NEED NOT contain entries for file paths starting with META-INF/, %s.<br/>This rule checks that a `META-INF/manifest.xml` `<manifest:file-entry>` element with a `manifest:full-path` attribute value starting with `META-INF/` exists. An information message that says this is unnecessary is raised. |
 | MAN-7 | An OpenDocument package SHOULD contain a <manifest:file-entry> element whose manifest:full-path attribute has the value \"/\"".<br/>This rule checks that a `META-INF/manifest.xml` `<manifest:file-entry>` element with a `manifest:full-path` attribute value `/` exists. IF it doesn't AND a `mimetype` entry also doesn't exist this warning is fired, if a `mimetype` entry does not exist then the error `MAN-5` is fired instead. |
-| MAN-8 | For directories, the manifest file should contain a <manifest:file-entry> element only if a directory contains a document or a sub document.<br/>Detection of sub-document rules WIP. |
-| MAN-9 | A directory for administrative or convenience purposes, such as a directory that contains various unrelated image files, should not have an entry in the manifest file.<br/>Detection of sub-document rules WIP. |
+| MAN-8 | For directories, the manifest file SHOULD contain a <manifest:file-entry> element only if a directory contains a document or a sub document. |
+| MAN-9 | A directory for administrative or convenience purposes, such as a directory that contains various unrelated image files, SHOULD NOT have an entry in the manifest file. |
 
 ### MIME Media Type Errors
 
