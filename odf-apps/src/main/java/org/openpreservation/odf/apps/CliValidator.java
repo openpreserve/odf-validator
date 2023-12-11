@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,14 +92,7 @@ class CliValidator implements Callable<Integer> {
         Integer retStatus = 0;
         for (Map.Entry<Path, ValidationReport> entry : validationReports.entrySet()) {
             if (this.appMessages.containsKey(entry.getKey())) {
-                for (List<Message> messages : this.appMessages.get(entry.getKey()).getMessages().values()) {
-                    for (Message message : messages) {
-                        ConsoleFormatter.colourise(message);
-                        if (message.isError() || message.isFatal()) {
-                            retStatus = 1;
-                        }
-                    }
-                }
+                retStatus = Math.max(retStatus, processMessageLists(this.appMessages.get(entry.getKey()).getMessages().values()));
             }
             if (entry.getValue() != null) {
                 retStatus = Math.max(retStatus, results(entry.getKey(), entry.getValue()));
@@ -106,17 +100,29 @@ class CliValidator implements Callable<Integer> {
         }
         for (Map.Entry<Path, ProfileResult> entry : profileResults.entrySet()) {
             if (this.appMessages.containsKey(entry.getKey())) {
-                for (List<Message> messages : this.appMessages.get(entry.getKey()).getMessages().values()) {
-                    for (Message message : messages) {
-                        ConsoleFormatter.colourise(message);
-                        if (message.isError() || message.isFatal()) {
-                            retStatus = 1;
-                        }
-                    }
-                }
+                retStatus = Math.max(retStatus, processMessageLists(this.appMessages.get(entry.getKey()).getMessages().values()));
             }
             if (entry.getValue() != null) {
                 retStatus = Math.max(retStatus, results(entry.getKey(), entry.getValue()));
+            }
+        }
+        return retStatus;
+    }
+
+    private Integer processMessageLists(Collection<List<Message>> messageLists) {
+        Integer retStatus = 0;
+        for (List<Message> messages : messageLists) {
+            retStatus = Math.max(retStatus, processMessageList(messages));
+        }
+        return retStatus;
+    }
+
+    private Integer processMessageList(final List<Message> messages) {
+        Integer retStatus = 0;
+        for (Message message : messages) {
+            ConsoleFormatter.colourise(message);
+            if (message.isFatal()) {
+                retStatus = 1;
             }
         }
         return retStatus;
@@ -128,56 +134,58 @@ class CliValidator implements Callable<Integer> {
         if (report.getMessages().isEmpty()) {
             ConsoleFormatter.info(FACTORY.getInfo("APP-3").getMessage());
         }
-        for (Map.Entry<String, List<Message>> entry : report.documentMessages.getMessages().entrySet()) {
-            for (Message message : entry.getValue()) {
-                ConsoleFormatter.colourise(Paths.get(entry.getKey()), message);
-                if (message.isError() || message.isFatal()) {
-                    retStatus = 1;
-                }
-            }
+        results(report.documentMessages.getMessages());
+        outputSummary(report.documentMessages);
+        return retStatus;
+    }
+
+    private Integer results(final Map<String, List<Message>> messageMap) {
+        Integer retStatus = 0;
+        for (Map.Entry<String, List<Message>> entry : messageMap.entrySet()) {
+            retStatus = Math.max(retStatus, results(entry.getKey(), entry.getValue()));
         }
-        if (report.documentMessages.hasErrors()) {
-            ConsoleFormatter.error(String.format("NOT VALID, %d errors, %d warnings and %d info messages.",
-                    report.documentMessages.getErrorCount(), report.documentMessages.getWarningCount(), report.documentMessages.getInfoCount()));
-        } else if (report.documentMessages.hasWarnings()) {
-            ConsoleFormatter.warn(String.format("VALID, no errors, %d warnings found and %d info messages.",
-                    report.documentMessages.getWarningCount(), report.documentMessages.getInfoCount()));
-        } else {
-            ConsoleFormatter
-                    .info(String.format("VALID, no errors, no warnings and %d info message found.", report.documentMessages.getInfoCount()));
-        }
-        ConsoleFormatter.newline();
         return retStatus;
     }
 
     private Integer results(final Path path, final ProfileResult report) {
         Integer retStatus = 0;
         ConsoleFormatter.colourise(FACTORY.getInfo("APP-5", this.dnaProfile.getName(), path.toString(), "bold"));
-        for (Map.Entry<String, List<Message>> entry : report.getProfileMessages().getMessages().entrySet()) {
-            for (Message message : entry.getValue()) {
-                ConsoleFormatter.colourise(Paths.get(entry.getKey()), message);
-                if (message.isError() || message.isFatal()) {
-                    retStatus = 1;
-                }
-            }
-        }
-        if (report.getProfileMessages().hasErrors()) {
-            ConsoleFormatter.error(String.format("NOT VALID, %d errors, %d warnings and %d info messages.",
-                   report.getProfileMessages().getErrorCount(), report.getProfileMessages().getWarningCount(), report.getProfileMessages().getInfoCount()));
-        } else if (report.getProfileMessages().hasWarnings()) {
-            ConsoleFormatter.warn(String.format("VALID, no errors, %d warnings found and %d info messages.",
-                    report.getProfileMessages().getWarningCount(), report.getProfileMessages().getInfoCount()));
-        } else {
-            ConsoleFormatter
-                    .info(String.format("VALID, no errors, no warnings and %d info message found.", report.getProfileMessages().getInfoCount()));
-        }
-        ConsoleFormatter.newline();
         if (report.getValidationReport() != null) {
-            retStatus = Math.max(retStatus, results(path, report.getValidationReport()));            
+            retStatus = results(report.getValidationReport().documentMessages.getMessages());
+        }
+        for (Map.Entry<String, List<Message>> entry : report.getProfileMessages().getMessages().entrySet()) {
+            retStatus = Math.max(retStatus, results(entry.getKey(), entry.getValue()));
+        }
+        MessageLog profileMessages = report.getValidationReport().documentMessages;
+        profileMessages.add(report.getProfileMessages().getMessages());
+        outputSummary(profileMessages);
+        return retStatus;
+    }
+
+    private Integer results(final String path, final List<Message> messages) {
+        Integer retStatus = 0;
+        for (Message message : messages) {
+            ConsoleFormatter.colourise(Paths.get(path), message);
+            if (message.isError() || message.isFatal()) {
+                retStatus = 1;
+            }
         }
         return retStatus;
     }
 
+    private void outputSummary(final MessageLog messageLog) {
+        if (messageLog.hasErrors()) {
+            ConsoleFormatter.error(String.format("NOT VALID, %d errors, %d warnings and %d info messages.",
+                    messageLog.getErrorCount(), messageLog.getWarningCount(), messageLog.getInfoCount()));
+        } else if (messageLog.hasWarnings()) {
+            ConsoleFormatter.warn(String.format("VALID, no errors, %d warnings found and %d info messages.",
+                    messageLog.getWarningCount(), messageLog.getInfoCount()));
+        } else {
+            ConsoleFormatter
+                    .info(String.format("VALID, no errors, no warnings and %d info message found.", messageLog.getInfoCount()));
+        }
+        ConsoleFormatter.newline();
+    }
     private final void logMessage(final Path path, final Message message) {
         this.appMessages.putIfAbsent(path, Messages.messageLogInstance());
         this.appMessages.get(path).add(path.toString(), message);
