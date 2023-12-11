@@ -83,7 +83,8 @@ public class ExternalDataTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.SCHEMATRON_CHECKER_ODS.toURI()).getAbsolutePath()));
         MessageLog messages = odf5.check(pkg);
         assertNotNull(messages);
-        assertEquals(1, messages.getErrors().size());
+        assertEquals(0, messages.getErrors().size());
+        assertEquals(1, messages.getInfos().size());
         assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_5")).count() > 0).count());
     }
 
