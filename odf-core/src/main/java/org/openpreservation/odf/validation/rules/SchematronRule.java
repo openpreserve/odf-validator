@@ -56,7 +56,7 @@ final class SchematronRule extends AbstractRule {
                 for (final AbstractSVRLMessage result : SVRLHelper
                         .getAllFailedAssertionsAndSuccessfulReports(schResult)) {
                     messageLog.add(entry.getFullPath(),
-                            Messages.getMessageInstance(this.id, Message.Severity.ERROR, this.getName(),
+                            Messages.getMessageInstance(this.id, Message.Severity.valueOf(result.getRole()), this.getName(),
                                     result.getText()));
                 }
             } catch (final Exception e) {
