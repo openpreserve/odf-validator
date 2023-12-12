@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.openpreservation.messages.MessageLog;
+import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
@@ -28,7 +29,7 @@ import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 public class MacrosTest {
     @Test
     public void testGetInstance() {
-        final SchematronResourcePure schematron = ((SchematronRule) Rules.odf8()).schematron;
+        final SchematronResourcePure schematron = MacroRule.getInstance(Severity.ERROR).schematron.schematron;
         assertTrue(schematron.isValidSchematron());
     }
 
@@ -56,7 +57,7 @@ public class MacrosTest {
 
     @Test
     public void testSchematronRuleMacroFail() throws Exception {
-        final SchematronResourcePure schematron = ((SchematronRule) Rules.odf8()).schematron;
+        final SchematronResourcePure schematron = MacroRule.getInstance(Severity.ERROR).schematron.schematron;
         final URL resource = TestFiles.MACRO_XML;
         assertNotNull(resource);
         final SchematronOutputType schResult = schematron.applySchematronValidationToSVRL(new URLResource(resource));
@@ -67,7 +68,7 @@ public class MacrosTest {
 
     @Test
     public void testSchematronNoMacroPass() throws Exception {
-        final SchematronResourcePure schematron = ((SchematronRule) Rules.odf8()).schematron;
+        final SchematronResourcePure schematron = MacroRule.getInstance(Severity.ERROR).schematron.schematron;
         final URL resource = ClassLoader.getSystemResource("org/openpreservation/odf/fmt/xml/content.xml");
         assertNotNull(resource);
         final SchematronOutputType schResult = schematron.applySchematronValidationToSVRL(new URLResource(resource));
@@ -95,5 +96,16 @@ public class MacrosTest {
         MessageLog messages = odf8.check(pkg);
         assertNotNull(messages);
         assertEquals(0, messages.getErrors().size());
+    }
+
+    @Test
+    public void testPackageStarBasicFail() throws Exception {
+        final Rule odf8 = Rules.odf8();
+        PackageParser parser = OdfPackages.getPackageParser();
+        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.STAR_BASIC.toURI()).getAbsolutePath()));
+        MessageLog messages = odf8.check(pkg);
+        assertNotNull(messages);
+        assertEquals(1, messages.getErrors().size());
+        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
     }
 }
