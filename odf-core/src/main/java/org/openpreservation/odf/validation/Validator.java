@@ -29,6 +29,7 @@ import org.xml.sax.SAXException;
 
 public class Validator {
     private static final String TAG_DOC = "office:document";
+    private static final String TO_VAL_STRING = "toValidate";
     private static final MessageFactory FACTORY = Messages.getInstance();
 
     public Validator() {
@@ -36,23 +37,23 @@ public class Validator {
     }
 
     public ValidationReport validateSpreadsheet(final Path toValidate) throws ParserConfigurationException, IOException, SAXException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", "toValidate"));
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
         return validateSingleFormat(toValidate, Formats.ODS);
     }
 
     public ValidationReport validateSpreadsheet(final File toValidate) throws ParserConfigurationException, IOException, SAXException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", "toValidate"));
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
         return validateSingleFormat(toValidate, Formats.ODS);
     }
 
     public ValidationReport validateSingleFormat(final File toValidate, final Formats legal) throws ParserConfigurationException, IOException, SAXException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "File", "toValidate"));
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "File", TO_VAL_STRING));
         Objects.requireNonNull(legal, String.format(Checks.NOT_NULL, "Formats", "legal"));
         return validateSingleFormat(toValidate.toPath(), legal);
     }
 
     public ValidationReport validateSingleFormat(final Path toValidate, final Formats legal) throws ParserConfigurationException, IOException, SAXException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", "toValidate"));
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
         Objects.requireNonNull(legal, String.format(Checks.NOT_NULL, "Formats", "legal"));
         ValidationReport report = validate(toValidate);
         if (report.document == null || report.document.getFormat() == null) {
@@ -67,13 +68,13 @@ public class Validator {
     }
 
     public ValidationReport validate(final File toValidate) throws ParserConfigurationException, IOException, SAXException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "File", "toValidate"));
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "File", TO_VAL_STRING));
         return validate(toValidate.toPath());
     }
 
     public ValidationReport validate(final Path toValidate)
             throws ParserConfigurationException, IOException, SAXException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", "toValidate"));
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
 
         // Check if the path exists and is not a directory
         existingFileCheck(toValidate);
