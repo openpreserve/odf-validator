@@ -65,4 +65,5 @@ public class TestFiles {
     public final static URL SCHEMATRON_CHECKER_ODS = ClassLoader.getSystemResource(RULES_ROOT + "schematron_checker.ods");
     public final static URL MACRO_XML = ClassLoader.getSystemResource(RULES_ROOT + "macro.xml");
     public final static URL MACRO_PACKAGE = ClassLoader.getSystemResource(RULES_ROOT + "macro.ods");
+    public final static URL STAR_BASIC = ClassLoader.getSystemResource(RULES_ROOT + "star_basic.ods");
 }
