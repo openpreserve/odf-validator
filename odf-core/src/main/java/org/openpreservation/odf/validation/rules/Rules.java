@@ -15,7 +15,6 @@ import org.xml.sax.SAXException;
 public class Rules {
     static final String ODF5_SCHEMATRON = "org/openpreservation/odf/core/odf/validation/rules/odf-5.sch";
     static final String ODF7_SCHEMATRON = "org/openpreservation/odf/core/odf/validation/rules/odf-7.sch";
-    static final String ODF8_SCHEMATRON = "org/openpreservation/odf/core/odf/validation/rules/odf-8.sch";
     static final List<Rule> SET_RULES = Arrays.asList(odf1(), odf2(), odf3(), odf4(), odf5(), odf7(), odf8(), odf9());
     static final Set<Rule> DNA_RULES = new LinkedHashSet<>(SET_RULES);
 
@@ -52,9 +51,7 @@ public class Rules {
     }
 
     public static final Rule odf8() {
-        return SchematronRule.getInstance("POL_8", "Macros check",
-                "The file MUST NOT contain any macros.", Severity.ERROR, false,
-                ClassLoader.getSystemResource(ODF8_SCHEMATRON));
+        return MacroRule.getInstance(Severity.ERROR);
     }
 
     public static final Rule odf9() {

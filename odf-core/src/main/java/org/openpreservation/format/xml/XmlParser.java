@@ -2,6 +2,7 @@ package org.openpreservation.format.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -42,9 +44,10 @@ public class XmlParser {
     public XmlParser() throws ParserConfigurationException, SAXException {
         this.nonValidatingFactory = getNonValidatingFactory();
         this.parser = nonValidatingFactory.newSAXParser();
-        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "false");
+        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "false");
         this.reader = this.parser.getXMLReader();
+        this.reader.setEntityResolver(new DummyEntityResolver());
     }
 
     public ParseResult parse(final InputStream toTest)
@@ -80,8 +83,18 @@ public class XmlParser {
                 "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl", ClassLoader.getSystemClassLoader());
         factory.setValidating(false);
         factory.setNamespaceAware(true);
+        factory.setXIncludeAware(false);
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setFeature(SAX_FEATURE_EXT_GEN_ENTITIES, false);
         factory.setFeature(SAX_FEATURE_EXT_PARAM_ENTITIES, false);
         return factory;
+    }
+
+    private static final class DummyEntityResolver implements EntityResolver {
+        public InputSource resolveEntity(String publicID, String systemID)
+                throws SAXException {
+
+            return new InputSource(new StringReader(""));
+        }
     }
 }
