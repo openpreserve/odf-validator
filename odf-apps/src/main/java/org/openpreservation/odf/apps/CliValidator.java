@@ -156,7 +156,10 @@ class CliValidator implements Callable<Integer> {
         for (Map.Entry<String, List<Message>> entry : report.getProfileMessages().getMessages().entrySet()) {
             retStatus = Math.max(retStatus, results(entry.getKey(), entry.getValue()));
         }
-        MessageLog profileMessages = report.getValidationReport().documentMessages;
+        if (report.getValidationReport() != null && report.getValidationReport().documentMessages.hasErrors()) {
+            retStatus = 1;
+        }
+        MessageLog profileMessages = (report.getValidationReport() != null) ? report.getValidationReport().documentMessages : Messages.messageLogInstance();
         profileMessages.add(report.getProfileMessages().getMessages());
         outputSummary(profileMessages);
         return retStatus;
