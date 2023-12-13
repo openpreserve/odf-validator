@@ -84,8 +84,8 @@ public class MacrosTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.MACRO_PACKAGE.toURI()).getAbsolutePath()));
         MessageLog messages = odf8.check(pkg);
         assertNotNull(messages);
-        assertEquals(1, messages.getErrors().size());
-        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
+        assertEquals(2, messages.getErrors().size());
+        assertEquals(2, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
     }
 
     @Test

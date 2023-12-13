@@ -42,7 +42,7 @@ final class MacroRule extends AbstractRule {
         messageLog.add(schematron.check(odfPackage).getMessages());
         return messageLog;
     }
-    
+
     private MessageLog checkOdfScriptXml(final OdfPackage odfPackage) throws IOException {
         MessageLog messageLog = Messages.messageLogInstance();
         XmlParser checker;
