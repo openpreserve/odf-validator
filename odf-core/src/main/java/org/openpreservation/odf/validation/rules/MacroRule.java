@@ -17,17 +17,20 @@ import org.xml.sax.SAXException;
 final class MacroRule extends AbstractRule {
     static final String ODF8_SCHEMATRON = "org/openpreservation/odf/core/odf/validation/rules/odf-8.sch";
     static final String NS_SCRIPTS = "http://openoffice.org/2000/script";
+
     static final MacroRule getInstance(final Severity severity) {
         return new MacroRule("POL_8", "Macros check",
-        "The file MUST NOT contain any macros.", severity, false);
+                "The file MUST NOT contain any macros.", severity, false);
     }
-    final SchematronRule schematron = SchematronRule.getInstance("POL_8", "Macros check",
-    "The file MUST NOT contain any macros.", Severity.ERROR, false,
-    ClassLoader.getSystemResource(ODF8_SCHEMATRON));
+
+    final SchematronRule schematron;
 
     private MacroRule(final String id, final String name, final String description, final Severity severity,
             final boolean isPrerequisite) {
         super(id, name, description, severity, isPrerequisite);
+        this.schematron = SchematronRule.getInstance(id, name,
+                description, severity, isPrerequisite,
+                ClassLoader.getSystemResource(ODF8_SCHEMATRON));
     }
 
     @Override
@@ -53,7 +56,8 @@ final class MacroRule extends AbstractRule {
         }
         for (FileEntry entry : odfPackage.getXmlEntries()) {
             ParseResult result = checker.parse(odfPackage.getEntryStream(entry));
-            if (NS_SCRIPTS.equals(result.getRootNamespace().getId().toASCIIString()) && "module".equals(result.getRootName())) {
+            if (NS_SCRIPTS.equals(result.getRootNamespace().getId().toASCIIString())
+                    && "module".equals(result.getRootName())) {
                 messageLog.add(entry.getFullPath(), Messages.getMessageInstance(id, severity, name, description));
 
             }

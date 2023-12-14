@@ -15,7 +15,7 @@ import org.xml.sax.SAXException;
 public class Rules {
     static final String ODF5_SCHEMATRON = "org/openpreservation/odf/core/odf/validation/rules/odf-5.sch";
     static final String ODF7_SCHEMATRON = "org/openpreservation/odf/core/odf/validation/rules/odf-7.sch";
-    static final List<Rule> SET_RULES = Arrays.asList(odf1(), odf2(), odf3(), odf4(), odf5(), odf7(), odf8(), odf9());
+    static final List<Rule> SET_RULES = Arrays.asList(odf1(), odf2(), odf3(), odf4(), odf5(), odf6(), odf7(), odf8(), odf9());
     static final Set<Rule> DNA_RULES = new LinkedHashSet<>(SET_RULES);
 
     public static final Rule odf1() {
@@ -42,6 +42,10 @@ public class Rules {
         return SchematronRule.getInstance("POL_5", "External data check",
                 "The file MUST NOT have any references to external data.", Severity.INFO, false,
                 ClassLoader.getSystemResource(ODF5_SCHEMATRON));
+    }
+
+    public static final Rule odf6() {
+        return EmbeddedObjectsRule.getInstance(Severity.INFO);
     }
 
     public static final Rule odf7() {
