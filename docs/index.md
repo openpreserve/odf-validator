@@ -1,3 +1,3 @@
 # Home Page
 
-See Maven site documentation here: <./site/>.
+See Maven site documentation [here](./site/).
