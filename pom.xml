@@ -45,6 +45,22 @@
       <id>carlwilson</id>
     </developer>
   </developers>
+  <contributors>
+    <contributor>
+      <name>Asbjørn Skødt</name>
+      <timezone>+01:00</timezone>
+      <url>https://github.com/Asbjoedt</url>
+      <organization>Rigsarkivet - The Danish National Archives</organization>
+      <organizationUrl>https://www.rigsarkivet.dk/</organizationUrl>
+    </contributor>
+    <contributor>
+      <name>Martin Dew Hattens</name>
+      <timezone>+01:00</timezone>
+      <url>https://github.com/dewhattens</url>
+      <organization>Rigsarkivet - The Danish National Archives</organization>
+      <organizationUrl>https://www.rigsarkivet.dk/</organizationUrl>
+    </contributor>
+  </contributors>
 
   <scm>
     <url>https://github.com/openpreserve/odf-validator/</url>
@@ -70,6 +86,7 @@
     <mvn.jar.version>3.3.0</mvn.jar.version>
     <mvn.javadoc.version>3.5.0</mvn.javadoc.version>
     <mvn.release.version>3.0.1</mvn.release.version>
+    <mvn.reportsinfo.version>3.5.0</mvn.reportsinfo.version>
     <mvn.resources.version>3.3.1</mvn.resources.version>
     <mvn.site.version>3.12.1</mvn.site.version>
     <mvn.source.version>3.3.0</mvn.source.version>
@@ -194,7 +211,7 @@
                 <requireMavenVersion>
                   <version>3.0</version>
                 </requireMavenVersion>
-              </rules>    
+              </rules>
             </configuration>
           </execution>
         </executions>
@@ -209,11 +226,11 @@
             </goals>
           </execution>
           <execution>
-              <id>generate-code-coverage-report</id>
-              <phase>test</phase>
-              <goals>
-                  <goal>report</goal>
-              </goals>
+            <id>generate-code-coverage-report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -260,6 +277,25 @@
     </plugins>
   </build>
 
+  <reporting>
+      <outputDirectory>docs/site</outputDirectory>    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>${mvn.reportsinfo.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${mvn.javadoc.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -269,16 +305,16 @@
       </dependency>
       <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
       <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-compress</artifactId>
-          <version>1.23.0</version>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-compress</artifactId>
+        <version>1.23.0</version>
       </dependency>
       <!-- https://mvnrepository.com/artifact/junit/junit -->
       <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.13.2</version>
-          <scope>test</scope>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.2</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>

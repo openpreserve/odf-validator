@@ -48,6 +48,10 @@ To include the core validation library in your project, add the following depend
 </dependency>
 ```
 
+## Overview of main classes
+
+The library employs a parser that parses ODF packages and creates an internal model of the package. This model is then used by the validator classes to validate the package. Validators effectively test properties of the model against the ODF Specification, or other policies.
+
 ## Parsing an ODF package
 
 The library allows a non-validating parse of an ODF package, indeed this is a pre-requisite to valdiation which is performed against a package instance. The following code snippet shows how to parse an ODF package:
