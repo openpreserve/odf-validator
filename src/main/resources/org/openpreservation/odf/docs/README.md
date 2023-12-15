@@ -1,6 +1,6 @@
 # ODF Validator
 
-Latest version is 0.10.0.
+Latest version is ${project.version}.
 
 ## About
 
