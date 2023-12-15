@@ -10,7 +10,7 @@
 
   <groupId>org.openpreservation.odf</groupId>
   <artifactId>odf-validator</artifactId>
-  <version>0.9.1</version>
+  <version>0.10.0</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -245,6 +245,11 @@
                 <resource>
                   <!--  Filter batch file copy to replace version number with current version number. -->
                   <directory>src/main/resources/org/openpreservation/odf/batch</directory>
+                  <filtering>true</filtering>
+                </resource>
+                <resource>
+                  <!--  Filter batch file copy to replace version number with current version number. -->
+                  <directory>src/main/resources/org/openpreservation/odf/docs</directory>
                   <filtering>true</filtering>
                 </resource>
               </resources>
