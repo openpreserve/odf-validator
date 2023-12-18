@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NamespaceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.format.xml</a> &gt; <span class="el_source">NamespaceImpl.java</span></div><h1>NamespaceImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.format.xml;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Objects;
+
+import org.openpreservation.utils.Checks;
+
+final class NamespaceImpl implements Namespace {
+    private static final String STRING = &quot;String&quot;;
+    static NamespaceImpl of(final URI id, final String prefix, final URL schemalocation) {
+<span class="fc" id="L14">        Objects.requireNonNull(id, String.format(Checks.NOT_NULL, &quot;id&quot;, &quot;URI&quot;));</span>
+<span class="fc" id="L15">        Objects.requireNonNull(prefix, String.format(Checks.NOT_NULL, &quot;prefix&quot;, STRING));</span>
+        try {
+<span class="fc bfc" id="L17" title="All 2 branches covered.">            return new NamespaceImpl(id, prefix, (schemalocation != null) ? schemalocation.toURI() : null);</span>
+<span class="fc" id="L18">        } catch (final URISyntaxException e) {</span>
+<span class="fc" id="L19">            throw new IllegalArgumentException(&quot;Parameter id MUST be a legal URI.&quot;, e);</span>
+        }
+    }
+    static NamespaceImpl of(final String id, final String prefix) {
+<span class="fc" id="L23">        Objects.requireNonNull(id, String.format(Checks.NOT_NULL, &quot;id&quot;, STRING));</span>
+<span class="fc" id="L24">        Objects.requireNonNull(prefix, String.format(Checks.NOT_NULL, &quot;prefix&quot;, STRING));</span>
+<span class="fc" id="L25">        return NamespaceImpl.of(URI.create(id), prefix, null);</span>
+    }
+    private final URI id;
+
+    private final String prefix;
+
+    private final URI schemalocation;
+
+    private NamespaceImpl(final URI id, final String prefix, final URI schemalocation) {
+<span class="fc" id="L34">        super();</span>
+<span class="fc" id="L35">        this.id = id;</span>
+<span class="fc" id="L36">        this.prefix = prefix;</span>
+<span class="fc" id="L37">        this.schemalocation = schemalocation;</span>
+<span class="fc" id="L38">    }</span>
+
+    @Override
+    public URI getId() {
+<span class="fc" id="L42">        return this.id;</span>
+    }
+
+    @Override
+    public String getPrefix() {
+<span class="fc" id="L47">        return this.prefix;</span>
+    }
+
+    @Override
+    public URL getSchemalocation() {
+        try {
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">            return (this.schemalocation != null) ? this.schemalocation.toURL() : null;</span>
+<span class="nc" id="L54">        } catch (final MalformedURLException e) {</span>
+<span class="nc" id="L55">            throw new IllegalArgumentException(&quot;Parameter schemalocation MUST be a legal URL.&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L61">        final int prime = 31;</span>
+<span class="fc" id="L62">        int result = 1;</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        result = prime * result + ((id == null) ? 0 : id.hashCode());</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        result = prime * result + ((schemalocation == null) ? 0 : schemalocation.hashCode());</span>
+<span class="fc" id="L66">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (this == obj)</span>
+<span class="fc" id="L72">            return true;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (obj == null)</span>
+<span class="fc" id="L74">            return false;</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (getClass() != obj.getClass())</span>
+<span class="fc" id="L76">            return false;</span>
+<span class="fc" id="L77">        final NamespaceImpl other = (NamespaceImpl) obj;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (id == null) {</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            if (other.id != null)</span>
+<span class="fc" id="L80">                return false;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        } else if (!id.equals(other.id))</span>
+<span class="fc" id="L82">            return false;</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (prefix == null) {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            if (other.prefix != null)</span>
+<span class="fc" id="L85">                return false;</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        } else if (!prefix.equals(other.prefix))</span>
+<span class="fc" id="L87">            return false;</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (schemalocation == null) {</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            if (other.schemalocation != null)</span>
+<span class="fc" id="L90">                return false;</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        } else if (!schemalocation.equals(other.schemalocation))</span>
+<span class="fc" id="L92">            return false;</span>
+<span class="fc" id="L93">        return true;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L98">        return &quot;NamespaceImpl [id=&quot; + id + &quot;, prefix=&quot; + prefix + &quot;, schemalocation=&quot; + schemalocation + &quot;]&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ManifestImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">ODF spreadsheet validator applications.</a> &gt; <a href="../index.html" class="el_bundle">odf-core</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.pkg</a> &gt; <span class="el_source">ManifestImpl.java</span></div><h1>ManifestImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.pkg;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.utils.Checks;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+
+final class ManifestImpl implements Manifest {
+<span class="fc" id="L24">    private static final class ManifestHandler extends DefaultHandler {</span>
+<span class="fc" id="L25">        private String version = &quot;&quot;;</span>
+<span class="fc" id="L26">        private String currentFullPath = &quot;&quot;;</span>
+<span class="fc" id="L27">        private String currentMediaType = &quot;&quot;;</span>
+<span class="fc" id="L28">        private String currentVersion = &quot;&quot;;</span>
+<span class="fc" id="L29">        private boolean isEncrypted = false;</span>
+<span class="fc" id="L30">        private long currentSize = -1;</span>
+<span class="fc" id="L31">        private final Map&lt;String, FileEntry&gt; entries = new HashMap&lt;&gt;();</span>
+
+        public ManifestImpl getManifest() {
+<span class="fc" id="L34">            return ManifestImpl.of(this.version, this.entries);</span>
+        }
+
+        @Override
+        public void startDocument() throws SAXException {
+<span class="fc" id="L39">            super.startDocument();</span>
+<span class="fc" id="L40">            this.entries.clear();</span>
+<span class="fc" id="L41">            this.version = &quot;&quot;;</span>
+<span class="fc" id="L42">        }</span>
+
+        @Override
+        public void startElement(final String uri, final String localName, final String qName,
+                final Attributes attributes)
+                throws SAXException {
+<span class="fc" id="L48">            super.startElement(uri, localName, qName, attributes);</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            if (&quot;manifest:file-entry&quot;.equals(qName)) {</span>
+<span class="fc" id="L50">                this.currentFullPath = attributes.getValue(&quot;manifest:full-path&quot;);</span>
+<span class="fc" id="L51">                this.currentMediaType = attributes.getValue(&quot;manifest:media-type&quot;);</span>
+<span class="fc" id="L52">                this.currentVersion = attributes.getValue(&quot;manifest:version&quot;);</span>
+<span class="fc" id="L53">                this.currentSize = -1;</span>
+<span class="fc" id="L54">                this.isEncrypted = false;</span>
+                try {
+<span class="fc" id="L56">                    this.currentSize = Long.parseLong(attributes.getValue(&quot;manifest:size&quot;));</span>
+<span class="fc" id="L57">                } catch (final NumberFormatException e) {</span>
+                    // ignore
+<span class="fc" id="L59">                }</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            } else if (&quot;manifest:manifest&quot;.equals(qName)) {</span>
+<span class="fc" id="L61">                this.version = attributes.getValue(&quot;manifest:version&quot;);</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            } else if (&quot;manifest:encryption-data&quot;.equals(qName)) {</span>
+<span class="fc" id="L63">                this.isEncrypted = true;</span>
+            }
+<span class="fc" id="L65">        }</span>
+
+        @Override
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+<span class="fc" id="L69">            super.endElement(uri, localName, qName);</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (&quot;manifest:file-entry&quot;.equals(qName)) {</span>
+<span class="fc" id="L71">                this.entries.put(this.currentFullPath, FileEntryImpl.of(this.currentFullPath, this.currentMediaType,</span>
+                        this.currentSize, currentVersion, this.isEncrypted));
+            }
+<span class="fc" id="L74">        }</span>
+    }
+
+    static final ManifestImpl of(final String version, final Map&lt;String, FileEntry&gt; entries) {
+<span class="fc" id="L78">        Objects.requireNonNull(entries, String.format(Checks.NOT_NULL, &quot;entries&quot;, &quot;Map&lt;String, FileEntry&gt;&quot;));</span>
+<span class="fc" id="L79">        return new ManifestImpl(version, entries);</span>
+    }
+
+    static final ManifestImpl from(final InputStream manifestStream)
+            throws ParserConfigurationException, SAXException, IOException {
+<span class="fc" id="L84">        Objects.requireNonNull(manifestStream, String.format(Checks.NOT_NULL, &quot;manifestStream&quot;, &quot;InputStream&quot;));</span>
+<span class="fc" id="L85">        final SAXParserFactory nonValidatingFactory = XmlParser.getNonValidatingFactory();</span>
+<span class="fc" id="L86">        final SAXParser parser = nonValidatingFactory.newSAXParser();</span>
+<span class="fc" id="L87">        final XMLReader reader = parser.getXMLReader();</span>
+<span class="fc" id="L88">        final ManifestHandler handler = new ManifestHandler();</span>
+<span class="fc" id="L89">        reader.setContentHandler(handler);</span>
+<span class="fc" id="L90">        reader.parse(new InputSource(manifestStream));</span>
+<span class="fc" id="L91">        return handler.getManifest();</span>
+    }
+
+    private final String version;
+
+    private final Map&lt;String, FileEntry&gt; entries;
+
+    private final boolean hasRoot;
+
+<span class="fc" id="L100">    private ManifestImpl(final String version, final Map&lt;String, FileEntry&gt; entries) {</span>
+<span class="fc" id="L101">        this.version = version;</span>
+<span class="fc" id="L102">        this.entries = entries;</span>
+<span class="fc" id="L103">        this.hasRoot = entries.containsKey(&quot;/&quot;);</span>
+<span class="fc" id="L104">    }</span>
+
+    @Override
+    public String getVersion() {
+<span class="pc bpc" id="L108" title="1 of 4 branches missed.">        return (this.version == null || this.version.isEmpty()) ? this.getRootVersion() : this.version;</span>
+    }
+
+    @Override
+    public boolean hasRootMediaType() {
+<span class="nc" id="L113">        return this.hasRoot;</span>
+    }
+
+    @Override
+    public String getRootMediaType() {
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        return this.hasRoot ? this.getEntry(&quot;/&quot;).getMediaType() : null;</span>
+    }
+
+    @Override
+    public String getRootVersion() {
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        return this.hasRoot ? this.getEntry(&quot;/&quot;).getVersion() : null;</span>
+    }
+
+    @Override
+    public int getEntryCount() {
+<span class="fc" id="L128">        return this.entries.size();</span>
+    }
+
+    @Override
+    public Set&lt;FileEntry&gt; getEntries() {
+<span class="fc" id="L133">        return this.entries.values().stream().collect(Collectors.toSet());</span>
+    }
+
+    @Override
+    public Set&lt;FileEntry&gt; getEntriesByMediaType(final String mediaType) {
+<span class="fc" id="L138">        return this.entries.values().stream().filter(e -&gt; e.getMediaType().equals(mediaType))</span>
+<span class="fc" id="L139">                .collect(Collectors.toSet());</span>
+    }
+
+    @Override
+    public Set&lt;FileEntry&gt; getEncryptedEntries() {
+<span class="nc" id="L144">        return this.entries.values().stream().filter(e -&gt; e.isEncrypted()).collect(Collectors.toSet());</span>
+    }
+
+    @Override
+    public FileEntry getEntry(final String entryName) {
+<span class="fc" id="L149">        return this.entries.get(entryName);</span>
+    }
+
+    @Override
+    public String getEntryMediaType(final String entryName) {
+<span class="fc" id="L154">        final FileEntry entry = this.entries.get(entryName);</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        return (entry != null) ? this.entries.get(entryName).getMediaType() : null;</span>
+    }
+
+    @Override
+    public Set&lt;FileEntry&gt; getDocumentEntries() {
+<span class="fc" id="L160">        return this.entries.values().stream().filter(e -&gt; e.isDocument()).collect(Collectors.toSet());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L165">        final int prime = 31;</span>
+<span class="fc" id="L166">        int result = 1;</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        result = prime * result + ((version == null) ? 0 : version.hashCode());</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        result = prime * result + ((entries == null) ? 0 : entries.hashCode());</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        result = prime * result + (hasRoot ? 1231 : 1237);</span>
+<span class="fc" id="L170">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        if (this == obj)</span>
+<span class="fc" id="L176">            return true;</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        if (obj == null)</span>
+<span class="fc" id="L178">            return false;</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        if (getClass() != obj.getClass())</span>
+<span class="fc" id="L180">            return false;</span>
+<span class="fc" id="L181">        final ManifestImpl other = (ManifestImpl) obj;</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        if (version == null) {</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">            if (other.version != null)</span>
+<span class="fc" id="L184">                return false;</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        } else if (!version.equals(other.version))</span>
+<span class="fc" id="L186">            return false;</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        if (entries == null) {</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            if (other.entries != null)</span>
+<span class="fc" id="L189">                return false;</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        } else if (!entries.equals(other.entries))</span>
+<span class="fc" id="L191">            return false;</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        if (hasRoot != other.hasRoot)</span>
+<span class="fc" id="L193">            return false;</span>
+<span class="fc" id="L194">        return true;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L199">        return &quot;ManifestImpl [version=&quot; + version + &quot;, entries=&quot; + entries + &quot;, hasRoot=&quot; + hasRoot + &quot;]&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

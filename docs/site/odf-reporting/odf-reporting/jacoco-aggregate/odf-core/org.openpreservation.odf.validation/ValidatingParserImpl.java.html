@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ValidatingParserImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="../index.html" class="el_bundle">odf-core</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.validation</a> &gt; <span class="el_source">ValidatingParserImpl.java</span></div><h1>ValidatingParserImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.validation;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.validation.Schema;
+
+import org.openpreservation.format.xml.ParseResult;
+import org.openpreservation.format.xml.ValidationResult;
+import org.openpreservation.format.xml.XmlValidator;
+import org.openpreservation.format.zip.ZipEntry;
+import org.openpreservation.messages.Message;
+import org.openpreservation.messages.MessageFactory;
+import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.document.Documents;
+import org.openpreservation.odf.fmt.OdfFormats;
+import org.openpreservation.odf.pkg.FileEntry;
+import org.openpreservation.odf.pkg.Manifest;
+import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.pkg.PackageParser;
+import org.openpreservation.odf.xml.Namespaces;
+import org.openpreservation.odf.xml.OdfSchemaFactory;
+import org.openpreservation.odf.xml.Version;
+import org.openpreservation.utils.Checks;
+import org.xml.sax.SAXException;
+
+final class ValidatingParserImpl implements ValidatingParser {
+    private static final String TO_VALIDATE = &quot;toValidate&quot;;
+<span class="fc" id="L39">    private static final MessageFactory FACTORY = Messages.getInstance();</span>
+<span class="fc" id="L40">    private static final OdfSchemaFactory SCHEMA_FACTORY = new OdfSchemaFactory();</span>
+
+    static final ValidatingParserImpl getInstance()
+            throws ParserConfigurationException, SAXException {
+<span class="fc" id="L44">        return new ValidatingParserImpl();</span>
+    }
+
+    private final XmlValidator validator;
+
+    private final PackageParser packageParser;
+
+<span class="fc" id="L51">    private final Map&lt;String, ValidationResult&gt; results = new HashMap&lt;&gt;();</span>
+
+    private ValidatingParserImpl()
+            throws ParserConfigurationException, SAXException {
+<span class="fc" id="L55">        super();</span>
+<span class="fc" id="L56">        this.packageParser = OdfPackages.getPackageParser();</span>
+<span class="fc" id="L57">        this.validator = new XmlValidator();</span>
+<span class="fc" id="L58">    }</span>
+
+    @Override
+    public ValidationReport validatePackage(final OdfPackage toValidate) {
+<span class="fc" id="L62">        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, TO_VALIDATE, &quot;OdfPackage&quot;));</span>
+<span class="fc" id="L63">        this.results.clear();</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (!toValidate.isWellFormedZip()) {</span>
+<span class="fc" id="L65">            final ValidationReport report = ValidationReport.of(toValidate.getName());</span>
+<span class="fc" id="L66">            report.add(toValidate.getName(), FACTORY.getError(&quot;PKG-1&quot;));</span>
+<span class="fc" id="L67">            return report;</span>
+        }
+<span class="fc" id="L69">        return validate(toValidate);</span>
+    }
+
+    @Override
+    public OdfPackage parsePackage(Path toParse) throws IOException {
+<span class="fc" id="L74">        return this.packageParser.parsePackage(toParse);</span>
+    }
+
+    @Override
+    public OdfPackage parsePackage(File toParse) throws IOException {
+<span class="fc" id="L79">        return this.packageParser.parsePackage(toParse);</span>
+    }
+
+    @Override
+    public OdfPackage parsePackage(final InputStream toParse, final String name) throws IOException {
+<span class="fc" id="L84">        return this.packageParser.parsePackage(toParse, name);</span>
+    }
+
+    private ValidationReport validate(final OdfPackage odfPackage) {
+<span class="fc" id="L88">        final ValidationReport report = ValidationReport.of(odfPackage.getName(), Documents.openDocumentOf(odfPackage));</span>
+<span class="fc" id="L89">        report.add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));</span>
+<span class="fc" id="L90">        report.add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (!odfPackage.hasThumbnail()) {</span>
+<span class="fc" id="L92">            report.add(OdfPackages.PATH_THUMBNAIL, FACTORY.getWarning(&quot;PKG-7&quot;));</span>
+        }
+<span class="fc" id="L94">        report.addAll(this.auditZipEntries(odfPackage));</span>
+<span class="fc" id="L95">        report.addAll(this.validateOdfXmlEntries(odfPackage));</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for (final Entry&lt;String, ValidationResult&gt; entry : this.results.entrySet()) {</span>
+<span class="fc" id="L97">            report.add(entry.getKey(), entry.getValue().getMessages());</span>
+<span class="fc" id="L98">        }</span>
+<span class="fc" id="L99">        return report;</span>
+    }
+
+    private final Map&lt;String, List&lt;Message&gt;&gt; validateOdfXmlEntries(final OdfPackage odfPackage) {
+<span class="fc" id="L103">        final Map&lt;String, List&lt;Message&gt;&gt; messages = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        for (final String xmlPath : odfPackage.getXmlEntryPaths()) {</span>
+<span class="fc" id="L105">            ParseResult parseResult = odfPackage.getEntryXmlParseResult(xmlPath);</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">            if (parseResult == null) {</span>
+<span class="fc" id="L107">                continue;</span>
+            }
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            List&lt;Message&gt; messageList = (parseResult.isWellFormed())</span>
+<span class="fc" id="L110">                    ? validateOdfXmlDocument(odfPackage, xmlPath, parseResult)</span>
+<span class="fc" id="L111">                    : parseResult.getMessages();</span>
+<span class="fc" id="L112">            messages.put(xmlPath, messageList);</span>
+<span class="fc" id="L113">        }</span>
+<span class="fc" id="L114">        return messages;</span>
+    }
+
+    private final List&lt;Message&gt; validateOdfXmlDocument(final OdfPackage odfPackage, final String xmlPath,
+            final ParseResult parseResult) {
+<span class="fc" id="L119">        List&lt;Message&gt; messageList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L120">        Namespaces ns = Namespaces.fromId(parseResult.getRootNamespace().getId());</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        Schema schema = (ns == null) ? null</span>
+<span class="fc" id="L122">                : SCHEMA_FACTORY.getSchema(ns,</span>
+<span class="fc" id="L123">                        getVersionFromPath(odfPackage, xmlPath));</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (schema != null) {</span>
+            try {
+<span class="fc" id="L126">                ValidationResult validationResult = this.validator.validate(parseResult,</span>
+<span class="fc" id="L127">                        odfPackage.getEntryXmlStream(xmlPath), schema);</span>
+<span class="fc" id="L128">                this.results.put(xmlPath, validationResult);</span>
+<span class="nc" id="L129">            } catch (IOException e) {</span>
+<span class="nc" id="L130">                messageList.add(FACTORY.getError(&quot;CORE-3&quot;, e.getMessage(), xmlPath));</span>
+<span class="fc" id="L131">            }</span>
+        }
+<span class="fc" id="L133">        return messageList;</span>
+    }
+
+    private Version getVersionFromPath(final OdfPackage odfPackage, final String path) {
+<span class="fc bfc" id="L137" title="All 4 branches covered.">        String version = (OdfPackages.PATH_MANIFEST.equals(path) || (OdfPackages.isDsig(path))) ? odfPackage.getManifest().getVersion()</span>
+<span class="fc" id="L138">                : (getVersionFromParseResult(odfPackage.getEntryXmlParseResult(path)));</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        return (version == null) ? Version.ODF_13 : Version.fromVersion(version);</span>
+    }
+
+    private final String getVersionFromParseResult(final ParseResult result) {
+<span class="fc" id="L143">        String version = &quot;1.3&quot;;</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        if (result.isWellFormed()) {</span>
+<span class="fc" id="L145">            version = result.getRootAttributeValue(String.format(&quot;%s:%s&quot;, result.getRootPrefix(), &quot;version&quot;));</span>
+        }
+<span class="fc" id="L147">        return version;</span>
+    }
+
+    private final List&lt;Message&gt; checkMimeEntry(final OdfPackage odfPackage) {
+<span class="fc" id="L151">        final List&lt;Message&gt; messages = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        if (odfPackage.hasMimeEntry()) {</span>
+<span class="fc" id="L153">            messages.addAll(this.validateMimeEntry(odfPackage.getZipArchive().getZipEntry(OdfFormats.MIMETYPE),</span>
+<span class="fc" id="L154">                    odfPackage.isMimeFirst()));</span>
+<span class="fc" id="L155">            messages.add(FACTORY.getInfo(&quot;DOC-3&quot;, odfPackage.getMimeType()));</span>
+        } else {
+<span class="fc bfc" id="L157" title="All 4 branches covered.">            if (odfPackage.hasManifest() &amp;&amp; odfPackage.getManifest().getRootMediaType() != null) {</span>
+<span class="fc" id="L158">                messages.add(FACTORY.getError(&quot;MIM-4&quot;));</span>
+            } else {
+<span class="fc" id="L160">                messages.add(FACTORY.getWarning(&quot;PKG-4&quot;));</span>
+            }
+        }
+<span class="fc" id="L163">        return messages;</span>
+    }
+
+    private final List&lt;Message&gt; validateMimeEntry(final ZipEntry mimeEntry, final boolean isFirst) {
+<span class="fc" id="L167">        final List&lt;Message&gt; messages = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        if (!isFirst) {</span>
+<span class="fc" id="L169">            messages.add(FACTORY.getError(&quot;MIM-1&quot;));</span>
+        }
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        if (!mimeEntry.isStored()) {</span>
+<span class="fc" id="L172">            messages.add(FACTORY.getError(&quot;MIM-2&quot;));</span>
+        }
+<span class="pc bpc" id="L174" title="1 of 4 branches missed.">        if (mimeEntry.getExtra() != null &amp;&amp; mimeEntry.getExtra().length &gt; 0) {</span>
+<span class="fc" id="L175">            messages.add(FACTORY.getError(&quot;MIM-3&quot;));</span>
+        }
+
+<span class="fc" id="L178">        return messages;</span>
+    }
+
+    private List&lt;Message&gt; validateManifest(final OdfPackage odfPackage) {
+<span class="fc" id="L182">        final List&lt;Message&gt; messages = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L183">        Manifest manifest = odfPackage.getManifest();</span>
+<span class="pc bpc" id="L184" title="1 of 4 branches missed.">        if (manifest == null || !odfPackage.hasManifest()) {</span>
+<span class="fc" id="L185">            messages.add(FACTORY.getError(&quot;PKG-3&quot;));</span>
+<span class="fc" id="L186">            return messages;</span>
+        }
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        if (manifest.getEntry(&quot;/&quot;) == null) {</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">            if (!odfPackage.hasMimeEntry()) {</span>
+<span class="fc" id="L190">                messages.add(FACTORY.getWarning(&quot;MAN-7&quot;));</span>
+            } else {
+<span class="fc" id="L192">                messages.add(FACTORY.getError(&quot;MAN-5&quot;));</span>
+            }
+<span class="pc bpc" id="L194" title="1 of 4 branches missed.">        } else if (hasManifestRootMime(manifest) &amp;&amp; (odfPackage.hasMimeEntry()</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">                &amp;&amp; !manifest.getRootMediaType().equals(odfPackage.getMimeType()))) {</span>
+<span class="fc" id="L196">            messages.add(FACTORY.getError(&quot;MIM-5&quot;, manifest.getRootMediaType(), odfPackage.getMimeType()));</span>
+        }
+<span class="fc" id="L198">        messages.addAll(checkManifestEntries(odfPackage));</span>
+<span class="fc" id="L199">        return messages;</span>
+    }
+
+    private boolean hasManifestRootMime(final Manifest manifest) {
+<span class="pc bpc" id="L203" title="2 of 4 branches missed.">        return manifest != null &amp;&amp; manifest.getRootMediaType() != null;</span>
+    }
+
+    private List&lt;Message&gt; checkManifestEntries(final OdfPackage odfPackage) {
+<span class="fc" id="L207">        final List&lt;Message&gt; messages = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        for (FileEntry entry : odfPackage.getManifest().getEntries()) {</span>
+<span class="fc" id="L209">            final String entryPath = entry.getFullPath();</span>
+<span class="fc" id="L210">            ZipEntry zipEntry = odfPackage.getZipArchive().getZipEntry(entryPath);</span>
+<span class="fc bfc" id="L211" title="All 4 branches covered.">            if (&quot;/&quot;.equals(entryPath) || entryPath.endsWith(&quot;/&quot;)) {</span>
+                // do nothing
+<span class="fc bfc" id="L213" title="All 2 branches covered.">            } else if (!isLegitimateManifestEntry(entryPath)) {</span>
+<span class="fc" id="L214">                messages.add(getManifestError(entryPath));</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">            } else if (zipEntry == null) {</span>
+<span class="fc" id="L216">                messages.add(FACTORY.getError(&quot;MAN-4&quot;, entryPath));</span>
+            }
+<span class="pc bpc" id="L218" title="2 of 6 branches missed.">            if (entry.isEncrypted() &amp;&amp; zipEntry != null &amp;&amp; !zipEntry.isStored() ) {</span>
+<span class="nc" id="L219">                messages.add(FACTORY.getError(&quot;PKG-8&quot;, entryPath));</span>
+            }
+<span class="fc" id="L221">        }</span>
+<span class="fc" id="L222">        return messages;</span>
+    }
+
+    private final Map&lt;String, List&lt;Message&gt;&gt; auditZipEntries(final OdfPackage odfPackage) {
+<span class="fc" id="L226">        final Map&lt;String, List&lt;Message&gt;&gt; messageMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L227">        final Manifest manifest = odfPackage.getManifest();</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        for (ZipEntry zipEntry : odfPackage.getZipArchive().getZipEntries()) {</span>
+<span class="fc" id="L229">            final List&lt;Message&gt; messages = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">            if (!isCompressionValid(zipEntry)) {</span>
+                // Entries SHALL be uncompressesed (Stored) or use deflate compression
+<span class="nc" id="L232">                messages.add(FACTORY.getError(&quot;PKG-2&quot;, zipEntry.getName()));</span>
+            }
+<span class="fc bfc" id="L234" title="All 2 branches covered.">            if (zipEntry.getName().startsWith(OdfPackages.NAME_META_INF)</span>
+<span class="pc bpc" id="L235" title="1 of 4 branches missed.">                    &amp;&amp; (!zipEntry.isDirectory() &amp;&amp; !OdfPackages.PATH_MANIFEST.equals(zipEntry.getName())</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">                    &amp;&amp; !OdfPackages.isDsig(zipEntry.getName()))) {</span>
+<span class="fc" id="L237">                messages.add(FACTORY.getError(&quot;PKG-5&quot;, zipEntry.getName()));</span>
+<span class="fc" id="L238">                messageMap.put(zipEntry.getName(), messages);</span>
+            }
+<span class="fc bfc" id="L240" title="All 4 branches covered.">            if (zipEntry.isDirectory() || !isLegitimateManifestEntry(zipEntry.getName())) {</span>
+<span class="fc" id="L241">                continue;</span>
+            }
+<span class="fc bfc" id="L243" title="All 4 branches covered.">            if (manifest != null &amp;&amp; odfPackage.getManifest().getEntry(zipEntry.getName()) == null) {</span>
+<span class="fc" id="L244">                messages.add(FACTORY.getError(&quot;MAN-1&quot;, zipEntry.getName()));</span>
+            }
+<span class="fc" id="L246">            messageMap.put(zipEntry.getName(), messages);</span>
+<span class="fc" id="L247">        }</span>
+<span class="fc" id="L248">        return messageMap;</span>
+    }
+
+    static final boolean isCompressionValid(final ZipEntry entry) {
+<span class="fc bfc" id="L252" title="All 4 branches covered.">        return entry.getMethod() == java.util.zip.ZipEntry.STORED || entry.getMethod() == java.util.zip.ZipEntry.DEFLATED;</span>
+    }
+
+    private final boolean isLegitimateManifestEntry(final String entryPath) {
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        return !(OdfFormats.MIMETYPE.equals(entryPath)</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">                || OdfPackages.PATH_MANIFEST.equals(entryPath)</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">                || entryPath.startsWith(OdfPackages.NAME_META_INF));</span>
+    }
+
+    private final Message getManifestError(final String entryPath) {
+<span class="fc bfc" id="L262" title="All 2 branches covered.">        if (OdfFormats.MIMETYPE.equals(entryPath)) {</span>
+<span class="fc" id="L263">            return FACTORY.getError(&quot;MAN-3&quot;, entryPath);</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        } else if (OdfPackages.PATH_MANIFEST.equals(entryPath)) {</span>
+<span class="fc" id="L265">            return FACTORY.getError(&quot;MAN-2&quot;, entryPath);</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">        } else if (entryPath.startsWith(OdfPackages.NAME_META_INF)) {</span>
+<span class="fc" id="L267">            return FACTORY.getInfo(&quot;MAN-6&quot;, entryPath);</span>
+        }
+<span class="nc" id="L269">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

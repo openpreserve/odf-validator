@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetadataImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.xml</a> &gt; <span class="el_source">MetadataImpl.java</span></div><h1>MetadataImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.xml;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.utils.Checks;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+
+final class MetadataImpl implements Metadata {
+<span class="fc" id="L25">    private static final class MetadataHandler extends DefaultHandler {</span>
+<span class="fc" id="L26">        private String version = &quot;&quot;;</span>
+<span class="fc" id="L27">        private boolean inMeta = false;</span>
+<span class="fc" id="L28">        private String currentElement = &quot;&quot;;</span>
+<span class="fc" id="L29">        private final Map&lt;String, String&gt; stringValues = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L30">        private final List&lt;UserDefinedField&gt; userDefinedFields = new ArrayList&lt;&gt;();</span>
+
+        public MetadataImpl getMetadata() {
+<span class="fc" id="L33">            return MetadataImpl.of(this.version, this.stringValues, this.userDefinedFields);</span>
+        }
+
+        @Override
+        public void startDocument() throws SAXException {
+<span class="fc" id="L38">            super.startDocument();</span>
+<span class="fc" id="L39">            this.stringValues.clear();</span>
+<span class="fc" id="L40">            this.userDefinedFields.clear();</span>
+<span class="fc" id="L41">            this.version = &quot;&quot;;</span>
+<span class="fc" id="L42">            this.currentElement = &quot;&quot;;</span>
+<span class="fc" id="L43">            this.inMeta = false;</span>
+<span class="fc" id="L44">        }</span>
+
+        @Override
+        public void startElement(final String uri, final String localName, final String qName,
+                final Attributes attributes)
+                throws SAXException {
+<span class="fc" id="L50">            super.startElement(uri, localName, qName, attributes);</span>
+<span class="fc bfc" id="L51" title="All 4 branches covered.">            if (&quot;office:document&quot;.equals(qName) || &quot;office:document-meta&quot;.equals(qName)) {</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">                if (attributes.getValue(&quot;office:version&quot;) != null) {</span>
+<span class="fc" id="L53">                    this.version = attributes.getValue(&quot;office:version&quot;);</span>
+                }
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            } else if (&quot;office:meta&quot;.equals(qName)) {</span>
+<span class="fc" id="L56">                this.inMeta = true;</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">            } else if (this.inMeta) {</span>
+<span class="fc" id="L58">                this.currentElement = qName;</span>
+            }
+<span class="fc" id="L60">        }</span>
+
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">            if (this.inMeta) {</span>
+<span class="fc" id="L65">                String value = new String(ch, start, length);</span>
+<span class="pc bpc" id="L66" title="3 of 6 branches missed.">                if (currentElement != null &amp;&amp; !currentElement.trim().isEmpty() &amp;&amp; !value.trim().isEmpty()) {</span>
+<span class="fc" id="L67">                    this.stringValues.put(this.currentElement, value);</span>
+                }
+            }
+<span class="fc" id="L70">        }</span>
+
+        @Override
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+<span class="fc" id="L74">            super.endElement(uri, localName, qName);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            if (&quot;office:meta&quot;.equals(qName)) {</span>
+<span class="fc" id="L76">                this.inMeta = false;</span>
+            }
+<span class="fc" id="L78">        }</span>
+    }
+
+    public static final class UserDefinedFieldImpl implements UserDefinedField {
+        static final UserDefinedField of(final String name, final String valueType, final String value) {
+<span class="fc" id="L83">            Objects.requireNonNull(name, String.format(Checks.NOT_NULL, &quot;name&quot;, &quot;String&quot;));</span>
+<span class="fc" id="L84">            return new UserDefinedFieldImpl(name, valueType, value);</span>
+        }
+
+        private final String name;
+        private final String valueType;
+
+        private final String value;
+
+        private UserDefinedFieldImpl(final String name, final String valueType, final String value) {
+<span class="fc" id="L93">            super();</span>
+<span class="fc" id="L94">            this.name = name;</span>
+<span class="fc" id="L95">            this.valueType = valueType;</span>
+<span class="fc" id="L96">            this.value = value;</span>
+<span class="fc" id="L97">        }</span>
+
+        @Override
+        public String getName() {
+<span class="fc" id="L101">            return this.name;</span>
+        }
+
+        @Override
+        public String getValueType() {
+<span class="fc" id="L106">            return this.valueType;</span>
+        }
+
+        @Override
+        public String getValue() {
+<span class="fc" id="L111">            return this.value;</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="fc" id="L116">            final int prime = 31;</span>
+<span class="fc" id="L117">            int result = 1;</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            result = prime * result + ((name == null) ? 0 : name.hashCode());</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            result = prime * result + ((valueType == null) ? 0 : valueType.hashCode());</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            result = prime * result + ((value == null) ? 0 : value.hashCode());</span>
+<span class="fc" id="L121">            return result;</span>
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            if (this == obj)</span>
+<span class="fc" id="L127">                return true;</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            if (obj == null)</span>
+<span class="fc" id="L129">                return false;</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            if (getClass() != obj.getClass())</span>
+<span class="fc" id="L131">                return false;</span>
+<span class="fc" id="L132">            final UserDefinedFieldImpl other = (UserDefinedFieldImpl) obj;</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            if (name == null) {</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">                if (other.name != null)</span>
+<span class="fc" id="L135">                    return false;</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">            } else if (!name.equals(other.name))</span>
+<span class="fc" id="L137">                return false;</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if (valueType == null) {</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">                if (other.valueType != null)</span>
+<span class="fc" id="L140">                    return false;</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            } else if (!valueType.equals(other.valueType))</span>
+<span class="fc" id="L142">                return false;</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">            if (value == null) {</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                if (other.value != null)</span>
+<span class="fc" id="L145">                    return false;</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            } else if (!value.equals(other.value))</span>
+<span class="fc" id="L147">                return false;</span>
+<span class="fc" id="L148">            return true;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc" id="L153">            return &quot;UserDefinedFieldImpl [name=&quot; + name + &quot;, valueType=&quot; + valueType + &quot;, value=&quot; + value + &quot;]&quot;;</span>
+        }
+    }
+
+    static final MetadataImpl of(final String version, final Map&lt;String, String&gt; stringValues,
+            final List&lt;UserDefinedField&gt; userDefinedFields) {
+<span class="fc" id="L159">        Objects.requireNonNull(stringValues, String.format(Checks.NOT_NULL, &quot;stringValues&quot;, &quot;Map&lt;String, String&gt;&quot;));</span>
+<span class="fc" id="L160">        Objects.requireNonNull(userDefinedFields,</span>
+<span class="fc" id="L161">                String.format(Checks.NOT_NULL, &quot;userDefinedFields&quot;, &quot;List&lt;UserDefinedField&gt;&quot;));</span>
+<span class="fc" id="L162">        return new MetadataImpl(version, stringValues, userDefinedFields);</span>
+    }
+
+    static final MetadataImpl from(final InputStream metaStream)
+            throws ParserConfigurationException, SAXException, IOException {
+<span class="fc" id="L167">        Objects.requireNonNull(metaStream, String.format(Checks.NOT_NULL, &quot;metaStream&quot;, &quot;InputStream&quot;));</span>
+<span class="fc" id="L168">        final SAXParserFactory nonValidatingFactory = XmlParser.getNonValidatingFactory();</span>
+<span class="fc" id="L169">        final SAXParser parser = nonValidatingFactory.newSAXParser();</span>
+<span class="fc" id="L170">        final XMLReader reader = parser.getXMLReader();</span>
+<span class="fc" id="L171">        final MetadataHandler handler = new MetadataHandler();</span>
+<span class="fc" id="L172">        reader.setContentHandler(handler);</span>
+<span class="fc" id="L173">        reader.parse(new InputSource(metaStream));</span>
+<span class="fc" id="L174">        return handler.getMetadata();</span>
+    }
+
+    private final String version;
+
+    private final Map&lt;String, String&gt; stringValues;
+
+    private final List&lt;UserDefinedField&gt; userDefinedFields;
+
+    private MetadataImpl(final String version, final Map&lt;String, String&gt; stringValues,
+            final List&lt;UserDefinedField&gt; userDefinedFields) {
+<span class="fc" id="L185">        super();</span>
+<span class="fc" id="L186">        this.version = version;</span>
+<span class="fc" id="L187">        this.stringValues = Collections.unmodifiableMap(stringValues);</span>
+<span class="fc" id="L188">        this.userDefinedFields = Collections.unmodifiableList(userDefinedFields);</span>
+<span class="fc" id="L189">    }</span>
+
+    @Override
+    public String getVersion() {
+<span class="fc" id="L193">        return this.version;</span>
+    }
+
+    @Override
+    public Map&lt;String, String&gt; getStringValueMap() {
+<span class="fc" id="L198">        return Collections.unmodifiableMap(this.stringValues);</span>
+    }
+
+    @Override
+    public String getStringValue(final String qualifiedName) {
+<span class="fc" id="L203">        return this.stringValues.get(qualifiedName);</span>
+    }
+
+    @Override
+    public String getStringValue(final String prefix, final String localName) {
+<span class="fc" id="L208">        return this.stringValues.get(prefix + &quot;:&quot; + localName);</span>
+    }
+
+    @Override
+    public List&lt;UserDefinedField&gt; getUserDefinedFields() {
+<span class="fc" id="L213">        return Collections.unmodifiableList(this.userDefinedFields);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L218">        final int prime = 31;</span>
+<span class="fc" id="L219">        int result = 1;</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        result = prime * result + ((version == null) ? 0 : version.hashCode());</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        result = prime * result + ((stringValues == null) ? 0 : stringValues.hashCode());</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        result = prime * result + ((userDefinedFields == null) ? 0 : userDefinedFields.hashCode());</span>
+<span class="fc" id="L223">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        if (this == obj)</span>
+<span class="fc" id="L229">            return true;</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">        if (obj == null)</span>
+<span class="fc" id="L231">            return false;</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        if (getClass() != obj.getClass())</span>
+<span class="fc" id="L233">            return false;</span>
+<span class="fc" id="L234">        final MetadataImpl other = (MetadataImpl) obj;</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">        if (version == null) {</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">            if (other.version != null)</span>
+<span class="fc" id="L237">                return false;</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        } else if (!version.equals(other.version))</span>
+<span class="fc" id="L239">            return false;</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        if (stringValues == null) {</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">            if (other.stringValues != null)</span>
+<span class="fc" id="L242">                return false;</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        } else if (!stringValues.equals(other.stringValues))</span>
+<span class="fc" id="L244">            return false;</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        if (userDefinedFields == null) {</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">            if (other.userDefinedFields != null)</span>
+<span class="fc" id="L247">                return false;</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        } else if (!userDefinedFields.equals(other.userDefinedFields))</span>
+<span class="fc" id="L249">            return false;</span>
+<span class="fc" id="L250">        return true;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L255">        return &quot;MetadataImpl [version=&quot; + version + &quot;, stringValues=&quot; + stringValues + &quot;, userDefinedFields=&quot;</span>
+                + userDefinedFields + &quot;]&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

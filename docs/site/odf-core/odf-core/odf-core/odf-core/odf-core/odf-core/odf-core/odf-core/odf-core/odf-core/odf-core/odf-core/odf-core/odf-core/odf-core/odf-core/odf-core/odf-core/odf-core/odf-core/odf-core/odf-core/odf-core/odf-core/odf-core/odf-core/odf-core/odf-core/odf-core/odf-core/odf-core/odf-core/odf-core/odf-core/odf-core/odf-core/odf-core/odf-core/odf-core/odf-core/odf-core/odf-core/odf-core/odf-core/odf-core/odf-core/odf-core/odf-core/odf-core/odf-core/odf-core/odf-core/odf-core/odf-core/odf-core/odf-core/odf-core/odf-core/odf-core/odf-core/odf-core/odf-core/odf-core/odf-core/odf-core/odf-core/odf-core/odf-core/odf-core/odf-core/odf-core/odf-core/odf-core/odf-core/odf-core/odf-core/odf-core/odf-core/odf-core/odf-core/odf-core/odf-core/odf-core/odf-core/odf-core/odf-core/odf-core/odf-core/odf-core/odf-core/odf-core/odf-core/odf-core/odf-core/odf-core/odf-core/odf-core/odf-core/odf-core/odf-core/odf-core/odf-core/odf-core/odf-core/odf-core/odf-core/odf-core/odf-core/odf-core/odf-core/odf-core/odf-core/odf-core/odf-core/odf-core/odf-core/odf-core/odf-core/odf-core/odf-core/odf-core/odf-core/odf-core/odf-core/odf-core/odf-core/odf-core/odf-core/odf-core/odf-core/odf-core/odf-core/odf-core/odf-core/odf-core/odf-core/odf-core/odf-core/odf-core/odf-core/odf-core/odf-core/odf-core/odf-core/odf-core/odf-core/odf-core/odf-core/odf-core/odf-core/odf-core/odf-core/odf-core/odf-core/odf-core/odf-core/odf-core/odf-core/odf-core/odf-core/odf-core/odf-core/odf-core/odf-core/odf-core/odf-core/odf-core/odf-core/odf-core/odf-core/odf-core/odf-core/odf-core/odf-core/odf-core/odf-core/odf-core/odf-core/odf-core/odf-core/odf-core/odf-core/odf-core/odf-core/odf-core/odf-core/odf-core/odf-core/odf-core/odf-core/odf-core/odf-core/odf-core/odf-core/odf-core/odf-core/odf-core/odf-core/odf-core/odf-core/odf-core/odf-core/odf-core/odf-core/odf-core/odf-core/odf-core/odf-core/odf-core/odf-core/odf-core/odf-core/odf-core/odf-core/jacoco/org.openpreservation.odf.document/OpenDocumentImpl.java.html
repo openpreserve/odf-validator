@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OpenDocumentImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.document</a> &gt; <span class="el_source">OpenDocumentImpl.java</span></div><h1>OpenDocumentImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.document;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.OdfPackageDocument;
+
+final class OpenDocumentImpl implements OpenDocument {
+    private final OdfDocument document;
+    private final OdfPackage pkg;
+
+    private OpenDocumentImpl(OdfDocument document, OdfPackage pkg) {
+<span class="fc" id="L17">        super();</span>
+<span class="fc" id="L18">        this.document = document;</span>
+<span class="fc" id="L19">        this.pkg = pkg;</span>
+<span class="fc" id="L20">    }</span>
+
+    static final OpenDocument of(OdfDocument document) {
+<span class="fc" id="L23">        Objects.requireNonNull(document, &quot;OdfDocument parameter document cannot be null&quot;);</span>
+<span class="fc" id="L24">        return new OpenDocumentImpl(document, null);</span>
+    }
+
+    static final OpenDocument of(OdfPackage pkg) {
+<span class="fc" id="L28">        Objects.requireNonNull(pkg, &quot;OdfPackage pkg document cannot be null&quot;);</span>
+<span class="fc" id="L29">        return new OpenDocumentImpl(pkg.getDocument(), pkg);</span>
+    }
+
+    @Override
+    public FileType getFileType() {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        return this.pkg != null ? FileType.PACKAGE : FileType.SINGLE;</span>
+    }
+
+    @Override
+    public boolean isPackage() {
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        return this.pkg != null;</span>
+    }
+
+    @Override
+    public OdfDocument getDocument() {
+<span class="fc" id="L44">        return this.document;</span>
+    }
+
+    @Override
+    public Collection&lt;OdfDocument&gt; getSubDocuments() {
+<span class="fc" id="L49">        List&lt;OdfDocument&gt; subDocs = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        for (OdfPackageDocument doc : this.pkg.getDocumentMap().values()) {</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">            if (!doc.equals(this.document)) {</span>
+<span class="fc" id="L52">                subDocs.add(doc);</span>
+            }
+<span class="fc" id="L54">        }</span>
+<span class="fc" id="L55">        return subDocs;</span>
+    }
+
+    @Override
+    public OdfPackage getPackage() {
+<span class="fc" id="L60">        return this.pkg;</span>
+    }
+
+    @Override
+    public Formats getFormat() {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        return (this.isPackage()) ? this.pkg.getDetectedFormat() : Formats.fromMime(this.document.getXmlDocument().getMimeType());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L70">        return Objects.hash(document, pkg);</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (this == obj)</span>
+<span class="fc" id="L76">            return true;</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (!(obj instanceof OpenDocumentImpl))</span>
+<span class="fc" id="L78">            return false;</span>
+<span class="fc" id="L79">        OpenDocumentImpl other = (OpenDocumentImpl) obj;</span>
+<span class="fc bfc" id="L80" title="All 4 branches covered.">        return Objects.equals(document, other.document) &amp;&amp; Objects.equals(pkg, other.pkg);</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

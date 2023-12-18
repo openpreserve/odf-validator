@@ -14,11 +14,21 @@ import java.util.zip.ZipInputStream;
 
 import org.openpreservation.utils.Checks;
 
+/**
+ * Utility class for working with {@link ZipArchive}s.
+ */
 public final class Zips {
-    private Zips() {
-        throw new AssertionError("Utility class 'Zips' should not be instantiated");
-    }
-
+    /**
+     * Create a {@link ZipEntryProcessor} instance that processes the entries and
+     * extracts them to the supplied root <code>Path</code>.
+     * 
+     * @param root               the root <code>Path</code> to extract the entries
+     *                           to
+     * @param extractDirectories <code>true</code> to extract directories,
+     *                           <code>false</code> to ignore them
+     * @return a <code>ZipEntryProcessor</code> that processes the entries and
+     *         extracts them to the supplied root <code>Path</code>
+     */
     public static final ZipEntryProcessor extractorInstance(final Path root, final boolean extractDirectories) {
         Objects.requireNonNull(root, "Path root must not be null");
         return new ZipEntryProcessor() {
@@ -46,6 +56,12 @@ public final class Zips {
         };
     }
 
+    /**
+     * Create a {@link ZipProcessor.Factory} instance that can be used to create
+     * {@link ZipProcessor} instances.
+     * 
+     * @return a <code>ZipProcessor.Factory</code>
+     */
     public static final ZipProcessor.Factory factoryInstance() {
         return (processor -> (is -> {
             Objects.requireNonNull(is, "null");
@@ -61,6 +77,15 @@ public final class Zips {
         }));
     }
 
+    /**
+     * Create a {@link ZipArchiveCache} instance that caches the contents of the
+     * archive and provides access to the <code>InputStream</code>s.
+     * 
+     * @param archive the <code>ZipArchive</code> to cache
+     * @param cache   the Map to use for caching
+     * @return a <code>ZipArchiveCache</code> instance that caches the contents of
+     *         the archive and provides access to the <code>InputStream</code>s
+     */
     public static final ZipArchiveCache zipArchiveCacheInstance(final ZipArchive archive,
             final Map<String, byte[]> cache) {
         Objects.requireNonNull(archive, String.format(Checks.NOT_NULL, "ZipArchive", "archive"));
@@ -68,11 +93,27 @@ public final class Zips {
         return ZipArchiveCacheImpl.of(archive, cache);
     }
 
+    /**
+     * Create a {@link ZipArchiveCache} instance that caches the contents of the
+     * archive and provides access to the <code>InputStream</code>s.
+     * 
+     * @param file the <code>File</code> to cache
+     * @return a <code>ZipArchiveCache</code> instance that caches the contents of
+     *         the archive and provides access to the <code>InputStream</code>s
+     */
     public static final ZipArchiveCache zipArchiveCacheInstance(final File file) throws IOException {
         Objects.requireNonNull(file, String.format(Checks.NOT_NULL, "File", "file"));
         return ZipFileProcessor.of(file.toPath());
     }
 
+    /**
+     * Create a {@link ZipArchiveCache} instance that caches the contents of the
+     * archive and provides access to the <code>Path</code>s.
+     * 
+     * @param path the <code>Path</code> to cache
+     * @return a <code>ZipArchiveCache</code> instance that caches the contents of
+     *         the archive and provides access to the <code>InputStream</code>s
+     */
     public static final ZipArchiveCache zipArchiveCacheInstance(final Path path) throws IOException {
         Objects.requireNonNull(path, String.format(Checks.NOT_NULL, "Path", "path"));
         if (!Files.exists(path) || Files.isDirectory(path)) {
@@ -81,9 +122,14 @@ public final class Zips {
         return ZipFileProcessor.of(path);
     }
 
-    public static final ZipEntry zipEntryInstance(final String name, final int size, final int compressedSize, int crc32,
-            int method, final boolean isDirectory, final byte[] extra) {
+    public static final ZipEntry zipEntryInstance(final String name, final int size, final int compressedSize,
+            final int crc32,
+            final int method, final boolean isDirectory, final byte[] extra) {
         Objects.requireNonNull(name, String.format(Checks.NOT_NULL, "String", "name"));
         return ZipEntryImpl.of(name, size, compressedSize, crc32, method, isDirectory, extra);
+    }
+
+    private Zips() {
+        throw new AssertionError("Utility class 'Zips' should not be instantiated");
     }
 }

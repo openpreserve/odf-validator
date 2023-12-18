@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.format.xml</a> &gt; <span class="el_source">XmlValidator.java</span></div><h1>XmlValidator.java</h1><pre class="source lang-java linenums">package org.openpreservation.format.xml;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.Validator;
+
+import org.openpreservation.messages.Message;
+import org.openpreservation.messages.MessageFactory;
+import org.openpreservation.messages.Messages;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+/**
+ * Simple class to wrap XML schema vaidaton.
+ */
+<span class="fc" id="L21">public final class XmlValidator {</span>
+<span class="fc" id="L22">    private static final MessageFactory FACTORY = Messages.getInstance();</span>
+    private static boolean isValid(final List&lt;Message&gt; messages) {
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        for (final Message message : messages) {</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">            if (message.isError()) {</span>
+<span class="fc" id="L26">                return false;</span>
+            }
+<span class="nc" id="L28">        }</span>
+<span class="fc" id="L29">        return true;</span>
+    }
+
+<span class="fc" id="L32">    private boolean isWellFormed = false;</span>
+
+    /**
+     * Validate the supplied InputStream against the supplied schema.
+     *
+     * @param parseResult the {@link ParseResult} obtained form parsign the file
+     *                    using {@link XmlParser}
+     * @param toValidate  an &lt;code&gt;InputStream&lt;/code&gt; to validate
+     * @param schema      the {@link Schema} to validate against
+     * @return a {@link ValidationResult} containing the result of the validation
+     * @throws IOException if there is an error reading supplied
+     *                     &lt;code&gt;InputStream&lt;/code&gt;.
+     */
+    public ValidationResult validate(final ParseResult parseResult, final InputStream toValidate, final Schema schema)
+            throws IOException {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (!parseResult.isWellFormed()) {</span>
+<span class="fc" id="L48">            return ValidationResultImpl.of(parseResult, false, new ArrayList&lt;&gt;());</span>
+        }
+<span class="fc" id="L50">        final List&lt;Message&gt; messages = validateSource(new StreamSource(toValidate), schema);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (!this.isWellFormed) {</span>
+<span class="fc" id="L52">            return ValidationResultImpl.of(ParseResultImpl.invertWellFormed(parseResult), false, messages);</span>
+        }
+<span class="fc" id="L54">        return ValidationResultImpl.of(parseResult, isValid(messages), messages);</span>
+    }
+
+    private List&lt;Message&gt; validateSource(final StreamSource toValidate, final Schema schema) throws IOException {
+<span class="fc" id="L58">        final List&lt;Message&gt; messages = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L59">        final Validator validator = schema.newValidator();</span>
+<span class="fc" id="L60">        final MessageHandler handler = new MessageHandler(&quot;XML-4&quot;);</span>
+<span class="fc" id="L61">        validator.setErrorHandler(handler);</span>
+        try {
+<span class="fc" id="L63">            validator.validate(toValidate);</span>
+<span class="fc" id="L64">            this.isWellFormed = true;</span>
+<span class="fc" id="L65">        } catch (final SAXParseException e) {</span>
+<span class="fc" id="L66">            messages.add(FACTORY.getError(&quot;XML-3&quot;, e.getLineNumber(),</span>
+<span class="fc" id="L67">                    e.getColumnNumber(), e.getMessage()));</span>
+<span class="nc" id="L68">        } catch (final SAXException e) {</span>
+<span class="nc" id="L69">            messages.add(FACTORY.getError(&quot;XML-1&quot;, e.getMessage()));</span>
+<span class="fc" id="L70">        }</span>
+<span class="fc" id="L71">        messages.addAll(handler.messages);</span>
+<span class="fc" id="L72">        return messages;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

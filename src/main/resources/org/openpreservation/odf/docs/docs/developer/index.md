@@ -85,6 +85,12 @@ for (FileEntry entry : manifest.getEntries()) {
 }
 ```
 
+Note the use of the factory method [`OdfPackages.getPackageParser()`](site/apidocs/org/openpreservation/odf/pkg/OdfPackages.html#getPackageParser()) to obtain a package parser instance. This can be reused to parse multiple packages. You can read more about the ODF Package types in the API documentation:
+
+* The high-level ODF Package interface: [`OdfPackage`](site/apidocs/org/openpreservation/odf/pkg/OdfPackage.html)
+* The interface for working with package manifests: [`Manifest`](site/apidocs/org/openpreservation/odf/pkg/Manifest.html)
+* An interface for deailing with manifett file entries: [`FileEntry`](site/apidocs/org/openpreservation/odf/pkg/FileEntry.html)
+
 ## Validating an ODF package
 
 ```java
@@ -131,6 +137,8 @@ if (report.isValid()) {
 }
 ```
 
+This time a [`ValidatingParser`](site/apidocs/org/openpreservation/odf/validation/ValidatingParser.html) instance is used. The [`ValidatingParser.validatePackage(OdfPackage)`](./site/apidocs/org/openpreservation/odf/validation/ValidatingParser.html#validatePackage(org.openpreservation.odf.pkg.OdfPackage)) method returns a [`ValidationReport`](site/apidocs/org/openpreservation/odf/validation/ValidationReport.html) instance. This can be used to determine if the package is valid or not. If the package is not valid, the report can be used to obtain the error messages.
+
 ## Validation of Spreadsheets Only
 
 The ODF Validator can be used to validate spreadsheets only. This is useful if you want to validate a spreadsheet without having to parse the entire package. The following code snippet shows how to validate a spreadsheet:
@@ -157,3 +165,28 @@ if (!report.isValid()) {
     System.out.println("The document is valid");
 }
 ```
+
+## Validation usigng the Preservation Specification profile
+
+There is an alternative profile validator that can run custom rules to check properties that are beyond the scope of the ODF specification. The following code snippet shows how to validate a spreadsheet using the Preservation Specification profile:
+
+```java
+
+Profile dnaProfile = Rules.getDnaProfile();
+ValidationReport report = validator.validateSpreadsheet(new File("path/to/package.ods"));
+if (!report.isValid()) {
+    List<Message> messages = report.getMessages();
+    // Loop through the messages
+    for (Message message : messages) {
+        // Get the message id
+        System.out.println(message.getId());
+        // Get the message severity (INFO, WARNING, ERROR)
+        System.out.println(message.getSeverity());
+        // Print out the message text
+        System.out.println(message.getMessage());
+    }
+} else {
+    System.out.println("The document is valid");
+}
+```
+

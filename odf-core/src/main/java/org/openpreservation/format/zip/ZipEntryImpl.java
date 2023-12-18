@@ -90,7 +90,6 @@ public final class ZipEntryImpl implements ZipEntry {
         return this.extra;
     }
 
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -106,14 +105,14 @@ public final class ZipEntryImpl implements ZipEntry {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ZipEntryImpl other = (ZipEntryImpl) obj;
+        final ZipEntryImpl other = (ZipEntryImpl) obj;
         if (name == null) {
             if (other.name != null)
                 return false;

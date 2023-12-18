@@ -19,7 +19,11 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.openpreservation.utils.Checks;
 
-public class ZipFileProcessor implements ZipArchiveCache {
+/**
+ * An implementation of {@link ZipArchiveCache} that caches the contents of the
+ * archive and provides access to the <code>InputStream</code>s.
+ */
+public final class ZipFileProcessor implements ZipArchiveCache {
     private final Path path;
     private final Map<String, ZipArchiveEntry> entryCache;
     private final Map<String, byte[]> byteCache = new HashMap<>();
@@ -69,6 +73,11 @@ public class ZipFileProcessor implements ZipArchiveCache {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * Returns the first physical {@link ZipEntry} in the archive.
+     *
+     * @return the first physical <code>ZipEntry</code> in the archive
+     */
     public ZipEntry getFirstEntry() {
         return ZipEntryImpl.of(this.entryCache.get(this.firstEntryName));
     }

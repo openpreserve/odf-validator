@@ -15,39 +15,60 @@ import org.openpreservation.messages.Messages;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-public class XmlValidator {
+/**
+ * Simple class to wrap XML schema vaidaton.
+ */
+public final class XmlValidator {
     private static final MessageFactory FACTORY = Messages.getInstance();
+    private static boolean isValid(final List<Message> messages) {
+        for (final Message message : messages) {
+            if (message.isError()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-    public ValidationResult validate(final ParseResult parseResult, final InputStream toValidate, Schema schema)
+    private boolean isWellFormed = false;
+
+    /**
+     * Validate the supplied InputStream against the supplied schema.
+     *
+     * @param parseResult the {@link ParseResult} obtained form parsign the file
+     *                    using {@link XmlParser}
+     * @param toValidate  an <code>InputStream</code> to validate
+     * @param schema      the {@link Schema} to validate against
+     * @return a {@link ValidationResult} containing the result of the validation
+     * @throws IOException if there is an error reading supplied
+     *                     <code>InputStream</code>.
+     */
+    public ValidationResult validate(final ParseResult parseResult, final InputStream toValidate, final Schema schema)
             throws IOException {
         if (!parseResult.isWellFormed()) {
             return ValidationResultImpl.of(parseResult, false, new ArrayList<>());
         }
+        final List<Message> messages = validateSource(new StreamSource(toValidate), schema);
+        if (!this.isWellFormed) {
+            return ValidationResultImpl.of(ParseResultImpl.invertWellFormed(parseResult), false, messages);
+        }
+        return ValidationResultImpl.of(parseResult, isValid(messages), messages);
+    }
+
+    private List<Message> validateSource(final StreamSource toValidate, final Schema schema) throws IOException {
         final List<Message> messages = new ArrayList<>();
-        Validator validator = schema.newValidator();
-        MessageHandler handler = new MessageHandler("XML-4");
+        final Validator validator = schema.newValidator();
+        final MessageHandler handler = new MessageHandler("XML-4");
         validator.setErrorHandler(handler);
-        boolean isWellFormed = false;
-        boolean isValid = true;
         try {
-            validator.validate(new StreamSource(toValidate));
-            isWellFormed = true;
-        } catch (SAXParseException e) {
+            validator.validate(toValidate);
+            this.isWellFormed = true;
+        } catch (final SAXParseException e) {
             messages.add(FACTORY.getError("XML-3", e.getLineNumber(),
                     e.getColumnNumber(), e.getMessage()));
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             messages.add(FACTORY.getError("XML-1", e.getMessage()));
         }
         messages.addAll(handler.messages);
-        for (Message message : messages) {
-            if (message.isError()) {
-                isValid = false;
-                break;
-            }
-        }
-        if (!isWellFormed) {
-            return ValidationResultImpl.of(ParseResultImpl.invertWellFormed(parseResult), false, messages);
-        }
-        return ValidationResultImpl.of(parseResult, isValid, messages);
+        return messages;
     }
 }

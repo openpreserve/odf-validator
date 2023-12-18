@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OdfSchemaFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.xml</a> &gt; <span class="el_source">OdfSchemaFactory.java</span></div><h1>OdfSchemaFactory.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.xml;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
+import org.openpreservation.utils.Checks;
+import org.xml.sax.SAXException;
+
+<span class="fc" id="L21">public class OdfSchemaFactory {</span>
+
+    private static final String SCHEMA_ROOT = &quot;org/openpreservation/odf/schema/&quot;;
+    private static final String ODF_ROOT = SCHEMA_ROOT + &quot;odf/&quot;;
+    private static final String ODF_13_ROOT = ODF_ROOT + &quot;1.3/&quot;;
+    private static final String ODF_12_ROOT = ODF_ROOT + &quot;1.2/&quot;;
+    private static final String ODF_11_ROOT = ODF_ROOT + &quot;1.1/&quot;;
+    private static final String ODF_10_ROOT = ODF_ROOT + &quot;1.0/&quot;;
+    private static final String SCHEMA_NAME_MANIFEST = &quot;manifest-schema.rng&quot;;
+    private static final String SCHEMA_NAME_DSIG = &quot;dsig-schema.rng&quot;;
+    private static final String SCHEMA_NAME = &quot;schema.rng&quot;;
+    private static final String SCHEMA_NAME_STRICT = &quot;strict-schema.rng&quot;;
+    private static final String SCHEMA_NAME_METADATA = &quot;metadata.owl&quot;;
+    private static final String SCHEMA_NAME_PACKAGE_METADATA = &quot;package-metadata.owl&quot;;
+    private static final String SCHEMA_PATH_DSIG_13 = ODF_13_ROOT + SCHEMA_NAME_DSIG;
+    private static final String SCHEMA_PATH_MANIFEST_13 = ODF_13_ROOT + SCHEMA_NAME_MANIFEST;
+    private static final String SCHEMA_PATH_ODF_13 = ODF_13_ROOT + SCHEMA_NAME;
+    private static final String SCHEMA_PATH_METADATA_13 = ODF_13_ROOT + SCHEMA_NAME_METADATA;
+    private static final String SCHEMA_PATH_PACKAGE_METADATA_13 = ODF_13_ROOT + SCHEMA_NAME_PACKAGE_METADATA;
+    private static final String SCHEMA_PATH_DSIG_12 = ODF_12_ROOT + SCHEMA_NAME_DSIG;
+    private static final String SCHEMA_PATH_MANIFEST_12 = ODF_12_ROOT + SCHEMA_NAME_MANIFEST;
+    private static final String SCHEMA_PATH_ODF_12 = ODF_12_ROOT + SCHEMA_NAME;
+    private static final String SCHEMA_PATH_METADATA_12 = ODF_12_ROOT + SCHEMA_NAME_METADATA;
+    private static final String SCHEMA_PATH_PACKAGE_METADATA_12 = ODF_12_ROOT + SCHEMA_NAME_PACKAGE_METADATA;
+    private static final String SCHEMA_PATH_MANIFEST_11 = ODF_11_ROOT + SCHEMA_NAME_MANIFEST;
+    private static final String SCHEMA_PATH_ODF_11 = ODF_11_ROOT + SCHEMA_NAME;
+    private static final String SCHEMA_PATH_STRICT_ODF_11 = ODF_11_ROOT + SCHEMA_NAME_STRICT;
+    private static final String SCHEMA_PATH_MANIFEST_10 = ODF_10_ROOT + SCHEMA_NAME_MANIFEST;
+    private static final String SCHEMA_PATH_ODF_10 = ODF_10_ROOT + SCHEMA_NAME;
+    private static final String SCHEMA_PATH_STRICT_ODF_10 = ODF_10_ROOT + SCHEMA_NAME_STRICT;
+    private static final String JAXP_RNG_FACTORY = &quot;com.thaiopensource.relaxng.jaxp.XMLSyntaxSchemaFactory&quot;;
+<span class="fc" id="L52">    private static final Map&lt;Version, Map&lt;Namespaces, String&gt;&gt; SCHEMA_LOCATION_MAP = schemaMap();</span>
+
+    private static final Map&lt;Version, Map&lt;Namespaces, String&gt;&gt; schemaMap() {
+<span class="fc" id="L55">        final Map&lt;Version, Map&lt;Namespaces, String&gt;&gt; map = new EnumMap&lt;&gt;(Version.class);</span>
+<span class="fc" id="L56">        map.put(Version.ODF_13, schemaMap13());</span>
+<span class="fc" id="L57">        map.put(Version.ODF_12, schemaMap12());</span>
+<span class="fc" id="L58">        map.put(Version.ODF_11, schemaMap11());</span>
+<span class="fc" id="L59">        map.put(Version.ODF_10, schemaMap10());</span>
+<span class="fc" id="L60">        return map;</span>
+    }
+
+    private static final Map&lt;Namespaces, String&gt; schemaMap13() {
+<span class="fc" id="L64">        final Map&lt;Namespaces, String&gt; map = new EnumMap&lt;&gt;(Namespaces.class);</span>
+<span class="fc" id="L65">        map.put(Namespaces.DSIG, SCHEMA_PATH_DSIG_13);</span>
+<span class="fc" id="L66">        map.put(Namespaces.MANIFEST, SCHEMA_PATH_MANIFEST_13);</span>
+<span class="fc" id="L67">        map.put(Namespaces.ODF, SCHEMA_PATH_METADATA_13);</span>
+<span class="fc" id="L68">        map.put(Namespaces.PKG, SCHEMA_PATH_PACKAGE_METADATA_13);</span>
+<span class="fc" id="L69">        map.put(Namespaces.OFFICE, SCHEMA_PATH_ODF_13);</span>
+<span class="fc" id="L70">        return map;</span>
+    }
+
+    private static final Map&lt;Namespaces, String&gt; schemaMap12() {
+<span class="fc" id="L74">        final Map&lt;Namespaces, String&gt; map = new EnumMap&lt;&gt;(Namespaces.class);</span>
+<span class="fc" id="L75">        map.put(Namespaces.DSIG, SCHEMA_PATH_DSIG_12);</span>
+<span class="fc" id="L76">        map.put(Namespaces.MANIFEST, SCHEMA_PATH_MANIFEST_12);</span>
+<span class="fc" id="L77">        map.put(Namespaces.ODF, SCHEMA_PATH_METADATA_12);</span>
+<span class="fc" id="L78">        map.put(Namespaces.PKG, SCHEMA_PATH_PACKAGE_METADATA_12);</span>
+<span class="fc" id="L79">        map.put(Namespaces.OFFICE, SCHEMA_PATH_ODF_12);</span>
+<span class="fc" id="L80">        return map;</span>
+    }
+
+    private static final Map&lt;Namespaces, String&gt; schemaMap11() {
+<span class="fc" id="L84">        final Map&lt;Namespaces, String&gt; map = new EnumMap&lt;&gt;(Namespaces.class);</span>
+<span class="fc" id="L85">        map.put(Namespaces.MANIFEST, SCHEMA_PATH_MANIFEST_11);</span>
+<span class="fc" id="L86">        map.put(Namespaces.OFFICE, SCHEMA_PATH_ODF_11);</span>
+<span class="fc" id="L87">        return map;</span>
+    }
+
+    private static final Map&lt;Namespaces, String&gt; schemaMap10() {
+<span class="fc" id="L91">        final Map&lt;Namespaces, String&gt; map = new EnumMap&lt;&gt;(Namespaces.class);</span>
+<span class="fc" id="L92">        map.put(Namespaces.MANIFEST, SCHEMA_PATH_MANIFEST_10);</span>
+<span class="fc" id="L93">        map.put(Namespaces.OFFICE, SCHEMA_PATH_ODF_10);</span>
+<span class="fc" id="L94">        return map;</span>
+    }
+
+    private static final SchemaFactory getSchemaFactory() {
+<span class="fc" id="L98">        System.setProperty(SchemaFactory.class.getName() + &quot;:&quot; + XMLConstants.RELAXNG_NS_URI,</span>
+                JAXP_RNG_FACTORY);
+<span class="fc" id="L100">        return SchemaFactory.newInstance(XMLConstants.RELAXNG_NS_URI);</span>
+    }
+
+<span class="fc" id="L103">    private final SchemaFactory rngSchemaFactory = getSchemaFactory();</span>
+
+    public final Schema getSchema(final Namespaces namespace) {
+<span class="fc" id="L106">        return getSchemas(EnumSet.of(namespace), Version.ODF_13);</span>
+    }
+
+    public final Schema getSchema(final Namespaces namespace, final Version version) {
+<span class="fc" id="L110">        Objects.requireNonNull(namespace, String.format(Checks.NOT_NULL, &quot;namespace&quot;, &quot;Namspaces&quot;));</span>
+<span class="fc" id="L111">        Objects.requireNonNull(version, String.format(Checks.NOT_NULL, &quot;version&quot;, &quot;Version&quot;));</span>
+<span class="fc" id="L112">        return getSchemas(EnumSet.of(namespace), version);</span>
+    }
+
+    public final Schema getSchemas(final Set&lt;Namespaces&gt; namespaces, final Version version) {
+<span class="fc" id="L116">        Objects.requireNonNull(namespaces, String.format(Checks.NOT_NULL, &quot;namespace&quot;, &quot;Namspaces&quot;));</span>
+<span class="fc" id="L117">        Objects.requireNonNull(version, String.format(Checks.NOT_NULL, &quot;version&quot;, &quot;Version&quot;));</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (namespaces.isEmpty()) {</span>
+<span class="fc" id="L119">            throw new IllegalArgumentException(&quot;At least one namespace must be specified&quot;);</span>
+        }
+<span class="fc" id="L121">        final Source[] sources = getSources(namespaces, version);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (sources.length &lt; 1) {</span>
+<span class="fc" id="L123">            throw new NoSuchElementException(&quot;No schema found for the specified namespace and version.&quot;);</span>
+        }
+        try {
+<span class="fc" id="L126">            return rngSchemaFactory.newSchema(getSources(namespaces, version));</span>
+<span class="nc" id="L127">        } catch (final SAXException e) {</span>
+<span class="nc" id="L128">            throw new IllegalStateException(&quot;Problem loading internal schema document&quot;, e);</span>
+        }
+    }
+
+    private final Source[] getSources(final Set&lt;Namespaces&gt; namespaces, final Version version) {
+<span class="fc" id="L133">        final List&lt;Source&gt; sources = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        for (final Namespaces namespace : namespaces) {</span>
+<span class="fc" id="L135">            final String schemaPath = SCHEMA_LOCATION_MAP.get(version).get(namespace);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">            if (schemaPath == null) {</span>
+<span class="fc" id="L137">                continue;</span>
+            }
+<span class="fc" id="L139">            sources.add(new StreamSource(ClassLoader.getSystemResourceAsStream(schemaPath)));</span>
+<span class="fc" id="L140">        }</span>
+<span class="fc" id="L141">        return sources.toArray(new Source[sources.size()]);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

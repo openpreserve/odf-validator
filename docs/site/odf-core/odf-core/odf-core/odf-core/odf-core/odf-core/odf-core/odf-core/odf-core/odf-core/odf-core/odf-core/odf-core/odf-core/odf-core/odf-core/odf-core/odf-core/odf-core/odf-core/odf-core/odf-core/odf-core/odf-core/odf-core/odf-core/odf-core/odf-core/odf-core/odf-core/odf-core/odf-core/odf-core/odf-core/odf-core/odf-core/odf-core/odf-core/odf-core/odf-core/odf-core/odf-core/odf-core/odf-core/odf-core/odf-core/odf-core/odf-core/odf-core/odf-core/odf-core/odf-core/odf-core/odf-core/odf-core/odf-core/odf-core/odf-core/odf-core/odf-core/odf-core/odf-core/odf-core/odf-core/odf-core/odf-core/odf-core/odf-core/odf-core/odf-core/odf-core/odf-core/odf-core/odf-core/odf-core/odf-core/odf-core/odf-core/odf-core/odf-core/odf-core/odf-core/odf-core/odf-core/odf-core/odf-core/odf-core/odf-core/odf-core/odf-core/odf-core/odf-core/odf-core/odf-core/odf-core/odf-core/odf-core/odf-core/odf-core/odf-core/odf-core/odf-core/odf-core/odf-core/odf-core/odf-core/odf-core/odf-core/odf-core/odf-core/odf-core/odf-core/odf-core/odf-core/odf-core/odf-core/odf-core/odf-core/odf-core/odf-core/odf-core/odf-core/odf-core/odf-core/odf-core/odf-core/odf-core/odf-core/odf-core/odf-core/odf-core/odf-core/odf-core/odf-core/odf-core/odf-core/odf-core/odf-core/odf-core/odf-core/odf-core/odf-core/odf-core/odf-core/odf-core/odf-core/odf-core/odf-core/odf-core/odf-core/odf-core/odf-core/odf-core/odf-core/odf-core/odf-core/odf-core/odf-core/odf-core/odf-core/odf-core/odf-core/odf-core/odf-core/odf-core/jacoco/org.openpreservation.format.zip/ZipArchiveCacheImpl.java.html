@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ZipArchiveCacheImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.format.zip</a> &gt; <span class="el_source">ZipArchiveCacheImpl.java</span></div><h1>ZipArchiveCacheImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.format.zip;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+final class ZipArchiveCacheImpl implements ZipArchiveCache {
+    private final ZipArchive archive;
+    private final Map&lt;String, byte[]&gt; cache;
+
+    private ZipArchiveCacheImpl(final ZipArchive archive, final Map&lt;String, byte[]&gt; cache) {
+<span class="nc" id="L15">        super();</span>
+<span class="nc" id="L16">        this.archive = archive;</span>
+<span class="nc" id="L17">        this.cache = Collections.unmodifiableMap(cache);</span>
+<span class="nc" id="L18">    }</span>
+
+    @Override
+    public List&lt;String&gt; getCachedEntryNames() {
+<span class="nc" id="L22">        return this.cache.keySet().stream().collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public InputStream getEntryInputStream(String entryName) {
+<span class="nc" id="L27">        return new ByteArrayInputStream(this.cache.get(entryName));</span>
+    }
+
+    @Override
+    public List&lt;ZipEntry&gt; getZipEntries() {
+<span class="nc" id="L32">        return this.archive.getZipEntries();</span>
+    }
+
+    @Override
+    public ZipEntry getZipEntry(String entryName) {
+<span class="nc" id="L37">        return this.archive.getZipEntry(entryName);</span>
+    }
+
+    @Override
+    public int size() {
+<span class="nc" id="L42">        return this.archive.size();</span>
+    }
+
+    static final ZipArchiveCacheImpl of(final ZipArchive archive, final Map&lt;String, byte[]&gt; cache) {
+<span class="nc" id="L46">        return new ZipArchiveCacheImpl(archive, cache);</span>
+    }
+
+    @Override
+    public ZipEntry getFirstEntry() {
+<span class="nc" id="L51">        return this.archive.getFirstEntry();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

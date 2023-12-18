@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OdfPackages.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.pkg</a> &gt; <span class="el_source">OdfPackages.java</span></div><h1>OdfPackages.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.pkg;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.openpreservation.odf.fmt.FormatSniffer;
+import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.fmt.OdfFormats;
+import org.xml.sax.SAXException;
+
+/**
+ * A static utility class for general ODF package parsing.
+ * 
+ * The class doubles as a lightweight factory as well as
+ * providing useful constants and utility methods.
+ */
+public final class OdfPackages {
+    /**
+     * The ODF specified name of the mimetype zip entry.
+     */
+    public static final String MIMETYPE = OdfFormats.MIMETYPE;
+    /**
+     * The ODF specified name of the package META-INF directory.
+     */
+    public static final String NAME_META_INF = Constants.NAME_META_INF;
+    /**
+     * The ODF specified path to the package manifest.
+     */
+    public static final String PATH_MANIFEST = Constants.PATH_MANIFEST;
+    /**
+     * The ODF specified path to a PNG thumbnail file.
+     */
+    public static final String PATH_THUMBNAIL = Constants.PATH_THUMBNAIL;
+
+    /**
+     * A factory method for {@link PackageParser} instances.
+     *
+     * @return a new &lt;code&gt;PackageParser&lt;/code&gt; instance
+     * @throws ParserConfigurationException if there's an issue configuring the underlying XML parser
+     * @throws SAXException if there's an issue creating the underlying XML parser
+     */
+    public static final PackageParser getPackageParser() {
+<span class="fc" id="L47">        return PackageParserImpl.getInstance();</span>
+    }
+
+    /**
+     * Uses the {@link FormatSniffer} to see if the supplied path resolves to a ZIP instance.
+     * 
+     * This check only tests the file header bytes and doesn't parse
+     * the resolved path to ensure the zip is valid. See {@link #isValidZip(Path)} for that.
+     *
+     * @param toCheck a &lt;code&gt;Path&lt;code&gt; to sniff as a zip file
+     * @return &lt;code&gt;true&lt;/code&gt; if the supplied path has a zip signature, &lt;code&gt;false&lt;/code&gt; otherwise.
+     * @throws IOException if there's an issue reading the resolved &lt;code&gt;Path&lt;/code&gt;
+     */
+    public static final boolean isZip(final Path toCheck) throws IOException {
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        return FormatSniffer.sniff(toCheck, Formats.ZIP.getMaxSignatureLength()) == Formats.ZIP;</span>
+    }
+
+    /**
+     * Check if the supplied &lt;code&gt;Path&lt;/code&gt; resolves to a valid zip archive
+     * instance.
+     * 
+     * This is a full library parse of the resolved &lt;code&gt;Path&lt;code&gt;.
+     *
+     * @param toCheck a &lt;code&gt;Path&lt;/code&gt; to resolve and test
+     * @return &lt;code&gt;true&lt;/code&gt; if the supplied path resolves to a valid zip file, else &lt;code&gt;false&lt;/code&gt;.
+     * @throws IOException if there's an issue reading the resolved &lt;code&gt;Path&lt;code&gt;
+     */
+    public static final boolean isValidZip(final Path toCheck) throws IOException {
+<span class="fc" id="L75">        try (ZipFile zipFile = new ZipFile(toCheck.toFile())) {</span>
+<span class="fc" id="L76">            return true;</span>
+<span class="fc" id="L77">        } catch (final ZipException e) {</span>
+            /**
+             * No need to report this as an error as it simply means that the file is not a
+             * ZIP
+             */
+        }
+<span class="fc" id="L83">        return false;</span>
+    }
+
+    /**
+     * Check if the given &lt;code&gt;String&lt;/code&gt; is an ODF spec compliant Digital Signature path.
+     *
+     * @param path the &lt;code&gt;String&lt;/code&gt; path to check
+     * @return &lt;code&gt;true&lt;/code&gt; if &lt;code&gt;path&lt;/code&gt; is a valid dsig path, else &lt;code&gt;false&lt;/code&gt;.
+     */
+    public static final boolean isDsig(final String path) {
+<span class="fc" id="L93">        return PackageParserImpl.isDsig(path);</span>
+    }
+
+    /**
+     * Check if the passed &lt;code&gt;String&lt;/code&gt; path is an ODF specified XML file name.
+     * 
+     * This is the list of ODF specified XML files:
+     * &lt;ul&gt;
+     * &lt;li&gt;content.xml&lt;/li&gt;
+     * &lt;li&gt;styles.xml&lt;/li&gt;
+     * &lt;li&gt;meta.xml&lt;/li&gt;
+     * &lt;li&gt;settings.xml&lt;/li&gt;
+     * &lt;li&gt;manifest.rdf&lt;/li&gt;
+     * &lt;/ul&gt;    
+     * 
+     * @param entrypath a &lt;code&gt;String&lt;/code&gt; file path to check
+     * @return &lt;code&gt;true&lt;/code&gt; if &lt;code&gt;entryPath&lt;/code&gt; is an ODF specified XML file name, else &lt;code&gt;false&lt;/code&gt;.
+     */
+    public static final boolean isOdfXml(final String entrypath) {
+<span class="fc" id="L112">        return PackageParserImpl.isOdfXml(entrypath);</span>
+    }
+
+<span class="nc" id="L115">    private OdfPackages() {</span>
+<span class="nc" id="L116">        throw new AssertionError(&quot;Utility class 'OdfPackages' should not be instantiated&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

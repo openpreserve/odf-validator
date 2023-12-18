@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SubDocumentRule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.validation.rules</a> &gt; <span class="el_source">SubDocumentRule.java</span></div><h1>SubDocumentRule.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.validation.rules;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import org.openpreservation.messages.Message.Severity;
+import org.openpreservation.messages.MessageLog;
+import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.xml.OdfXmlDocument;
+
+final class SubDocumentRule extends AbstractRule {
+
+    static final SubDocumentRule getInstance(final Severity severity) {
+<span class="fc" id="L16">        return new SubDocumentRule(&quot;POL_10&quot;, &quot;Sub Documents&quot;,</span>
+                &quot;The package MUST NOT contain sub documents.&quot;, severity, false);
+    }
+
+    private SubDocumentRule(final String id, final String name, final String description, final Severity severity,
+            final boolean isPrerequisite) {
+<span class="fc" id="L22">        super(id, name, description, severity, isPrerequisite);</span>
+<span class="fc" id="L23">    }</span>
+
+    @Override
+    public MessageLog check(final OdfXmlDocument document) {
+<span class="fc" id="L27">        throw new UnsupportedOperationException(&quot;Unimplemented method 'check'&quot;);</span>
+    }
+
+    @Override
+    public MessageLog check(final OdfPackage odfPackage) throws IOException {
+<span class="fc" id="L32">        Objects.requireNonNull(odfPackage, &quot;odfPackage must not be null&quot;);</span>
+<span class="fc" id="L33">        final MessageLog messageLog = Messages.messageLogInstance();</span>
+<span class="pc bpc" id="L34" title="1 of 4 branches missed.">        if (odfPackage.hasManifest() &amp;&amp; odfPackage.getManifest().getDocumentEntries().size() &gt; 1) {</span>
+<span class="fc" id="L35">            messageLog.add(OdfPackages.PATH_MANIFEST,</span>
+<span class="fc" id="L36">                    Messages.getMessageInstance(this.id, this.severity, this.getName(),</span>
+<span class="fc" id="L37">                            this.getDescription()));</span>
+        }
+<span class="fc" id="L39">        return messageLog;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

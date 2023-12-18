@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageLogImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.messages</a> &gt; <span class="el_source">MessageLogImpl.java</span></div><h1>MessageLogImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.messages;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+final class MessageLogImpl implements MessageLog {
+    static final MessageLog of() {
+<span class="fc" id="L14">        return new MessageLogImpl();</span>
+    }
+
+    static final MessageLog of(final String path, final List&lt;Message&gt; messages) {
+<span class="nc" id="L18">        final Map&lt;String, List&lt;Message&gt;&gt; messageMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L19">        messageMap.put(path, messages);</span>
+<span class="nc" id="L20">        return new MessageLogImpl(messageMap);</span>
+    }
+
+    private final Map&lt;String, List&lt;Message&gt;&gt; messageMap;
+
+    private MessageLogImpl() {
+<span class="fc" id="L26">        this(new HashMap&lt;&gt;());</span>
+<span class="fc" id="L27">    }</span>
+
+    private MessageLogImpl(final Map&lt;String, List&lt;Message&gt;&gt; messageMap) {
+<span class="fc" id="L30">        super();</span>
+<span class="fc" id="L31">        this.messageMap = new HashMap&lt;&gt;(messageMap);</span>
+<span class="fc" id="L32">    }</span>
+
+    @Override
+    public int size() {
+<span class="fc" id="L36">        return this.messageMap.values().stream().mapToInt(List::size).sum();</span>
+    }
+
+    @Override
+    public boolean isEmpty() {
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        return this.size() == 0;</span>
+    }
+
+    @Override
+    public int add(final String path, final Message message) {
+<span class="fc" id="L46">        messageMap.putIfAbsent(path, new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L47">        this.messageMap.get(path).add(message);</span>
+<span class="fc" id="L48">        return this.size();</span>
+    }
+
+    @Override
+    public int add(final String path, final Collection&lt;? extends Message&gt; messages) {
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (!messages.isEmpty()) {</span>
+<span class="fc" id="L54">            messageMap.putIfAbsent(path, new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L55">            this.messageMap.get(path).addAll(messages);</span>
+        }
+<span class="fc" id="L57">        return this.size();</span>
+    }
+
+    @Override
+    public Map&lt;String, List&lt;Message&gt;&gt; getErrors() {
+<span class="fc" id="L62">        return getMessagesBySeverity(Message.Severity.ERROR);</span>
+    }
+
+    @Override
+    public Map&lt;String, List&lt;Message&gt;&gt; getWarnings() {
+<span class="nc" id="L67">        return getMessagesBySeverity(Message.Severity.WARNING);</span>
+    }
+
+    @Override
+    public Map&lt;String, List&lt;Message&gt;&gt; getInfos() {
+<span class="fc" id="L72">        return getMessagesBySeverity(Message.Severity.INFO);</span>
+    }
+
+    @Override
+    public Map&lt;String, List&lt;Message&gt;&gt; getMessagesBySeverity(final Message.Severity severity) {
+<span class="fc" id="L77">        return this.messageMap.entrySet().stream()</span>
+<span class="fc" id="L78">                .collect(Collectors.toMap(Entry::getKey,</span>
+<span class="fc" id="L79">                        e -&gt; e.getValue().stream().filter(m -&gt; m.getSeverity().equals(severity))</span>
+<span class="fc" id="L80">                                .collect(Collectors.toUnmodifiableList())))</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">                .entrySet().stream().filter(e -&gt; !e.getValue().isEmpty())</span>
+<span class="fc" id="L82">                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));</span>
+    }
+
+    @Override
+    public Map&lt;String, List&lt;Message&gt;&gt; getMessages() {
+<span class="fc" id="L87">        return Collections.unmodifiableMap(this.messageMap);</span>
+    }
+
+    @Override
+    public Map&lt;String, List&lt;Message&gt;&gt; getMessagesById(final String id) {
+<span class="nc" id="L92">        return this.messageMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey,</span>
+<span class="nc" id="L93">                e -&gt; e.getValue().stream().filter(m -&gt; m.getId().equals(id)).collect(Collectors.toUnmodifiableList())));</span>
+    }
+
+    @Override
+    public boolean hasErrors() {
+<span class="fc" id="L98">        return containsSeverity(Message.Severity.ERROR);</span>
+    }
+
+    @Override
+    public boolean hasWarnings() {
+<span class="fc" id="L103">        return containsSeverity(Message.Severity.WARNING);</span>
+    }
+
+    @Override
+    public boolean hasInfos() {
+<span class="fc" id="L108">        return containsSeverity(Message.Severity.INFO);</span>
+    }
+
+    @Override
+    public List&lt;Message&gt; getMessagesForPath(final String path) {
+<span class="nc" id="L113">        return Collections.unmodifiableList(this.messageMap.getOrDefault(path, new ArrayList&lt;&gt;()));</span>
+    }
+
+    private boolean containsSeverity(final Message.Severity severity) {
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        return this.getMessagesBySeverity(severity).size() &gt; 0;</span>
+    }
+
+    @Override
+    public int add(Map&lt;String, List&lt;Message&gt;&gt; messages) {
+<span class="fc" id="L122">        messages.forEach(this::add);</span>
+<span class="fc" id="L123">        return this.size();</span>
+    }
+
+    @Override
+    public int getErrorCount() {
+<span class="nc" id="L128">        return this.getErrors().values().stream().mapToInt(List::size).sum();</span>
+    }
+
+    @Override
+    public int getWarningCount() {
+<span class="nc" id="L133">        return this.getWarnings().values().stream().mapToInt(List::size).sum();</span>
+    }
+
+    @Override
+    public int getInfoCount() {
+<span class="nc" id="L138">        return this.getInfos().values().stream().mapToInt(List::size).sum();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
