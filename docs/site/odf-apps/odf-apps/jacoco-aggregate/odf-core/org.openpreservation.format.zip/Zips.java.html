@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Zips.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">ODF spreadsheet validator applications.</a> &gt; <a href="../index.html" class="el_bundle">odf-core</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.format.zip</a> &gt; <span class="el_source">Zips.java</span></div><h1>Zips.java</h1><pre class="source lang-java linenums">package org.openpreservation.format.zip;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.zip.ZipInputStream;
+
+import org.openpreservation.utils.Checks;
+
+/**
+ * Utility class for working with {@link ZipArchive}s.
+ */
+public final class Zips {
+    /**
+     * Create a {@link ZipEntryProcessor} instance that processes the entries and
+     * extracts them to the supplied root &lt;code&gt;Path&lt;/code&gt;.
+     * 
+     * @param root               the root &lt;code&gt;Path&lt;/code&gt; to extract the entries
+     *                           to
+     * @param extractDirectories &lt;code&gt;true&lt;/code&gt; to extract directories,
+     *                           &lt;code&gt;false&lt;/code&gt; to ignore them
+     * @return a &lt;code&gt;ZipEntryProcessor&lt;/code&gt; that processes the entries and
+     *         extracts them to the supplied root &lt;code&gt;Path&lt;/code&gt;
+     */
+    public static final ZipEntryProcessor extractorInstance(final Path root, final boolean extractDirectories) {
+<span class="fc" id="L33">        Objects.requireNonNull(root, &quot;Path root must not be null&quot;);</span>
+<span class="fc" id="L34">        return new ZipEntryProcessor() {</span>
+            @Override
+            public void process(final java.util.zip.ZipEntry entry, final InputStream is) throws IOException {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">                if (!this.accepts(entry)) {</span>
+<span class="fc" id="L38">                    return;</span>
+                }
+<span class="fc" id="L40">                final Path target = root.resolve(entry.getName());</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">                if (entry.isDirectory()) {</span>
+<span class="fc" id="L42">                    Files.createDirectories(target);</span>
+                } else {
+<span class="fc" id="L44">                    Files.createDirectories(target.getParent());</span>
+<span class="fc" id="L45">                    try (OutputStream os = Files.newOutputStream(target)) {</span>
+<span class="fc" id="L46">                        is.transferTo(os);</span>
+                    }
+                }
+<span class="fc" id="L49">            }</span>
+
+            @Override
+            public boolean accepts(final java.util.zip.ZipEntry entry) {
+<span class="fc bfc" id="L53" title="All 4 branches covered.">                return !entry.isDirectory() || extractDirectories;</span>
+            }
+
+        };
+    }
+
+    /**
+     * Create a {@link ZipProcessor.Factory} instance that can be used to create
+     * {@link ZipProcessor} instances.
+     * 
+     * @return a &lt;code&gt;ZipProcessor.Factory&lt;/code&gt;
+     */
+    public static final ZipProcessor.Factory factoryInstance() {
+<span class="fc" id="L66">        return (processor -&gt; (is -&gt; {</span>
+<span class="fc" id="L67">            Objects.requireNonNull(is, &quot;null&quot;);</span>
+<span class="fc" id="L68">            final List&lt;ZipEntry&gt; entries = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L69">            try (ZipInputStream zis = new ZipInputStream(is)) {</span>
+                java.util.zip.ZipEntry entry;
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                while ((entry = zis.getNextEntry()) != null) {</span>
+<span class="fc" id="L72">                    entries.add(ZipEntryImpl.of(entry));</span>
+<span class="fc" id="L73">                    processor.process(entry, zis);</span>
+                }
+            }
+<span class="fc" id="L76">            return ZipArchiveImpl.from(entries);</span>
+        }));
+    }
+
+    /**
+     * Create a {@link ZipArchiveCache} instance that caches the contents of the
+     * archive and provides access to the &lt;code&gt;InputStream&lt;/code&gt;s.
+     * 
+     * @param archive the &lt;code&gt;ZipArchive&lt;/code&gt; to cache
+     * @param cache   the Map to use for caching
+     * @return a &lt;code&gt;ZipArchiveCache&lt;/code&gt; instance that caches the contents of
+     *         the archive and provides access to the &lt;code&gt;InputStream&lt;/code&gt;s
+     */
+    public static final ZipArchiveCache zipArchiveCacheInstance(final ZipArchive archive,
+            final Map&lt;String, byte[]&gt; cache) {
+<span class="nc" id="L91">        Objects.requireNonNull(archive, String.format(Checks.NOT_NULL, &quot;ZipArchive&quot;, &quot;archive&quot;));</span>
+<span class="nc" id="L92">        Objects.requireNonNull(cache, String.format(Checks.NOT_NULL, &quot;Map&lt;String, byte[]&gt;&quot;, &quot;cache&quot;));</span>
+<span class="nc" id="L93">        return ZipArchiveCacheImpl.of(archive, cache);</span>
+    }
+
+    /**
+     * Create a {@link ZipArchiveCache} instance that caches the contents of the
+     * archive and provides access to the &lt;code&gt;InputStream&lt;/code&gt;s.
+     * 
+     * @param file the &lt;code&gt;File&lt;/code&gt; to cache
+     * @return a &lt;code&gt;ZipArchiveCache&lt;/code&gt; instance that caches the contents of
+     *         the archive and provides access to the &lt;code&gt;InputStream&lt;/code&gt;s
+     */
+    public static final ZipArchiveCache zipArchiveCacheInstance(final File file) throws IOException {
+<span class="fc" id="L105">        Objects.requireNonNull(file, String.format(Checks.NOT_NULL, &quot;File&quot;, &quot;file&quot;));</span>
+<span class="fc" id="L106">        return ZipFileProcessor.of(file.toPath());</span>
+    }
+
+    /**
+     * Create a {@link ZipArchiveCache} instance that caches the contents of the
+     * archive and provides access to the &lt;code&gt;Path&lt;/code&gt;s.
+     * 
+     * @param path the &lt;code&gt;Path&lt;/code&gt; to cache
+     * @return a &lt;code&gt;ZipArchiveCache&lt;/code&gt; instance that caches the contents of
+     *         the archive and provides access to the &lt;code&gt;InputStream&lt;/code&gt;s
+     */
+    public static final ZipArchiveCache zipArchiveCacheInstance(final Path path) throws IOException {
+<span class="fc" id="L118">        Objects.requireNonNull(path, String.format(Checks.NOT_NULL, &quot;Path&quot;, &quot;path&quot;));</span>
+<span class="pc bpc" id="L119" title="1 of 4 branches missed.">        if (!Files.exists(path) || Files.isDirectory(path)) {</span>
+<span class="fc" id="L120">            throw new IllegalArgumentException(String.format(&quot;Path %s does not exist&quot;, path));</span>
+        }
+<span class="fc" id="L122">        return ZipFileProcessor.of(path);</span>
+    }
+
+    public static final ZipEntry zipEntryInstance(final String name, final int size, final int compressedSize,
+            final int crc32,
+            final int method, final boolean isDirectory, final byte[] extra) {
+<span class="fc" id="L128">        Objects.requireNonNull(name, String.format(Checks.NOT_NULL, &quot;String&quot;, &quot;name&quot;));</span>
+<span class="fc" id="L129">        return ZipEntryImpl.of(name, size, compressedSize, crc32, method, isDirectory, extra);</span>
+    }
+
+<span class="nc" id="L132">    private Zips() {</span>
+<span class="nc" id="L133">        throw new AssertionError(&quot;Utility class 'Zips' should not be instantiated&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

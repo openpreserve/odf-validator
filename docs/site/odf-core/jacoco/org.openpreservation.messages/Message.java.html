@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Message.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.messages</a> &gt; <span class="el_source">Message.java</span></div><h1>Message.java</h1><pre class="source lang-java linenums">package org.openpreservation.messages;
+
+import java.util.Date;
+
+import org.openpreservation.messages.Message.Severity;
+
+/**
+ * Defines behaviour of validation messages.
+ *
+ * These messages have a unique string identifier as well as
+ * the previous message and sub-message strings.
+ *
+ * @author &lt;a href=&quot;mailto:carl@openpreservation.org&quot;&gt;Carl Wilson&lt;/a&gt;
+ *         &lt;a href=&quot;https://github.com/carlwilson&quot;&gt;carlwilson AT github&lt;/a&gt;
+ */
+
+public interface Message {
+    /**
+     * An enum set that defines the severity of a message.
+     */
+<span class="fc" id="L21">    public enum Severity {</span>
+        /**
+         * The message is informational, equivalent to MAY
+         */
+<span class="fc" id="L25">        INFO,</span>
+        /**
+         * The message is a warning, equivalent to SHOULD
+         */
+<span class="fc" id="L29">        WARNING,</span>
+        /**
+         * The message is an error, equivalent to MUST
+         */
+<span class="fc" id="L33">        ERROR,</span>
+        /**
+         * The message is a fatal error, usually an system issue
+         */
+<span class="fc" id="L37">        FATAL;</span>
+
+        /**
+         * The label for the severity, lower case
+         */
+        public final String label;
+
+<span class="fc" id="L44">        private Severity() {</span>
+<span class="fc" id="L45">            this.label = this.name().toLowerCase();</span>
+<span class="fc" id="L46">        }</span>
+    }
+
+    /**
+     * Get the unique, persistent message identifier.
+     *
+     * @return the &lt;code&gt;String&lt;/code&gt; message id.
+     */
+    public String getId();
+
+    /**
+     * Get the message timestamp
+     *
+     * @return the {@link Date} timestamp of the message, or {@code null} if not set
+     */
+    public Date getTimestamp();
+
+    /**
+     * Get the message severity
+     *
+     * @return the {@link Severity} of the message
+     */
+    public Severity getSeverity();
+
+    /**
+     * Get the main message
+     *
+     * @return the &lt;code&gt;String&lt;/code&gt; message
+     */
+    public String getMessage();
+
+    /**
+     * Test whether the message has a sub-message
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if the message has a sub-message,
+     *         &lt;code&gt;false&lt;/code&gt; otherwise
+     */
+    public boolean hasSubMessage();
+
+    /**
+     * Get the sub-message
+     *
+     * @return the &lt;code&gt;String&lt;/code&gt; sub-message
+     */
+    public String getSubMessage();
+
+    /**
+     * Test whether the message has {@link Severity} ERROR.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if the message has &lt;code&gt;Severity.ERROR&lt;/code&gt;,
+     *         &lt;code&gt;false&lt;/code&gt; otherwise
+     */
+    public boolean isError();
+
+    /**
+     * Test whether the message has {@link Severity} FATAL.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if the message has &lt;code&gt;Severity.FATAL&lt;/code&gt;,
+     *         &lt;code&gt;false&lt;/code&gt; otherwise
+     */
+    public boolean isFatal();
+
+    /**
+     * Test whether the message has {@link Severity} INFO.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if the message has &lt;code&gt;Severity.INFO&lt;/code&gt;,
+     *         &lt;code&gt;false&lt;/code&gt; otherwise
+     */
+    public boolean isInfo();
+
+    /**
+     * Test whether the message has {@link Severity} WARNING.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if the message has &lt;code&gt;Severity.WARNING&lt;/code&gt;,
+     *         &lt;code&gt;false&lt;/code&gt; otherwise
+     */
+    public boolean isWarning();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

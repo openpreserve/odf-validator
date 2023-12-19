@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FormatSniffer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">ODF spreadsheet validator applications.</a> &gt; <a href="../index.html" class="el_bundle">odf-core</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.fmt</a> &gt; <span class="el_source">FormatSniffer.java</span></div><h1>FormatSniffer.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.fmt;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
+
+import org.openpreservation.format.xml.Encodings;
+import org.openpreservation.utils.Checks;
+
+public final class FormatSniffer {
+    private static final int MAX_BOM_LENGTH = 4;
+    private static final int MAX_MIME_LENGTH = 90;
+    private static final String TEST_VAR = &quot;toSniff&quot;;
+
+    public static Formats sniff(final String toSniff) throws IOException {
+<span class="fc" id="L22">        return sniff(toSniff, MAX_MIME_LENGTH);</span>
+    }
+
+    public static Formats sniff(final String toSniff, final int length) throws IOException {
+<span class="fc" id="L26">        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, &quot;String&quot;, TEST_VAR));</span>
+<span class="fc" id="L27">        return sniff(Paths.get(toSniff), length);</span>
+    }
+
+    public static Formats sniff(final Path toSniff) throws IOException {
+<span class="fc" id="L31">        return sniff(toSniff, MAX_MIME_LENGTH);</span>
+    }
+
+    public static Formats sniff(final Path toSniff, final int length) throws IOException {
+<span class="fc" id="L35">        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, &quot;Path&quot;, TEST_VAR));</span>
+<span class="fc" id="L36">        return sniff(toSniff.toFile(), length);</span>
+    }
+
+    public static Formats sniff(final File toSniff) throws IOException {
+<span class="fc" id="L40">        return sniff(toSniff, MAX_MIME_LENGTH);</span>
+    }
+
+    public static Formats sniff(final File toSniff, final int length) throws IOException {
+<span class="fc" id="L44">        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, &quot;File&quot;, TEST_VAR));</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (!toSniff.exists()) {</span>
+<span class="fc" id="L46">            throw new FileNotFoundException(&quot;File &quot; + toSniff.getAbsolutePath() + &quot; does not exist.&quot;);</span>
+        }
+<span class="fc" id="L48">        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(toSniff))) {</span>
+<span class="fc" id="L49">            return sniff(bis, length);</span>
+        }
+    }
+
+    public static Formats sniff(final BufferedInputStream toSniff) throws IOException {
+<span class="fc" id="L54">        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, &quot;InputStream&quot;, TEST_VAR));</span>
+<span class="fc" id="L55">        return sniff(toSniff, MAX_MIME_LENGTH);</span>
+    }
+
+    public static Formats sniff(final BufferedInputStream toSniff, final int length) throws IOException {
+<span class="fc" id="L59">        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, &quot;InputStream&quot;, TEST_VAR));</span>
+<span class="fc" id="L60">        final Encodings bom = skipBom(toSniff);</span>
+<span class="fc" id="L61">        final Formats format = Formats.identify(Utils.readAndReset(toSniff, length));</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (bom == Encodings.NONE) {</span>
+<span class="fc" id="L63">            return format;</span>
+        }
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        return format.isText() ? format : Formats.UNKNOWN;</span>
+    }
+
+    public static Encodings sniffEncoding(final String toSniff) throws IOException {
+<span class="fc" id="L69">        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, &quot;String&quot;, TEST_VAR));</span>
+<span class="fc" id="L70">        return sniffEncoding(Paths.get(toSniff));</span>
+    }
+
+    public static Encodings sniffEncoding(final Path toSniff) throws IOException {
+<span class="fc" id="L74">        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, &quot;Path&quot;, TEST_VAR));</span>
+<span class="fc" id="L75">        return sniffEncoding(toSniff.toFile());</span>
+    }
+
+    public static Encodings sniffEncoding(final File toSniff) throws IOException {
+<span class="fc" id="L79">        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, &quot;File&quot;, TEST_VAR));</span>
+<span class="fc" id="L80">        try (InputStream bis = new FileInputStream(toSniff)) {</span>
+<span class="fc" id="L81">            return sniffEncoding(bis);</span>
+        }
+    }
+
+    public static Encodings sniffEncoding(final InputStream toSniff) throws IOException {
+<span class="fc" id="L86">        Objects.requireNonNull(toSniff, String.format(Checks.NOT_NULL, &quot;InputStream&quot;, TEST_VAR));</span>
+<span class="fc" id="L87">        try (BufferedInputStream bis = new BufferedInputStream(toSniff)) {</span>
+<span class="fc" id="L88">            return skipBom(bis);</span>
+        }
+    }
+
+    private static Encodings skipBom(final BufferedInputStream toSkip) throws IOException {
+<span class="fc" id="L93">        final byte[] bom = Utils.readAndReset(toSkip, MAX_BOM_LENGTH);</span>
+<span class="fc" id="L94">        final Encodings enc = Encodings.fromRepresentation(bom);</span>
+        try {
+<span class="fc" id="L96">            final long skipped = toSkip.skip(enc.getLength());</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">            if (skipped != enc.getLength()) {</span>
+<span class="nc" id="L98">                throw new IOException(</span>
+<span class="nc" id="L99">                        String.format(&quot;BOM %s detected but failed to skip %d bytes.&quot;, enc, enc.getLength()));</span>
+            }
+<span class="fc" id="L101">            return enc;</span>
+<span class="nc" id="L102">        } catch (final IOException e) {</span>
+<span class="nc" id="L103">            throw new IOException(&quot;Could not skip BOM.&quot;, e);</span>
+        }
+    }
+
+<span class="nc" id="L107">    private FormatSniffer() {</span>
+<span class="nc" id="L108">        throw new AssertionError(&quot;Utility class 'FormatSniffer' should not be instantiated&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
