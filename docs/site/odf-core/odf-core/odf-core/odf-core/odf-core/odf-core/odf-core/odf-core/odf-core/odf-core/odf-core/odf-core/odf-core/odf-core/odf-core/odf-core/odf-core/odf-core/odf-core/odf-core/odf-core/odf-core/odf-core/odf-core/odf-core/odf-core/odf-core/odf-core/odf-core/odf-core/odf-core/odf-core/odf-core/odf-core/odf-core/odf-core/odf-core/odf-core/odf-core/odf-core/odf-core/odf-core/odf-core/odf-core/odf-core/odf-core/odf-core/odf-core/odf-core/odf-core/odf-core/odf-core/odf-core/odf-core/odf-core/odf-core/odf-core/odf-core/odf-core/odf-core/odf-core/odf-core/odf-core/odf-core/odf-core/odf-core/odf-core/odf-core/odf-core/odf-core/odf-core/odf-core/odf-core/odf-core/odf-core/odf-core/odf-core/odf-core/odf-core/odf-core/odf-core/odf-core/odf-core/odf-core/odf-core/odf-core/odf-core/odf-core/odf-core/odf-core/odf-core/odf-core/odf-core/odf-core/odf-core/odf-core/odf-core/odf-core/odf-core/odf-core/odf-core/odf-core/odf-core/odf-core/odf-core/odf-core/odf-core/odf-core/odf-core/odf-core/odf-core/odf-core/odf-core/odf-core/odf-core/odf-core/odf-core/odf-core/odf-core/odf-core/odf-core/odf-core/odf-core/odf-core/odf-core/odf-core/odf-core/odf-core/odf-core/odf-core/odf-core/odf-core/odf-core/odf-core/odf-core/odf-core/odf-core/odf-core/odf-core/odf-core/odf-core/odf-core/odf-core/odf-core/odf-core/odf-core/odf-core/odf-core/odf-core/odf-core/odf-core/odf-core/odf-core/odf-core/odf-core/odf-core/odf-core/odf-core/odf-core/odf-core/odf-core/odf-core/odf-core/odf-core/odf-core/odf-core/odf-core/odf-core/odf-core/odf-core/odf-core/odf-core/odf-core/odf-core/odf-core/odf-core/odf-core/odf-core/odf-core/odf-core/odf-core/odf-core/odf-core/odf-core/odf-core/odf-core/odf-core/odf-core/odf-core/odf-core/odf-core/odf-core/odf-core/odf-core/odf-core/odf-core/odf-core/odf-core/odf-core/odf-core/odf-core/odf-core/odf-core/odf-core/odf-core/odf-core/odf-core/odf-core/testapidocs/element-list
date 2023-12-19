@@ -1,9 +1,0 @@
-org.openpreservation.format.xml
-org.openpreservation.format.zip
-org.openpreservation.messages
-org.openpreservation.odf.document
-org.openpreservation.odf.fmt
-org.openpreservation.odf.pkg
-org.openpreservation.odf.validation
-org.openpreservation.odf.validation.rules
-org.openpreservation.odf.xml

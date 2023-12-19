@@ -1,1 +1,0 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"org.openpreservation.odf.apps","l":"ConsoleFormatter"}];updateSearchResults();
