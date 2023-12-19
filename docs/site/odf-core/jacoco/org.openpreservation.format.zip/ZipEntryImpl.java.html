@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ZipEntryImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.format.zip</a> &gt; <span class="el_source">ZipEntryImpl.java</span></div><h1>ZipEntryImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.format.zip;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.openpreservation.utils.Checks;
+
+public final class ZipEntryImpl implements ZipEntry {
+    static final ZipEntryImpl of(final String name, final long size, final long compressedSize, final long crc,
+            final int method, final boolean isDirectory, final byte[] extra) {
+<span class="fc" id="L12">        Objects.requireNonNull(name, String.format(Checks.NOT_NULL, name, &quot;String&quot;));</span>
+<span class="fc" id="L13">        return new ZipEntryImpl(name, size, compressedSize, crc, method, isDirectory, extra);</span>
+    }
+
+    static final ZipEntryImpl of(final ZipArchiveEntry entry) {
+<span class="fc" id="L17">        Objects.requireNonNull(entry, String.format(Checks.NOT_NULL, entry, &quot;ZipArchiveEntry&quot;));</span>
+<span class="fc" id="L18">        return ZipEntryImpl.of(entry.getName(), entry.getSize(), entry.getCompressedSize(), entry.getCrc(),</span>
+<span class="fc" id="L19">                entry.getMethod(), entry.isDirectory(), entry.getExtra());</span>
+    }
+
+    static final ZipEntryImpl of(final java.util.zip.ZipEntry entry) {
+<span class="fc" id="L23">        Objects.requireNonNull(entry, String.format(Checks.NOT_NULL, entry, &quot;ZipArchiveEntry&quot;));</span>
+<span class="fc" id="L24">        return ZipEntryImpl.of(entry.getName(), entry.getSize(), entry.getCompressedSize(), entry.getCrc(),</span>
+<span class="fc" id="L25">                entry.getMethod(), entry.isDirectory(), entry.getExtra());</span>
+    }
+
+    static final ZipEntryImpl of(final String name) {
+<span class="fc" id="L29">        Objects.requireNonNull(name, String.format(Checks.NOT_NULL, name, &quot;String&quot;));</span>
+<span class="fc" id="L30">        return new ZipEntryImpl(name, 0, 0, 0, 0, false, null);</span>
+    }
+
+    private final String name;
+    private final long size;
+    private final long compressedSize;
+    private final long crc;
+    private final int method;
+    private final byte[] extra;
+
+    private final boolean isDirectory;
+
+    private ZipEntryImpl(final String name, final long size, final long compressedSize, final long crc,
+            final int method, final boolean isDirectory, final byte[] extra) {
+<span class="fc" id="L44">        super();</span>
+<span class="fc" id="L45">        this.name = name;</span>
+<span class="fc" id="L46">        this.size = size;</span>
+<span class="fc" id="L47">        this.compressedSize = compressedSize;</span>
+<span class="fc" id="L48">        this.crc = crc;</span>
+<span class="fc" id="L49">        this.method = method;</span>
+<span class="fc" id="L50">        this.isDirectory = isDirectory;</span>
+<span class="fc" id="L51">        this.extra = extra;</span>
+<span class="fc" id="L52">    }</span>
+
+    @Override
+    public String getName() {
+<span class="fc" id="L56">        return this.name;</span>
+    }
+
+    @Override
+    public long getSize() {
+<span class="nc" id="L61">        return this.size;</span>
+    }
+
+    @Override
+    public long getCompressedSize() {
+<span class="nc" id="L66">        return this.compressedSize;</span>
+    }
+
+    @Override
+    public long getCrc() {
+<span class="nc" id="L71">        return this.crc;</span>
+    }
+
+    @Override
+    public boolean isStored() {
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        return this.getMethod() == java.util.zip.ZipEntry.STORED;</span>
+    }
+
+    @Override
+    public int getMethod() {
+<span class="fc" id="L81">        return this.method;</span>
+    }
+
+    @Override
+    public boolean isDirectory() {
+<span class="fc" id="L86">        return this.isDirectory;</span>
+    }
+
+    public byte[] getExtra() {
+<span class="fc" id="L90">        return this.extra;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L95">        final int prime = 31;</span>
+<span class="fc" id="L96">        int result = 1;</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        result = prime * result + ((name == null) ? 0 : name.hashCode());</span>
+<span class="fc" id="L98">        result = prime * result + (int) (size ^ (size &gt;&gt;&gt; 32));</span>
+<span class="fc" id="L99">        result = prime * result + (int) (compressedSize ^ (compressedSize &gt;&gt;&gt; 32));</span>
+<span class="fc" id="L100">        result = prime * result + (int) (crc ^ (crc &gt;&gt;&gt; 32));</span>
+<span class="fc" id="L101">        result = prime * result + method;</span>
+<span class="fc" id="L102">        result = prime * result + Arrays.hashCode(extra);</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        result = prime * result + (isDirectory ? 1231 : 1237);</span>
+<span class="fc" id="L104">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (this == obj)</span>
+<span class="fc" id="L110">            return true;</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (obj == null)</span>
+<span class="fc" id="L112">            return false;</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if (getClass() != obj.getClass())</span>
+<span class="fc" id="L114">            return false;</span>
+<span class="fc" id="L115">        final ZipEntryImpl other = (ZipEntryImpl) obj;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (name == null) {</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">            if (other.name != null)</span>
+<span class="fc" id="L118">                return false;</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        } else if (!name.equals(other.name))</span>
+<span class="fc" id="L120">            return false;</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if (size != other.size)</span>
+<span class="fc" id="L122">            return false;</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        if (compressedSize != other.compressedSize)</span>
+<span class="fc" id="L124">            return false;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (crc != other.crc)</span>
+<span class="fc" id="L126">            return false;</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        if (method != other.method)</span>
+<span class="fc" id="L128">            return false;</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        if (!Arrays.equals(extra, other.extra))</span>
+<span class="fc" id="L130">            return false;</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if (isDirectory != other.isDirectory)</span>
+<span class="fc" id="L132">            return false;</span>
+<span class="fc" id="L133">        return true;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L138">        return &quot;ZipEntryImpl [name=&quot; + name + &quot;, size=&quot; + size + &quot;, compressedSize=&quot; + compressedSize + &quot;, crc=&quot; + crc</span>
+                + &quot;, method=&quot; + method + &quot;, isDirectory=&quot; + isDirectory + &quot;]&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

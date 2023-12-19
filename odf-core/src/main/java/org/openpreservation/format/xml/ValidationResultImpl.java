@@ -9,8 +9,36 @@ import org.openpreservation.messages.Message;
 import org.openpreservation.utils.Checks;
 
 final class ValidationResultImpl implements ValidationResult {
+    private static final String PARSE_RESULT_NAME = "parseResult";
+    private static final String PARSE_RESULT_TYPE = "ParseResult";
+    private static final String MESSAGES_NAME = "messages";
+    private static final String MESSAGES_TYPE = "List<Message>";
+    static final ValidationResult of(final ParseResult parseResult, final boolean valid, final List<Message> messages) {
+        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));
+        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
+        return new ValidationResultImpl(parseResult, valid, messages);
+    }
+    static final ValidationResult valid(final ParseResult parseResult, final List<Message> messages) {
+        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));
+        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
+        return of(parseResult, true, messages);
+    }
+    static final ValidationResult notValid(final ParseResult parseResult, final List<Message> messages) {
+        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));
+        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
+        return of(parseResult, false, messages);
+    }
+
+    private static List<Message> combineMessages(final ParseResult result, final List<Message> messages) {
+        final List<Message> combined = new ArrayList<>(result.getMessages());
+        combined.addAll(messages);
+        return combined;
+    }
+
     private final ParseResult parseResult;
+
     private final boolean valid;
+
     private final List<Message> messages;
 
     private ValidationResultImpl(final ParseResult parseResult, final boolean valid, final List<Message> messages) {
@@ -45,7 +73,7 @@ final class ValidationResultImpl implements ValidationResult {
     }
 
     @Override
-    public boolean isRootName(String name) {
+    public boolean isRootName(final String name) {
         return this.parseResult.isRootName(name);
     }
 
@@ -55,7 +83,7 @@ final class ValidationResultImpl implements ValidationResult {
     }
 
     @Override
-    public String getRootAttributeValue(String qName) {
+    public String getRootAttributeValue(final String qName) {
         return this.parseResult.getRootAttributeValue(qName);
     }
 
@@ -80,14 +108,14 @@ final class ValidationResultImpl implements ValidationResult {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ValidationResultImpl other = (ValidationResultImpl) obj;
+        final ValidationResultImpl other = (ValidationResultImpl) obj;
         if (parseResult == null) {
             if (other.parseResult != null)
                 return false;
@@ -106,29 +134,5 @@ final class ValidationResultImpl implements ValidationResult {
     @Override
     public String toString() {
         return "ValidationResultImpl [parseResult=" + parseResult + ", valid=" + valid + ", messages=" + messages + "]";
-    }
-
-    static final ValidationResult of(final ParseResult parseResult, final boolean valid, final List<Message> messages) {
-        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
-        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, "messages", "List<Message>"));
-        return new ValidationResultImpl(parseResult, valid, messages);
-    }
-
-    static final ValidationResult valid(final ParseResult parseResult, final List<Message> messages) {
-        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
-        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, "messages", "List<Message>"));
-        return of(parseResult, true, messages);
-    }
-
-    static final ValidationResult notValid(final ParseResult parseResult, final List<Message> messages) {
-        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
-        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, "messages", "List<Message>"));
-        return of(parseResult, false, messages);
-    }
-
-    private static List<Message> combineMessages(final ParseResult result, final List<Message> messages) {
-        final List<Message> combined = new ArrayList<>(result.getMessages());
-        combined.addAll(messages);
-        return combined;
     }
 }

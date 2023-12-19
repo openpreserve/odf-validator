@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ValidationResultImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="../index.html" class="el_bundle">odf-core</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.format.xml</a> &gt; <span class="el_source">ValidationResultImpl.java</span></div><h1>ValidationResultImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.format.xml;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import org.openpreservation.messages.Message;
+import org.openpreservation.utils.Checks;
+
+final class ValidationResultImpl implements ValidationResult {
+    private static final String PARSE_RESULT_NAME = &quot;parseResult&quot;;
+    private static final String PARSE_RESULT_TYPE = &quot;ParseResult&quot;;
+    private static final String MESSAGES_NAME = &quot;messages&quot;;
+    private static final String MESSAGES_TYPE = &quot;List&lt;Message&gt;&quot;;
+    static final ValidationResult of(final ParseResult parseResult, final boolean valid, final List&lt;Message&gt; messages) {
+<span class="fc" id="L17">        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));</span>
+<span class="fc" id="L18">        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));</span>
+<span class="fc" id="L19">        return new ValidationResultImpl(parseResult, valid, messages);</span>
+    }
+    static final ValidationResult valid(final ParseResult parseResult, final List&lt;Message&gt; messages) {
+<span class="fc" id="L22">        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));</span>
+<span class="fc" id="L23">        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));</span>
+<span class="fc" id="L24">        return of(parseResult, true, messages);</span>
+    }
+    static final ValidationResult notValid(final ParseResult parseResult, final List&lt;Message&gt; messages) {
+<span class="fc" id="L27">        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));</span>
+<span class="fc" id="L28">        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));</span>
+<span class="fc" id="L29">        return of(parseResult, false, messages);</span>
+    }
+
+    private static List&lt;Message&gt; combineMessages(final ParseResult result, final List&lt;Message&gt; messages) {
+<span class="fc" id="L33">        final List&lt;Message&gt; combined = new ArrayList&lt;&gt;(result.getMessages());</span>
+<span class="fc" id="L34">        combined.addAll(messages);</span>
+<span class="fc" id="L35">        return combined;</span>
+    }
+
+    private final ParseResult parseResult;
+
+    private final boolean valid;
+
+    private final List&lt;Message&gt; messages;
+
+<span class="fc" id="L44">    private ValidationResultImpl(final ParseResult parseResult, final boolean valid, final List&lt;Message&gt; messages) {</span>
+<span class="fc" id="L45">        this.parseResult = parseResult;</span>
+<span class="fc" id="L46">        this.valid = valid;</span>
+<span class="fc" id="L47">        this.messages = Collections.unmodifiableList(combineMessages(parseResult, messages));</span>
+<span class="fc" id="L48">    }</span>
+
+    @Override
+    public boolean isWellFormed() {
+<span class="fc" id="L52">        return this.parseResult.isWellFormed();</span>
+    }
+
+    @Override
+    public Namespace getRootNamespace() {
+<span class="nc" id="L57">        return this.parseResult.getRootNamespace();</span>
+    }
+
+    @Override
+    public List&lt;Namespace&gt; getNamespaces() {
+<span class="nc" id="L62">        return this.parseResult.getNamespaces();</span>
+    }
+
+    @Override
+    public String getRootPrefix() {
+<span class="nc" id="L67">        return this.parseResult.getRootPrefix();</span>
+    }
+
+    @Override
+    public String getRootName() {
+<span class="nc" id="L72">        return this.parseResult.getRootName();</span>
+    }
+
+    @Override
+    public boolean isRootName(final String name) {
+<span class="nc" id="L77">        return this.parseResult.isRootName(name);</span>
+    }
+
+    @Override
+    public List&lt;Attribute&gt; getRootAttributes() {
+<span class="nc" id="L82">        return this.parseResult.getRootAttributes();</span>
+    }
+
+    @Override
+    public String getRootAttributeValue(final String qName) {
+<span class="nc" id="L87">        return this.parseResult.getRootAttributeValue(qName);</span>
+    }
+
+    @Override
+    public List&lt;Message&gt; getMessages() {
+<span class="fc" id="L92">        return this.messages;</span>
+    }
+
+    @Override
+    public boolean isValid() {
+<span class="fc" id="L97">        return this.valid;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L102">        final int prime = 31;</span>
+<span class="fc" id="L103">        int result = 1;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        result = prime * result + ((parseResult == null) ? 0 : parseResult.hashCode());</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        result = prime * result + (valid ? 1231 : 1237);</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        result = prime * result + ((messages == null) ? 0 : messages.hashCode());</span>
+<span class="fc" id="L107">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (this == obj)</span>
+<span class="fc" id="L113">            return true;</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (obj == null)</span>
+<span class="fc" id="L115">            return false;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (getClass() != obj.getClass())</span>
+<span class="fc" id="L117">            return false;</span>
+<span class="fc" id="L118">        final ValidationResultImpl other = (ValidationResultImpl) obj;</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (parseResult == null) {</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            if (other.parseResult != null)</span>
+<span class="fc" id="L121">                return false;</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        } else if (!parseResult.equals(other.parseResult))</span>
+<span class="fc" id="L123">            return false;</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (valid != other.valid)</span>
+<span class="fc" id="L125">            return false;</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        if (messages == null) {</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            if (other.messages != null)</span>
+<span class="fc" id="L128">                return false;</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        } else if (!messages.equals(other.messages))</span>
+<span class="fc" id="L130">            return false;</span>
+<span class="fc" id="L131">        return true;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L136">        return &quot;ValidationResultImpl [parseResult=&quot; + parseResult + &quot;, valid=&quot; + valid + &quot;, messages=&quot; + messages + &quot;]&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

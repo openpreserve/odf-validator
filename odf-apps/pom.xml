@@ -6,6 +6,7 @@
     <groupId>org.openpreservation.odf</groupId>
     <artifactId>odf-validator</artifactId>
     <version>0.10.0</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>odf-apps</artifactId>

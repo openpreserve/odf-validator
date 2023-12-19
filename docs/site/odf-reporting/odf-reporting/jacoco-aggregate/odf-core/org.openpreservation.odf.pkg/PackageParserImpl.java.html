@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PackageParserImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="../index.html" class="el_bundle">odf-core</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.pkg</a> &gt; <span class="el_source">PackageParserImpl.java</span></div><h1>PackageParserImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.pkg;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.openpreservation.format.zip.ZipArchiveCache;
+import org.openpreservation.format.zip.ZipEntry;
+import org.openpreservation.format.zip.Zips;
+import org.openpreservation.odf.fmt.FormatSniffer;
+import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.fmt.OdfFormats;
+import org.openpreservation.odf.xml.OdfXmlDocument;
+import org.openpreservation.odf.xml.OdfXmlDocuments;
+import org.openpreservation.utils.Checks;
+import org.xml.sax.SAXException;
+
+final class PackageParserImpl implements PackageParser {
+<span class="fc" id="L30">    private static String toParseConst = &quot;toParse&quot;;</span>
+
+    static final PackageParser getInstance() {
+<span class="fc" id="L33">        return new PackageParserImpl();</span>
+    }
+
+    static final boolean isOdfXml(final String entrypath) {
+<span class="fc" id="L37">        return Constants.ODF_XML.contains(new File(entrypath).getName());</span>
+    }
+
+    static final boolean isDsig(final String entrypath) {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (isMetaInf(entrypath)) {</span>
+<span class="fc" id="L42">            return entrypath.contains(Constants.SIG_TERM);</span>
+        }
+<span class="fc" id="L44">        return false;</span>
+    }
+
+    static final boolean isMetaInf(final String entrypath) {
+<span class="fc" id="L48">        return entrypath.startsWith(Constants.NAME_META_INF);</span>
+    }
+
+    private static final Formats sniff(final Path toSniff) throws IOException {
+<span class="fc" id="L52">        try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(toSniff))) {</span>
+<span class="fc" id="L53">            return FormatSniffer.sniff(bis);</span>
+        }
+    }
+    private ZipArchiveCache cache;
+<span class="fc" id="L57">    private Formats format = Formats.UNKNOWN;</span>
+<span class="fc" id="L58">    private String mimetype = &quot;&quot;;</span>
+<span class="fc" id="L59">    private Manifest manifest = null;</span>
+
+<span class="fc" id="L61">    private final Map&lt;String, OdfXmlDocument&gt; xmlDocumentMap = new HashMap&lt;&gt;();</span>
+
+    private PackageParserImpl() {
+<span class="fc" id="L64">        super();</span>
+<span class="fc" id="L65">    }</span>
+
+    @Override
+    public OdfPackage parsePackage(final Path toParse) throws IOException {
+<span class="fc" id="L69">        Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, toParseConst, &quot;Path&quot;));</span>
+<span class="fc" id="L70">        return this.parsePackage(toParse, toParse.getFileName().toString());</span>
+    }
+
+    @Override
+    public OdfPackage parsePackage(final File toParse) throws IOException {
+<span class="fc" id="L75">        Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, toParseConst, &quot;File&quot;));</span>
+<span class="fc" id="L76">        return this.parsePackage(toParse.toPath(), toParse.getName());</span>
+    }
+
+    @Override
+    public OdfPackage parsePackage(final InputStream toParse, final String name) throws IOException {
+<span class="fc" id="L81">        Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, toParseConst, &quot;InputStream&quot;));</span>
+<span class="fc" id="L82">        Objects.requireNonNull(name, String.format(Checks.NOT_NULL, name, &quot;String&quot;));</span>
+<span class="fc" id="L83">        try (BufferedInputStream bis = new BufferedInputStream(toParse)) {</span>
+<span class="fc" id="L84">            final Path temp = Files.createTempFile(&quot;odf&quot;, &quot;.pkg&quot;);</span>
+<span class="fc" id="L85">            Files.copy(bis, temp, StandardCopyOption.REPLACE_EXISTING);</span>
+<span class="fc" id="L86">            return this.parsePackage(temp, name);</span>
+        }
+    }
+
+    private final OdfPackage parsePackage(final Path toParse, final String name) throws IOException {
+<span class="fc" id="L91">        this.initialise();</span>
+        try {
+<span class="fc" id="L93">            this.format = sniff(toParse);</span>
+<span class="fc" id="L94">            this.cache = Zips.zipArchiveCacheInstance(toParse);</span>
+<span class="fc" id="L95">        } catch (final IOException e) {</span>
+            // Simply catch the exception and return a sparsely populated OdfPackage
+<span class="fc" id="L97">            return OdfPackageImpl.Builder.builder().name(name).format(this.format).build();</span>
+<span class="fc" id="L98">        }</span>
+        try {
+<span class="fc" id="L100">            this.processZipEntries();</span>
+<span class="fc" id="L101">            return this.makePackage(name);</span>
+<span class="nc" id="L102">        } catch (ParserConfigurationException | SAXException e) {</span>
+<span class="nc" id="L103">            throw new IOException(e);</span>
+        }
+    }
+
+    private final void processZipEntries() throws ParserConfigurationException, SAXException, IOException {
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        for (final ZipEntry entry : this.cache.getZipEntries()) {</span>
+<span class="fc" id="L109">            processEntry(entry);</span>
+<span class="fc" id="L110">        }</span>
+<span class="fc" id="L111">    }</span>
+
+    private final void processEntry(final ZipEntry entry)
+            throws ParserConfigurationException, SAXException, IOException {
+<span class="fc" id="L115">        final String path = entry.getName();</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (entry.isDirectory()) {</span>
+            // No need to process directories
+<span class="fc" id="L118">            return;</span>
+        }
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        if (OdfFormats.MIMETYPE.equals(path)) {</span>
+            // Grab the mimetype value from the MIMETYPE file
+<span class="fc" id="L122">            this.mimetype = new String(this.cache.getEntryInputStream(entry.getName()).readAllBytes(),</span>
+                    StandardCharsets.UTF_8);
+<span class="fc" id="L124">            return;</span>
+        }
+<span class="fc bfc" id="L126" title="All 4 branches covered.">        if (!isOdfXml(path) &amp;&amp; !isMetaInf(path)) {</span>
+<span class="fc" id="L127">            return;</span>
+        }
+<span class="fc" id="L129">        try (InputStream is = this.cache.getEntryInputStream(path)) {</span>
+<span class="fc" id="L130">            final OdfXmlDocument xmlDoc = OdfXmlDocuments.xmlDocumentFrom(is);</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if (xmlDoc != null) {</span>
+<span class="fc" id="L132">                this.xmlDocumentMap.put(path, xmlDoc);</span>
+<span class="fc bfc" id="L133" title="All 4 branches covered.">                if (xmlDoc.getParseResult().isWellFormed() &amp;&amp; Constants.PATH_MANIFEST.equals(path)) {</span>
+<span class="fc" id="L134">                    this.manifest = ManifestImpl.from(this.cache.getEntryInputStream(path));</span>
+                }
+            }
+        }
+<span class="fc" id="L138">    }</span>
+
+    private final void initialise() {
+<span class="fc" id="L141">        this.format = Formats.UNKNOWN;</span>
+<span class="fc" id="L142">        this.mimetype = null;</span>
+<span class="fc" id="L143">        this.xmlDocumentMap.clear();</span>
+<span class="fc" id="L144">        this.manifest = null;</span>
+<span class="fc" id="L145">    }</span>
+
+    private final OdfPackage makePackage(final String name)
+            throws ParserConfigurationException, IOException, SAXException {
+<span class="fc" id="L149">        final OdfPackageImpl.Builder builder = OdfPackageImpl.Builder.builder().name(name).archive(this.cache)</span>
+<span class="fc" id="L150">                .format(this.format)</span>
+<span class="fc" id="L151">                .mimetype(mimetype);</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        if (this.manifest != null) {</span>
+<span class="fc" id="L153">            builder.manifest(manifest);</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">            for (final FileEntry docEntry : manifest.getDocumentEntries()) {</span>
+<span class="fc" id="L155">                builder.document(docEntry.getFullPath(), makeDocument(docEntry));</span>
+<span class="fc" id="L156">            }</span>
+        }
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        for (final Entry&lt;String, OdfXmlDocument&gt; docEntry : this.xmlDocumentMap.entrySet()) {</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            if (isMetaInf(docEntry.getKey())) {</span>
+<span class="fc" id="L160">                builder.metaInf(docEntry.getKey(), docEntry.getValue().getParseResult());</span>
+            }
+<span class="fc" id="L162">        }</span>
+
+<span class="fc" id="L164">        return builder.build();</span>
+    }
+
+    private final OdfPackageDocument makeDocument(final FileEntry docEntry)
+            throws ParserConfigurationException, IOException, SAXException {
+<span class="fc" id="L169">        final OdfPackageDocumentImpl.Builder builder = OdfPackageDocumentImpl.Builder.of(docEntry);</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        final String keyPrefix = &quot;/&quot;.equals(docEntry.getFullPath()) ? &quot;&quot; : docEntry.getFullPath();</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        for (final String docName : Constants.ODF_XML) {</span>
+<span class="fc" id="L172">            final String docKey = keyPrefix + docName;</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">            if (this.xmlDocumentMap.containsKey(docKey)) {</span>
+<span class="fc" id="L174">                builder.xmlDocument(docName, this.xmlDocumentMap.get(docKey));</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">                if (Constants.NAME_META.equals(docName)</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">                        &amp;&amp; this.xmlDocumentMap.get(docKey).getParseResult().isWellFormed()) {</span>
+<span class="fc" id="L177">                    builder.metadata(this.cache.getEntryInputStream(docKey));</span>
+                }
+            }
+<span class="fc" id="L180">        }</span>
+<span class="fc" id="L181">        return builder.build();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

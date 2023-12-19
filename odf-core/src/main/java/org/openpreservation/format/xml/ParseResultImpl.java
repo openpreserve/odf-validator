@@ -9,11 +9,13 @@ import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.utils.Checks;
 
 final class ParseResultImpl implements ParseResult {
+    private static final String MESSAGES_NAME = "messages";
+    private static final String MESSAGES_TYPE = "List<Message>";
     static ParseResult of(final boolean isWellFormed, final Namespace rootNamespace, final List<Namespace> namespaces,
             final String rootPrefix, final String rootName,
             final List<Attribute> rootAttributes, final List<Message> messages) {
         Objects.requireNonNull(namespaces, String.format(Checks.NOT_NULL, "namespaces", "List<Namespace>"));
-        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, "messages", "List<Message>"));
+        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
         return new ParseResultImpl(isWellFormed, rootNamespace, namespaces, rootPrefix, rootName, rootAttributes,
                 messages);
     }
@@ -21,10 +23,18 @@ final class ParseResultImpl implements ParseResult {
     static ParseResult of(final Namespace rootNamespace, final List<Namespace> namespaces,
             final String rootPrefix, final String rootName,
             final List<Attribute> rootAttributes, final List<Message> messages) {
-        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, "messages", "List<Message>"));
+        Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
         return ParseResultImpl.of(isWellFormed(messages), rootNamespace, namespaces, rootPrefix, rootName,
                 rootAttributes,
                 messages);
+    }
+
+    static ParseResult invertWellFormed(final ParseResult parseResult) {
+        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
+        return new ParseResultImpl(!parseResult.isWellFormed(), parseResult.getRootNamespace(),
+                parseResult.getNamespaces(), parseResult.getRootPrefix(), parseResult.getRootName(),
+                parseResult.getRootAttributes(),
+                parseResult.getMessages());
     }
 
     private static final boolean isWellFormed(final List<Message> messages) {
@@ -34,14 +44,6 @@ final class ParseResultImpl implements ParseResult {
             }
         }
         return true;
-    }
-
-    static ParseResult invertWellFormed(final ParseResult parseResult) {
-        Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
-        return new ParseResultImpl(!parseResult.isWellFormed(), parseResult.getRootNamespace(),
-                parseResult.getNamespaces(), parseResult.getRootPrefix(), parseResult.getRootName(),
-                parseResult.getRootAttributes(),
-                parseResult.getMessages());
     }
 
     private final boolean isWF;
@@ -91,7 +93,7 @@ final class ParseResultImpl implements ParseResult {
         if (this.rootName == null || (name.contains(":") && this.rootPrefix == null)) {
             return false;
         }
-        String match = (name.contains(":")) ? String.format("%s:%s", this.rootPrefix, this.rootName) : this.rootName;
+        final String match = (name.contains(":")) ? String.format("%s:%s", this.rootPrefix, this.rootName) : this.rootName;
         return match.equals(name);
     }
 

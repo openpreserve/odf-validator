@@ -10,8 +10,24 @@ import org.openpreservation.utils.Checks;
 
 final class NamespaceImpl implements Namespace {
     private static final String STRING = "String";
+    static NamespaceImpl of(final URI id, final String prefix, final URL schemalocation) {
+        Objects.requireNonNull(id, String.format(Checks.NOT_NULL, "id", "URI"));
+        Objects.requireNonNull(prefix, String.format(Checks.NOT_NULL, "prefix", STRING));
+        try {
+            return new NamespaceImpl(id, prefix, (schemalocation != null) ? schemalocation.toURI() : null);
+        } catch (final URISyntaxException e) {
+            throw new IllegalArgumentException("Parameter id MUST be a legal URI.", e);
+        }
+    }
+    static NamespaceImpl of(final String id, final String prefix) {
+        Objects.requireNonNull(id, String.format(Checks.NOT_NULL, "id", STRING));
+        Objects.requireNonNull(prefix, String.format(Checks.NOT_NULL, "prefix", STRING));
+        return NamespaceImpl.of(URI.create(id), prefix, null);
+    }
     private final URI id;
+
     private final String prefix;
+
     private final URI schemalocation;
 
     private NamespaceImpl(final URI id, final String prefix, final URI schemalocation) {
@@ -35,7 +51,7 @@ final class NamespaceImpl implements Namespace {
     public URL getSchemalocation() {
         try {
             return (this.schemalocation != null) ? this.schemalocation.toURL() : null;
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             throw new IllegalArgumentException("Parameter schemalocation MUST be a legal URL.", e);
         }
     }
@@ -51,14 +67,14 @@ final class NamespaceImpl implements Namespace {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        NamespaceImpl other = (NamespaceImpl) obj;
+        final NamespaceImpl other = (NamespaceImpl) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -80,21 +96,5 @@ final class NamespaceImpl implements Namespace {
     @Override
     public String toString() {
         return "NamespaceImpl [id=" + id + ", prefix=" + prefix + ", schemalocation=" + schemalocation + "]";
-    }
-
-    static NamespaceImpl of(final URI id, final String prefix, final URL schemalocation) {
-        Objects.requireNonNull(id, String.format(Checks.NOT_NULL, "id", "URI"));
-        Objects.requireNonNull(prefix, String.format(Checks.NOT_NULL, "prefix", STRING));
-        try {
-            return new NamespaceImpl(id, prefix, (schemalocation != null) ? schemalocation.toURI() : null);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Parameter id MUST be a legal URI.", e);
-        }
-    }
-
-    static NamespaceImpl of(final String id, final String prefix) {
-        Objects.requireNonNull(id, String.format(Checks.NOT_NULL, "id", STRING));
-        Objects.requireNonNull(prefix, String.format(Checks.NOT_NULL, "prefix", STRING));
-        return NamespaceImpl.of(URI.create(id), prefix, null);
     }
 }

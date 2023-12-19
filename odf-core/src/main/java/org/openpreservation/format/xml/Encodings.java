@@ -5,6 +5,11 @@ import java.util.Objects;
 
 import org.openpreservation.utils.Checks;
 
+/**
+ * An enum defining the Byte Order Marks for UTF-8, UTF-16 and UTF-32.
+ * 
+ * See <a href="https://en.wikipedia.org/wiki/Byte_order_mark">Byte Order Mark</a>
+ */
 public enum Encodings {
     /**
      * Empty Byte String to match no encoding
@@ -32,35 +37,12 @@ public enum Encodings {
     UTF_32_LE("UTF-32(LE)", new byte[] { (byte) 0xFF, (byte) 0xFE, (byte) 0x00, (byte) 0x00 });
 
     /**
-     * The encoding name for the Byte Order Mark
-     */
-    public final String encoding;
-    /**
-     * A byte array representing the Byte Order Mark
-     */
-    final byte[] representation;
-
-    private Encodings(final String encoding, final byte[] representation) {
-        this.encoding = encoding;
-        this.representation = representation;
-    }
-
-    /**
-     * Returns the length of the Byte Order Mark in bytes
-     *
-     * @return the length of the Byte Order Mark in bytes
-     */
-    public int getLength() {
-        return representation.length;
-    }
-
-    /**
-     * Get a Byte Order Mark from the String name
+     * Get an <code>Encodings</code> instance from the String name or {@link NONE} if no match
      *
      * @param encoding the name of the encoding to retrieve
      *
-     * @return the Endcoding with the given name, or Encoding.NONE if no match
-     * @throws NullPointerException if encoding is null
+     * @return the Endcoding with the given name, or <code>Encoding.NONE</code> if no match
+     * @throws NullPointerException if <code>encoding</code> is <code>null</code>
      */
     public static Encodings fromEncoding(final String encoding) {
         Objects.requireNonNull(encoding, String.format(Checks.NOT_NULL, "encoding", "String"));
@@ -74,12 +56,12 @@ public enum Encodings {
     }
 
     /**
-     * Get a Byte Order Mark from the byte array representation
+     * Get an <code>Encodings</code> instance from the byte array representation, or {@link NONE} if no match.
      *
-     * @param bytes the byte array representation of the encoding to retrieve
+     * @param bytes the <code>byte[]</code> representation of the encoding to retrieve
      *
-     * @return the Endcoding with the given representation, or Encoding.NONE if no match
-     * @throws NullPointerException if bytes is null
+     * @return the <code>Endcodings</code> instance with the given representation, or <code>Encoding.NONE</code> if no match
+     * @throws NullPointerException if <code>bytes</code> is <code>null</code>.
      */
     public static Encodings fromRepresentation(final byte[] bytes) {
         Objects.requireNonNull(bytes, String.format(Checks.NOT_NULL, "bytes", "byte[]"));
@@ -91,6 +73,30 @@ public enum Encodings {
             }
         }
         return result;
+    }
+
+    /**
+     * The <code>String</code> encoding name for the Byte Order Mark
+     */
+    public final String encoding;
+
+    /**
+     * A <code>byte[]</code> representing the Byte Order Mark
+     */
+    final byte[] representation;
+
+    private Encodings(final String encoding, final byte[] representation) {
+        this.encoding = encoding;
+        this.representation = representation;
+    }
+
+    /**
+     * Returns the length of the Byte Order Mark in bytes
+     *
+     * @return the <code>int</code> length of the Byte Order Mark in bytes
+     */
+    public int getLength() {
+        return representation.length;
     }
 
 }
