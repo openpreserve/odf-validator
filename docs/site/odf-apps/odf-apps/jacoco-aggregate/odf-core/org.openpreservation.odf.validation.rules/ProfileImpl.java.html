@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ProfileImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">ODF spreadsheet validator applications.</a> &gt; <a href="../index.html" class="el_bundle">odf-core</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.validation.rules</a> &gt; <span class="el_source">ProfileImpl.java</span></div><h1>ProfileImpl.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.validation.rules;
+
+import java.io.IOException;
+import java.util.Set;
+
+import org.openpreservation.messages.MessageLog;
+import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.validation.ProfileResult;
+import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.ValidationReport;
+
+final class ProfileImpl extends AbstractProfile {
+    static final ProfileImpl of(final String id, final String name, final String description, final Set&lt;Rule&gt; rules) {
+<span class="fc" id="L15">        return new ProfileImpl(id, name, description, rules);</span>
+    }
+
+    private ProfileImpl(final String id, final String name, final String description, final Set&lt;Rule&gt; rules) {
+<span class="fc" id="L19">        super(id, name, description, rules);</span>
+<span class="fc" id="L20">    }</span>
+ 
+    @Override
+    public ProfileResult check(final OdfPackage odfPackage) throws IOException {
+<span class="fc" id="L24">        ValidationReport report = null;</span>
+<span class="fc" id="L25">        final MessageLog messages = Messages.messageLogInstance();</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        for (final Rule rule : this.rules) {</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">            if (!rule.isPrerequisite()) {</span>
+<span class="fc" id="L28">                continue;</span>
+            }
+<span class="fc" id="L30">            final MessageLog ruleMessages = rule.check(odfPackage);</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">            if (rule instanceof ValidPackageRule) {</span>
+<span class="fc" id="L32">                report = ((ValidPackageRule) rule).getValidationReport();</span>
+            }
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">            if (ruleMessages.hasErrors()) {</span>
+<span class="nc" id="L35">                return ProfileResultImpl.of(odfPackage.getName(), report, ruleMessages);</span>
+            }
+<span class="fc" id="L37">            messages.add(ruleMessages.getMessages());</span>
+<span class="fc" id="L38">        }</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        for (final Rule rule : this.rules) {</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">            if (rule.isPrerequisite()) {</span>
+<span class="fc" id="L41">                continue;</span>
+            }
+<span class="fc" id="L43">            final MessageLog ruleMessages = rule.check(odfPackage);</span>
+<span class="fc" id="L44">            messages.add(ruleMessages.getMessages());</span>
+<span class="fc" id="L45">        }</span>
+<span class="fc" id="L46">        return ProfileResultImpl.of(odfPackage.getName(), report, messages);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

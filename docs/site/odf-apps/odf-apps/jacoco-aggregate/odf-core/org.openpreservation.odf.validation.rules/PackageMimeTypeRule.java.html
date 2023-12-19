@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PackageMimeTypeRule.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">ODF spreadsheet validator applications.</a> &gt; <a href="../index.html" class="el_bundle">odf-core</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.validation.rules</a> &gt; <span class="el_source">PackageMimeTypeRule.java</span></div><h1>PackageMimeTypeRule.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.validation.rules;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import org.openpreservation.messages.Message.Severity;
+import org.openpreservation.messages.MessageLog;
+import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.xml.OdfXmlDocument;
+
+final class PackageMimeTypeRule extends AbstractRule {
+
+    static final PackageMimeTypeRule getInstance(final Severity severity) {
+<span class="fc" id="L16">        return new PackageMimeTypeRule(&quot;POL_3&quot;, &quot;Package mimetype entry&quot;,</span>
+                &quot;An ODF package MUST have a mimetype entry as specified in the Section 3.3 of the ODF specification v1.3.&quot;,
+                severity, false);
+    }
+
+    private PackageMimeTypeRule(final String id, final String name, final String description, final Severity severity,
+            final boolean isPrerequisite) {
+<span class="fc" id="L23">        super(id, name, description, severity, isPrerequisite);</span>
+<span class="fc" id="L24">    }</span>
+
+    @Override
+    public MessageLog check(final OdfXmlDocument document) {
+<span class="fc" id="L28">        throw new UnsupportedOperationException(&quot;Unimplemented method 'check'&quot;);</span>
+    }
+
+    @Override
+    public MessageLog check(final OdfPackage odfPackage) throws IOException {
+<span class="fc" id="L33">        Objects.requireNonNull(odfPackage, &quot;odfPackage must not be null&quot;);</span>
+<span class="fc" id="L34">        final MessageLog messageLog = Messages.messageLogInstance();</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (!odfPackage.hasMimeEntry()) {</span>
+<span class="fc" id="L36">            messageLog.add(OdfPackages.MIMETYPE, Messages.getMessageInstance(this.id, this.severity, this.getName(),</span>
+<span class="fc" id="L37">                    this.getDescription()));</span>
+        }
+<span class="fc" id="L39">        return messageLog;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

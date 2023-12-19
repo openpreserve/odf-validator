@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>XmlParser.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">ODF spreadsheet validator core library.</a> &gt; <a href="../index.html" class="el_bundle">odf-core</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.format.xml</a> &gt; <span class="el_source">XmlParser.java</span></div><h1>XmlParser.java</h1><pre class="source lang-java linenums">package org.openpreservation.format.xml;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.openpreservation.messages.Message;
+import org.openpreservation.messages.MessageFactory;
+import org.openpreservation.messages.Messages;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+
+/**
+ * Class to wrap the checking of XML files for well-formedness and validity.
+ *
+ * @author &lt;a href=&quot;mailto:carl@openpreservation.org&quot;&gt;Carl Wilson&lt;/a&gt;
+ *
+ */
+public final class XmlParser {
+    private static final class DummyEntityResolver implements EntityResolver {
+        public InputSource resolveEntity(final String publicID, final String systemID)
+                throws SAXException {
+
+<span class="fc" id="L39">            return new InputSource(new StringReader(&quot;&quot;));</span>
+        }
+    }
+    private static final String SAX_FEATURE_PREFIX = &quot;http://xml.org/sax/features/&quot;;
+    private static final String SAX_FEATURE_EXT_GEN_ENTITIES = SAX_FEATURE_PREFIX + &quot;external-general-entities&quot;;
+
+    private static final String SAX_FEATURE_EXT_PARAM_ENTITIES = SAX_FEATURE_PREFIX + &quot;external-parameter-entities&quot;;
+<span class="fc" id="L46">    private static final MessageFactory FACTORY = Messages.getInstance();</span>
+    /**
+     * Convenience method to obtain a pre-configured SAXParserFactory that is not
+     * validating and is namespace aware.
+     * 
+     * @return a pre-configured &lt;code&gt;SAXParserFactory&lt;/code&gt; that is not validating
+     *         and is namespace aware.
+     * @throws SAXNotRecognizedException    When the underlying XMLReader does not
+     *                                      recognize the property name.
+     * @throws SAXNotSupportedException     When the underlying XMLReader recognizes
+     *                                      the property name but doesn't support
+     *                                      the property.
+     * @throws ParserConfigurationException When the underlying XMLReader is not
+     *                                      configured correctly.
+     */
+    public static final SAXParserFactory getNonValidatingFactory()
+            throws SAXNotRecognizedException, SAXNotSupportedException, ParserConfigurationException {
+<span class="fc" id="L63">        final SAXParserFactory factory = SAXParserFactory.newInstance(</span>
+<span class="fc" id="L64">                &quot;com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl&quot;, ClassLoader.getSystemClassLoader());</span>
+<span class="fc" id="L65">        factory.setValidating(false);</span>
+<span class="fc" id="L66">        factory.setNamespaceAware(true);</span>
+<span class="fc" id="L67">        factory.setXIncludeAware(false);</span>
+<span class="fc" id="L68">        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);</span>
+<span class="fc" id="L69">        factory.setFeature(SAX_FEATURE_EXT_GEN_ENTITIES, false);</span>
+<span class="fc" id="L70">        factory.setFeature(SAX_FEATURE_EXT_PARAM_ENTITIES, false);</span>
+<span class="fc" id="L71">        return factory;</span>
+    }
+    private final SAXParserFactory nonValidatingFactory;
+
+    private final SAXParser parser;
+
+    private final XMLReader reader;
+
+    /**
+     * Default constructor for the &lt;code&gt;XmlParser&lt;/code&gt; class.
+     * 
+     * @throws ParserConfigurationException if the parser can not be configured
+     * @throws SAXException                 if the parser can not be created
+     */
+<span class="fc" id="L85">    public XmlParser() throws ParserConfigurationException, SAXException {</span>
+<span class="fc" id="L86">        this.nonValidatingFactory = getNonValidatingFactory();</span>
+<span class="fc" id="L87">        this.parser = nonValidatingFactory.newSAXParser();</span>
+<span class="fc" id="L88">        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, &quot;false&quot;);</span>
+<span class="fc" id="L89">        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, &quot;false&quot;);</span>
+<span class="fc" id="L90">        this.reader = this.parser.getXMLReader();</span>
+<span class="fc" id="L91">        this.reader.setEntityResolver(new DummyEntityResolver());</span>
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Parses the supplied &lt;code&gt;InputStream&lt;/code&gt; for well-formedness and returns
+     * a {@link ParseResult} object.
+     *
+     * @param toTest an &lt;code&gt;InputStream&lt;/code&gt; to be parsed.
+     * @return a &lt;code&gt;ParseResult&lt;/code&gt; object containing the result of the parse.
+     * @throws IOException if the supplied &lt;code&gt;InputStream&lt;/code&gt; can not be read.
+     */
+    public ParseResult parse(final InputStream toTest)
+            throws IOException {
+<span class="fc" id="L104">        Objects.requireNonNull(toTest, &quot;Parameter toTest can not be null.&quot;);</span>
+<span class="fc" id="L105">        final List&lt;Message&gt; messages = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L106">        final ParsingHandler handler = new ParsingHandler();</span>
+<span class="fc" id="L107">        final MessageHandler messageHandler = new MessageHandler();</span>
+<span class="fc" id="L108">        reader.setContentHandler(handler);</span>
+<span class="fc" id="L109">        reader.setErrorHandler(messageHandler);</span>
+        try {
+<span class="fc" id="L111">            reader.parse(new InputSource(toTest));</span>
+<span class="fc" id="L112">            messages.addAll(messageHandler.messages);</span>
+<span class="fc" id="L113">            return handler.getResult(true, messages);</span>
+<span class="fc" id="L114">        } catch (final SAXParseException e) {</span>
+<span class="fc" id="L115">            messages.add(FACTORY.getError(&quot;XML-3&quot;, e.getLineNumber(),</span>
+<span class="fc" id="L116">                    e.getColumnNumber(), e.getMessage()));</span>
+<span class="nc" id="L117">        } catch (final SAXException e) {</span>
+<span class="nc" id="L118">            messages.add(FACTORY.getError(&quot;XML-1&quot;, e.getMessage()));</span>
+<span class="fc" id="L119">        }</span>
+<span class="fc" id="L120">        return handler.getResult(false, messages);</span>
+    }
+
+    /**
+     * Parses the supplied &lt;code&gt;Path&lt;/code&gt; for well-formedness and returns a
+     * {@link ParseResult} object.
+     *
+     * @param toTest a &lt;code&gt;Path&lt;/code&gt; to be parsed.
+     * @return a &lt;code&gt;ParseResult&lt;/code&gt; object containing the result of the parse.
+     * @throws IOException if the supplied &lt;code&gt;Path&lt;/code&gt; can not be read.
+     */
+    public ParseResult parse(final Path toTest)
+            throws IOException {
+<span class="fc" id="L133">        Objects.requireNonNull(toTest, &quot;Parameter toTest can not be null.&quot;);</span>
+<span class="fc" id="L134">        return parse(Files.newInputStream(toTest));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

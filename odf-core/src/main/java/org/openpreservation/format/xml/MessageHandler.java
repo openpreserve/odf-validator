@@ -9,7 +9,7 @@ import org.openpreservation.messages.Messages;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
-public class MessageHandler implements ErrorHandler {
+public final class MessageHandler implements ErrorHandler {
     private static final String MESSAGE_ID = "XML-3";
     private static final MessageFactory FACTORY = Messages.getInstance();
     public final List<Message> messages = new ArrayList<>();

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Signatures.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">ODF spreadsheet validator applications.</a> &gt; <a href="../index.html" class="el_bundle">odf-core</a> &gt; <a href="index.source.html" class="el_package">org.openpreservation.odf.fmt</a> &gt; <span class="el_source">Signatures.java</span></div><h1>Signatures.java</h1><pre class="source lang-java linenums">package org.openpreservation.odf.fmt;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
+
+<span class="fc" id="L8">public enum Signatures {</span>
+<span class="fc" id="L9">    NOMATCH(new byte[0]),</span>
+<span class="fc" id="L10">    ZIP(Utils.hexStringToByteArray(&quot;504B0304&quot;)),</span>
+<span class="fc" id="L11">    ZIP_EMPTY(Utils.hexStringToByteArray(&quot;504B0506&quot;)),</span>
+<span class="fc" id="L12">    ZIP_SPANNED(Utils.hexStringToByteArray(&quot;504B0708&quot;)),</span>
+<span class="fc" id="L13">    XML_UTF_8(Utils.hexStringToByteArray(&quot;3C3F786D6C20&quot;)),</span>
+<span class="fc" id="L14">    XML_UTF_16_LE(Utils.hexStringToByteArray(&quot;3C003F0078006D006C0020&quot;)),</span>
+<span class="fc" id="L15">    XML_UTF_16_BE(Utils.hexStringToByteArray(&quot;003C003F0078006D006C0020&quot;)),</span>
+<span class="fc" id="L16">    XML_UTF_32_LE(Utils.hexStringToByteArray(&quot;3C0000003F000000780000006D0000006C00000020000000&quot;)),</span>
+<span class="fc" id="L17">    XML_UTF_32_BE(Utils.hexStringToByteArray(&quot;0000003C0000003F000000780000006D0000006C00000020&quot;)),</span>
+<span class="fc" id="L18">    ODF_MIME(Utils.stringToHexBytes(Constants.MIMETYPE), 30),</span>
+<span class="fc" id="L19">    ODB(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_ODB), 30),</span>
+<span class="fc" id="L20">    ODC(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_ODC), 30),</span>
+<span class="fc" id="L21">    ODF(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_ODF), 30),</span>
+<span class="fc" id="L22">    ODG(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_ODG), 30),</span>
+<span class="fc" id="L23">    ODI(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_ODI), 30),</span>
+<span class="fc" id="L24">    ODM(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_ODM), 30),</span>
+<span class="fc" id="L25">    ODP(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_ODP), 30),</span>
+<span class="fc" id="L26">    ODS(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_ODS), 30),</span>
+<span class="fc" id="L27">    ODT(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_ODT), 30),</span>
+<span class="fc" id="L28">    OTC(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_OTC), 30),</span>
+<span class="fc" id="L29">    OTF(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_OTF), 30),</span>
+<span class="fc" id="L30">    OTG(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_OTG), 30),</span>
+<span class="fc" id="L31">    OTH(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_OTH), 30),</span>
+<span class="fc" id="L32">    OTI(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_OTI), 30),</span>
+<span class="fc" id="L33">    OTM(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_OTM), 30),</span>
+<span class="fc" id="L34">    OTP(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_OTP), 30),</span>
+<span class="fc" id="L35">    OTS(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_OTS), 30),</span>
+<span class="fc" id="L36">    OTT(Utils.stringToHexBytes(Constants.MIMETYPE + Constants.MIME_OTT), 30);</span>
+
+<span class="fc" id="L38">    public static final int MAX_LENGTH = maxLength();</span>
+
+
+    public static Signatures match(final byte[] signature) {
+<span class="fc" id="L42">        return match(signature, 0);</span>
+    }
+
+    public static Signatures match(final byte[] bytes, final int offset) {
+<span class="fc" id="L46">        return match(bytes, offset, Arrays.asList(Signatures.values()));</span>
+    }
+
+    public static Signatures match(final byte[] bytes, final int offset, final Collection&lt;Signatures&gt; sigs) {
+<span class="fc" id="L50">        Signatures result = Signatures.NOMATCH;</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (final Signatures sig : sigs) {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            if (sig.isMatch(bytes, offset)) {</span>
+<span class="fc" id="L53">                result = sig;</span>
+            }
+<span class="fc" id="L55">        }</span>
+<span class="fc" id="L56">        return result;</span>
+    }
+
+    public static Set&lt;Signatures&gt; matchAll(final byte[] signature) {
+<span class="nc" id="L60">        return matchAll(signature, 0);</span>
+    }
+
+    public static Set&lt;Signatures&gt; matchAll(final byte[] bytes, final int offset) {
+<span class="nc" id="L64">        return matchAll(bytes, offset, Arrays.asList(Signatures.values()));</span>
+    }
+
+    private static Set&lt;Signatures&gt; matchAll(final byte[] bytes, final int offset, final Collection&lt;Signatures&gt; sigs) {
+<span class="nc" id="L68">        final Set&lt;Signatures&gt; result = EnumSet.noneOf(Signatures.class);</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        for (final Signatures sig : sigs) {</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">            if (sig == Signatures.NOMATCH) {</span>
+<span class="nc" id="L71">                continue;</span>
+            }
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            if (sig.isMatch(bytes, offset)) {</span>
+<span class="nc" id="L74">                result.add(sig);</span>
+            }
+<span class="nc" id="L76">        }</span>
+<span class="nc" id="L77">        return result;</span>
+    }
+
+    private static int maxLength() {
+<span class="fc" id="L81">        int max = 0;</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        for (final Signatures sig : Signatures.values()) {</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">            if (sig.getLength() + sig.offset &gt; max) {</span>
+<span class="fc" id="L84">                max = sig.signature.length + sig.offset;</span>
+            }
+        }
+<span class="fc" id="L87">        return max;</span>
+    }
+
+    private final byte[] signature;
+
+    public final int offset;
+
+    private Signatures(final byte[] signature) {
+<span class="fc" id="L95">        this(signature, 0);</span>
+<span class="fc" id="L96">    }</span>
+
+<span class="fc" id="L98">    private Signatures(final byte[] signature, final int offset) {</span>
+<span class="fc" id="L99">        this.signature = signature;</span>
+<span class="fc" id="L100">        this.offset = offset;</span>
+<span class="fc" id="L101">    }</span>
+
+    public int getLength() {
+<span class="fc" id="L104">        return signature.length;</span>
+    }
+
+    public byte[] getSignature() {
+<span class="nc" id="L108">        return signature.clone();</span>
+    }
+
+    public boolean isMatch(final byte[] bytes) {
+<span class="nc" id="L112">        return this.isMatch(bytes, 0);</span>
+    }
+
+    public boolean isMatch(final byte[] bytes, final int offset) {
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        return (signature.length &lt;= (bytes.length - offset - this.offset)</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                &amp;&amp; (Arrays.equals(signature,</span>
+<span class="fc" id="L118">                        Arrays.copyOfRange(bytes, this.offset + offset,</span>
+                                signature.length + offset + this.offset))));
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

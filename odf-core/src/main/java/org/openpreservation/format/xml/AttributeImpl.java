@@ -9,14 +9,37 @@ import org.openpreservation.utils.Checks;
 import org.xml.sax.Attributes;
 
 final class AttributeImpl implements Attribute {
+    static final Attribute of(final int index, final String qualifiedName, final String value, final URI uri,
+            final String type) {
+        Objects.requireNonNull(qualifiedName, String.format(Checks.NOT_NULL, "qualifiedName", "String"));
+        Objects.requireNonNull(value, String.format(Checks.NOT_NULL, "value", "String"));
+        if (qualifiedName.isBlank()) {
+            throw new IllegalArgumentException(String.format(Checks.NOT_EMPTY, "qualifiedName"));
+        }
+        if (index < 0) {
+            throw new IllegalArgumentException(String.format(Checks.GREATER_THAN_OR_EQUAL_TO, "index", "0"));
+        }
+        return new AttributeImpl(index, qualifiedName, value, uri, type);
+    }
+    static final List<Attribute> of(final Attributes attributes) {
+        final List<Attribute> result = new ArrayList<>();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            result.add(of(i, attributes.getQName(i), attributes.getValue(i), URI.create(attributes.getURI(i)),
+                    attributes.getType(i)));
+        }
+        return result;
+    }
     private final int index;
     private final String qualifiedName;
     private final String value;
+
     private final URI uri;
+
     private final String type;
 
     private AttributeImpl(final int index, final String qualifiedName, final String value, final URI uri,
             final String type) {
+        super();
         this.index = index;
         this.qualifiedName = qualifiedName;
         this.value = value;
@@ -76,14 +99,14 @@ final class AttributeImpl implements Attribute {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AttributeImpl other = (AttributeImpl) obj;
+        final AttributeImpl other = (AttributeImpl) obj;
         if (index != other.index)
             return false;
         if (qualifiedName == null) {
@@ -113,27 +136,5 @@ final class AttributeImpl implements Attribute {
     public String toString() {
         return "AttributeImpl [index=" + index + ", qualifiedName=" + qualifiedName + ", value=" + value + ", uri="
                 + uri + ", type=" + type + "]";
-    }
-
-    static final Attribute of(final int index, final String qualifiedName, final String value, final URI uri,
-            final String type) {
-        Objects.requireNonNull(qualifiedName, String.format(Checks.NOT_NULL, "qualifiedName", "String"));
-        Objects.requireNonNull(value, String.format(Checks.NOT_NULL, "value", "String"));
-        if (qualifiedName.isBlank()) {
-            throw new IllegalArgumentException(String.format(Checks.NOT_EMPTY, "qualifiedName"));
-        }
-        if (index < 0) {
-            throw new IllegalArgumentException(String.format(Checks.GREATER_THAN_OR_EQUAL_TO, "index", "0"));
-        }
-        return new AttributeImpl(index, qualifiedName, value, uri, type);
-    }
-
-    static final List<Attribute> of(final Attributes attributes) {
-        List<Attribute> result = new ArrayList<>();
-        for (int i = 0; i < attributes.getLength(); i++) {
-            result.add(of(i, attributes.getQName(i), attributes.getValue(i), URI.create(attributes.getURI(i)),
-                    attributes.getType(i)));
-        }
-        return result;
     }
 }

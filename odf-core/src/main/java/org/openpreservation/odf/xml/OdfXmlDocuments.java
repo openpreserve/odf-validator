@@ -53,10 +53,10 @@ public final class OdfXmlDocuments {
      * and a List of UserDefinedFields.
      *
      * @param version           the version of the ODF XML Metadata block/document.
-     * @param stringValues      a Map<String, String> of the key value pairs that
-     *                          comprise the standard Metadata values.
-     * @param userDefinedFields a List<UserDefinedField> of the UserDefinedFields
-     *                          that comprise the Metadata block/document.
+     * @param stringValues      a Map of the key value pairs that comprise the
+     *                          standard Metadata values.
+     * @param userDefinedFields a List of the UserDefinedFields that comprise the
+     *                          Metadata block/document.
      * @return a Metadata object created from the passed parameters.
      */
     public static final Metadata metadataOf(final String version, final Map<String, String> stringValues,
