@@ -137,7 +137,7 @@ if (report.isValid()) {
 }
 ```
 
-This time a [`ValidatingParser`](site/apidocs/org/openpreservation/odf/validation/ValidatingParser.html) instance is used. The [`ValidatingParser.validatePackage(OdfPackage)`](./site/apidocs/org/openpreservation/odf/validation/ValidatingParser.html#validatePackage(org.openpreservation.odf.pkg.OdfPackage)) method returns a [`ValidationReport`](site/apidocs/org/openpreservation/odf/validation/ValidationReport.html) instance. This can be used to determine if the package is valid or not. If the package is not valid, the report can be used to obtain the error messages.
+This time a [`ValidatingParser`](site/apidocs/org/openpreservation/odf/validation/ValidatingParser.html) instance is used. The [`ValidatingParser.validatePackage(OdfPackage)`](site/apidocs/org/openpreservation/odf/validation/ValidatingParser.html#validatePackage(org.openpreservation.odf.pkg.OdfPackage)) method returns a [`ValidationReport`](site/apidocs/org/openpreservation/odf/validation/ValidationReport.html) instance. This can be used to determine if the package is valid or not. If the package is not valid, the report can be used to obtain the error messages.
 
 ## Validation of Spreadsheets Only
 
@@ -173,9 +173,10 @@ There is an alternative profile validator that can run custom rules to check pro
 ```java
 
 Profile dnaProfile = Rules.getDnaProfile();
-ValidationReport report = validator.validateSpreadsheet(new File("path/to/package.ods"));
-if (!report.isValid()) {
-    List<Message> messages = report.getMessages();
+ProfileResult result = dnaProfile.check(parser.parsePackage(Path.of("path/to/package.ods")));
+// Check if the result is valid and print out any messages found
+if (!result.isValid()) {
+    List<Message> messages = report.getProfileMessages().getMessages();
     // Loop through the messages
     for (Message message : messages) {
         // Get the message id
