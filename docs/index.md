@@ -4,10 +4,10 @@ Read more about:
 
 * [Using the command line software](./usage/).
 * [A list of validation checks performed by the software](./validation/).
+* [A list of policy checks performed by the software](./policies/).
 * [More details of the detection of validation conditions](./detection/).
 * [How to use the validation library as a developer.](./developer/).
 * [JavaDoc for the API and library.](./site/apidocs/index.html).
-* [Software project details.](./site/apidocs/index.html).
 * [Source code on GitHub](https://github.com/openpreserve/odf-validator).
 * [Project information](./site/project-info.html).
 * [Project software reports](./site/project-reports.html).

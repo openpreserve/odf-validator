@@ -9,4 +9,3 @@ Latest version is 0.10.0. The documentation site can be found at <https://odf.op
 ## Quick Start
 
 For getting started with building and running the software see <https://odf.openpreservation.org/#quick-start>
-
