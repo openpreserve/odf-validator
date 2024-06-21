@@ -1,7 +1,6 @@
 package org.openpreservation.odf.validation;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,6 +54,7 @@ public class Validator {
     public ValidationReport validateSingleFormat(final Path toValidate, final Formats legal) throws ParserConfigurationException, IOException, SAXException {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
         Objects.requireNonNull(legal, String.format(Checks.NOT_NULL, "Formats", "legal"));
+        Checks.existingFileCheck(toValidate);
         ValidationReport report = validate(toValidate);
         if (report.document == null || report.document.getFormat() == null) {
             report.add(toValidate.toString(), FACTORY.getError("DOC-6"));
@@ -77,7 +77,7 @@ public class Validator {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
 
         // Check if the path exists and is not a directory
-        existingFileCheck(toValidate);
+        Checks.existingFileCheck(toValidate);
 
         if (OdfPackages.isZip(toValidate)) {
             return validatePackage(toValidate);
@@ -92,14 +92,6 @@ public class Validator {
         final ValidationReport report = ValidationReport.of(toValidate.toString());
         report.add(toValidate.toString(), FACTORY.getError("DOC-1"));
         return report;
-    }
-
-    static final void existingFileCheck(final Path toValidate) throws FileNotFoundException {
-        if (!Files.exists(toValidate)) {
-            throw new FileNotFoundException(errMessage(toValidate.toString(), " does not exist."));
-        } else if (Files.isDirectory(toValidate)) {
-            throw new IllegalArgumentException(errMessage(toValidate.toString(), " is a directory."));
-        }
     }
 
     private ValidationReport validatePackage(final Path toValidate) throws ParserConfigurationException, SAXException, IOException {
@@ -132,9 +124,5 @@ public class Validator {
         }
         report.add(toValidate.toString(), parseResult.getMessages());
         return report;
-    }
-
-    private static final String errMessage(final String toValidate, final String subMess) {
-        return String.format("Supplied Path parameter: %s %s", toValidate, subMess);
     }
 }

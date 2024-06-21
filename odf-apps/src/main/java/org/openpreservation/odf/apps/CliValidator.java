@@ -37,7 +37,7 @@ class CliValidator implements Callable<Integer> {
     private static final MessageFactory FACTORY = Messages
             .getInstance("org.openpreservation.odf.apps.messages.Messages");
 
-    @Option(names = {"-p", "--profile"}, description = "Validate using extended Spreadsheet preservation profile.")
+    @Option(names = { "-p", "--profile" }, description = "Validate using extended Spreadsheet preservation profile.")
     private boolean profileFlag;
     @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format spreadsheet files to validate.")
     private File[] toValidateFiles;
@@ -77,8 +77,10 @@ class CliValidator implements Callable<Integer> {
     private ProfileResult profilePath(final Path toProfile) {
         try {
             return dnaProfile.check(parser.parsePackage(toProfile));
-        } catch (IllegalArgumentException | IOException e) {
+        } catch (IllegalArgumentException | FileNotFoundException e) {
             this.logMessage(toProfile, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -92,7 +94,8 @@ class CliValidator implements Callable<Integer> {
         Integer retStatus = 0;
         for (Map.Entry<Path, ValidationReport> entry : validationReports.entrySet()) {
             if (this.appMessages.containsKey(entry.getKey())) {
-                retStatus = Math.max(retStatus, processMessageLists(this.appMessages.get(entry.getKey()).getMessages().values()));
+                retStatus = Math.max(retStatus,
+                        processMessageLists(this.appMessages.get(entry.getKey()).getMessages().values()));
             }
             if (entry.getValue() != null) {
                 retStatus = Math.max(retStatus, results(entry.getKey(), entry.getValue()));
@@ -100,7 +103,8 @@ class CliValidator implements Callable<Integer> {
         }
         for (Map.Entry<Path, ProfileResult> entry : profileResults.entrySet()) {
             if (this.appMessages.containsKey(entry.getKey())) {
-                retStatus = Math.max(retStatus, processMessageLists(this.appMessages.get(entry.getKey()).getMessages().values()));
+                retStatus = Math.max(retStatus,
+                        processMessageLists(this.appMessages.get(entry.getKey()).getMessages().values()));
             }
             if (entry.getValue() != null) {
                 retStatus = Math.max(retStatus, results(entry.getKey(), entry.getValue()));
@@ -159,7 +163,9 @@ class CliValidator implements Callable<Integer> {
         if (report.getValidationReport() != null && report.getValidationReport().documentMessages.hasErrors()) {
             retStatus = 1;
         }
-        MessageLog profileMessages = (report.getValidationReport() != null) ? report.getValidationReport().documentMessages : Messages.messageLogInstance();
+        MessageLog profileMessages = (report.getValidationReport() != null)
+                ? report.getValidationReport().documentMessages
+                : Messages.messageLogInstance();
         profileMessages.add(report.getProfileMessages().getMessages());
         outputSummary(profileMessages);
         return retStatus;
@@ -185,10 +191,12 @@ class CliValidator implements Callable<Integer> {
                     messageLog.getWarningCount(), messageLog.getInfoCount()));
         } else {
             ConsoleFormatter
-                    .info(String.format("VALID, no errors, no warnings and %d info message found.", messageLog.getInfoCount()));
+                    .info(String.format("VALID, no errors, no warnings and %d info message found.",
+                            messageLog.getInfoCount()));
         }
         ConsoleFormatter.newline();
     }
+
     private final void logMessage(final Path path, final Message message) {
         this.appMessages.putIfAbsent(path, Messages.messageLogInstance());
         this.appMessages.get(path).add(path.toString(), message);
