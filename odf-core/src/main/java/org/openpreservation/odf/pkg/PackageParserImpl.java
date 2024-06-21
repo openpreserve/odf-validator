@@ -88,6 +88,7 @@ final class PackageParserImpl implements PackageParser {
     }
 
     private final OdfPackage parsePackage(final Path toParse, final String name) throws IOException {
+        Checks.existingFileCheck(toParse);
         this.initialise();
         try {
             this.format = sniff(toParse);
