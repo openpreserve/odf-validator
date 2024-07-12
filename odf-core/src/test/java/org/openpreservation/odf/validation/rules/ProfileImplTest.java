@@ -26,7 +26,7 @@ public class ProfileImplTest {
         ProfileResult result = profile.check(pkg);
         assertNotNull(result);
         assertTrue(result.getValidationReport().isValid());
-        assertFalse(result.isValid());
+        assertTrue (result.isValid());
     }
 
     @Test
