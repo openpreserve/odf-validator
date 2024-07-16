@@ -86,6 +86,7 @@ final class ValidatingParserImpl implements ValidatingParser {
 
     private ValidationReport validate(final OdfPackage odfPackage) {
         final ValidationReport report = ValidationReport.of(odfPackage.getName(), Documents.openDocumentOf(odfPackage));
+        report.add("package", FACTORY.getInfo("DOC-2", odfPackage.getDetectedVersion().version));
         report.add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
         report.add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));
         if (!odfPackage.hasThumbnail()) {
@@ -134,7 +135,8 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     private Version getVersionFromPath(final OdfPackage odfPackage, final String path) {
-        String version = (OdfPackages.PATH_MANIFEST.equals(path) || (OdfPackages.isDsig(path))) ? odfPackage.getManifest().getVersion()
+        String version = (OdfPackages.PATH_MANIFEST.equals(path) || (OdfPackages.isDsig(path)))
+                ? odfPackage.getManifest().getVersion()
                 : (getVersionFromParseResult(odfPackage.getEntryXmlParseResult(path)));
         return (version == null) ? Version.ODF_13 : Version.fromVersion(version);
     }
@@ -215,7 +217,7 @@ final class ValidatingParserImpl implements ValidatingParser {
             } else if (zipEntry == null) {
                 messages.add(FACTORY.getError("MAN-4", entryPath));
             }
-            if (entry.isEncrypted() && zipEntry != null && !zipEntry.isStored() ) {
+            if (entry.isEncrypted() && zipEntry != null && !zipEntry.isStored()) {
                 messages.add(FACTORY.getError("PKG-8", entryPath));
             }
         }
@@ -233,7 +235,7 @@ final class ValidatingParserImpl implements ValidatingParser {
             }
             if (zipEntry.getName().startsWith(OdfPackages.NAME_META_INF)
                     && (!zipEntry.isDirectory() && !OdfPackages.PATH_MANIFEST.equals(zipEntry.getName())
-                    && !OdfPackages.isDsig(zipEntry.getName()))) {
+                            && !OdfPackages.isDsig(zipEntry.getName()))) {
                 messages.add(FACTORY.getError("PKG-5", zipEntry.getName()));
                 messageMap.put(zipEntry.getName(), messages);
             }
@@ -249,7 +251,8 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     static final boolean isCompressionValid(final ZipEntry entry) {
-        return entry.getMethod() == java.util.zip.ZipEntry.STORED || entry.getMethod() == java.util.zip.ZipEntry.DEFLATED;
+        return entry.getMethod() == java.util.zip.ZipEntry.STORED
+                || entry.getMethod() == java.util.zip.ZipEntry.DEFLATED;
     }
 
     private final boolean isLegitimateManifestEntry(final String entryPath) {

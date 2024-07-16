@@ -3,6 +3,7 @@ package org.openpreservation.odf.pkg;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -19,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.odf.fmt.TestFiles;
+import org.openpreservation.odf.xml.Version;
 import org.xml.sax.SAXException;
 
 public class PackageParserTest {
@@ -160,5 +162,19 @@ public class PackageParserTest {
         ParseResult result = pkg.getEntryXmlParseResult("META-INF/manifest.xml");
         assertNotNull("Dsig file META-INF/documentsignatures.xml result should not be null", result);
         assertFalse("Package should NOT have a well formed META-INF/manifest.xml", result.isWellFormed());
+    }
+
+    @Test
+    public void testVersionDetection() throws IOException {
+        PackageParser parser = OdfPackages.getPackageParser();
+        OdfPackage pkg = parser.parsePackage(TestFiles.VER_1_3_ODS.openStream(),
+                TestFiles.VER_1_3_ODS.toString());
+        assertEquals("Package should be version 1.3", Version.ODF_13, pkg.getDetectedVersion());
+        pkg = parser.parsePackage(TestFiles.VER_1_2_ODS.openStream(),
+                TestFiles.VER_1_2_ODS.toString());
+        assertEquals("Package should be version 1.2", Version.ODF_12, pkg.getDetectedVersion());
+        pkg = parser.parsePackage(TestFiles.VER_1_1_ODS.openStream(),
+                TestFiles.VER_1_1_ODS.toString());
+        assertEquals("Package should be version 1.1", Version.ODF_11, pkg.getDetectedVersion());
     }
 }

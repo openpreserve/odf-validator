@@ -60,9 +60,9 @@ public enum ConsoleFormatter {
 
     public static final void colourise(final Path path, final Message message, final String colour) {
         final String formatted = (message.hasSubMessage())
-                ? String.format("%s: %s [%s] %s | %s", message.getId(), path, message.getSeverity(),
+                ? String.format("%s: [%s] %s %s | %s", message.getId(), message.getSeverity(), path,
                         message.getMessage(), message.getSubMessage())
-                : String.format("%s: %s [%s] %s", message.getId(), path, message.getSeverity(),
+                : String.format("%s: [%s] %s %s", message.getId(), message.getSeverity(), path,
                         message.getMessage());
         colourise(formatted, colour, message.isFatal() ? System.err : System.out);
     }
