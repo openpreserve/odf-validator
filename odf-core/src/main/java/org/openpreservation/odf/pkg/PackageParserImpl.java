@@ -15,6 +15,8 @@ import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.openpreservation.format.xml.ParseResult;
+import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.zip.ZipArchiveCache;
 import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.format.zip.Zips;
@@ -23,6 +25,7 @@ import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
+import org.openpreservation.odf.xml.Version;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
@@ -57,6 +60,7 @@ final class PackageParserImpl implements PackageParser {
     private Formats format = Formats.UNKNOWN;
     private String mimetype = "";
     private Manifest manifest = null;
+    private Version version = Version.UNKNOWN;
 
     private final Map<String, OdfXmlDocument> xmlDocumentMap = new HashMap<>();
 
@@ -93,6 +97,7 @@ final class PackageParserImpl implements PackageParser {
         try {
             this.format = sniff(toParse);
             this.cache = Zips.zipArchiveCacheInstance(toParse);
+            this.version = detectVersion();
         } catch (final IOException e) {
             // Simply catch the exception and return a sparsely populated OdfPackage
             return OdfPackageImpl.Builder.builder().name(name).format(this.format).build();
@@ -103,6 +108,32 @@ final class PackageParserImpl implements PackageParser {
         } catch (ParserConfigurationException | SAXException e) {
             throw new IOException(e);
         }
+    }
+
+
+    final Version detectVersion() throws IOException {
+        Version version = Version.UNKNOWN;
+        try (InputStream is = getVersionStreamName()) {
+            if (is != null) {
+                ParseResult result = new XmlParser().parse(is);
+                return Version.fromVersion(result.getRootAttributeValue("office:version"));
+            }
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new IOException(e);
+        }
+        return version;
+    }
+
+    private final InputStream getVersionStreamName() throws IOException {
+        InputStream retVal = null;
+        retVal = this.cache.getEntryInputStream(Constants.NAME_MANIFEST);
+        if (retVal == null) {
+            retVal = this.cache.getEntryInputStream(Constants.NAME_SETTINGS);
+        }
+        if (retVal == null) {
+            retVal = this.cache.getEntryInputStream(Constants.NAME_CONTENT);
+        }
+        return retVal;
     }
 
     private final void processZipEntries() throws ParserConfigurationException, SAXException, IOException {
@@ -143,13 +174,15 @@ final class PackageParserImpl implements PackageParser {
         this.mimetype = null;
         this.xmlDocumentMap.clear();
         this.manifest = null;
+        this.version = Version.UNKNOWN;
     }
 
     private final OdfPackage makePackage(final String name)
             throws ParserConfigurationException, IOException, SAXException {
         final OdfPackageImpl.Builder builder = OdfPackageImpl.Builder.builder().name(name).archive(this.cache)
                 .format(this.format)
-                .mimetype(mimetype);
+                .mimetype(mimetype)
+                .version(version);
         if (this.manifest != null) {
             builder.manifest(manifest);
             for (final FileEntry docEntry : manifest.getDocumentEntries()) {
