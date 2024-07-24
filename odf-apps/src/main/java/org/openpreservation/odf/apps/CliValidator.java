@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.openpreservation.messages.Message;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageFactory;
@@ -19,12 +17,12 @@ import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ProfileResult;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.rules.Rules;
-import org.xml.sax.SAXException;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -76,8 +74,9 @@ class CliValidator implements Callable<Integer> {
             return validator.validate(toValidate);
         } catch (IllegalArgumentException | FileNotFoundException e) {
             this.logMessage(toValidate, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
+        } catch (ParseException e) {
+            this.logMessage(toValidate, Messages.getMessageInstance("SYS-1", Severity.ERROR,
+                    "Package could not be parsed, due to an exception.", e.getMessage()));
         }
         return null;
     }
@@ -87,8 +86,9 @@ class CliValidator implements Callable<Integer> {
             return dnaProfile.check(parser.parsePackage(toProfile));
         } catch (IllegalArgumentException | FileNotFoundException e) {
             this.logMessage(toProfile, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (ParseException e) {
+            this.logMessage(toProfile, Messages.getMessageInstance("SYS-1", Severity.ERROR,
+                    "Package could not be parsed, due to an exception.", e.getMessage()));
         }
         return null;
     }

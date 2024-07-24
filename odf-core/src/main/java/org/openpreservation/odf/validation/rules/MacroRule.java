@@ -11,6 +11,7 @@ import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.xml.sax.SAXException;
 
@@ -34,14 +35,19 @@ final class MacroRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfXmlDocument document) throws IOException {
+    public MessageLog check(final OdfXmlDocument document) throws ParseException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'check'");
     }
 
     @Override
-    public MessageLog check(final OdfPackage odfPackage) throws IOException {
-        MessageLog messageLog = checkOdfScriptXml(odfPackage);
+    public MessageLog check(final OdfPackage odfPackage) throws ParseException {
+        MessageLog messageLog;
+        try {
+            messageLog = checkOdfScriptXml(odfPackage);
+        } catch (IOException e) {
+            throw new ParseException("IOException when checking for macros.", e);
+        }
         messageLog.add(schematron.check(odfPackage).getMessages());
         return messageLog;
     }

@@ -20,6 +20,7 @@ import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 
@@ -80,7 +81,7 @@ public class EmbeddedObjectsRuleTest {
     }
 
     @Test
-    public void testCheckValidPackage() throws IOException, URISyntaxException {
+    public void testCheckValidPackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
@@ -88,7 +89,7 @@ public class EmbeddedObjectsRuleTest {
     }
 
     @Test
-    public void testCheckEmbeddedPackage() throws IOException, URISyntaxException {
+    public void testCheckEmbeddedPackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.OLE_EMBEDDED_PACKAGE.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);

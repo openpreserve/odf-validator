@@ -14,6 +14,7 @@ import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 
 import com.helger.schematron.pure.SchematronResourcePure;
@@ -37,13 +38,13 @@ final class SchematronRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfXmlDocument document) throws IOException {
+    public MessageLog check(final OdfXmlDocument document) throws ParseException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'check'");
     }
 
     @Override
-    public MessageLog check(final OdfPackage odfPackage) throws IOException {
+    public MessageLog check(final OdfPackage odfPackage) throws ParseException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
         for (final FileEntry entry : odfPackage.getXmlEntries()) {
@@ -60,7 +61,7 @@ final class SchematronRule extends AbstractRule {
                                     result.getText()));
                 }
             } catch (final Exception e) {
-                throw new IOException(e);
+                throw new ParseException("Unexpected Exception caught when executing Schematron checks.", e);
             }
         }
         return messageLog;

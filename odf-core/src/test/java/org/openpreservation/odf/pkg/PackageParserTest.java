@@ -20,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.odf.fmt.TestFiles;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.Version;
 import org.xml.sax.SAXException;
 
@@ -97,7 +98,7 @@ public class PackageParserTest {
     }
 
     @Test
-    public void testParseNullStream() throws ParserConfigurationException, SAXException, IOException {
+    public void testParseNullStream() throws ParseException, SAXException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
@@ -114,7 +115,7 @@ public class PackageParserTest {
 
     @Test
     public void testParsePackagePath()
-            throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
+            throws ParseException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
         assertNotNull("Parsed package should not be null", pkg);
@@ -125,7 +126,7 @@ public class PackageParserTest {
 
     @Test
     public void testParsePackageFile()
-            throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
+            throws ParseException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull("Parsed package should not be null", pkg);
@@ -136,7 +137,7 @@ public class PackageParserTest {
 
     @Test
     public void testParsePackageStream()
-            throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
+            throws ParseException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.EMPTY_ODS.openStream(), TestFiles.EMPTY_ODS.toString());
         assertNotNull("Parsed package should not be null", pkg);
@@ -146,7 +147,7 @@ public class PackageParserTest {
     }
 
     @Test
-    public void testDsigParsing() throws ParserConfigurationException, SAXException, IOException {
+    public void testDsigParsing() throws IOException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.DSIG_INVALID.openStream(), TestFiles.DSIG_INVALID.toString());
         ParseResult result = pkg.getEntryXmlParseResult("META-INF/documentsignatures.xml");
@@ -155,7 +156,7 @@ public class PackageParserTest {
     }
 
     @Test
-    public void testManifestNotWF() throws IOException {
+    public void testManifestNotWF() throws IOException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_NOT_WF.openStream(),
                 TestFiles.MANIFEST_NOT_WF.toString());
@@ -165,7 +166,7 @@ public class PackageParserTest {
     }
 
     @Test
-    public void testVersionDetection() throws IOException {
+    public void testVersionDetection() throws IOException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.VER_1_3_ODS.openStream(),
                 TestFiles.VER_1_3_ODS.toString());

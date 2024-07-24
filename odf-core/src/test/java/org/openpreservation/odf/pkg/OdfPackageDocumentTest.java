@@ -8,17 +8,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.junit.Test;
 import org.openpreservation.odf.fmt.TestFiles;
-import org.xml.sax.SAXException;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.DocumentType;
 import org.openpreservation.odf.xml.Version;
 
 public class OdfPackageDocumentTest {
     @Test
-    public void testParseDocument() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
+    public void testParseDocument() throws ParseException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
         InputStream is = TestFiles.EMPTY_ODS.openStream();
         OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS.toString());
@@ -38,7 +36,7 @@ public class OdfPackageDocumentTest {
 
     @Test
     public void testParseSubDocument()
-            throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
+            throws ParseException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
         InputStream is = TestFiles.EMPTY_ODS.openStream();
         OdfPackage pkg = parser.parsePackage(is, TestFiles.EMPTY_ODS.toString());
@@ -57,7 +55,7 @@ public class OdfPackageDocumentTest {
 
     @Test
     public void testParseStylesDocument()
-            throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
+            throws URISyntaxException, ParseException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
         InputStream is = TestFiles.STYLES_ONLY_DOC.openStream();
         OdfPackage pkg = parser.parsePackage(is, TestFiles.STYLES_ONLY_DOC.toString());
