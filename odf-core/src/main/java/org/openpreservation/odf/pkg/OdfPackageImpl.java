@@ -21,6 +21,7 @@ import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.xml.OdfXmlDocument;
+import org.openpreservation.odf.xml.Version;
 
 final class OdfPackageImpl implements OdfPackage {
 
@@ -39,6 +40,7 @@ final class OdfPackageImpl implements OdfPackage {
         private String mimetype = OdfFormats.MIME_UKNOWN;
         private Formats format = Formats.UNKNOWN;
         private Manifest manifest;
+        private Version version = Version.UNKNOWN;
 
         private Map<String, OdfPackageDocument> documentMap = new HashMap<>();
         private Map<String, ParseResult> metaInfMap = new HashMap<>();
@@ -73,6 +75,11 @@ final class OdfPackageImpl implements OdfPackage {
             return this;
         }
 
+        public Builder version(final Version version) {
+            this.version = version;
+            return this;
+        }
+
         public Builder document(final String path, final OdfPackageDocument document) {
             Objects.requireNonNull(path, "path cannot be null");
             Objects.requireNonNull(document, "document cannot be null");
@@ -88,7 +95,7 @@ final class OdfPackageImpl implements OdfPackage {
         }
 
         public OdfPackage build() {
-            return new OdfPackageImpl(this.name, this.archive, this.format, this.mimetype, this.manifest,
+            return new OdfPackageImpl(this.name, this.archive, this.format, this.version, this.mimetype, this.manifest,
                     this.documentMap, this.metaInfMap);
         }
     }
@@ -98,12 +105,15 @@ final class OdfPackageImpl implements OdfPackage {
     private final String mimetype;
     private final Manifest manifest;
     private final String name;
+    private final Version version;
 
     private final Map<String, OdfPackageDocument> documentMap;
     private final Map<String, ParseResult> metaInfMap;
 
     private OdfPackageImpl(final String name, final ZipArchiveCache archive, final Formats format,
-            final String mimetype, final Manifest manifest, final Map<String, OdfPackageDocument> documentMap, final Map<String, ParseResult> metaInfMap) {
+            final Version version,
+            final String mimetype, final Manifest manifest, final Map<String, OdfPackageDocument> documentMap,
+            final Map<String, ParseResult> metaInfMap) {
         super();
         this.archive = archive;
         this.format = format;
@@ -112,6 +122,7 @@ final class OdfPackageImpl implements OdfPackage {
         this.documentMap = Collections.unmodifiableMap(documentMap);
         this.metaInfMap = Collections.unmodifiableMap(metaInfMap);
         this.name = name;
+        this.version = version;
     }
 
     @Override
@@ -136,7 +147,8 @@ final class OdfPackageImpl implements OdfPackage {
 
     @Override
     public boolean hasManifest() {
-        return (this.archive != null) && this.archive.getZipEntry(Constants.PATH_MANIFEST) != null && this.manifest != null;
+        return (this.archive != null) && this.archive.getZipEntry(Constants.PATH_MANIFEST) != null
+                && this.manifest != null;
     }
 
     @Override
@@ -165,6 +177,11 @@ final class OdfPackageImpl implements OdfPackage {
     }
 
     @Override
+    public Version getDetectedVersion() {
+        return this.version;
+    }
+
+    @Override
     public InputStream getEntryXmlStream(final String path) throws IOException {
         return (this.archive != null) ? this.archive.getEntryInputStream(path) : null;
     }
@@ -177,8 +194,9 @@ final class OdfPackageImpl implements OdfPackage {
         }
         Path parent = filePath.getParent();
         OdfPackageDocument doc = this.documentMap.get((parent == null) ? "/" : parent.toString());
-        return (doc == null) ? null : doc.getXmlDocument(filePath.getFileName().toString())
-                .getParseResult();
+        return (doc == null) ? null
+                : doc.getXmlDocument(filePath.getFileName().toString())
+                        .getParseResult();
     }
 
     @Override
@@ -216,6 +234,7 @@ final class OdfPackageImpl implements OdfPackage {
         int result = 1;
         result = prime * result + ((archive == null) ? 0 : archive.hashCode());
         result = prime * result + ((format == null) ? 0 : format.hashCode());
+        result = prime * result + ((version == null) ? 0 : version.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((mimetype == null) ? 0 : mimetype.hashCode());
         result = prime * result + ((manifest == null) ? 0 : manifest.hashCode());
@@ -239,6 +258,8 @@ final class OdfPackageImpl implements OdfPackage {
         } else if (!archive.equals(other.archive))
             return false;
         if (format != other.format)
+            return false;
+        if (version != other.version)
             return false;
         if (name == null) {
             if (other.name != null)
