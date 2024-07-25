@@ -233,6 +233,7 @@ final class ValidatingParserImpl implements ValidatingParser {
             if (!isCompressionValid(zipEntry)) {
                 // Entries SHALL be uncompressesed (Stored) or use deflate compression
                 messages.add(FACTORY.getError("PKG-2", zipEntry.getName()));
+                messageMap.put(zipEntry.getName(), messages);
             }
             if (zipEntry.getName().startsWith(OdfPackages.NAME_META_INF)
                     && (!zipEntry.isDirectory() && !OdfPackages.PATH_MANIFEST.equals(zipEntry.getName())
