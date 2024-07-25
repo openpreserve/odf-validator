@@ -8,6 +8,7 @@ import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class SubDocumentRule extends AbstractRule {
@@ -28,7 +29,7 @@ final class SubDocumentRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfPackage odfPackage) throws IOException {
+    public MessageLog check(final OdfPackage odfPackage) throws ParseException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
         if (odfPackage.hasManifest() && odfPackage.getManifest().getDocumentEntries().size() > 1) {

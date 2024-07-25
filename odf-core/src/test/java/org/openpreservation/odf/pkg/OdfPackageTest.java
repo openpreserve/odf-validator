@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.TestFiles;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.Metadata;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.xml.sax.SAXException;
@@ -42,21 +43,21 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testWellFormedZip() throws IOException, URISyntaxException {
+    public void testWellFormedZip() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertTrue("Package should be a well formed zip", pkg.isWellFormedZip());
     }
 
     @Test
-    public void testGetName() throws IOException, URISyntaxException {
+    public void testGetName() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertEquals("Package name should be passed String", new File(TestFiles.EMPTY_ODS.toURI()).getName(), pkg.getName());
     }
 
     @Test
-    public void testHasMimeEntry() throws IOException, URISyntaxException {
+    public void testHasMimeEntry() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
@@ -65,7 +66,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testGetFormat() throws IOException, URISyntaxException {
+    public void testGetFormat() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertEquals(Formats.ODS, pkg.getDetectedFormat());
@@ -74,7 +75,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testHasManifest() throws IOException, URISyntaxException {
+    public void testHasManifest() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertTrue(pkg.hasManifest());
@@ -83,7 +84,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testGetManifest() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
+    public void testGetManifest() throws ParserConfigurationException, SAXException, IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         Manifest manifest = pkg.getManifest();
@@ -94,7 +95,7 @@ public class OdfPackageTest {
 
     @Test
     public void testGetManifestNoMime()
-            throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
+            throws ParserConfigurationException, SAXException, IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser
                 .parsePackage(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()));
@@ -105,7 +106,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testGetMetadata() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
+    public void testGetMetadata() throws ParserConfigurationException, SAXException, IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         Metadata metadata = pkg.getDocument().getMetadata();
@@ -115,7 +116,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testIsMimeFirst() throws IOException, URISyntaxException {
+    public void testIsMimeFirst() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertTrue("MIME entry should be first", pkg.isMimeFirst());
@@ -126,7 +127,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testIsMimeCompressed() throws IOException, URISyntaxException {
+    public void testIsMimeCompressed() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         ZipEntry entry = pkg.getZipArchive().getZipEntry(OdfPackages.MIMETYPE);
@@ -143,7 +144,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testHasThumbnail() throws IOException, URISyntaxException {
+    public void testHasThumbnail() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertTrue("Package should have a thumbnail", pkg.hasThumbnail());
@@ -152,7 +153,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testXmlEntryPaths() throws IOException, URISyntaxException {
+    public void testXmlEntryPaths() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.DSIG_INVALID.toURI()));
         final List<String> entryPaths = Collections.unmodifiableList(pkg.getXmlEntryPaths());
@@ -167,7 +168,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testXmlParseResults() throws IOException, URISyntaxException {
+    public void testXmlParseResults() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         for (String entryPath: pkg.getXmlEntryPaths()) {
@@ -177,7 +178,7 @@ public class OdfPackageTest {
     }
 
     @Test
-    public void testgetEntryStream() throws IOException, URISyntaxException {
+    public void testgetEntryStream() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         for (FileEntry manifestEntry: pkg.getManifest().getEntries()) {

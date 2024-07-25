@@ -1,11 +1,11 @@
 package org.openpreservation.odf.validation.rules;
 
-import java.io.IOException;
 import java.util.Set;
 
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.ProfileResult;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.ValidationReport;
@@ -20,7 +20,7 @@ final class ProfileImpl extends AbstractProfile {
     }
  
     @Override
-    public ProfileResult check(final OdfPackage odfPackage) throws IOException {
+    public ProfileResult check(final OdfPackage odfPackage) throws ParseException {
         ValidationReport report = null;
         final MessageLog messages = Messages.messageLogInstance();
         for (final Rule rule : this.rules) {

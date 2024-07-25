@@ -112,7 +112,8 @@ final class OdfPackageImpl implements OdfPackage {
 
     private OdfPackageImpl(final String name, final ZipArchiveCache archive, final Formats format,
             final Version version,
-            final String mimetype, final Manifest manifest, final Map<String, OdfPackageDocument> documentMap,
+            final String mimetype, final Manifest manifest,
+            final Map<String, OdfPackageDocument> documentMap,
             final Map<String, ParseResult> metaInfMap) {
         super();
         this.archive = archive;

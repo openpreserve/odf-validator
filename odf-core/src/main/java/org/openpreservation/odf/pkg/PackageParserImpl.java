@@ -2,6 +2,7 @@ package org.openpreservation.odf.pkg;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +16,9 @@ import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.compress.archivers.zip.UnsupportedZipFeatureException;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.zip.ZipArchiveCache;
@@ -31,6 +35,8 @@ import org.xml.sax.SAXException;
 
 final class PackageParserImpl implements PackageParser {
     private static String toParseConst = "toParse";
+    private static String badFeature = "Unsupported Zip feature: %s";
+    private static String ioException = "IO Exception reading stream: %s";
 
     static final PackageParser getInstance() {
         return new PackageParserImpl();
@@ -56,6 +62,7 @@ final class PackageParserImpl implements PackageParser {
             return FormatSniffer.sniff(bis);
         }
     }
+
     private ZipArchiveCache cache;
     private Formats format = Formats.UNKNOWN;
     private String mimetype = "";
@@ -69,34 +76,40 @@ final class PackageParserImpl implements PackageParser {
     }
 
     @Override
-    public OdfPackage parsePackage(final Path toParse) throws IOException {
+    public OdfPackage parsePackage(final Path toParse) throws ParseException, FileNotFoundException {
         Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, toParseConst, "Path"));
         return this.parsePackage(toParse, toParse.getFileName().toString());
     }
 
     @Override
-    public OdfPackage parsePackage(final File toParse) throws IOException {
+    public OdfPackage parsePackage(final File toParse) throws ParseException, FileNotFoundException {
         Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, toParseConst, "File"));
         return this.parsePackage(toParse.toPath(), toParse.getName());
     }
 
     @Override
-    public OdfPackage parsePackage(final InputStream toParse, final String name) throws IOException {
+    public OdfPackage parsePackage(final InputStream toParse, final String name) throws ParseException {
         Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, toParseConst, "InputStream"));
         Objects.requireNonNull(name, String.format(Checks.NOT_NULL, name, "String"));
         try (BufferedInputStream bis = new BufferedInputStream(toParse)) {
             final Path temp = Files.createTempFile("odf", ".pkg");
             Files.copy(bis, temp, StandardCopyOption.REPLACE_EXISTING);
             return this.parsePackage(temp, name);
+        } catch (IOException e) {
+            throw new ParseException("IOException occured when reading package.", e);
         }
     }
 
-    private final OdfPackage parsePackage(final Path toParse, final String name) throws IOException {
+    private final OdfPackage parsePackage(final Path toParse, final String name) throws ParseException, FileNotFoundException {
         Checks.existingFileCheck(toParse);
         this.initialise();
         try {
             this.format = sniff(toParse);
             this.cache = Zips.zipArchiveCacheInstance(toParse);
+            Map<String, String> badEntries = checkZipEntries();
+            if (!badEntries.isEmpty()) {
+                throw new ParseException(badEntries);
+            }
             this.version = detectVersion();
         } catch (final IOException e) {
             // Simply catch the exception and return a sparsely populated OdfPackage
@@ -106,13 +119,28 @@ final class PackageParserImpl implements PackageParser {
             this.processZipEntries();
             return this.makePackage(name);
         } catch (ParserConfigurationException | SAXException e) {
-            throw new IOException(e);
+            throw new ParseException("SAX Exception while parsing package.", e);
+        } catch (IOException e) {
+            throw new ParseException("IOException while parsing package.", e);
         }
     }
 
+    private final Map<String, String> checkZipEntries() {
+        final Map<String, String> badEntries = new HashMap<>();
+        for (ZipEntry entry : this.cache.getZipEntries()) {
+            try {
+                this.cache.getEntryInputStream(entry.getName()).close();
+            } catch (UnsupportedZipFeatureException e) {
+                badEntries.put(entry.getName(), String.format(badFeature, e.getFeature().toString()));
+            } catch (IOException e) {
+                badEntries.put(entry.getName(), String.format(ioException, e.getMessage()));
+            }
+        }
+        return badEntries;
+    }
 
     final Version detectVersion() throws IOException {
-        Version version = Version.UNKNOWN;
+        Version detectedVersion = Version.UNKNOWN;
         try (InputStream is = getVersionStreamName()) {
             if (is != null) {
                 ParseResult result = new XmlParser().parse(is);
@@ -121,7 +149,7 @@ final class PackageParserImpl implements PackageParser {
         } catch (ParserConfigurationException | SAXException e) {
             throw new IOException(e);
         }
-        return version;
+        return detectedVersion;
     }
 
     private final InputStream getVersionStreamName() throws IOException {
@@ -189,6 +217,7 @@ final class PackageParserImpl implements PackageParser {
                 builder.document(docEntry.getFullPath(), makeDocument(docEntry));
             }
         }
+
         for (final Entry<String, OdfXmlDocument> docEntry : this.xmlDocumentMap.entrySet()) {
             if (isMetaInf(docEntry.getKey())) {
                 builder.metaInf(docEntry.getKey(), docEntry.getValue().getParseResult());

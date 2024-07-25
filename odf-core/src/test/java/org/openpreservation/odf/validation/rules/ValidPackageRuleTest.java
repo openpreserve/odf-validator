@@ -19,6 +19,7 @@ import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.xml.sax.SAXException;
@@ -60,7 +61,7 @@ public class ValidPackageRuleTest {
 
     @Test
     public void testCheckValidPackage()
-            throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+            throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
@@ -69,7 +70,7 @@ public class ValidPackageRuleTest {
 
     @Test
     public void testCheckNotZipPackage()
-            throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+            throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_FODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
@@ -79,7 +80,7 @@ public class ValidPackageRuleTest {
 
     @Test
     public void testCheckNotWellFormedPackage()
-            throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+            throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.BADLY_FORMED_PKG.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
@@ -89,7 +90,7 @@ public class ValidPackageRuleTest {
 
     @Test
     public void testCheckInvalidPackage()
-            throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+            throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.MIME_EXTRA_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);

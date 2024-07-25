@@ -17,6 +17,7 @@ import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 
@@ -55,7 +56,7 @@ public class PackageMimeTypeRuleTest {
     }
 
     @Test
-    public void testCheckValidPackage() throws IOException, URISyntaxException {
+    public void testCheckValidPackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
@@ -63,7 +64,7 @@ public class PackageMimeTypeRuleTest {
     }
 
     @Test
-    public void testCheckNotZipPackage() throws IOException, URISyntaxException {
+    public void testCheckNotZipPackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_FODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
@@ -72,7 +73,7 @@ public class PackageMimeTypeRuleTest {
     }
 
     @Test
-    public void testCheckNotWellFormedPackage() throws IOException, URISyntaxException {
+    public void testCheckNotWellFormedPackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.BADLY_FORMED_PKG.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
@@ -81,7 +82,7 @@ public class PackageMimeTypeRuleTest {
     }
 
     @Test
-    public void testCheckInvalidPackage() throws IOException, URISyntaxException {
+    public void testCheckInvalidPackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.MIME_EXTRA_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
@@ -89,7 +90,7 @@ public class PackageMimeTypeRuleTest {
     }
 
     @Test
-    public void testCheckNoMimePackage() throws IOException, URISyntaxException {
+    public void testCheckNoMimePackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
@@ -98,7 +99,7 @@ public class PackageMimeTypeRuleTest {
     }
 
     @Test
-    public void testCheckNoMimeNoRootPackage() throws IOException, URISyntaxException {
+    public void testCheckNoMimeNoRootPackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);

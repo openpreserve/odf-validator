@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.xml.sax.SAXException;
 
 public class ValidatingParserTest {
@@ -34,7 +35,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testParsePath() throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
+    public void testParsePath() throws ParseException, URISyntaxException, IOException, ParserConfigurationException, SAXException {
         ValidatingParser parser = Validators.getValidatingParser();
         URL resourceUrl = TestFiles.EMPTY_ODS;
         Path path = Paths.get(resourceUrl.toURI());
@@ -56,7 +57,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testParseFile() throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
+    public void testParseFile() throws ParseException, IOException, URISyntaxException, ParserConfigurationException, SAXException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull("Parsed package should not be null", pkg);
@@ -87,7 +88,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testParseStream() throws ParserConfigurationException, SAXException, IOException {
+    public void testParseStream() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.EMPTY_ODS.openStream(), TestFiles.EMPTY_ODS.toString());
         assertNotNull("Parsed package should not be null", pkg);
@@ -96,7 +97,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testValidPackage() throws ParserConfigurationException, SAXException, IOException {
+    public void testValidPackage() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.EMPTY_ODS.openStream(), TestFiles.EMPTY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -104,7 +105,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testInValidZip() throws ParserConfigurationException, SAXException, IOException {
+    public void testInValidZip() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.FAKEMIME_TEXT.openStream(), TestFiles.FAKEMIME_TEXT.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -113,7 +114,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testBadlyFormedPackage() throws ParserConfigurationException, SAXException, IOException {
+    public void testBadlyFormedPackage() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.BADLY_FORMED_PKG.openStream(), TestFiles.BADLY_FORMED_PKG.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -124,7 +125,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testNoManifest() throws ParserConfigurationException, SAXException, IOException {
+    public void testNoManifest() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.NO_MANIFEST_ODS.openStream(), TestFiles.NO_MANIFEST_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -133,7 +134,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testManifestRootNoMime() throws ParserConfigurationException, SAXException, IOException {
+    public void testManifestRootNoMime() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_ROOT_NO_MIME_ODS.openStream(), TestFiles.MANIFEST_ROOT_NO_MIME_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -142,7 +143,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testManifestRootRandMimetype() throws ParserConfigurationException, SAXException, IOException {
+    public void testManifestRootRandMimetype() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_RAND_MIMETYPE_ODS.openStream(), TestFiles.MANIFEST_RAND_MIMETYPE_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -151,7 +152,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testManifestRandRootMime() throws ParserConfigurationException, SAXException, IOException {
+    public void testManifestRandRootMime() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_RAND_ROOT_MIME_ODS.openStream(), TestFiles.MANIFEST_RAND_ROOT_MIME_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -160,7 +161,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testManifestRootDiffMime() throws ParserConfigurationException, SAXException, IOException {
+    public void testManifestRootDiffMime() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_DIFF_MIME_ODS.openStream(), TestFiles.MANIFEST_DIFF_MIME_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -169,7 +170,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testManifestEmptyRootMime() throws ParserConfigurationException, SAXException, IOException {
+    public void testManifestEmptyRootMime() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_EMPTY_ROOT_MIME_ODS.openStream(), TestFiles.MANIFEST_EMPTY_ROOT_MIME_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -178,7 +179,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testManifestEntry() throws ParserConfigurationException, SAXException, IOException {
+    public void testManifestEntry() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_ENTRY_ODS.openStream(), TestFiles.MANIFEST_ENTRY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -187,7 +188,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testMimetypeEntry() throws ParserConfigurationException, SAXException, IOException {
+    public void testMimetypeEntry() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MIMETYPE_ENTRY_ODS.openStream(), TestFiles.MIMETYPE_ENTRY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -196,7 +197,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testMetainfEntry() throws ParserConfigurationException, SAXException, IOException {
+    public void testMetainfEntry() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.METAINF_ENTRY_ODT.openStream(), TestFiles.METAINF_ENTRY_ODT.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -205,7 +206,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testMissingManifestEntry() throws ParserConfigurationException, SAXException, IOException {
+    public void testMissingManifestEntry() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_MISSING_ENTRY_ODS.openStream(), TestFiles.MANIFEST_MISSING_ENTRY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -214,7 +215,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testMissingXmlEntry() throws ParserConfigurationException, SAXException, IOException {
+    public void testMissingXmlEntry() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_MISSING_XML_ENTRY_ODS.openStream(), TestFiles.MANIFEST_MISSING_XML_ENTRY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -223,7 +224,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testMissingFile() throws ParserConfigurationException, SAXException, IOException {
+    public void testMissingFile() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MISSING_FILE_ODS.openStream(), TestFiles.MISSING_FILE_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -232,7 +233,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testNoMimeWithRoot() throws ParserConfigurationException, SAXException, IOException {
+    public void testNoMimeWithRoot() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.NO_MIME_ROOT_ODS.openStream(), TestFiles.NO_MIME_ROOT_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -241,7 +242,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testNoRootMimeTyoe() throws ParserConfigurationException, SAXException, IOException {
+    public void testNoRootMimeTyoe() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MANIFEST_NO_ROOT_MIMETYPE_ODS.openStream(), TestFiles.MANIFEST_NO_ROOT_MIMETYPE_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -250,7 +251,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testNoMimeNoRoot() throws ParserConfigurationException, SAXException, IOException {
+    public void testNoMimeNoRoot() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.NO_MIME_NO_ROOT_ODS.openStream(), TestFiles.NO_MIME_NO_ROOT_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -260,7 +261,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testMimeLast() throws ParserConfigurationException, SAXException, IOException {
+    public void testMimeLast() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MIME_LAST_ODS.openStream(), TestFiles.MIME_LAST_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -269,7 +270,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testMimeCompressed() throws ParserConfigurationException, SAXException, IOException {
+    public void testMimeCompressed() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MIME_COMPRESSED_ODS.openStream(), TestFiles.MIME_COMPRESSED_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -278,7 +279,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testMimeCompressedLast() throws ParserConfigurationException, SAXException, IOException {
+    public void testMimeCompressedLast() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MIME_COMPRESSED_LAST_ODS.openStream(), TestFiles.MIME_COMPRESSED_LAST_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -288,7 +289,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testMimeExtra() throws ParserConfigurationException, SAXException, IOException {
+    public void testMimeExtra() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.MIME_EXTRA_ODS.openStream(), TestFiles.MIME_EXTRA_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -297,7 +298,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testNoThumbnail() throws ParserConfigurationException, SAXException, IOException {
+    public void testNoThumbnail() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.NO_THUMBNAIL_ODS.openStream(), TestFiles.NO_THUMBNAIL_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -306,7 +307,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testNoEmbeddedWord() throws ParserConfigurationException, SAXException, IOException {
+    public void testNoEmbeddedWord() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.EMBEDDED_WORD.openStream(), TestFiles.EMBEDDED_WORD.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -314,7 +315,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testPasswordEncrypted() throws ParserConfigurationException, SAXException, IOException {
+    public void testPasswordEncrypted() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.ENCRYPTED_PASSWORDS.openStream(), TestFiles.ENCRYPTED_PASSWORDS.toString());
         ValidationReport report = parser.validatePackage(pkg);
@@ -323,7 +324,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testDsigValid() throws ParserConfigurationException, SAXException, IOException {
+    public void testDsigValid() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         InputStream is = TestFiles.DSIG_VALID.openStream();
         OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_VALID.toString());
@@ -332,7 +333,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testDsigInvalid() throws ParserConfigurationException, SAXException, IOException {
+    public void testDsigInvalid() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         InputStream is = TestFiles.DSIG_INVALID.openStream();
         OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_INVALID.toString());
@@ -341,7 +342,7 @@ public class ValidatingParserTest {
     }
 
     @Test
-    public void testDsigInvalidBadName() throws ParserConfigurationException, SAXException, IOException {
+    public void testDsigInvalidBadName() throws ParserConfigurationException, SAXException, IOException, ParseException {
         ValidatingParser parser = Validators.getValidatingParser();
         InputStream is = TestFiles.DSIG_BADNAME.openStream();
         OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_BADNAME.toString());
