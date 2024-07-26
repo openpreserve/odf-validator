@@ -20,6 +20,7 @@ import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.DocumentType;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
@@ -62,7 +63,7 @@ public class DocumentsTest {
 
     @Test
     public void testOpenDocInstantiationOfPackage()
-            throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
+            throws IOException, ParseException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         OpenDocument openDoc = Documents.openDocumentOf(pkg);

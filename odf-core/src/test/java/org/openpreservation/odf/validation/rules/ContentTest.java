@@ -83,7 +83,7 @@ public class ContentTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
         MessageLog messages = odf7.check(pkg);
         assertNotNull(messages);
-        assertEquals(1, messages.getErrors().size());
+        assertEquals(1, messages.getWarnings().size());
         assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_7")).count() > 0).count());
     }
 

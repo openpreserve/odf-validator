@@ -10,6 +10,7 @@ import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.zip.ZipArchive;
 import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.xml.Version;
 
 /**
  * An interface defining the behaviour of ODF packages.
@@ -36,6 +37,11 @@ public interface OdfPackage {
     public Formats getDetectedFormat();
 
     /**
+     * Get the detected {@link Version} of the package.
+     */
+    public Version getDetectedVersion();
+
+    /**
      * Is the item parsed a well formed <code>ZipArchive</code>.
      *
      * @return <code>true</code> if the package is well formed, otherwise
@@ -58,12 +64,13 @@ public interface OdfPackage {
      * Does the package have a <code>mimetype</code> {@link ZipEntry}?
      *
      * @return <code>true</code> if the package has a <code>mimetype</code>
-     * <code>ZipEntry</code>, otherwise <code>false</code>
+     *         <code>ZipEntry</code>, otherwise <code>false</code>
      */
     public boolean hasMimeEntry();
 
     /**
-     * Is the <code>mimetype</code> <code>ZipEntry</code> the first <code>ZipEntry</code> in the package?
+     * Is the <code>mimetype</code> <code>ZipEntry</code> the first
+     * <code>ZipEntry</code> in the package?
      *
      * @return <code>true</code> if the <code>mimetype</code> <code>ZipEntry</code>
      *         is the first entry in the package's <code>ZipArchive</code>,

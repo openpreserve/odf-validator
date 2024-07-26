@@ -1,6 +1,5 @@
 package org.openpreservation.odf.validation.rules;
 
-import java.io.IOException;
 import java.util.Objects;
 
 import org.openpreservation.messages.Message.Severity;
@@ -8,6 +7,7 @@ import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class DigitalSignaturesRule extends AbstractRule {
@@ -28,7 +28,7 @@ final class DigitalSignaturesRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfPackage odfPackage) throws IOException {
+    public MessageLog check(final OdfPackage odfPackage) throws ParseException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
         if (odfPackage.hasDsigEntries()) {

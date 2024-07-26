@@ -16,6 +16,7 @@ import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.xml.sax.SAXException;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -55,7 +56,7 @@ public class OpenDocumentImplTest {
     }
 
     @Test
-    public void testGetDocumentPackage() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
+    public void testGetDocumentPackage() throws IOException, ParseException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         OpenDocument openDoc = OpenDocumentImpl.of(pkg);
@@ -70,7 +71,7 @@ public class OpenDocumentImplTest {
     }
 
     @Test
-    public void testGetFileTypePackage() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
+    public void testGetFileTypePackage() throws IOException, ParseException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         OpenDocument openDoc = OpenDocumentImpl.of(pkg);
@@ -78,7 +79,7 @@ public class OpenDocumentImplTest {
     }
 
     @Test
-    public void testGetPackage() throws IOException, URISyntaxException {
+    public void testGetPackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         OpenDocument openDoc = OpenDocumentImpl.of(pkg);
@@ -86,7 +87,7 @@ public class OpenDocumentImplTest {
     }
 
     @Test
-    public void testGetSubDocuments() throws IOException, URISyntaxException {
+    public void testGetSubDocuments() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         OpenDocument openDoc = OpenDocumentImpl.of(pkg);
@@ -102,7 +103,7 @@ public class OpenDocumentImplTest {
     }
 
     @Test
-    public void testIsPackagePackage() throws IOException, URISyntaxException {
+    public void testIsPackagePackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         OpenDocument openDoc = OpenDocumentImpl.of(pkg);

@@ -16,7 +16,8 @@ public interface ZipArchive {
     /**
      * Get a <code>List<ZipEntry></code> of all of the zip entries in the archive
      *
-     * @return an ordered <code>List<ZipEntry></code> of all of the zip entries in the archive
+     * @return an ordered <code>List<ZipEntry></code> of all of the zip entries in
+     *         the archive
      */
     public List<ZipEntry> getZipEntries();
 
@@ -25,7 +26,8 @@ public interface ZipArchive {
      *
      * @param entryName the name of the <code>ZipEntry</code> to retrieve
      *
-     * @return the <code>ZipEntry</code> with the given <code>entryName</code>, or <code>null</code> if no match
+     * @return the <code>ZipEntry</code> with the given <code>entryName</code>, or
+     *         <code>null</code> if no match
      */
     public ZipEntry getZipEntry(final String entryName);
 
