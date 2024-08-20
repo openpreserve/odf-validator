@@ -1,6 +1,5 @@
 package org.openpreservation.odf.xml;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Test;

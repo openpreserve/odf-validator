@@ -1,7 +1,9 @@
 package org.openpreservation.format.xml;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openpreservation.messages.Message;
 import org.xml.sax.Attributes;
@@ -9,7 +11,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ParsingHandler extends DefaultHandler {
     private Namespace rootNamespace = null;
-    private List<Namespace> namespaces = new ArrayList<>();
+    private Set<Namespace> declaredNamespaces = new HashSet<>();
+    private Set<Namespace> usedNamespaces = new HashSet<>();
     private String rootPrefix = "";
     private String rootLocalName = "";
     private List<Attribute> attributes = new ArrayList<>();
@@ -19,7 +22,7 @@ public class ParsingHandler extends DefaultHandler {
     }
 
     public ParseResult getResult(final boolean isWellFormed, final List<Message> messages) {
-        return ParseResultImpl.of(isWellFormed, this.rootNamespace, this.namespaces, this.rootPrefix,
+        return ParseResultImpl.of(isWellFormed, this.rootNamespace, this.declaredNamespaces, this.rootPrefix,
                 this.rootLocalName, this.attributes, messages);
     }
 
@@ -35,6 +38,6 @@ public class ParsingHandler extends DefaultHandler {
 
     @Override
     public void startPrefixMapping(String prefix, String uri) {
-        this.namespaces.add(NamespaceImpl.of(uri, prefix));
+        this.declaredNamespaces.add(NamespaceImpl.of(uri, prefix));
     }
 }

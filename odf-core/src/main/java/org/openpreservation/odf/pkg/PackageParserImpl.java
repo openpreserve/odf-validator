@@ -17,8 +17,6 @@ import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.compress.archivers.zip.UnsupportedZipFeatureException;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.zip.ZipArchiveCache;

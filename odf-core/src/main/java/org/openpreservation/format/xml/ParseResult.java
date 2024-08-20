@@ -1,6 +1,7 @@
 package org.openpreservation.format.xml;
 
 import java.util.List;
+import java.util.Set;
 
 import org.openpreservation.messages.Message;
 
@@ -31,7 +32,7 @@ public interface ParseResult {
      *
      * @return the <code>List<Namespace></code> of the document's namespaces
      */
-    public List<Namespace> getNamespaces();
+    public Set<Namespace> getDeclaredNamespaces();
 
     /**
      * Get the root element namespace prefix

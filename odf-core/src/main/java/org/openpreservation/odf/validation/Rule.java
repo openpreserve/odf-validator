@@ -1,9 +1,7 @@
 package org.openpreservation.odf.validation;
 
-import java.io.IOException;
-
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Message.Severity;
+import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.OdfXmlDocument;

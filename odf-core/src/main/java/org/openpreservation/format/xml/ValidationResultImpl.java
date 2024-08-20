@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.openpreservation.messages.Message;
 import org.openpreservation.utils.Checks;
@@ -58,8 +59,8 @@ final class ValidationResultImpl implements ValidationResult {
     }
 
     @Override
-    public List<Namespace> getNamespaces() {
-        return this.parseResult.getNamespaces();
+    public Set<Namespace> getDeclaredNamespaces() {
+        return this.parseResult.getDeclaredNamespaces();
     }
 
     @Override

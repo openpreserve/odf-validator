@@ -47,7 +47,7 @@ public class XmlParserTest {
         assertNotNull("Parse result should have root prefix", result.getRootPrefix());
         assertTrue("Parse result should have multiple root attributes", result.getRootAttributes().size() > 1);
         assertFalse("Parse result should have version attribute", result.getRootAttributeValue("office:version").isBlank());
-        assertTrue("Parse result should have multiple namespace declarations", result.getNamespaces().size() > 1);
+        assertTrue("Parse result should have multiple namespace declarations", result.getDeclaredNamespaces().size() > 1);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class XmlParserTest {
         assertNotNull("Parse result should have root prefix", result.getRootPrefix());
         assertTrue("Parse result should have multiple root attributes", result.getRootAttributes().size() > 1);
         assertFalse("Parse result should have version attribute", result.getRootAttributeValue("office:version").isBlank());
-        assertTrue("Parse result should have multiple namespace declarations", result.getNamespaces().size() > 1);
+        assertTrue("Parse result should have multiple namespace declarations", result.getDeclaredNamespaces().size() > 1);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class XmlParserTest {
         assertNotNull("Parse result should have root prefix", result.getRootPrefix());
         assertTrue("Parse result should have multiple root attributes", result.getRootAttributes().size() > 1);
         assertFalse("Parse result should have version attribute", result.getRootAttributeValue("office:version").isBlank());
-        assertTrue("Parse result should have multiple namespace declarations", result.getNamespaces().size() > 1);
+        assertTrue("Parse result should have multiple namespace declarations", result.getDeclaredNamespaces().size() > 1);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class XmlParserTest {
         assertTrue("Parse result should NOT have root prefix", result.getRootPrefix().isBlank());
         assertEquals("Parse result should have no root attributes", 0, result.getRootAttributes().size());
         assertNull("Parse result should have no version attribute", result.getRootAttributeValue("office:version"));
-        assertTrue("Parse result should have NO namespace declarations", result.getNamespaces().size() < 1);
+        assertTrue("Parse result should have NO namespace declarations", result.getDeclaredNamespaces().size() < 1);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class XmlParserTest {
         assertTrue("Parse result should have a root attribute", result.getRootAttributes().size() > 0);
         assertNull("Parse result should have NO version attribute", result.getRootAttributeValue("office:version"));
         assertNotNull("Parse result should have a mimetype attribute", result.getRootAttributeValue("office:mimetype"));
-        assertTrue("Parse result should have multiple namespace declarations", result.getNamespaces().size() > 1);
+        assertTrue("Parse result should have multiple namespace declarations", result.getDeclaredNamespaces().size() > 1);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class XmlParserTest {
         assertNotNull("Parse result should have a version attribute", result.getRootAttributeValue("office:version"));
         assertTrue("Parse result should have a root attribute", result.getRootAttributes().size() > 0);
         assertNull("Parse result should NOT have a mimetype attribute", result.getRootAttributeValue("office:mimetype"));
-        assertTrue("Parse result should have multiple namespace declarations", result.getNamespaces().size() > 1);
+        assertTrue("Parse result should have multiple namespace declarations", result.getDeclaredNamespaces().size() > 1);
     }
 
     @Test
@@ -133,6 +133,6 @@ public class XmlParserTest {
         assertTrue("Parse result should NOT have root prefix", result.getRootPrefix().isBlank());
         assertEquals("Parse result should have no root attributes", 0, result.getRootAttributes().size());
         assertNull("Parse result should have no version attribute", result.getRootAttributeValue("office:version"));
-        assertTrue("Parse result should have NO namespace declarations", result.getNamespaces().size() < 1);
+        assertTrue("Parse result should have NO namespace declarations", result.getDeclaredNamespaces().size() < 1);
     }
 }
