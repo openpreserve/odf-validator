@@ -22,7 +22,7 @@ public class ParsingHandler extends DefaultHandler {
     }
 
     public ParseResult getResult(final boolean isWellFormed, final List<Message> messages) {
-        return ParseResultImpl.of(isWellFormed, this.rootNamespace, this.declaredNamespaces, this.rootPrefix,
+        return ParseResultImpl.of(isWellFormed, this.rootNamespace, this.declaredNamespaces, this.usedNamespaces, this.rootPrefix,
                 this.rootLocalName, this.attributes, messages);
     }
 
@@ -30,10 +30,17 @@ public class ParsingHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if (this.rootLocalName.isEmpty()) {
             this.rootLocalName = localName;
-            this.rootPrefix = qName.contains(":") ? qName.split(":")[0] : "";
+            this.rootPrefix = splitNamespace(qName);
             this.attributes = AttributeImpl.of(attributes);
             this.rootNamespace = NamespaceImpl.of(uri, this.rootPrefix);
+            this.usedNamespaces.add(NamespaceImpl.of(uri, this.rootPrefix));
+        } else {
+            this.usedNamespaces.add(NamespaceImpl.of(uri, splitNamespace(qName)));
         }
+    }
+
+    private static final String splitNamespace(final String qName) {
+        return qName.contains(":") ? qName.split(":")[0] : "";
     }
 
     @Override

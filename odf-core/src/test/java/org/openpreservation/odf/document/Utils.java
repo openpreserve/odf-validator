@@ -20,7 +20,7 @@ import org.xml.sax.SAXException;
 
 final class Utils {
     ParseResult parseResult = ValidationResults.parseResultOf(true, XmlTestUtils.exampleNamespace,
-            new ArrayList<>(),
+            new ArrayList<>(), new ArrayList<>(),
             "prefix", "name", new ArrayList<>(), new ArrayList<>());
     Map<String, String> stringValues = new HashMap<>();
     List<UserDefinedField> userDefinedFields = new ArrayList<>();

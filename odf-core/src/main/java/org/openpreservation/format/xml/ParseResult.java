@@ -30,9 +30,16 @@ public interface ParseResult {
     /**
      * Get all of the declared <code>Namespace</code>s in the document
      *
-     * @return the <code>List<Namespace></code> of the document's namespaces
+     * @return the <code>Set<Namespace></code> of the document's namespaces
      */
     public Set<Namespace> getDeclaredNamespaces();
+
+    /**
+     * Get all of the declared <code>Namespace</code>s in the document
+     *
+     * @return the <code>Set<Namespace></code> of the document's namespaces
+     */
+    public Set<Namespace> getUsedNamespaces();
 
     /**
      * Get the root element namespace prefix

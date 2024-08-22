@@ -64,6 +64,11 @@ final class ValidationResultImpl implements ValidationResult {
     }
 
     @Override
+    public Set<Namespace> getUsedNamespaces() {
+        return this.parseResult.getUsedNamespaces();
+    }
+
+    @Override
     public String getRootPrefix() {
         return this.parseResult.getRootPrefix();
     }

@@ -14,6 +14,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class ValidationResultTest {
     private static ParseResult parseResult = ParseResultImpl.of(true, XmlTestUtils.exampleNamespace, new ArrayList<>(),
+            new ArrayList<>(),
             "prefix", "name", new ArrayList<>(), new ArrayList<>());
 
     @Test
