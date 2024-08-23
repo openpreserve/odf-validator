@@ -159,6 +159,6 @@ public class XmlParserTest {
         assertEquals("Parse result should have a root attributes", 1, result.getRootAttributes().size());
         assertEquals("Parse result should have multiple namespace declarations", 35,
                 result.getDeclaredNamespaces().size());
-        assertEquals("Parse result should have multiple used namespaces", 6, result.getUsedNamespaces().size());
+        assertEquals("Parse result should have multiple used namespaces", 10, result.getUsedNamespaces().size());
     }
 }

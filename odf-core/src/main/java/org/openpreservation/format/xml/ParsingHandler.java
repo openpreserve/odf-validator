@@ -22,7 +22,8 @@ public class ParsingHandler extends DefaultHandler {
     }
 
     public ParseResult getResult(final boolean isWellFormed, final List<Message> messages) {
-        return ParseResultImpl.of(isWellFormed, this.rootNamespace, this.declaredNamespaces, this.usedNamespaces, this.rootPrefix,
+        return ParseResultImpl.of(isWellFormed, this.rootNamespace, this.declaredNamespaces, this.usedNamespaces,
+                this.rootPrefix,
                 this.rootLocalName, this.attributes, messages);
     }
 
@@ -36,6 +37,10 @@ public class ParsingHandler extends DefaultHandler {
             this.usedNamespaces.add(NamespaceImpl.of(uri, this.rootPrefix));
         } else {
             this.usedNamespaces.add(NamespaceImpl.of(uri, splitNamespace(qName)));
+        }
+        for (int index = 0; index < attributes.getLength(); index++) {
+            this.usedNamespaces
+                    .add(NamespaceImpl.of(attributes.getURI(index), splitNamespace(attributes.getQName(index))));
         }
     }
 

@@ -2,6 +2,7 @@ package org.openpreservation.odf.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -13,6 +14,8 @@ import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
 final class OdfXmlDocumentImpl implements OdfXmlDocument {
+    static final String[] extendedDocTypes = { "office:document-content", "office:document-styles", "office:styles" };
+
     static final OdfXmlDocumentImpl of(final ParseResult parseResult) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
         final String version = parseResult.getRootAttributeValue("office:version") != null
@@ -77,7 +80,12 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
 
     @Override
     public String getRootName() {
-        return String.format("%s:%s", this.getRootNamespace().getPrefix(), this.getLocalRootName());
+        return getQualifedName(this.getRootNamespace().getPrefix(), this.getLocalRootName());
+    }
+
+    @Override
+    public boolean isExtended() {
+        return usesExtendedNamespace(this.parseResult);
     }
 
     @Override
@@ -127,5 +135,25 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
         return "OdfDocumentImpl [parseResult=" + this.parseResult + ", rootName=" + this.getRootName() + ", mimeType="
                 + mimeType
                 + ", version=" + version + "]";
+    }
+
+    static boolean usesExtendedNamespace(final ParseResult parseResult) {
+        if (!isExtendedRoot(getQualifedName(parseResult.getRootPrefix(), parseResult.getRootName()))) {
+            return false;
+        }
+        for (final Namespace usedNamespace : parseResult.getUsedNamespaces()) {
+            if (Namespaces.fromId(usedNamespace.getId()) == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean isExtendedRoot(final String rootName) {
+        return Arrays.stream(extendedDocTypes).anyMatch(rootName::equals);
+    }
+
+    private static final String getQualifedName(final String prefix, final String name) {
+        return String.format("%s:%s", prefix, name);
     }
 }

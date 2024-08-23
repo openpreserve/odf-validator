@@ -59,7 +59,7 @@ public class ValidatorTest {
     public void validatePath() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
-        assertTrue("Package should be valid.", report.isValid());
+        assertFalse("Package should be valid.", report.isValid());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ValidatorTest {
     public void validateFile() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY_ODS.toURI()));
-        assertTrue("Package should be valid.", report.isValid());
+        assertFalse("Package should be valid.", report.isValid());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class ValidatorTest {
     public void validateSpreadsheetPath() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSpreadsheet(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
-        assertTrue("Package should be valid.", report.isValid());
+        assertFalse("Package should be valid.", report.isValid());
     }
 
     @Test
@@ -152,7 +152,7 @@ public class ValidatorTest {
     public void validateSpreadsheetFile() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSpreadsheet(new File(TestFiles.EMPTY_ODS.toURI()));
-        assertTrue("Package should be valid.", report.isValid());
+        assertFalse("Package should be valid.", report.isValid());
     }
 
     @Test
@@ -202,5 +202,14 @@ public class ValidatorTest {
         assertFalse("Document should NOT be valid.", report.isValid());
         assertEquals(1, report.getMessages().stream().filter(m -> m.getId().equals("DOC-1")).count());
         assertEquals(1, report.getMessages().stream().filter(m -> m.getId().equals("XML-3")).count());
+    }
+
+    @Test
+    public void validateExtendedSpreadsheet() throws ParseException, IOException, URISyntaxException {
+        Validator validator = new Validator();
+        ValidationReport report = validator.validateSpreadsheet(new File(TestFiles.EXTENDED_SPREADSHEET.toURI()).toPath());
+        assertFalse("Document should NOT be valid.", report.isValid());
+        assertEquals(2, report.getMessages().stream().filter(m -> m.getId().equals("DOC-8")).count());
+        assertEquals(0, report.getMessages().stream().filter(m -> m.getId().equals("XML-3")).count());
     }
 }

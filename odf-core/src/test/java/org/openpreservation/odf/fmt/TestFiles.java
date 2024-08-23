@@ -13,6 +13,7 @@ public class TestFiles {
     final static String VERSION_TEST_ROOT = PKG_TEST_ROOT + "version/";
     final static String EMBEDDED_TEST_ROOT = PKG_TEST_ROOT + "embedded/";
     final static String ENCRYPTED_TEST_ROOT = PKG_TEST_ROOT + "encrypted/";
+    final static String EXTENDED_TEST_ROOT = PKG_TEST_ROOT + "extended/";
     final static String DSIG_TEST_ROOT = PKG_TEST_ROOT + "dsigs/";
     final static String INVALID_PKG_ROOT = PKG_TEST_ROOT + "invalid/";
     final static String RULES_ROOT = PKG_TEST_ROOT + "rules/";
@@ -60,6 +61,8 @@ public class TestFiles {
             .getSystemResource(EMBEDDED_TEST_ROOT + "WithEmbeddedwordDoc.ods");
     public final static URL ENCRYPTED_PASSWORDS = ClassLoader
             .getSystemResource(ENCRYPTED_TEST_ROOT + "WithPassword.ods");
+    public final static URL EXTENDED_SPREADSHEET = ClassLoader
+            .getSystemResource(EXTENDED_TEST_ROOT + "lo_ext.ods");
 
     /**
      * OpenDocument XML test files
@@ -69,7 +72,8 @@ public class TestFiles {
     public final static URL FLAT_NOT_VALID = ClassLoader.getSystemResource(XML_TEST_ROOT + "flat_not_valid.fods");
     public final static URL FLAT_NO_VERSION = ClassLoader.getSystemResource(XML_TEST_ROOT + "no_version.fods");
     public final static URL FLAT_NO_MIME = ClassLoader.getSystemResource(XML_TEST_ROOT + "no_mimetype.fods");
-    public final static URL LOEXT_EXTENDED_CONFORMANCE = ClassLoader.getSystemResource(XML_TEST_ROOT + "loext_ext_cnfrm.xml");
+    public final static URL LOEXT_EXTENDED_CONFORMANCE = ClassLoader
+            .getSystemResource(XML_TEST_ROOT + "loext_ext_cnfrm.xml");
 
     public final static URL EMPTY = ClassLoader.getSystemResource(FILE_TEST_ROOT + "empty.file");
     public final static URL STYLES_ONLY_DOC = ClassLoader.getSystemResource(DOCUMENT_TEST_ROOT + "styles_only_doc.ods");

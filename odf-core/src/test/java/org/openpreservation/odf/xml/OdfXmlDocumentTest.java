@@ -97,4 +97,14 @@ public class OdfXmlDocumentTest {
         assertEquals("office", odfDocument.getRootNamespace().getPrefix());
         assertEquals("document", odfDocument.getLocalRootName());
     }
+
+    @Test
+    public void testParseIsExtended() throws IOException {
+        ParseResult parseResult = xmlParser.parse(TestFiles.LOEXT_EXTENDED_CONFORMANCE.openStream());
+        OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
+        assertNotNull(odfDocument);
+        assertEquals("office", odfDocument.getRootNamespace().getPrefix());
+        assertEquals("document-content", odfDocument.getLocalRootName());
+        assertTrue(odfDocument.isExtended());
+    }
 }
