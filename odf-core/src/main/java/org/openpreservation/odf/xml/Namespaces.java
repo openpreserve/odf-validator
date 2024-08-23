@@ -57,7 +57,9 @@ public enum Namespaces {
     XLINK("http://www.w3.org/1999/xlink",
             "The XLink namespace (see https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part3-schema/OpenDocument-v1.3-os-part3-schema.html#nref-xlink)."),
     ODF("http://docs.oasis-open.org/ns/office/1.2/meta/odf#",
-            "RDF node property and node elements for OpenDocument package entities.");
+            "RDF node property and node elements for OpenDocument package entities."),
+    OOO("http://openoffice.org/2004/office",
+            "OpenOffice.org namespace.");
 
     public static final Namespaces fromPrefix(final String prefix) {
         Objects.requireNonNull(prefix, String.format(Checks.NOT_NULL, "String", "prefix"));

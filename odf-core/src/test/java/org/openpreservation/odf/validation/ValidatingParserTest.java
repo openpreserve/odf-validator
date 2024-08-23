@@ -101,7 +101,7 @@ public class ValidatingParserTest {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.EMPTY_ODS.openStream(), TestFiles.EMPTY_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
-        assertTrue("Empty ODS should be valid", report.isValid());
+        assertFalse("Empty ODS IS invalid", report.isValid());
     }
 
     @Test
@@ -302,7 +302,6 @@ public class ValidatingParserTest {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.NO_THUMBNAIL_ODS.openStream(), TestFiles.NO_THUMBNAIL_ODS.toString());
         ValidationReport report = parser.validatePackage(pkg);
-        assertTrue("NO_THUMBNAIL_ODS should be valid", report.isValid());
         assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-7")).count() > 0);
     }
 
@@ -311,7 +310,7 @@ public class ValidatingParserTest {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.EMBEDDED_WORD.openStream(), TestFiles.EMBEDDED_WORD.toString());
         ValidationReport report = parser.validatePackage(pkg);
-        assertTrue("EMBEDDED_WORD should be valid", report.isValid());
+        assertFalse("EMBEDDED_WORD isn't valid", report.isValid());
     }
 
     @Test
@@ -329,7 +328,7 @@ public class ValidatingParserTest {
         InputStream is = TestFiles.DSIG_VALID.openStream();
         OdfPackage pkg = parser.parsePackage(is, TestFiles.DSIG_VALID.toString());
         ValidationReport report = parser.validatePackage(pkg);
-        assertTrue("Package should be be valid" , report.isValid());
+        assertFalse("Package is not valid" , report.isValid());
     }
 
     @Test

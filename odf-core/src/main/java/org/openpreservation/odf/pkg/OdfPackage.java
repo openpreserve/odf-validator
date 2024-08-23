@@ -223,4 +223,11 @@ public interface OdfPackage {
      *         otherwise <code>false</code>.
      */
     public boolean hasDsigEntries();
+
+    /**
+     * Discover if the file uses any namespaces outside of the ODF specification.
+     *
+     * @return true if the file uses any namespaces outside of the ODF
+     */
+    public boolean isExtended();
 }

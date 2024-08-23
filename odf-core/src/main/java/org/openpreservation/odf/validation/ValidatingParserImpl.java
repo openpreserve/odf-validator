@@ -23,6 +23,7 @@ import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.Documents;
+import org.openpreservation.odf.document.OdfDocument;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.Manifest;
@@ -31,6 +32,7 @@ import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.xml.Namespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
+import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.openpreservation.odf.xml.Version;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
@@ -120,6 +122,10 @@ final class ValidatingParserImpl implements ValidatingParser {
             final ParseResult parseResult) {
         List<Message> messageList = new ArrayList<>();
         Namespaces ns = Namespaces.fromId(parseResult.getRootNamespace().getId());
+        if (OdfXmlDocuments.odfXmlDocumentOf(parseResult).isExtended()) {
+            messageList.add(FACTORY.getError("DOC-8", xmlPath));
+            return messageList;
+        }
         Schema schema = (ns == null) ? null
                 : SCHEMA_FACTORY.getSchema(ns,
                         getVersionFromPath(odfPackage, xmlPath));

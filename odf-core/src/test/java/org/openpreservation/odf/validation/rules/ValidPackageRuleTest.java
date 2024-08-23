@@ -65,7 +65,7 @@ public class ValidPackageRuleTest {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
-        assertFalse("Valid Package should not return errors", results.hasErrors());
+        assertTrue("Package should return errors", results.hasErrors());
     }
 
     @Test
