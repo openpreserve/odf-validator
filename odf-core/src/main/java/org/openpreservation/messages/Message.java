@@ -2,8 +2,6 @@ package org.openpreservation.messages;
 
 import java.util.Date;
 
-import org.openpreservation.messages.Message.Severity;
-
 /**
  * Defines behaviour of validation messages.
  *

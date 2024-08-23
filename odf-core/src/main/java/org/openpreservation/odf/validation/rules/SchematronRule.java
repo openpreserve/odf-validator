@@ -1,6 +1,5 @@
 package org.openpreservation.odf.validation.rules;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Objects;
@@ -39,7 +38,6 @@ final class SchematronRule extends AbstractRule {
 
     @Override
     public MessageLog check(final OdfXmlDocument document) throws ParseException {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'check'");
     }
 
@@ -57,7 +55,8 @@ final class SchematronRule extends AbstractRule {
                 for (final AbstractSVRLMessage result : SVRLHelper
                         .getAllFailedAssertionsAndSuccessfulReports(schResult)) {
                     messageLog.add(entry.getFullPath(),
-                            Messages.getMessageInstance(this.id, Message.Severity.valueOf(result.getRole()), this.getName(),
+                            Messages.getMessageInstance(this.id, Message.Severity.valueOf(result.getRole()),
+                                    this.getName(),
                                     result.getText()));
                 }
             } catch (final Exception e) {

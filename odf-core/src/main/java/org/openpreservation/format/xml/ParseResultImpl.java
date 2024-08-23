@@ -1,8 +1,11 @@
 package org.openpreservation.format.xml;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.openpreservation.messages.Message;
 import org.openpreservation.messages.Message.Severity;
@@ -11,20 +14,26 @@ import org.openpreservation.utils.Checks;
 final class ParseResultImpl implements ParseResult {
     private static final String MESSAGES_NAME = "messages";
     private static final String MESSAGES_TYPE = "List<Message>";
-    static ParseResult of(final boolean isWellFormed, final Namespace rootNamespace, final List<Namespace> namespaces,
+
+    static ParseResult of(final boolean isWellFormed, final Namespace rootNamespace,
+            final Collection<Namespace> declaredNamespaces, final Collection<Namespace> usedNamespaces,
             final String rootPrefix, final String rootName,
             final List<Attribute> rootAttributes, final List<Message> messages) {
-        Objects.requireNonNull(namespaces, String.format(Checks.NOT_NULL, "namespaces", "List<Namespace>"));
+        Objects.requireNonNull(declaredNamespaces, String.format(Checks.NOT_NULL, "declaredNamespaces", "List<Namespace>"));
+        Objects.requireNonNull(usedNamespaces, String.format(Checks.NOT_NULL, "usedNamespaces", "List<Namespace>"));
         Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
-        return new ParseResultImpl(isWellFormed, rootNamespace, namespaces, rootPrefix, rootName, rootAttributes,
+        return new ParseResultImpl(isWellFormed, rootNamespace, declaredNamespaces, usedNamespaces, rootPrefix,
+                rootName, rootAttributes,
                 messages);
     }
 
-    static ParseResult of(final Namespace rootNamespace, final List<Namespace> namespaces,
+    static ParseResult of(final Namespace rootNamespace, final Collection<Namespace> declaredNamespaces,
+            final Collection<Namespace> usedNamespaces,
             final String rootPrefix, final String rootName,
             final List<Attribute> rootAttributes, final List<Message> messages) {
         Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
-        return ParseResultImpl.of(isWellFormed(messages), rootNamespace, namespaces, rootPrefix, rootName,
+        return ParseResultImpl.of(isWellFormed(messages), rootNamespace, declaredNamespaces, usedNamespaces, rootPrefix,
+                rootName,
                 rootAttributes,
                 messages);
     }
@@ -32,7 +41,8 @@ final class ParseResultImpl implements ParseResult {
     static ParseResult invertWellFormed(final ParseResult parseResult) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
         return new ParseResultImpl(!parseResult.isWellFormed(), parseResult.getRootNamespace(),
-                parseResult.getNamespaces(), parseResult.getRootPrefix(), parseResult.getRootName(),
+                parseResult.getDeclaredNamespaces(), parseResult.getUsedNamespaces(), parseResult.getRootPrefix(),
+                parseResult.getRootName(),
                 parseResult.getRootAttributes(),
                 parseResult.getMessages());
     }
@@ -48,19 +58,22 @@ final class ParseResultImpl implements ParseResult {
 
     private final boolean isWF;
     private final Namespace rootNamespace;
-    private final List<Namespace> namespaces;
+    private final Set<Namespace> usedNamespaces;
+    private final Set<Namespace> declaredNamespaces;
     private final String rootPrefix;
     private final String rootName;
     private final List<Attribute> rootAttributes;
 
     private final List<Message> messages;
 
-    private ParseResultImpl(final boolean isWellFormed, final Namespace rootNamespace, final List<Namespace> namespaces,
+    private ParseResultImpl(final boolean isWellFormed, final Namespace rootNamespace,
+            final Collection<Namespace> declaredNamespaces, final Collection<Namespace> usedNamespaces,
             final String rootPrefix, final String rootName, final List<Attribute> rootAttributes,
             final List<Message> messages) {
         this.isWF = isWellFormed;
         this.rootNamespace = rootNamespace;
-        this.namespaces = Collections.unmodifiableList(namespaces);
+        this.declaredNamespaces = Collections.unmodifiableSet(new HashSet<>(declaredNamespaces));
+        this.usedNamespaces = Collections.unmodifiableSet(new HashSet<>(usedNamespaces));
         this.rootPrefix = rootPrefix;
         this.rootName = rootName;
         this.rootAttributes = Collections.unmodifiableList(rootAttributes);
@@ -78,8 +91,13 @@ final class ParseResultImpl implements ParseResult {
     }
 
     @Override
-    public List<Namespace> getNamespaces() {
-        return this.namespaces;
+    public Set<Namespace> getDeclaredNamespaces() {
+        return this.declaredNamespaces;
+    }
+
+    @Override
+    public Set<Namespace> getUsedNamespaces() {
+        return this.usedNamespaces;
     }
 
     @Override
@@ -93,7 +111,8 @@ final class ParseResultImpl implements ParseResult {
         if (this.rootName == null || (name.contains(":") && this.rootPrefix == null)) {
             return false;
         }
-        final String match = (name.contains(":")) ? String.format("%s:%s", this.rootPrefix, this.rootName) : this.rootName;
+        final String match = (name.contains(":")) ? String.format("%s:%s", this.rootPrefix, this.rootName)
+                : this.rootName;
         return match.equals(name);
     }
 
@@ -118,7 +137,8 @@ final class ParseResultImpl implements ParseResult {
         int result = 1;
         result = prime * result + (isWF ? 1231 : 1237);
         result = prime * result + ((rootNamespace == null) ? 0 : rootNamespace.hashCode());
-        result = prime * result + ((namespaces == null) ? 0 : namespaces.hashCode());
+        result = prime * result + ((declaredNamespaces == null) ? 0 : declaredNamespaces.hashCode());
+        result = prime * result + ((usedNamespaces == null) ? 0 : usedNamespaces.hashCode());
         result = prime * result + ((rootPrefix == null) ? 0 : rootPrefix.hashCode());
         result = prime * result + ((rootName == null) ? 0 : rootName.hashCode());
         result = prime * result + ((rootAttributes == null) ? 0 : rootAttributes.hashCode());
@@ -142,10 +162,15 @@ final class ParseResultImpl implements ParseResult {
                 return false;
         } else if (!rootNamespace.equals(other.rootNamespace))
             return false;
-        if (namespaces == null) {
-            if (other.namespaces != null)
+        if (declaredNamespaces == null) {
+            if (other.declaredNamespaces != null)
                 return false;
-        } else if (!namespaces.equals(other.namespaces))
+        } else if (!declaredNamespaces.equals(other.declaredNamespaces))
+            return false;
+        if (usedNamespaces == null) {
+            if (other.usedNamespaces != null)
+                return false;
+        } else if (!usedNamespaces.equals(other.usedNamespaces))
             return false;
         if (rootPrefix == null) {
             if (other.rootPrefix != null)
@@ -172,7 +197,8 @@ final class ParseResultImpl implements ParseResult {
 
     @Override
     public String toString() {
-        return "ParseResultImpl [isWF=" + isWF + ", rootNamespace=" + rootNamespace + ", namespaces=" + namespaces
+        return "ParseResultImpl [isWF=" + isWF + ", rootNamespace=" + rootNamespace + ", namespaces="
+                + declaredNamespaces
                 + ", rootPrefix=" + rootPrefix + ", rootName=" + rootName + ", rootAttributes=" + rootAttributes
                 + ", messages=" + messages + "]";
     }

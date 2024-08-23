@@ -1,6 +1,5 @@
 package org.openpreservation.odf.validation.rules;
 
-import java.io.IOException;
 import java.util.Objects;
 
 import org.openpreservation.messages.Message.Severity;
