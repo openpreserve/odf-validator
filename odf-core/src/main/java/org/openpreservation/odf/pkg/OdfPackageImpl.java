@@ -328,4 +328,14 @@ final class OdfPackageImpl implements OdfPackage {
         }
         return false;
     }
+
+    @Override
+    public boolean isExtended() {
+        for (OdfPackageDocument doc : this.documentMap.values()) {
+            if (doc.getXmlDocument().isExtended()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

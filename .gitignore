@@ -6,6 +6,9 @@ pom.xml.next
 release.properties
 **/pom.xml.versionsBackup
 
+# Ignore generated project documentation folders
+odf-*/docs
+
 # Ignore Eclipse artefacts
 **/.settings
 **/.project

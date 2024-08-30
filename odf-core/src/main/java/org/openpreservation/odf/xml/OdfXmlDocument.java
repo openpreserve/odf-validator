@@ -1,5 +1,7 @@
 package org.openpreservation.odf.xml;
 
+import java.util.Set;
+
 import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.format.xml.ParseResult;
 
@@ -53,6 +55,23 @@ public interface OdfXmlDocument {
      * @return The value of the version attribute or null if no attribute found
      */
     public String getVersion();
+
+    /**
+     * Get the set of foreign namespaces used in the document, e.g. all of the
+     * namespaces outside of the declared ODF namespaces.
+     *
+     * @return
+     */
+    public Set<Namespace> getForeignNamespaces();
+
+    /**
+     * Establish whether the document uses a namespace outside of the declared ODF
+     * namespaces.
+     *
+     * @return true if the document uses a namespace outside of the declared ODF
+     *         namespaces
+     */
+    public boolean isExtended();
 
     /**
      * Get the parse result of the XML document

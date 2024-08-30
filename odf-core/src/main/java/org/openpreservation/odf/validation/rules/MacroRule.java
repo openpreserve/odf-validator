@@ -36,7 +36,6 @@ final class MacroRule extends AbstractRule {
 
     @Override
     public MessageLog check(final OdfXmlDocument document) throws ParseException {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'check'");
     }
 

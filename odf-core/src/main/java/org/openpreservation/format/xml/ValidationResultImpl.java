@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.openpreservation.messages.Message;
 import org.openpreservation.utils.Checks;
@@ -13,16 +14,19 @@ final class ValidationResultImpl implements ValidationResult {
     private static final String PARSE_RESULT_TYPE = "ParseResult";
     private static final String MESSAGES_NAME = "messages";
     private static final String MESSAGES_TYPE = "List<Message>";
+
     static final ValidationResult of(final ParseResult parseResult, final boolean valid, final List<Message> messages) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));
         Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
         return new ValidationResultImpl(parseResult, valid, messages);
     }
+
     static final ValidationResult valid(final ParseResult parseResult, final List<Message> messages) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));
         Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
         return of(parseResult, true, messages);
     }
+
     static final ValidationResult notValid(final ParseResult parseResult, final List<Message> messages) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));
         Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
@@ -58,8 +62,13 @@ final class ValidationResultImpl implements ValidationResult {
     }
 
     @Override
-    public List<Namespace> getNamespaces() {
-        return this.parseResult.getNamespaces();
+    public Set<Namespace> getDeclaredNamespaces() {
+        return this.parseResult.getDeclaredNamespaces();
+    }
+
+    @Override
+    public Set<Namespace> getUsedNamespaces() {
+        return this.parseResult.getUsedNamespaces();
     }
 
     @Override

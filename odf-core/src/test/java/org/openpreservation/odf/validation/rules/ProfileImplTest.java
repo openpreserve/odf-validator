@@ -1,5 +1,6 @@
 package org.openpreservation.odf.validation.rules;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -26,7 +27,7 @@ public class ProfileImplTest {
         ProfileResult result = profile.check(pkg);
         assertNotNull(result);
         assertTrue(result.getValidationReport().isValid());
-        assertTrue (result.isValid());
+        assertTrue(result.isValid());
     }
 
     @Test
