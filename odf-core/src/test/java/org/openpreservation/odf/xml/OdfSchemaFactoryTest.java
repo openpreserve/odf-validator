@@ -14,7 +14,7 @@ public class OdfSchemaFactoryTest {
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    factory.getSchema(Namespaces.OFFICE, null);
+                    factory.getSchema(OdfNamespaces.OFFICE, null);
                 });
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
@@ -31,7 +31,7 @@ public class OdfSchemaFactoryTest {
     @Test
     public void testGetSchemas() {
         OdfSchemaFactory factory = new OdfSchemaFactory();
-        EnumSet<Namespaces> namespaces = EnumSet.of(Namespaces.OFFICE);
+        EnumSet<OdfNamespaces> namespaces = EnumSet.of(OdfNamespaces.OFFICE);
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
@@ -52,7 +52,7 @@ public class OdfSchemaFactoryTest {
     @Test
     public void testMissingSchema() {
         OdfSchemaFactory factory = new OdfSchemaFactory();
-        EnumSet<Namespaces> namespaces = EnumSet.of(Namespaces.ANIM);
+        EnumSet<OdfNamespaces> namespaces = EnumSet.of(OdfNamespaces.ANIM);
         assertThrows("NoSuchElementException expected",
                 NoSuchElementException.class,
                 () -> {
@@ -63,7 +63,7 @@ public class OdfSchemaFactoryTest {
     @Test
     public void testNoNamespaces() {
         OdfSchemaFactory factory = new OdfSchemaFactory();
-        EnumSet<Namespaces> empty = EnumSet.noneOf(Namespaces.class);
+        EnumSet<OdfNamespaces> empty = EnumSet.noneOf(OdfNamespaces.class);
         assertThrows("IllegalArgumentException expected",
                 IllegalArgumentException.class,
                 () -> {

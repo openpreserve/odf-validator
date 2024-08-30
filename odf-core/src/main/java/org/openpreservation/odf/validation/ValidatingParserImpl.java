@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 
+import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.ValidationResult;
 import org.openpreservation.format.xml.XmlValidator;
@@ -23,14 +25,13 @@ import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.Documents;
-import org.openpreservation.odf.document.OdfDocument;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.Manifest;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
-import org.openpreservation.odf.xml.Namespaces;
+import org.openpreservation.odf.xml.OdfNamespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.openpreservation.odf.xml.Version;
@@ -121,9 +122,10 @@ final class ValidatingParserImpl implements ValidatingParser {
     private final List<Message> validateOdfXmlDocument(final OdfPackage odfPackage, final String xmlPath,
             final ParseResult parseResult) {
         List<Message> messageList = new ArrayList<>();
-        Namespaces ns = Namespaces.fromId(parseResult.getRootNamespace().getId());
+        OdfNamespaces ns = OdfNamespaces.fromId(parseResult.getRootNamespace().getId());
         if (OdfXmlDocuments.odfXmlDocumentOf(parseResult).isExtended()) {
-            messageList.add(FACTORY.getError("DOC-8", xmlPath));
+            messageList.add(FACTORY.getError("DOC-8", OdfXmlDocuments.odfXmlDocumentOf(parseResult)
+                    .getForeignNamespaces().stream().map(Namespace::getPrefix).collect(Collectors.joining(","))));
             return messageList;
         }
         Schema schema = (ns == null) ? null

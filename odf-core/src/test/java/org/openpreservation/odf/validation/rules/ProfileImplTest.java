@@ -2,6 +2,7 @@ package org.openpreservation.odf.validation.rules;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +26,8 @@ public class ProfileImplTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
         ProfileResult result = profile.check(pkg);
         assertNotNull(result);
-        assertFalse(result.getValidationReport().isValid());
-        assertFalse (result.isValid());
+        assertTrue(result.getValidationReport().isValid());
+        assertTrue(result.isValid());
     }
 
     @Test

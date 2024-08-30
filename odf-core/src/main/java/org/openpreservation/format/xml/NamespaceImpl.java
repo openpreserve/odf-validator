@@ -10,6 +10,7 @@ import org.openpreservation.utils.Checks;
 
 final class NamespaceImpl implements Namespace {
     private static final String STRING = "String";
+
     static NamespaceImpl of(final URI id, final String prefix, final URL schemalocation) {
         Objects.requireNonNull(id, String.format(Checks.NOT_NULL, "id", "URI"));
         Objects.requireNonNull(prefix, String.format(Checks.NOT_NULL, "prefix", STRING));
@@ -19,11 +20,13 @@ final class NamespaceImpl implements Namespace {
             throw new IllegalArgumentException("Parameter id MUST be a legal URI.", e);
         }
     }
+
     static NamespaceImpl of(final String id, final String prefix) {
         Objects.requireNonNull(id, String.format(Checks.NOT_NULL, "id", STRING));
         Objects.requireNonNull(prefix, String.format(Checks.NOT_NULL, "prefix", STRING));
         return NamespaceImpl.of(URI.create(id), prefix, null);
     }
+
     private final URI id;
 
     private final String prefix;

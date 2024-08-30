@@ -57,11 +57,22 @@ public interface OdfXmlDocument {
     public String getVersion();
 
     /**
-     * Establish whether the document uses a namespace outside of the declared ODF namespaces.
+     * Get the set of foreign namespaces used in the document, e.g. all of the
+     * namespaces outside of the declared ODF namespaces.
      *
-     * @return true if the document uses a namespace outside of the declared ODF namespaces
+     * @return
+     */
+    public Set<Namespace> getForeignNamespaces();
+
+    /**
+     * Establish whether the document uses a namespace outside of the declared ODF
+     * namespaces.
+     *
+     * @return true if the document uses a namespace outside of the declared ODF
+     *         namespaces
      */
     public boolean isExtended();
+
     /**
      * Get the parse result of the XML document
      *

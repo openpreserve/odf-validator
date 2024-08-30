@@ -13,19 +13,19 @@ public class NamespacesTest {
 
     @Test
     public void testFromPrefix() {
-        assertEquals(MANIFEST_ID, Namespaces.fromPrefix("manifest").id.toString());
-        assertEquals(DSIG_ID, Namespaces.fromPrefix("dsig").id.toString());
-        assertEquals(PKG, Namespaces.fromPrefix("pkg").id.toString());
-        assertEquals(DS, Namespaces.fromPrefix("ds").id.toString());
-        assertNull(Namespaces.fromPrefix("foo"));
+        assertEquals(MANIFEST_ID, OdfNamespaces.fromPrefix("manifest").getId().toString());
+        assertEquals(DSIG_ID, OdfNamespaces.fromPrefix("dsig").getId().toString());
+        assertEquals(PKG, OdfNamespaces.fromPrefix("pkg").getId().toString());
+        assertEquals(DS, OdfNamespaces.fromPrefix("ds").getId().toString());
+        assertNull(OdfNamespaces.fromPrefix("foo"));
     }
 
     @Test
     public void testFromId() {
-        assertEquals("manifest", Namespaces.fromId(MANIFEST_ID).prefix);
-        assertEquals("dsig", Namespaces.fromId(DSIG_ID).prefix);
-        assertEquals("pkg", Namespaces.fromId(PKG).prefix);
-        assertEquals("ds", Namespaces.fromId(DS).prefix);
-        assertNull(Namespaces.fromId("foo"));
+        assertEquals("manifest", OdfNamespaces.fromId(MANIFEST_ID).getPrefix());
+        assertEquals("dsig", OdfNamespaces.fromId(DSIG_ID).getPrefix());
+        assertEquals("pkg", OdfNamespaces.fromId(PKG).getPrefix());
+        assertEquals("ds", OdfNamespaces.fromId(DS).getPrefix());
+        assertNull(OdfNamespaces.fromId("foo"));
     }
 }

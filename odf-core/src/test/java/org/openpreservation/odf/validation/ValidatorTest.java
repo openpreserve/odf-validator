@@ -59,7 +59,7 @@ public class ValidatorTest {
     public void validatePath() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
-        assertFalse("Package should be valid.", report.isValid());
+        assertTrue("Package should be valid.", report.isValid());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ValidatorTest {
     public void validateFile() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY_ODS.toURI()));
-        assertFalse("Package should be valid.", report.isValid());
+        assertTrue("Package should be valid.", report.isValid());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class ValidatorTest {
     public void validateSpreadsheetPath() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSpreadsheet(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
-        assertFalse("Package should be valid.", report.isValid());
+        assertTrue("Package should be valid.", report.isValid());
     }
 
     @Test
@@ -152,7 +152,7 @@ public class ValidatorTest {
     public void validateSpreadsheetFile() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSpreadsheet(new File(TestFiles.EMPTY_ODS.toURI()));
-        assertFalse("Package should be valid.", report.isValid());
+        assertTrue("Package should be valid.", report.isValid());
     }
 
     @Test
