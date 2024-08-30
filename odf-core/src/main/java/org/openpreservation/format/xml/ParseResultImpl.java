@@ -19,7 +19,8 @@ final class ParseResultImpl implements ParseResult {
             final Collection<Namespace> declaredNamespaces, final Collection<Namespace> usedNamespaces,
             final String rootPrefix, final String rootName,
             final List<Attribute> rootAttributes, final List<Message> messages) {
-        Objects.requireNonNull(declaredNamespaces, String.format(Checks.NOT_NULL, "declaredNamespaces", "List<Namespace>"));
+        Objects.requireNonNull(declaredNamespaces,
+                String.format(Checks.NOT_NULL, "declaredNamespaces", "List<Namespace>"));
         Objects.requireNonNull(usedNamespaces, String.format(Checks.NOT_NULL, "usedNamespaces", "List<Namespace>"));
         Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
         return new ParseResultImpl(isWellFormed, rootNamespace, declaredNamespaces, usedNamespaces, rootPrefix,

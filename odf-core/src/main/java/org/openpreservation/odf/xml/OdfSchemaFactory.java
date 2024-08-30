@@ -49,10 +49,10 @@ public class OdfSchemaFactory {
     private static final String SCHEMA_PATH_ODF_10 = ODF_10_ROOT + SCHEMA_NAME;
     private static final String SCHEMA_PATH_STRICT_ODF_10 = ODF_10_ROOT + SCHEMA_NAME_STRICT;
     private static final String JAXP_RNG_FACTORY = "com.thaiopensource.relaxng.jaxp.XMLSyntaxSchemaFactory";
-    private static final Map<Version, Map<Namespaces, String>> SCHEMA_LOCATION_MAP = schemaMap();
+    private static final Map<Version, Map<OdfNamespaces, String>> SCHEMA_LOCATION_MAP = schemaMap();
 
-    private static final Map<Version, Map<Namespaces, String>> schemaMap() {
-        final Map<Version, Map<Namespaces, String>> map = new EnumMap<>(Version.class);
+    private static final Map<Version, Map<OdfNamespaces, String>> schemaMap() {
+        final Map<Version, Map<OdfNamespaces, String>> map = new EnumMap<>(Version.class);
         map.put(Version.ODF_13, schemaMap13());
         map.put(Version.ODF_12, schemaMap12());
         map.put(Version.ODF_11, schemaMap11());
@@ -60,37 +60,37 @@ public class OdfSchemaFactory {
         return map;
     }
 
-    private static final Map<Namespaces, String> schemaMap13() {
-        final Map<Namespaces, String> map = new EnumMap<>(Namespaces.class);
-        map.put(Namespaces.DSIG, SCHEMA_PATH_DSIG_13);
-        map.put(Namespaces.MANIFEST, SCHEMA_PATH_MANIFEST_13);
-        map.put(Namespaces.ODF, SCHEMA_PATH_METADATA_13);
-        map.put(Namespaces.PKG, SCHEMA_PATH_PACKAGE_METADATA_13);
-        map.put(Namespaces.OFFICE, SCHEMA_PATH_ODF_13);
+    private static final Map<OdfNamespaces, String> schemaMap13() {
+        final Map<OdfNamespaces, String> map = new EnumMap<>(OdfNamespaces.class);
+        map.put(OdfNamespaces.DSIG, SCHEMA_PATH_DSIG_13);
+        map.put(OdfNamespaces.MANIFEST, SCHEMA_PATH_MANIFEST_13);
+        map.put(OdfNamespaces.ODF, SCHEMA_PATH_METADATA_13);
+        map.put(OdfNamespaces.PKG, SCHEMA_PATH_PACKAGE_METADATA_13);
+        map.put(OdfNamespaces.OFFICE, SCHEMA_PATH_ODF_13);
         return map;
     }
 
-    private static final Map<Namespaces, String> schemaMap12() {
-        final Map<Namespaces, String> map = new EnumMap<>(Namespaces.class);
-        map.put(Namespaces.DSIG, SCHEMA_PATH_DSIG_12);
-        map.put(Namespaces.MANIFEST, SCHEMA_PATH_MANIFEST_12);
-        map.put(Namespaces.ODF, SCHEMA_PATH_METADATA_12);
-        map.put(Namespaces.PKG, SCHEMA_PATH_PACKAGE_METADATA_12);
-        map.put(Namespaces.OFFICE, SCHEMA_PATH_ODF_12);
+    private static final Map<OdfNamespaces, String> schemaMap12() {
+        final Map<OdfNamespaces, String> map = new EnumMap<>(OdfNamespaces.class);
+        map.put(OdfNamespaces.DSIG, SCHEMA_PATH_DSIG_12);
+        map.put(OdfNamespaces.MANIFEST, SCHEMA_PATH_MANIFEST_12);
+        map.put(OdfNamespaces.ODF, SCHEMA_PATH_METADATA_12);
+        map.put(OdfNamespaces.PKG, SCHEMA_PATH_PACKAGE_METADATA_12);
+        map.put(OdfNamespaces.OFFICE, SCHEMA_PATH_ODF_12);
         return map;
     }
 
-    private static final Map<Namespaces, String> schemaMap11() {
-        final Map<Namespaces, String> map = new EnumMap<>(Namespaces.class);
-        map.put(Namespaces.MANIFEST, SCHEMA_PATH_MANIFEST_11);
-        map.put(Namespaces.OFFICE, SCHEMA_PATH_ODF_11);
+    private static final Map<OdfNamespaces, String> schemaMap11() {
+        final Map<OdfNamespaces, String> map = new EnumMap<>(OdfNamespaces.class);
+        map.put(OdfNamespaces.MANIFEST, SCHEMA_PATH_MANIFEST_11);
+        map.put(OdfNamespaces.OFFICE, SCHEMA_PATH_ODF_11);
         return map;
     }
 
-    private static final Map<Namespaces, String> schemaMap10() {
-        final Map<Namespaces, String> map = new EnumMap<>(Namespaces.class);
-        map.put(Namespaces.MANIFEST, SCHEMA_PATH_MANIFEST_10);
-        map.put(Namespaces.OFFICE, SCHEMA_PATH_ODF_10);
+    private static final Map<OdfNamespaces, String> schemaMap10() {
+        final Map<OdfNamespaces, String> map = new EnumMap<>(OdfNamespaces.class);
+        map.put(OdfNamespaces.MANIFEST, SCHEMA_PATH_MANIFEST_10);
+        map.put(OdfNamespaces.OFFICE, SCHEMA_PATH_ODF_10);
         return map;
     }
 
@@ -102,17 +102,17 @@ public class OdfSchemaFactory {
 
     private final SchemaFactory rngSchemaFactory = getSchemaFactory();
 
-    public final Schema getSchema(final Namespaces namespace) {
+    public final Schema getSchema(final OdfNamespaces namespace) {
         return getSchemas(EnumSet.of(namespace), Version.ODF_13);
     }
 
-    public final Schema getSchema(final Namespaces namespace, final Version version) {
+    public final Schema getSchema(final OdfNamespaces namespace, final Version version) {
         Objects.requireNonNull(namespace, String.format(Checks.NOT_NULL, "namespace", "Namspaces"));
         Objects.requireNonNull(version, String.format(Checks.NOT_NULL, "version", "Version"));
         return getSchemas(EnumSet.of(namespace), version);
     }
 
-    public final Schema getSchemas(final Set<Namespaces> namespaces, final Version version) {
+    public final Schema getSchemas(final Set<OdfNamespaces> namespaces, final Version version) {
         Objects.requireNonNull(namespaces, String.format(Checks.NOT_NULL, "namespace", "Namspaces"));
         Objects.requireNonNull(version, String.format(Checks.NOT_NULL, "version", "Version"));
         if (namespaces.isEmpty()) {
@@ -129,9 +129,9 @@ public class OdfSchemaFactory {
         }
     }
 
-    private final Source[] getSources(final Set<Namespaces> namespaces, final Version version) {
+    private final Source[] getSources(final Set<OdfNamespaces> namespaces, final Version version) {
         final List<Source> sources = new ArrayList<>();
-        for (final Namespaces namespace : namespaces) {
+        for (final OdfNamespaces namespace : namespaces) {
             final String schemaPath = SCHEMA_LOCATION_MAP.get(version).get(namespace);
             if (schemaPath == null) {
                 continue;

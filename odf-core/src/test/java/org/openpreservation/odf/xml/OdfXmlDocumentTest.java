@@ -107,4 +107,14 @@ public class OdfXmlDocumentTest {
         assertEquals("document-content", odfDocument.getLocalRootName());
         assertTrue(odfDocument.isExtended());
     }
+
+    @Test
+    public void testParseIsNotExtendedContent() throws IOException {
+        ParseResult parseResult = xmlParser.parse(TestFiles.CONTENT_SVG.openStream());
+        OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
+        assertNotNull(odfDocument);
+        assertEquals("office", odfDocument.getRootNamespace().getPrefix());
+        assertEquals("document-content", odfDocument.getLocalRootName());
+        assertFalse(odfDocument.isExtended());
+    }
 }

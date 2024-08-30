@@ -24,7 +24,8 @@ public final class ValidationResults {
     public static final ParseResult parseResultOf(final boolean valid, final Namespace namespace,
             final List<Namespace> declareNamespaces, final List<Namespace> usedNamespaces,
             final String prefix, final String name, final List<Attribute> attributes, final List<Message> messages) {
-        return ParseResultImpl.of(valid, namespace, declareNamespaces, usedNamespaces, prefix, name, attributes, messages);
+        return ParseResultImpl.of(valid, namespace, declareNamespaces, usedNamespaces, prefix, name, attributes,
+                messages);
     }
 
     /**

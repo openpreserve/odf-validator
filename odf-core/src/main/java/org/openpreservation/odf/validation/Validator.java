@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 
+import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.xml.XmlValidator;
@@ -20,7 +22,7 @@ import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.xml.Namespaces;
+import org.openpreservation.odf.xml.OdfNamespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
@@ -131,9 +133,11 @@ public class Validator {
                 }
             }
             if (doc.isExtended()) {
-                report.add(toValidate.toString(), FACTORY.getError("DOC-8"));
+                report.add(toValidate.toString(),
+                        FACTORY.getError("DOC-8", OdfXmlDocuments.odfXmlDocumentOf(parseResult).getForeignNamespaces()
+                                .stream().map(Namespace::getPrefix).collect(Collectors.joining(", "))));
             } else {
-                Schema schema = new OdfSchemaFactory().getSchema(Namespaces.OFFICE, version);
+                Schema schema = new OdfSchemaFactory().getSchema(OdfNamespaces.OFFICE, version);
                 parseResult = validator.validate(parseResult, Files.newInputStream(toValidate), schema);
             }
         } else {

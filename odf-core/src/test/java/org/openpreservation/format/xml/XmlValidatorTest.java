@@ -11,7 +11,7 @@ import javax.xml.validation.Schema;
 
 import org.junit.Test;
 import org.openpreservation.odf.fmt.TestFiles;
-import org.openpreservation.odf.xml.Namespaces;
+import org.openpreservation.odf.xml.OdfNamespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
 import org.xml.sax.SAXException;
 
@@ -19,7 +19,7 @@ public class XmlValidatorTest {
     private XmlParser xmlParser = new XmlParser();
     private XmlValidator xmlValidator = new XmlValidator();
     private OdfSchemaFactory odfSchemaFactory = new OdfSchemaFactory();
-    private Schema schema = odfSchemaFactory.getSchema(Namespaces.OFFICE);
+    private Schema schema = odfSchemaFactory.getSchema(OdfNamespaces.OFFICE);
 
     public XmlValidatorTest() throws ParserConfigurationException, SAXException {
     }

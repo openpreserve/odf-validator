@@ -3,7 +3,10 @@ package org.openpreservation.odf.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -14,7 +17,8 @@ import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
 final class OdfXmlDocumentImpl implements OdfXmlDocument {
-    static final String[] extendedDocTypes = { "office:document-content", "office:document-styles", "office:styles" };
+    static final String[] extendedDocTypes = { "office:document-content", "office:document-styles", "office:styles",
+            "office:document-settings" };
 
     static final OdfXmlDocumentImpl of(final ParseResult parseResult) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
@@ -39,6 +43,7 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
     private final ParseResult parseResult;
     private final String mimeType;
     private final String version;
+    private final Set<Namespace> foreignNamespaces;
 
     private OdfXmlDocumentImpl(final ParseResult parseResult, final String mimeType,
             final String version) {
@@ -46,6 +51,7 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
         this.parseResult = parseResult;
         this.mimeType = mimeType;
         this.version = version;
+        this.foreignNamespaces = Collections.unmodifiableSet(getForeignNamespaces(parseResult));
     }
 
     @Override
@@ -84,8 +90,13 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
     }
 
     @Override
+    public Set<Namespace> getForeignNamespaces() {
+        return this.foreignNamespaces;
+    }
+
+    @Override
     public boolean isExtended() {
-        return usesExtendedNamespace(this.parseResult);
+        return !this.foreignNamespaces.isEmpty();
     }
 
     @Override
@@ -100,6 +111,7 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
         result = prime * result + ((parseResult == null) ? 0 : parseResult.hashCode());
         result = prime * result + ((mimeType == null) ? 0 : mimeType.hashCode());
         result = prime * result + ((version == null) ? 0 : version.hashCode());
+        result = prime * result + ((foreignNamespaces == null) ? 0 : foreignNamespaces.hashCode());
         return result;
     }
 
@@ -127,6 +139,11 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
                 return false;
         } else if (!version.equals(other.version))
             return false;
+        if (foreignNamespaces == null) {
+            if (other.foreignNamespaces != null)
+                return false;
+        } else if (!foreignNamespaces.equals(other.foreignNamespaces))
+            return false;
         return true;
     }
 
@@ -137,16 +154,16 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
                 + ", version=" + version + "]";
     }
 
-    static boolean usesExtendedNamespace(final ParseResult parseResult) {
-        if (!isExtendedRoot(getQualifedName(parseResult.getRootPrefix(), parseResult.getRootName()))) {
-            return false;
-        }
-        for (final Namespace usedNamespace : parseResult.getUsedNamespaces()) {
-            if (Namespaces.fromId(usedNamespace.getId()) == null) {
-                return true;
+    static final Set<Namespace> getForeignNamespaces(final ParseResult parseResult) {
+        Set<Namespace> foreignNamespaces = new HashSet<>();
+        if (isExtendedRoot(getQualifedName(parseResult.getRootPrefix(), parseResult.getRootName()))) {
+            for (final Namespace usedNamespace : parseResult.getUsedNamespaces()) {
+                if (OdfNamespaces.fromId(usedNamespace.getId()) == null) {
+                    foreignNamespaces.add(usedNamespace);
+                }
             }
         }
-        return false;
+        return foreignNamespaces;
     }
 
     static boolean isExtendedRoot(final String rootName) {
