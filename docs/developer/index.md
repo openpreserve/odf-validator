@@ -44,7 +44,7 @@ To include the core validation library in your project, add the following depend
 <dependency>
     <groupId>org.openpreservation.odf</groupId>
     <artifactId>odf-core</artifactId>
-    <version>0.13.1</version>
+    <version>0.14.0-SNAPSHOT</version>
 </dependency>
 ```
 
