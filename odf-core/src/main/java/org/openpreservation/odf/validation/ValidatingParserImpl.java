@@ -124,8 +124,8 @@ final class ValidatingParserImpl implements ValidatingParser {
         List<Message> messageList = new ArrayList<>();
         OdfNamespaces ns = OdfNamespaces.fromId(parseResult.getRootNamespace().getId());
         if (OdfXmlDocuments.odfXmlDocumentOf(parseResult).isExtended()) {
-            messageList.add(FACTORY.getError("DOC-8", OdfXmlDocuments.odfXmlDocumentOf(parseResult)
-                    .getForeignNamespaces().stream().map(Namespace::getPrefix).collect(Collectors.joining(","))));
+            messageList.add(FACTORY.getError("DOC-8", Utils.collectNsPrefixes(OdfXmlDocuments.odfXmlDocumentOf(parseResult)
+                    .getForeignNamespaces())));
             return messageList;
         }
         Schema schema = (ns == null) ? null
