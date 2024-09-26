@@ -134,8 +134,8 @@ public class Validator {
             }
             if (doc.isExtended()) {
                 report.add(toValidate.toString(),
-                        FACTORY.getError("DOC-8", OdfXmlDocuments.odfXmlDocumentOf(parseResult).getForeignNamespaces()
-                                .stream().map(Namespace::getPrefix).collect(Collectors.joining(", "))));
+                        FACTORY.getError("DOC-8", Utils.collectNsPrefixes(
+                                OdfXmlDocuments.odfXmlDocumentOf(parseResult).getForeignNamespaces())));
             } else {
                 Schema schema = new OdfSchemaFactory().getSchema(OdfNamespaces.OFFICE, version);
                 parseResult = validator.validate(parseResult, Files.newInputStream(toValidate), schema);
