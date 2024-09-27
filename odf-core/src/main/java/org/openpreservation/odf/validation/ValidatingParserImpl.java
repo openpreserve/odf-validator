@@ -11,12 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 
-import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.ValidationResult;
 import org.openpreservation.format.xml.XmlValidator;
@@ -124,8 +122,9 @@ final class ValidatingParserImpl implements ValidatingParser {
         List<Message> messageList = new ArrayList<>();
         OdfNamespaces ns = OdfNamespaces.fromId(parseResult.getRootNamespace().getId());
         if (OdfXmlDocuments.odfXmlDocumentOf(parseResult).isExtended()) {
-            messageList.add(FACTORY.getError("DOC-8", Utils.collectNsPrefixes(OdfXmlDocuments.odfXmlDocumentOf(parseResult)
-                    .getForeignNamespaces())));
+            messageList
+                    .add(FACTORY.getError("DOC-8", Utils.collectNsPrefixes(OdfXmlDocuments.odfXmlDocumentOf(parseResult)
+                            .getForeignNamespaces())));
             return messageList;
         }
         Schema schema = (ns == null) ? null

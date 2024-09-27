@@ -6,12 +6,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 
-import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.xml.XmlValidator;
