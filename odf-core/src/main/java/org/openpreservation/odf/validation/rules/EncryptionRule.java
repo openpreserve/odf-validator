@@ -14,7 +14,7 @@ final class EncryptionRule extends AbstractRule {
 
     static final EncryptionRule getInstance(final Severity severity) {
         return new EncryptionRule("POL_1", "Encryption",
-                "The package MUST NOT contain any encrypted entries.", severity, true);
+                "The package MUST NOT contain any encrypted entries.", severity, false);
     }
 
     private EncryptionRule(final String id, final String name, final String description, final Severity severity,
