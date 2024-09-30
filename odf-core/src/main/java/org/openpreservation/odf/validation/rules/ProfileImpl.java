@@ -22,14 +22,15 @@ import org.openpreservation.odf.validation.Validators;
 import org.xml.sax.SAXException;
 
 final class ProfileImpl extends AbstractProfile {
-    static final ProfileImpl of(final String id, final String name, final String description, final Set<Rule> rules) throws ParserConfigurationException, SAXException {
+    private final ValidatingParser validatingParser = Validators.getValidatingParser();
+
+    static final ProfileImpl of(final String id, final String name, final String description, final Set<Rule> rules)
+            throws ParserConfigurationException, SAXException {
         return new ProfileImpl(id, name, description, rules);
     }
 
-    private final ValidatingParser validatingParser = Validators.getValidatingParser();
-
-
-    private ProfileImpl(final String id, final String name, final String description, final Set<Rule> rules) throws ParserConfigurationException, SAXException {
+    private ProfileImpl(final String id, final String name, final String description, final Set<Rule> rules)
+            throws ParserConfigurationException, SAXException {
         super(id, name, description, rules);
     }
 
