@@ -18,7 +18,6 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.Version;
 import org.xml.sax.SAXException;
 
-
 class ValidPackageRule extends AbstractRule {
     private static final String VER_MESS = "Package version: %s detected. ";
     private static final String INV_MESS = "Package does not comply with specification. ";
@@ -31,8 +30,6 @@ class ValidPackageRule extends AbstractRule {
     }
 
     private final ValidatingParser validatingParser = Validators.getValidatingParser();
-
-    private ValidationReport validationReport;
 
     private ValidPackageRule(final String id, final String name, final String description, final Severity severity,
             final boolean isPrerequisite) throws ParserConfigurationException, SAXException {
@@ -47,27 +44,30 @@ class ValidPackageRule extends AbstractRule {
     @Override
     public MessageLog check(final OdfPackage odfPackage) throws ParseException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
-        final MessageLog messageLog = Messages.messageLogInstance();
         try {
-            this.validationReport = this.validatingParser.validatePackage(odfPackage);
+            ValidationReport report = this.validatingParser.validatePackage(odfPackage);
+            return check(report);
         } catch (FileNotFoundException e) {
             throw new ParseException("File not found exception when processing package.", e);
         }
-        if (!this.validationReport.isValid() || !odfPackage.getDetectedVersion().equals(Version.ODF_13)) {
-            String message = "";
-            if (!odfPackage.getDetectedVersion().equals(Version.ODF_13)) {
-                message = String.format(VER_MESS, odfPackage.getDetectedVersion().version);
-            }
-            if (!this.validationReport.isValid()) {
-                message += INV_MESS;
-            }
-            messageLog.add(odfPackage.getName(), Messages.getMessageInstance(this.id, Message.Severity.ERROR,
-                    this.getName(), message + this.getDescription()));
-        }
-        return messageLog;
     }
 
-    public final ValidationReport getValidationReport() {
-        return this.validationReport;
+    @Override
+    public MessageLog check(final ValidationReport report) {
+        Objects.requireNonNull(report, "report must not be null");
+        final MessageLog messageLog = Messages.messageLogInstance();
+        if (!report.isValid() || !report.document.getPackage().getDetectedVersion().equals(Version.ODF_13)) {
+            String message = "";
+            if (report.document != null && !report.document.getPackage().getDetectedVersion().equals(Version.ODF_13)) {
+                message = String.format(VER_MESS, report.document.getPackage().getDetectedVersion().version);
+            }
+            if (!report.isValid()) {
+                message += INV_MESS;
+            }
+            messageLog.add(report.name,
+                    Messages.getMessageInstance(this.id, Message.Severity.ERROR,
+                            this.getName(), message + this.getDescription()));
+        }
+        return messageLog;
     }
 }

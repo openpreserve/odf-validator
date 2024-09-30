@@ -8,10 +8,18 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 
 public interface Rule {
     public String getId();
+
     public String getName();
+
     public String getDescription();
+
     public Severity getSeverity();
+
     public boolean isPrerequisite();
+
     public MessageLog check(final OdfXmlDocument document) throws ParseException;
+
     public MessageLog check(final OdfPackage odfPackage) throws ParseException;
+
+    public MessageLog check(final ValidationReport report) throws ParseException;
 }

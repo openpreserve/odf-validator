@@ -11,7 +11,7 @@ import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 
 public final class ValidationReport {
-    final String name;
+    public final String name;
     public final OpenDocument document;
     public final MessageLog documentMessages;
 
@@ -33,6 +33,7 @@ public final class ValidationReport {
     static final ValidationReport of(final String name) {
         return new ValidationReport(name);
     }
+
     static final ValidationReport of(final String name, final OpenDocument document) {
         return new ValidationReport(name, document);
     }
@@ -41,7 +42,8 @@ public final class ValidationReport {
         return new ValidationReport(name, null, documentMessages);
     }
 
-    static final ValidationReport of(final String name, final OpenDocument document, final MessageLog documentMessages) {
+    static final ValidationReport of(final String name, final OpenDocument document,
+            final MessageLog documentMessages) {
         return new ValidationReport(name, document, documentMessages);
     }
 
@@ -69,6 +71,7 @@ public final class ValidationReport {
     public List<Message> getErrors() {
         return documentMessages.getErrors().values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
+
     public List<Message> getMessages() {
         return documentMessages.getMessages().values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
