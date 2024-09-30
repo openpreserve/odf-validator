@@ -8,9 +8,16 @@ import org.openpreservation.odf.xml.OdfXmlDocument;
 
 public interface Profile {
     public String getId();
+
     public String getName();
+
     public String getDescription();
+
     public ProfileResult check(final OdfXmlDocument document) throws ParseException;
+
+    public ProfileResult check(final ValidationReport report) throws ParseException;
+
     public ProfileResult check(final OdfPackage odfPackage) throws ParseException;
+
     public Set<Rule> getRules();
 }

@@ -3,7 +3,10 @@ package org.openpreservation.odf.validation.rules;
 import java.util.Objects;
 
 import org.openpreservation.messages.Message.Severity;
+import org.openpreservation.messages.MessageLog;
+import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.ValidationReport;
 
 abstract class AbstractRule implements Rule {
     final String id;
@@ -45,6 +48,11 @@ abstract class AbstractRule implements Rule {
     @Override
     public boolean isPrerequisite() {
         return this.isPrerequisite.booleanValue();
+    }
+
+    @Override
+    public MessageLog check(ValidationReport report) throws ParseException {
+        return report.document.isPackage() ? check(report.document.getPackage()) : check(report.document.getDocument().getXmlDocument());
     }
 
     @Override
