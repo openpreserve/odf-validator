@@ -16,6 +16,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - uses: pre-commit/action@v3.0.1
       - name: JDK setup
         uses: actions/setup-java@v3
         with:
@@ -25,7 +27,7 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots install -DjacocoAgg
       - name: Run pre-commit tests
-        uses: pre-commit/action@v3.0.0
+        uses: pre-commit/action@v3.0.1
         with:
           extra_args: --all-files --verbose
       - name: Test with Maven
