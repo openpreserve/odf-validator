@@ -140,9 +140,6 @@ class CliValidator implements Callable<Integer> {
     private static Integer results(final Path path, final ProfileResult report) {
         Integer status = 0;
         ConsoleFormatter.colourise(FACTORY.getInfo("APP-5", report.getName(), path.toString(), "bold"));
-        if (report.getValidationReport() != null) {
-            status = results(report.getValidationReport().documentMessages.getMessages());
-        }
         for (Map.Entry<String, List<Message>> entry : report.getMessageLog().getMessages().entrySet()) {
             status = Math.max(status, results(entry.getKey(), entry.getValue()));
         }
