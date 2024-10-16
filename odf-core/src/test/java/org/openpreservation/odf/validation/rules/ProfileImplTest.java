@@ -1,6 +1,5 @@
 package org.openpreservation.odf.validation.rules;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -8,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
 import org.openpreservation.odf.fmt.TestFiles;
@@ -17,10 +18,11 @@ import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ProfileResult;
+import org.xml.sax.SAXException;
 
 public class ProfileImplTest {
     @Test
-    public void testCheck() throws IOException, URISyntaxException, ParseException {
+    public void testCheck() throws IOException, URISyntaxException, ParseException, ParserConfigurationException, SAXException {
         Profile profile = Rules.getDnaProfile();
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
@@ -31,7 +33,7 @@ public class ProfileImplTest {
     }
 
     @Test
-    public void testOf() {
+    public void testOf() throws ParserConfigurationException, SAXException {
         Profile profile = Rules.getDnaProfile();
         assertNotNull(profile);
     }

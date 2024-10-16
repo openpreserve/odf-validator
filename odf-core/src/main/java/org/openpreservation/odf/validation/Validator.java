@@ -6,12 +6,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 
-import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.xml.XmlValidator;
@@ -134,8 +132,8 @@ public class Validator {
             }
             if (doc.isExtended()) {
                 report.add(toValidate.toString(),
-                        FACTORY.getError("DOC-8", OdfXmlDocuments.odfXmlDocumentOf(parseResult).getForeignNamespaces()
-                                .stream().map(Namespace::getPrefix).collect(Collectors.joining(", "))));
+                        FACTORY.getError("DOC-8", Utils.collectNsPrefixes(
+                                OdfXmlDocuments.odfXmlDocumentOf(parseResult).getForeignNamespaces())));
             } else {
                 Schema schema = new OdfSchemaFactory().getSchema(OdfNamespaces.OFFICE, version);
                 parseResult = validator.validate(parseResult, Files.newInputStream(toValidate), schema);

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.openpreservation.messages.Message;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageFactory;
@@ -22,6 +24,7 @@ import org.openpreservation.odf.validation.ProfileResult;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.rules.Rules;
+import org.xml.sax.SAXException;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -38,7 +41,6 @@ class CliValidator implements Callable<Integer> {
     @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format spreadsheet files to validate.")
     private File[] toValidateFiles;
     private final Validator validator = new Validator();
-    private final Profile dnaProfile = Rules.getDnaProfile();
     private MessageLog appMessages = Messages.messageLogInstance();
     private final PackageParser parser = OdfPackages.getPackageParser();
 
@@ -49,15 +51,14 @@ class CliValidator implements Callable<Integer> {
             Path toValidate = file.toPath();
             this.appMessages = Messages.messageLogInstance();
             ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", toValidate.toString()));
-            if (this.profileFlag) {
-                final ProfileResult profileResult = profilePath(toValidate);
-                if (profileResult != null) {
-                    retStatus = Math.max(retStatus, results(toValidate, profileResult));
-                }
-            } else {
-                final ValidationReport validationReport = validatePath(toValidate);
-                if (validationReport != null) {
-                    retStatus = Math.max(retStatus, results(toValidate, validationReport));
+            final ValidationReport validationReport = validatePath(toValidate);
+            if (validationReport != null) {
+                retStatus = Math.max(retStatus, results(toValidate, validationReport));
+                if (this.profileFlag) {
+                    final ProfileResult profileResult = profileReport(validationReport, toValidate);
+                    if (profileResult != null) {
+                        retStatus = Math.max(retStatus, results(toValidate, profileResult));
+                    }
                 }
             }
             if (this.appMessages.hasErrors()) {
@@ -80,13 +81,14 @@ class CliValidator implements Callable<Integer> {
         return null;
     }
 
-    private ProfileResult profilePath(final Path toProfile) {
+    private ProfileResult profileReport(final ValidationReport toProfile, final Path path) {
         try {
-            return dnaProfile.check(parser.parsePackage(toProfile));
-        } catch (IllegalArgumentException | FileNotFoundException e) {
-            this.logMessage(toProfile, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
-        } catch (ParseException e) {
-            this.logMessage(toProfile, Messages.getMessageInstance("SYS-1", Severity.ERROR,
+            final Profile dnaProfile = Rules.getDnaProfile();
+            return dnaProfile.check(toProfile);
+        } catch (IllegalArgumentException e) {
+            this.logMessage(path, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
+        } catch (ParseException | ParserConfigurationException | SAXException e) {
+            this.logMessage(path, Messages.getMessageInstance("SYS-1", Severity.ERROR,
                     "Package could not be parsed, due to an exception.", e.getMessage()));
         }
         return null;
@@ -116,7 +118,7 @@ class CliValidator implements Callable<Integer> {
         return status;
     }
 
-    private Integer results(final Path path, final ValidationReport report) {
+    private static Integer results(final Path path, final ValidationReport report) {
         Integer status = 0;
         ConsoleFormatter.colourise(FACTORY.getInfo("APP-4", path.toString(), "bold"));
         if (report.getMessages().isEmpty()) {
@@ -127,7 +129,7 @@ class CliValidator implements Callable<Integer> {
         return status;
     }
 
-    private Integer results(final Map<String, List<Message>> messageMap) {
+    private static Integer results(final Map<String, List<Message>> messageMap) {
         Integer status = 0;
         for (Map.Entry<String, List<Message>> entry : messageMap.entrySet()) {
             status = Math.max(status, results(entry.getKey(), entry.getValue()));
@@ -135,13 +137,13 @@ class CliValidator implements Callable<Integer> {
         return status;
     }
 
-    private Integer results(final Path path, final ProfileResult report) {
+    private static Integer results(final Path path, final ProfileResult report) {
         Integer status = 0;
-        ConsoleFormatter.colourise(FACTORY.getInfo("APP-5", this.dnaProfile.getName(), path.toString(), "bold"));
+        ConsoleFormatter.colourise(FACTORY.getInfo("APP-5", report.getName(), path.toString(), "bold"));
         if (report.getValidationReport() != null) {
             status = results(report.getValidationReport().documentMessages.getMessages());
         }
-        for (Map.Entry<String, List<Message>> entry : report.getProfileMessages().getMessages().entrySet()) {
+        for (Map.Entry<String, List<Message>> entry : report.getMessageLog().getMessages().entrySet()) {
             status = Math.max(status, results(entry.getKey(), entry.getValue()));
         }
         if (report.getValidationReport() != null && report.getValidationReport().documentMessages.hasErrors()) {
@@ -150,12 +152,12 @@ class CliValidator implements Callable<Integer> {
         MessageLog profileMessages = (report.getValidationReport() != null)
                 ? report.getValidationReport().documentMessages
                 : Messages.messageLogInstance();
-        profileMessages.add(report.getProfileMessages().getMessages());
+        profileMessages.add(report.getMessageLog().getMessages());
         outputSummary(profileMessages);
         return status;
     }
 
-    private Integer results(final String path, final List<Message> messages) {
+    private static Integer results(final String path, final List<Message> messages) {
         Integer status = 0;
         for (Message message : messages) {
             ConsoleFormatter.colourise(Paths.get(path), message);
@@ -166,7 +168,7 @@ class CliValidator implements Callable<Integer> {
         return status;
     }
 
-    private void outputSummary(final MessageLog messageLog) {
+    private static void outputSummary(final MessageLog messageLog) {
         if (messageLog.hasErrors()) {
             ConsoleFormatter.error(String.format("NOT VALID, %d errors, %d warnings and %d info messages.",
                     messageLog.getErrorCount(), messageLog.getWarningCount(), messageLog.getInfoCount()));
