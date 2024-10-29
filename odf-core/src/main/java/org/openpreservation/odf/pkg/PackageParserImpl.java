@@ -32,9 +32,11 @@ import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
 final class PackageParserImpl implements PackageParser {
-    private static String toParseConst = "toParse";
-    private static String badFeature = "Unsupported Zip feature: %s";
-    private static String ioException = "IO Exception reading stream: %s";
+    private static final String TO_PARSE = "toParse";
+    private static final String MESS_BAD_FEATURE = "Unsupported Zip feature: %s";
+    private static final String MESS_IO_EXCEPTION = "IO Exception reading stream: %s";
+    private static final String[] VERSION_FILE_PATHS = { Constants.PATH_MANIFEST, Constants.NAME_SETTINGS,
+            Constants.NAME_CONTENT };
 
     static final PackageParser getInstance() {
         return new PackageParserImpl();
@@ -75,19 +77,19 @@ final class PackageParserImpl implements PackageParser {
 
     @Override
     public OdfPackage parsePackage(final Path toParse) throws ParseException, FileNotFoundException {
-        Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, toParseConst, "Path"));
+        Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, TO_PARSE, "Path"));
         return this.parsePackage(toParse, toParse.getFileName().toString());
     }
 
     @Override
     public OdfPackage parsePackage(final File toParse) throws ParseException, FileNotFoundException {
-        Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, toParseConst, "File"));
+        Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, TO_PARSE, "File"));
         return this.parsePackage(toParse.toPath(), toParse.getName());
     }
 
     @Override
     public OdfPackage parsePackage(final InputStream toParse, final String name) throws ParseException {
-        Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, toParseConst, "InputStream"));
+        Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, TO_PARSE, "InputStream"));
         Objects.requireNonNull(name, String.format(Checks.NOT_NULL, name, "String"));
         try (BufferedInputStream bis = new BufferedInputStream(toParse)) {
             final Path temp = Files.createTempFile("odf", ".pkg");
@@ -130,9 +132,9 @@ final class PackageParserImpl implements PackageParser {
             try {
                 this.cache.getEntryInputStream(entry.getName()).close();
             } catch (UnsupportedZipFeatureException e) {
-                badEntries.put(entry.getName(), String.format(badFeature, e.getFeature().toString()));
+                badEntries.put(entry.getName(), String.format(MESS_BAD_FEATURE, e.getFeature().toString()));
             } catch (IOException e) {
-                badEntries.put(entry.getName(), String.format(ioException, e.getMessage()));
+                badEntries.put(entry.getName(), String.format(MESS_IO_EXCEPTION, e.getMessage()));
             }
         }
         return badEntries;
@@ -140,27 +142,21 @@ final class PackageParserImpl implements PackageParser {
 
     final Version detectVersion() throws IOException {
         Version detectedVersion = Version.UNKNOWN;
-        try (InputStream is = getVersionStreamName()) {
-            if (is != null) {
-                ParseResult result = new XmlParser().parse(is);
-                return Version.fromVersion(result.getRootAttributeValue(String.format("%s:version", result.getRootPrefix())));
+        for (final String versionPath : VERSION_FILE_PATHS) {
+            try (InputStream is = this.cache.getEntryInputStream(versionPath)) {
+                if (is != null) {
+                    ParseResult result = new XmlParser().parse(is);
+                    detectedVersion = Version.fromVersion(
+                            result.getRootAttributeValue(String.format("%s:version", result.getRootPrefix())));
+                    if (!Version.UNKNOWN.equals(detectedVersion)) {
+                        return detectedVersion;
+                    }
+                }
+            } catch (ParserConfigurationException | SAXException e) {
+                throw new IOException(e);
             }
-        } catch (ParserConfigurationException | SAXException e) {
-            throw new IOException(e);
         }
         return detectedVersion;
-    }
-
-    private final InputStream getVersionStreamName() throws IOException {
-        InputStream retVal = null;
-        retVal = this.cache.getEntryInputStream(Constants.PATH_MANIFEST);
-        if (retVal == null) {
-            retVal = this.cache.getEntryInputStream(Constants.NAME_SETTINGS);
-        }
-        if (retVal == null) {
-            retVal = this.cache.getEntryInputStream(Constants.NAME_CONTENT);
-        }
-        return retVal;
     }
 
     private final void processZipEntries() throws ParserConfigurationException, SAXException, IOException {
