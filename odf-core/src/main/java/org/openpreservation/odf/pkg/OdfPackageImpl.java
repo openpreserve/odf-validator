@@ -218,8 +218,10 @@ final class OdfPackageImpl implements OdfPackage {
     @Override
     public Set<FileEntry> getXmlEntries() {
         Set<FileEntry> entries = new HashSet<>();
-        for (FileEntry entry : this.manifest.getEntriesByMediaType("text/xml")) {
-            entries.add(entry);
+        if (this.manifest != null) {
+            for (FileEntry entry : this.manifest.getEntriesByMediaType("text/xml")) {
+                entries.add(entry);
+            }
         }
         return entries;
     }
