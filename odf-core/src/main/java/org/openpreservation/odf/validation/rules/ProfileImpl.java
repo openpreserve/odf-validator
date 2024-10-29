@@ -46,20 +46,21 @@ final class ProfileImpl extends AbstractProfile {
     @Override
     public ProfileResult check(final ValidationReport report) throws ParseException {
         final MessageLog messages = Messages.messageLogInstance();
-        messages.add(getRulesetMessages(report.document.getPackage(),
+        messages.add(getRulesetMessages(report,
                 this.rules.stream().filter(Rule::isPrerequisite).collect(Collectors.toList())));
         if (!messages.hasErrors()) {
-            messages.add(getRulesetMessages(report.document.getPackage(),
+            messages.add(getRulesetMessages(report,
                     this.rules.stream().filter(rule -> !rule.isPrerequisite()).collect(Collectors.toList())));
         }
-        return ProfileResultImpl.of(report.document.getPackage().getName(), this.name, report, messages);
+            return ProfileResultImpl.of(report.document == null ? "" : report.document.getPackage().getName(), this.name,
+                report, messages);
     }
 
-    private final Map<String, List<Message>> getRulesetMessages(final OdfPackage odfPackage,
+    private final Map<String, List<Message>> getRulesetMessages(final ValidationReport report,
             final Collection<Rule> rules) throws ParseException {
         final MessageLog messages = Messages.messageLogInstance();
         for (final Rule rule : rules) {
-            final MessageLog ruleMessages = rule.check(odfPackage);
+            final MessageLog ruleMessages = rule.check(report);
             messages.add(ruleMessages.getMessages());
         }
         return messages.getMessages();
