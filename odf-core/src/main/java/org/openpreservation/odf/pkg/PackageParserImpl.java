@@ -98,7 +98,8 @@ final class PackageParserImpl implements PackageParser {
         }
     }
 
-    private final OdfPackage parsePackage(final Path toParse, final String name) throws ParseException, FileNotFoundException {
+    private final OdfPackage parsePackage(final Path toParse, final String name)
+            throws ParseException, FileNotFoundException {
         Checks.existingFileCheck(toParse);
         this.initialise();
         try {
@@ -142,7 +143,7 @@ final class PackageParserImpl implements PackageParser {
         try (InputStream is = getVersionStreamName()) {
             if (is != null) {
                 ParseResult result = new XmlParser().parse(is);
-                return Version.fromVersion(result.getRootAttributeValue("office:version"));
+                return Version.fromVersion(result.getRootAttributeValue(String.format("%s:version", result.getRootPrefix())));
             }
         } catch (ParserConfigurationException | SAXException e) {
             throw new IOException(e);
@@ -152,7 +153,7 @@ final class PackageParserImpl implements PackageParser {
 
     private final InputStream getVersionStreamName() throws IOException {
         InputStream retVal = null;
-        retVal = this.cache.getEntryInputStream(Constants.NAME_MANIFEST);
+        retVal = this.cache.getEntryInputStream(Constants.PATH_MANIFEST);
         if (retVal == null) {
             retVal = this.cache.getEntryInputStream(Constants.NAME_SETTINGS);
         }
