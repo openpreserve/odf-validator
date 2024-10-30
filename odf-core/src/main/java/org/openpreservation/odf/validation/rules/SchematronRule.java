@@ -46,7 +46,7 @@ final class SchematronRule extends AbstractRule {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
         for (final FileEntry entry : odfPackage.getXmlEntries()) {
-            if (!OdfPackages.isOdfXml(entry.getFullPath())) {
+            if (!OdfPackages.isOdfXml(entry.getFullPath()) || entry.isEncrypted()) {
                 continue;
             }
             try (InputStream is = odfPackage.getEntryStream(entry)) {

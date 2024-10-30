@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,17 +105,27 @@ final class ValidatingParserImpl implements ValidatingParser {
 
     private final Map<String, List<Message>> validateOdfXmlEntries(final OdfPackage odfPackage) {
         final Map<String, List<Message>> messages = new HashMap<>();
-        for (final String xmlPath : odfPackage.getXmlEntryPaths()) {
-            ParseResult parseResult = odfPackage.getEntryXmlParseResult(xmlPath);
-            if (parseResult == null) {
-                continue;
-            }
-            List<Message> messageList = (parseResult.isWellFormed())
-                    ? validateOdfXmlDocument(odfPackage, xmlPath, parseResult)
-                    : parseResult.getMessages();
-            messages.put(xmlPath, messageList);
+        for (final FileEntry xmlEntry : odfPackage.getXmlEntries()) {
+            messages.put(xmlEntry.getFullPath(), validateXmlEntry(xmlEntry, odfPackage));
         }
         return messages;
+    }
+
+    private final List<Message> validateXmlEntry(final FileEntry xmlEntry, final OdfPackage odfPackage) {
+        final String xmlPath = xmlEntry.getFullPath();
+        if (xmlPath.equals("/")) {
+            return new ArrayList<>();
+        }
+        if (xmlEntry.isEncrypted()) {
+            return Arrays.asList(FACTORY.getWarning("PKG-10", xmlPath));
+        }
+        ParseResult parseResult = odfPackage.getEntryXmlParseResult(xmlPath);
+        if (parseResult == null) {
+            return new ArrayList<>();
+        }
+        return (parseResult.isWellFormed())
+                ? validateOdfXmlDocument(odfPackage, xmlPath, parseResult)
+                : parseResult.getMessages();
     }
 
     private final List<Message> validateOdfXmlDocument(final OdfPackage odfPackage, final String xmlPath,

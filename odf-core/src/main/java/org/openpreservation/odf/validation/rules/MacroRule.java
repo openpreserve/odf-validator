@@ -61,6 +61,9 @@ final class MacroRule extends AbstractRule {
             throw new IllegalStateException(e);
         }
         for (FileEntry entry : odfPackage.getXmlEntries()) {
+            if (entry.isEncrypted()) {
+                continue;
+            }
             try (final InputStream entryStream = odfPackage.getEntryStream(entry)) {
                 if (entryStream == null) {
                     continue;
