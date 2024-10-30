@@ -1,6 +1,6 @@
 # ODF Validator
 
-Latest version is 0.15.0-SNAPSHOT.
+Latest version is 0.16.0.
 
 ## About
 
