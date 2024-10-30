@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
+import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.ValidationReport;
@@ -52,7 +53,11 @@ abstract class AbstractRule implements Rule {
 
     @Override
     public MessageLog check(ValidationReport report) throws ParseException {
-        return report.document.isPackage() ? check(report.document.getPackage()) : check(report.document.getDocument().getXmlDocument());
+        if (report.document == null) {
+            return Messages.messageLogInstance();
+        }
+        return report.document.isPackage() ? check(report.document.getPackage())
+                : check(report.document.getDocument().getXmlDocument());
     }
 
     @Override

@@ -218,8 +218,10 @@ final class OdfPackageImpl implements OdfPackage {
     @Override
     public Set<FileEntry> getXmlEntries() {
         Set<FileEntry> entries = new HashSet<>();
-        for (FileEntry entry : this.manifest.getEntriesByMediaType("text/xml")) {
-            entries.add(entry);
+        if (this.manifest != null) {
+            for (FileEntry entry : this.manifest.getEntriesByMediaType("text/xml")) {
+                entries.add(entry);
+            }
         }
         return entries;
     }
@@ -333,6 +335,19 @@ final class OdfPackageImpl implements OdfPackage {
     public boolean isExtended() {
         for (OdfPackageDocument doc : this.documentMap.values()) {
             if (doc.getXmlDocument().isExtended()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isEncrypted() {
+        if (this.manifest == null) {
+            return false;
+        }
+        for (FileEntry entry : this.manifest.getEntries()) {
+            if (entry.isEncrypted()) {
                 return true;
             }
         }

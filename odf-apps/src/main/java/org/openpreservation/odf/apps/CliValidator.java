@@ -125,8 +125,12 @@ class CliValidator implements Callable<Integer> {
             ConsoleFormatter.info(FACTORY.getInfo("APP-3").getMessage());
         }
         results(report.documentMessages.getMessages());
-        outputSummary(report.documentMessages);
+        outputSummary(isEncrypted(report), report.documentMessages);
         return status;
+    }
+
+    private static boolean isEncrypted(final ValidationReport report) {
+        return report.document.isPackage() && report.document.getPackage().isEncrypted();
     }
 
     private static Integer results(final Map<String, List<Message>> messageMap) {
@@ -140,9 +144,6 @@ class CliValidator implements Callable<Integer> {
     private static Integer results(final Path path, final ProfileResult report) {
         Integer status = 0;
         ConsoleFormatter.colourise(FACTORY.getInfo("APP-5", report.getName(), path.toString(), "bold"));
-        if (report.getValidationReport() != null) {
-            status = results(report.getValidationReport().documentMessages.getMessages());
-        }
         for (Map.Entry<String, List<Message>> entry : report.getMessageLog().getMessages().entrySet()) {
             status = Math.max(status, results(entry.getKey(), entry.getValue()));
         }
@@ -153,7 +154,7 @@ class CliValidator implements Callable<Integer> {
                 ? report.getValidationReport().documentMessages
                 : Messages.messageLogInstance();
         profileMessages.add(report.getMessageLog().getMessages());
-        outputSummary(profileMessages);
+        outputSummary(isEncrypted(report.getValidationReport()), profileMessages);
         return status;
     }
 
@@ -168,8 +169,12 @@ class CliValidator implements Callable<Integer> {
         return status;
     }
 
-    private static void outputSummary(final MessageLog messageLog) {
-        if (messageLog.hasErrors()) {
+    private static void outputSummary(final boolean isEncrypted, final MessageLog messageLog) {
+        if (isEncrypted) {
+            ConsoleFormatter.error(String.format(
+                    "INCOMPLETE encrypted entries are not supported, %d errors, %d warnings and %d info messages.",
+                    messageLog.getErrorCount(), messageLog.getWarningCount(), messageLog.getInfoCount()));
+        } else if (messageLog.hasErrors()) {
             ConsoleFormatter.error(String.format("NOT VALID, %d errors, %d warnings and %d info messages.",
                     messageLog.getErrorCount(), messageLog.getWarningCount(), messageLog.getInfoCount()));
         } else if (messageLog.hasWarnings()) {

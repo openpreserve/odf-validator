@@ -1,6 +1,7 @@
 package org.openpreservation.odf.validation.rules;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -60,11 +61,19 @@ final class MacroRule extends AbstractRule {
             throw new IllegalStateException(e);
         }
         for (FileEntry entry : odfPackage.getXmlEntries()) {
-            ParseResult result = checker.parse(odfPackage.getEntryStream(entry));
-            if (NS_SCRIPTS.equals(result.getRootNamespace().getId().toASCIIString())
-                    && "module".equals(result.getRootName())) {
-                messageLog.add(entry.getFullPath(), Messages.getMessageInstance(id, severity, name, description));
+            if (entry.isEncrypted()) {
+                continue;
+            }
+            try (final InputStream entryStream = odfPackage.getEntryStream(entry)) {
+                if (entryStream == null) {
+                    continue;
+                }
+                ParseResult result = checker.parse(odfPackage.getEntryStream(entry));
+                if (NS_SCRIPTS.equals(result.getRootNamespace().getId().toASCIIString())
+                        && "module".equals(result.getRootName())) {
+                    messageLog.add(entry.getFullPath(), Messages.getMessageInstance(id, severity, name, description));
 
+                }
             }
         }
         return messageLog;

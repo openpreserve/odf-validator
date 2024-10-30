@@ -230,4 +230,11 @@ public interface OdfPackage {
      * @return true if the file uses any namespaces outside of the ODF
      */
     public boolean isExtended();
+
+    /**
+     * Discover if the package had any encrypted entries.
+     *
+     * @return true if the package has encrypted entries
+     */
+    public boolean isEncrypted();
 }
