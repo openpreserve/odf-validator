@@ -340,4 +340,17 @@ final class OdfPackageImpl implements OdfPackage {
         }
         return false;
     }
+
+    @Override
+    public boolean isEncrypted() {
+        if (this.manifest == null) {
+            return false;
+        }
+        for (FileEntry entry : this.manifest.getEntries()) {
+            if (entry.isEncrypted()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
