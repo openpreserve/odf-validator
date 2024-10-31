@@ -130,7 +130,8 @@ class CliValidator implements Callable<Integer> {
     }
 
     private static boolean isEncrypted(final ValidationReport report) {
-        return report.document.isPackage() && report.document.getPackage().isEncrypted();
+
+        return report.document != null && report.document.isPackage() && report.document.getPackage().isEncrypted();
     }
 
     private static Integer results(final Map<String, List<Message>> messageMap) {
