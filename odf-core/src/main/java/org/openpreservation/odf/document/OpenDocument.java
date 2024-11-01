@@ -39,14 +39,16 @@ public interface OpenDocument {
     public Collection<OdfDocument> getSubDocuments();
 
     /**
-     * Get the ODF Package for the OpenDocument, this will be null for a single XML file.
+     * Get the ODF Package for the OpenDocument, this will be null for a single XML
+     * file.
      *
      * @return the ODF Package for the OpenDocument
      */
     public OdfPackage getPackage();
 
     /**
-     * Get the format of the OpenDocument, this will be the declared format of the package
+     * Get the format of the OpenDocument, this will be the declared format of the
+     * package
      * or the parsed format of a single document.
      *
      * @return the format of the OpenDocument
