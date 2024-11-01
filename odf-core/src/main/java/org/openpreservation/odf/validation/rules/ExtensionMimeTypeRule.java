@@ -27,7 +27,11 @@ final class ExtensionMimeTypeRule extends AbstractRule {
 
     @Override
     public MessageLog check(final OdfXmlDocument document) {
-        throw new UnsupportedOperationException("Unimplemented method 'check'");
+        Objects.requireNonNull(document, "document must not be null");
+        final MessageLog messageLog = Messages.messageLogInstance();
+        messageLog.add(OdfPackages.MIMETYPE, Messages.getMessageInstance(this.id, this.severity, this.getName(),
+                this.getDescription()));
+        return messageLog;
     }
 
     @Override

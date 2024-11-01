@@ -24,11 +24,6 @@ final class PackageMimeTypeRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfXmlDocument document) {
-        throw new UnsupportedOperationException("Unimplemented method 'check'");
-    }
-
-    @Override
     public MessageLog check(final OdfPackage odfPackage) throws ParseException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();

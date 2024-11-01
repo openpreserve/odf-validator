@@ -36,13 +36,11 @@ public class EncryptionRuleTest {
     }
 
     @Test
-    public void testCheckNullXmlDoc() {
+    public void testCheckNullXmlDoc() throws ParseException {
         OdfXmlDocument nullDoc = null;
-        assertThrows("UnsupportedOperationException expected",
-        UnsupportedOperationException.class,
-                () -> {
-                    rule.check(nullDoc);
-                });
+        MessageLog log = rule.check(nullDoc);
+        assertNotNull(log);
+        assertTrue(log.isEmpty());
     }
 
     @Test

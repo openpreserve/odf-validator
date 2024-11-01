@@ -56,7 +56,7 @@ class ValidPackageRule extends AbstractRule {
     public MessageLog check(final ValidationReport report) {
         Objects.requireNonNull(report, "report must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
-        if (!report.isValid() || !report.document.getPackage().getDetectedVersion().equals(Version.ODF_13)) {
+        if (!report.isValid() || !report.document.getVersion().equals(Version.ODF_13)) {
             String message = "";
             if (report.document != null && !report.document.getPackage().getDetectedVersion().equals(Version.ODF_13)) {
                 message = String.format(VER_MESS, report.document.getPackage().getDetectedVersion().version);
