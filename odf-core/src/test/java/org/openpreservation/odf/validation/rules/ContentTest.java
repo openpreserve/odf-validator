@@ -36,8 +36,8 @@ public class ContentTest {
     public void testCheckNullXmlDoc() {
         Rule rule = Rules.odf7();
         OdfXmlDocument nullDoc = null;
-        assertThrows("UnsupportedOperationException expected",
-        UnsupportedOperationException.class,
+        assertThrows("NullPointerException expected",
+        NullPointerException.class,
                 () -> {
                     rule.check(nullDoc);
                 });

@@ -8,7 +8,6 @@ import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class PackageMimeTypeRule extends AbstractRule {
 

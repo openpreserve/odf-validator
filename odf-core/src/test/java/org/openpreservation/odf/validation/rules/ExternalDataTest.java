@@ -36,8 +36,8 @@ public class ExternalDataTest {
     public void testCheckNullXmlDoc() {
         Rule rule = Rules.odf5();
         OdfXmlDocument nullDoc = null;
-        assertThrows("UnsupportedOperationException expected",
-        UnsupportedOperationException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     rule.check(nullDoc);
                 });
@@ -48,7 +48,7 @@ public class ExternalDataTest {
         Rule rule = Rules.odf5();
         OdfPackage nullPkg = null;
         assertThrows("NullPointerException expected",
-        NullPointerException.class,
+                NullPointerException.class,
                 () -> {
                     rule.check(nullPkg);
                 });
@@ -80,12 +80,14 @@ public class ExternalDataTest {
     public void testPackageExternalDataFail() throws Exception {
         final Rule odf5 = Rules.odf5();
         PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.SCHEMATRON_CHECKER_ODS.toURI()).getAbsolutePath()));
+        OdfPackage pkg = parser
+                .parsePackage(Paths.get(new File(TestFiles.SCHEMATRON_CHECKER_ODS.toURI()).getAbsolutePath()));
         MessageLog messages = odf5.check(pkg);
         assertNotNull(messages);
         assertEquals(0, messages.getErrors().size());
         assertEquals(1, messages.getInfos().size());
-        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_5")).count() > 0).count());
+        assertEquals(1, messages.getMessages().values().stream()
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_5")).count() > 0).count());
     }
 
     @Test

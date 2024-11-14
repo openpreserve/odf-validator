@@ -64,11 +64,13 @@ abstract class AbstractRule implements Rule {
 
     @Override
     public MessageLog check(final OdfXmlDocument document) throws ParseException {
+        Objects.requireNonNull(document, "document must not be null");
         return Messages.messageLogInstance();
     }
 
     @Override
     public MessageLog check(final OdfPackage odfPackage) throws ParseException {
+        Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         return Messages.messageLogInstance();
     }
 

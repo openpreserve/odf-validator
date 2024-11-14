@@ -28,7 +28,8 @@ public class EmbeddedObjectsRule extends AbstractRule {
 
     @Override
     public MessageLog check(final OdfXmlDocument document) throws ParseException {
-        throw new UnsupportedOperationException("Unimplemented method 'check'");
+        Objects.requireNonNull(document, "document must not be null");
+        return this.schematron.check(document);
     }
 
     @Override

@@ -52,7 +52,9 @@ final class ProfileImpl extends AbstractProfile {
             messages.add(getRulesetMessages(report,
                     this.rules.stream().filter(rule -> !rule.isPrerequisite()).collect(Collectors.toList())));
         }
-            return ProfileResultImpl.of(report.document == null ? "" : report.document.getPackage().getName(), this.name,
+        final String packageName = report.document == null || report.document.getPackage() == null ? ""
+                : report.document.getPackage().getName();
+        return ProfileResultImpl.of(packageName, this.name,
                 report, messages);
     }
 
