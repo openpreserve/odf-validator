@@ -127,7 +127,6 @@ class CliValidator implements Callable<Integer> {
     }
 
     private static boolean isEncrypted(final ValidationReport report) {
-
         return report.document != null && report.document.isPackage() && report.document.getPackage().isEncrypted();
     }
 
