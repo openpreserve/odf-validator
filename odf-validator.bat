@@ -85,7 +85,7 @@ if NOT "%CLASSPATH_PREFIX%" == "" set CLASSPATH=%CLASSPATH_PREFIX%;%CLASSPATH%
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-"%JAVACMD%" -Dfile.encoding=UTF8 -XX:+IgnoreUnrecognizedVMOptions -Dapp.name="ODF Validator" -jar .\odf-apps\target\odf-apps-0.16.0-jar-with-dependencies.jar %CMD_LINE_ARGS%
+"%JAVACMD%" -Dfile.encoding=UTF8 -XX:+IgnoreUnrecognizedVMOptions -Dapp.name="ODF Validator" -jar .\odf-apps\target\odf-apps-0.16.2-SNAPSHOT-jar-with-dependencies.jar %CMD_LINE_ARGS%
 if %ERRORLEVEL% NEQ 0 goto error
 goto end
 

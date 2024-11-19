@@ -2,6 +2,7 @@ package org.openpreservation.odf.validation.rules;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -37,11 +38,13 @@ final class MacroRule extends AbstractRule {
 
     @Override
     public MessageLog check(final OdfXmlDocument document) throws ParseException {
-        throw new UnsupportedOperationException("Unimplemented method 'check'");
+        Objects.requireNonNull(document, "document must not be null");
+        return this.schematron.check(document);
     }
 
     @Override
     public MessageLog check(final OdfPackage odfPackage) throws ParseException {
+        Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         MessageLog messageLog;
         try {
             messageLog = checkOdfScriptXml(odfPackage);

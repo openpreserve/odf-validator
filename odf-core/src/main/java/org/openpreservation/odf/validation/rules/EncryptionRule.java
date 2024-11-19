@@ -24,7 +24,7 @@ final class EncryptionRule extends AbstractRule {
 
     @Override
     public MessageLog check(final OdfXmlDocument document) {
-        throw new UnsupportedOperationException("Unimplemented method 'check'");
+        return Messages.messageLogInstance();
     }
 
     @Override

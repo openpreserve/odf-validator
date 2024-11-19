@@ -16,8 +16,6 @@ import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
-import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ProfileResult;
@@ -42,7 +40,6 @@ class CliValidator implements Callable<Integer> {
     private File[] toValidateFiles;
     private final Validator validator = new Validator();
     private MessageLog appMessages = Messages.messageLogInstance();
-    private final PackageParser parser = OdfPackages.getPackageParser();
 
     @Override
     public Integer call() {
@@ -130,7 +127,7 @@ class CliValidator implements Callable<Integer> {
     }
 
     private static boolean isEncrypted(final ValidationReport report) {
-        return report.document.isPackage() && report.document.getPackage().isEncrypted();
+        return report.document != null && report.document.isPackage() && report.document.getPackage().isEncrypted();
     }
 
     private static Integer results(final Map<String, List<Message>> messageMap) {

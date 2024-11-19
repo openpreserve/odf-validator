@@ -39,8 +39,8 @@ public class DigitalSignaturesRuleTest {
     @Test
     public void testCheckNullXmlDoc() {
         OdfXmlDocument nullDoc = null;
-        assertThrows("UnsupportedOperationException expected",
-        UnsupportedOperationException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     rule.check(nullDoc);
                 });
@@ -50,7 +50,7 @@ public class DigitalSignaturesRuleTest {
     public void testCheckNullPackage() {
         OdfPackage nullPkg = null;
         assertThrows("NullPointerException expected",
-        NullPointerException.class,
+                NullPointerException.class,
                 () -> {
                     rule.check(nullPkg);
                 });
@@ -94,6 +94,7 @@ public class DigitalSignaturesRuleTest {
         OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.DSIG_VALID.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertTrue("File contains valid digital signatures.", results.hasErrors());
-        assertEquals(1, results.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_9")).count() > 0).count());
+        assertEquals(1, results.getMessages().values().stream()
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_9")).count() > 0).count());
     }
 }

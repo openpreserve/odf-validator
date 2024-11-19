@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackageDocument;
+import org.openpreservation.odf.xml.Version;
 
 final class OpenDocumentImpl implements OpenDocument {
     private final OdfDocument document;
@@ -62,7 +63,13 @@ final class OpenDocumentImpl implements OpenDocument {
 
     @Override
     public Formats getFormat() {
-        return (this.isPackage()) ? this.pkg.getDetectedFormat() : Formats.fromMime(this.document.getXmlDocument().getMimeType());
+        return (this.isPackage()) ? this.pkg.getDetectedFormat()
+                : Formats.fromMime(this.document.getXmlDocument().getMimeType());
+    }
+
+    @Override
+    public Version getVersion() {
+        return (this.isPackage()) ? this.pkg.getDetectedVersion() : this.document.getVersion();
     }
 
     @Override
@@ -79,5 +86,5 @@ final class OpenDocumentImpl implements OpenDocument {
         OpenDocumentImpl other = (OpenDocumentImpl) obj;
         return Objects.equals(document, other.document) && Objects.equals(pkg, other.pkg);
     }
-    
+
 }

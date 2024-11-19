@@ -14,7 +14,6 @@ import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 import com.helger.schematron.pure.SchematronResourcePure;
 import com.helger.schematron.svrl.AbstractSVRLMessage;
@@ -34,11 +33,6 @@ final class SchematronRule extends AbstractRule {
         super(id, name, description, severity, isPrerequisite);
         Objects.requireNonNull(schematronLoc, "schematronLoc must not be null");
         this.schematron = SchematronResourcePure.fromURL(schematronLoc);
-    }
-
-    @Override
-    public MessageLog check(final OdfXmlDocument document) throws ParseException {
-        throw new UnsupportedOperationException("Unimplemented method 'check'");
     }
 
     @Override

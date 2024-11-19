@@ -195,9 +195,12 @@ final class OdfPackageImpl implements OdfPackage {
         }
         Path parent = filePath.getParent();
         OdfPackageDocument doc = this.documentMap.get((parent == null) ? "/" : parent.toString());
-        return (doc == null) ? null
-                : doc.getXmlDocument(filePath.getFileName().toString())
-                        .getParseResult();
+        if (doc == null) {
+            return null;
+        }
+        OdfXmlDocument xmlDoc = doc.getXmlDocument(filePath.getFileName().toString());
+        return (xmlDoc == null) ? null
+                : xmlDoc.getParseResult();
     }
 
     @Override

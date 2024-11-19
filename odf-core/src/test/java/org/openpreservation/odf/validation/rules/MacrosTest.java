@@ -28,6 +28,7 @@ import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 
 public class MacrosTest {
     private final Rule rule = Rules.odf8();
+
     @Test
     public void testGetInstance() {
         final SchematronResourcePure schematron = MacroRule.getInstance(Severity.ERROR).schematron.schematron;
@@ -37,8 +38,8 @@ public class MacrosTest {
     @Test
     public void testCheckNullXmlDoc() {
         OdfXmlDocument nullDoc = null;
-        assertThrows("UnsupportedOperationException expected",
-        UnsupportedOperationException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     rule.check(nullDoc);
                 });
@@ -48,7 +49,7 @@ public class MacrosTest {
     public void testCheckNullPackage() {
         OdfPackage nullPkg = null;
         assertThrows("NullPointerException expected",
-        NullPointerException.class,
+                NullPointerException.class,
                 () -> {
                     rule.check(nullPkg);
                 });
@@ -83,7 +84,8 @@ public class MacrosTest {
         MessageLog messages = rule.check(pkg);
         assertNotNull(messages);
         assertEquals(2, messages.getErrors().size());
-        assertEquals(2, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
+        assertEquals(2, messages.getMessages().values().stream()
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
     }
 
     @Test
@@ -102,6 +104,7 @@ public class MacrosTest {
         MessageLog messages = rule.check(pkg);
         assertNotNull(messages);
         assertEquals(1, messages.getErrors().size());
-        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
+        assertEquals(1, messages.getMessages().values().stream()
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
     }
 }

@@ -32,6 +32,7 @@ import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 
 public class EmbeddedObjectsRuleTest {
     private final Rule rule = Rules.odf6();
+
     @Test
     public void testGetInstance() {
         final SchematronResourcePure schematron = EmbeddedObjectsRule.getInstance(Severity.INFO).schematron.schematron;
@@ -41,8 +42,8 @@ public class EmbeddedObjectsRuleTest {
     @Test
     public void testCheckNullXmlDoc() {
         OdfXmlDocument nullDoc = null;
-        assertThrows("UnsupportedOperationException expected",
-        UnsupportedOperationException.class,
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     rule.check(nullDoc);
                 });
@@ -52,7 +53,7 @@ public class EmbeddedObjectsRuleTest {
     public void testCheckNullPackage() {
         OdfPackage nullPkg = null;
         assertThrows("NullPointerException expected",
-        NullPointerException.class,
+                NullPointerException.class,
                 () -> {
                     rule.check(nullPkg);
                 });
@@ -91,7 +92,8 @@ public class EmbeddedObjectsRuleTest {
     @Test
     public void testCheckEmbeddedPackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.OLE_EMBEDDED_PACKAGE.toURI()).getAbsolutePath()));
+        OdfPackage pkg = parser
+                .parsePackage(Paths.get(new File(TestFiles.OLE_EMBEDDED_PACKAGE.toURI()).getAbsolutePath()));
         MessageLog results = rule.check(pkg);
         assertFalse("Valid Package should not return errors.", results.hasErrors());
         assertTrue("Valid Package should have info messages.", results.hasInfos());
