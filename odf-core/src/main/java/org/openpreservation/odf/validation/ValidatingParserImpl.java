@@ -108,6 +108,9 @@ final class ValidatingParserImpl implements ValidatingParser {
         for (final FileEntry xmlEntry : odfPackage.getXmlEntries()) {
             messages.put(xmlEntry.getFullPath(), validateXmlEntry(xmlEntry, odfPackage));
         }
+        for (final Entry<String, ParseResult> entry : odfPackage.getMetaInfMap().entrySet()) {
+            messages.put(entry.getKey(), validatePackageXml(entry.getKey(), odfPackage, entry.getValue()));
+        }
         return messages;
     }
 
@@ -119,7 +122,12 @@ final class ValidatingParserImpl implements ValidatingParser {
         if (xmlEntry.isEncrypted()) {
             return Arrays.asList(FACTORY.getWarning("PKG-10", xmlPath));
         }
-        ParseResult parseResult = odfPackage.getEntryXmlParseResult(xmlPath);
+        return validatePackageXml(xmlPath, odfPackage, odfPackage.getEntryXmlParseResult(xmlPath));
+
+    }
+
+    private final List<Message> validatePackageXml(final String xmlPath, final OdfPackage odfPackage,
+            final ParseResult parseResult) {
         if (parseResult == null) {
             return new ArrayList<>();
         }
