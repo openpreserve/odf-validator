@@ -1,5 +1,6 @@
 package org.openpreservation.odf.document;
 
+import java.nio.file.Path;
 import java.util.Collection;
 
 import org.openpreservation.odf.fmt.Formats;
@@ -7,6 +8,13 @@ import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.xml.Version;
 
 public interface OpenDocument {
+    /**
+     * Get the path to the OpenDocument file.
+     *
+     * @return the path to the OpenDocument file
+     */
+    public Path getPath();
+
     /**
      * Indicates the type of OpenDocument, a zip archive package or a single XML
      * file
@@ -40,14 +48,16 @@ public interface OpenDocument {
     public Collection<OdfDocument> getSubDocuments();
 
     /**
-     * Get the ODF Package for the OpenDocument, this will be null for a single XML file.
+     * Get the ODF Package for the OpenDocument, this will be null for a single XML
+     * file.
      *
      * @return the ODF Package for the OpenDocument
      */
     public OdfPackage getPackage();
 
     /**
-     * Get the format of the OpenDocument, this will be the declared format of the package
+     * Get the format of the OpenDocument, this will be the declared format of the
+     * package
      * or the parsed format of a single document.
      *
      * @return the format of the OpenDocument

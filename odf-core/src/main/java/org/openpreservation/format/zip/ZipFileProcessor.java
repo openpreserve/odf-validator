@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.compress.archivers.zip.ZipFile.Builder;
 import org.openpreservation.utils.Checks;
 
 /**
@@ -50,7 +51,7 @@ public final class ZipFileProcessor implements ZipArchiveCache {
 
     private final Map<String, ZipArchiveEntry> cache(final Path path) throws IOException {
         Map<String, ZipArchiveEntry> result = new HashMap<>();
-        try (ZipFile zipFile = new ZipFile(path)) {
+        try (ZipFile zipFile = new Builder().setSeekableByteChannel(Files.newByteChannel(path)).get()) {
             Enumeration<ZipArchiveEntry> entries = zipFile.getEntriesInPhysicalOrder();
             while (entries.hasMoreElements()) {
                 ZipArchiveEntry entry = entries.nextElement();
@@ -61,6 +62,11 @@ public final class ZipFileProcessor implements ZipArchiveCache {
             }
         }
         return result;
+    }
+
+    @Override
+    public Path getPath() {
+        return this.path;
     }
 
     @Override
@@ -108,7 +114,8 @@ public final class ZipFileProcessor implements ZipArchiveCache {
             return null;
         }
         if (!this.byteCache.containsKey(entryName)) {
-            try (ZipFile zipFile = new ZipFile(this.path)) {
+            try (ZipFile zipFile = new ZipFile.Builder().setSeekableByteChannel(Files.newByteChannel(this.path))
+                    .get()) {
                 ZipArchiveEntry entry = zipFile.getEntry(entryName);
                 if (entry == null) {
                     return null;

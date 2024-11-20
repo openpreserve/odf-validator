@@ -5,10 +5,10 @@ import java.util.Objects;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.document.OdfDocument;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class ExtensionMimeTypeRule extends AbstractRule {
 
@@ -26,7 +26,15 @@ final class ExtensionMimeTypeRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfXmlDocument document) {
+    public MessageLog check(final OpenDocument document) {
+        Objects.requireNonNull(document, "document must not be null");
+        if (document.isPackage()) {
+            return this.check(document.getPackage());
+        }
+        return this.check(document.getDocument());
+    }
+
+    public MessageLog check(final OdfDocument document) {
         Objects.requireNonNull(document, "document must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
         messageLog.add(OdfPackages.MIMETYPE, Messages.getMessageInstance(this.id, this.severity, this.getName(),
@@ -34,8 +42,7 @@ final class ExtensionMimeTypeRule extends AbstractRule {
         return messageLog;
     }
 
-    @Override
-    public MessageLog check(final OdfPackage odfPackage) throws ParseException {
+    public MessageLog check(final OdfPackage odfPackage) {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
         if (!odfPackage.hasMimeEntry()

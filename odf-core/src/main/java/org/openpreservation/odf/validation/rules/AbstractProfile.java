@@ -5,11 +5,11 @@ import java.util.Set;
 
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ProfileResult;
 import org.openpreservation.odf.validation.Rule;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 abstract class AbstractProfile implements Profile {
     final String id;
@@ -46,12 +46,12 @@ abstract class AbstractProfile implements Profile {
     }
 
     @Override
-    public ProfileResult check(OdfXmlDocument document) throws ParseException {
+    public ProfileResult check(OpenDocument document) throws ParseException {
         MessageLog log = Messages.messageLogInstance();
         for (Rule rule : this.rules) {
             log.add(rule.check(document).getMessages());
         }
-        Collections.singletonMap(document.getRootName(), log);
+        Collections.singletonMap(document.getDocument().getXmlDocument().getRootName(), log);
         return null;
     }
 }

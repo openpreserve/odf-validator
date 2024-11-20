@@ -61,7 +61,7 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     @Override
-    public ValidationReport validatePackage(final OdfPackage toValidate) {
+    public ValidationReport validatePackage(final Path path, final OdfPackage toValidate) {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, TO_VALIDATE, "OdfPackage"));
         this.results.clear();
         if (!toValidate.isWellFormedZip()) {
@@ -69,7 +69,7 @@ final class ValidatingParserImpl implements ValidatingParser {
             report.add(toValidate.getName(), FACTORY.getError("PKG-1"));
             return report;
         }
-        return validate(toValidate);
+        return validate(path, toValidate);
     }
 
     @Override
@@ -87,8 +87,8 @@ final class ValidatingParserImpl implements ValidatingParser {
         return this.packageParser.parsePackage(toParse, name);
     }
 
-    private ValidationReport validate(final OdfPackage odfPackage) {
-        final ValidationReport report = ValidationReport.of(odfPackage.getName(), Documents.openDocumentOf(odfPackage));
+    private ValidationReport validate(final Path path, final OdfPackage odfPackage) {
+        final ValidationReport report = ValidationReport.of(odfPackage.getName(), Documents.openDocumentOf(path, odfPackage));
         report.add("package", FACTORY.getInfo("DOC-2", odfPackage.getDetectedVersion().version));
         report.add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
         report.add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));

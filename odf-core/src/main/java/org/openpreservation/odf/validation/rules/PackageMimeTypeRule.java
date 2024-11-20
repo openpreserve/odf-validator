@@ -5,9 +5,8 @@ import java.util.Objects;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
-import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.PackageParser.ParseException;
 
 final class PackageMimeTypeRule extends AbstractRule {
 
@@ -23,10 +22,10 @@ final class PackageMimeTypeRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfPackage odfPackage) throws ParseException {
-        Objects.requireNonNull(odfPackage, "odfPackage must not be null");
+    public MessageLog check(final OpenDocument document) {
+        Objects.requireNonNull(document, "document must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
-        if (!odfPackage.hasMimeEntry()) {
+        if (document.isPackage() && !document.getPackage().hasMimeEntry()) {
             messageLog.add(OdfPackages.MIMETYPE, Messages.getMessageInstance(this.id, this.severity, this.getName(),
                     this.getDescription()));
         }

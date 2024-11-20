@@ -11,10 +11,10 @@ import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.xml.sax.SAXException;
 
 final class MacroRule extends AbstractRule {
@@ -37,48 +37,63 @@ final class MacroRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfXmlDocument document) throws ParseException {
+    public MessageLog check(final OpenDocument document) throws ParseException {
         Objects.requireNonNull(document, "document must not be null");
-        return this.schematron.check(document);
+        if (document.isPackage()) {
+            return this.check(document.getPackage());
+        }
+        MessageLog messageLog = checkOdfScriptParseResult(document.getPath().toString(),
+                document.getDocument().getXmlDocument().getParseResult());
+        messageLog.add(this.schematron.check(document).getMessages());
+        return messageLog;
     }
 
-    @Override
-    public MessageLog check(final OdfPackage odfPackage) throws ParseException {
+    private MessageLog check(final OdfPackage odfPackage) throws ParseException {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
-        MessageLog messageLog;
-        try {
-            messageLog = checkOdfScriptXml(odfPackage);
-        } catch (IOException e) {
-            throw new ParseException("IOException when checking for macros.", e);
-        }
+        MessageLog messageLog = checkOdfScriptXml(odfPackage);
         messageLog.add(schematron.check(odfPackage).getMessages());
         return messageLog;
     }
 
-    private MessageLog checkOdfScriptXml(final OdfPackage odfPackage) throws IOException {
+    private MessageLog checkOdfScriptXml(final OdfPackage odfPackage) {
         MessageLog messageLog = Messages.messageLogInstance();
-        XmlParser checker;
-        try {
-            checker = new XmlParser();
-        } catch (ParserConfigurationException | SAXException e) {
-            throw new IllegalStateException(e);
-        }
         for (FileEntry entry : odfPackage.getXmlEntries()) {
-            if (entry.isEncrypted()) {
-                continue;
-            }
-            try (final InputStream entryStream = odfPackage.getEntryStream(entry)) {
-                if (entryStream == null) {
-                    continue;
-                }
-                ParseResult result = checker.parse(odfPackage.getEntryStream(entry));
-                if (NS_SCRIPTS.equals(result.getRootNamespace().getId().toASCIIString())
-                        && "module".equals(result.getRootName())) {
-                    messageLog.add(entry.getFullPath(), Messages.getMessageInstance(id, severity, name, description));
-
-                }
+            final ParseResult result = getParseResult(odfPackage, entry);
+            if (result != null) {
+                messageLog.add(checkOdfScriptParseResult(entry.getFullPath(), result).getMessages());
             }
         }
         return messageLog;
+    }
+
+    private ParseResult getParseResult(final OdfPackage odfPackage, final FileEntry entry) {
+        if (entry.isEncrypted()) {
+            return null;
+        }
+        ParseResult result = odfPackage.getEntryXmlParseResult(entry.getFullPath());
+        if (result == null) {
+            try (final InputStream entryStream = odfPackage.getEntryStream(entry)) {
+                if (entryStream == null) {
+                    return null;
+                }
+                result = new XmlParser().parse(entryStream);
+            } catch (IOException | ParserConfigurationException | SAXException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        return result;
+    }
+
+    private MessageLog checkOdfScriptParseResult(final String fullPath, final ParseResult result) {
+        MessageLog messageLog = Messages.messageLogInstance();
+        if (result == null) {
+            return messageLog;
+        }
+        if (NS_SCRIPTS.equals(result.getRootNamespace().getId().toASCIIString())
+                && "module".equals(result.getRootName())) {
+            messageLog.add(fullPath, Messages.getMessageInstance(id, severity, name, description));
+        }
+        return messageLog;
+
     }
 }

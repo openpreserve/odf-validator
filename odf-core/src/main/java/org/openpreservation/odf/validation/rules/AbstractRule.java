@@ -5,11 +5,10 @@ import java.util.Objects;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
-import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.ValidationReport;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 abstract class AbstractRule implements Rule {
     final String id;
@@ -58,19 +57,12 @@ abstract class AbstractRule implements Rule {
         if (report.document == null) {
             return Messages.messageLogInstance();
         }
-        return report.document.isPackage() ? check(report.document.getPackage())
-                : check(report.document.getDocument().getXmlDocument());
+        return check(report.document);
     }
 
     @Override
-    public MessageLog check(final OdfXmlDocument document) throws ParseException {
+    public MessageLog check(final OpenDocument document) throws ParseException {
         Objects.requireNonNull(document, "document must not be null");
-        return Messages.messageLogInstance();
-    }
-
-    @Override
-    public MessageLog check(final OdfPackage odfPackage) throws ParseException {
-        Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         return Messages.messageLogInstance();
     }
 
