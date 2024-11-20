@@ -5,10 +5,9 @@ import java.util.Objects;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
-import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class SubDocumentRule extends AbstractRule {
 
@@ -23,15 +22,10 @@ final class SubDocumentRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfXmlDocument document) {
-        throw new UnsupportedOperationException("Unimplemented method 'check'");
-    }
-
-    @Override
-    public MessageLog check(final OdfPackage odfPackage) throws ParseException {
-        Objects.requireNonNull(odfPackage, "odfPackage must not be null");
+    public MessageLog check(final OpenDocument document) throws ParseException {
+        Objects.requireNonNull(document, "document must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
-        if (odfPackage.hasManifest() && odfPackage.getManifest().getDocumentEntries().size() > 1) {
+        if (document.isPackage() && document.getPackage().hasManifest() && document.getPackage().getManifest().getDocumentEntries().size() > 1) {
             messageLog.add(OdfPackages.PATH_MANIFEST,
                     Messages.getMessageInstance(this.id, this.severity, this.getName(),
                             this.getDescription()));

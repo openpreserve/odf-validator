@@ -2,6 +2,7 @@ package org.openpreservation.format.zip;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -49,5 +50,10 @@ final class ZipArchiveCacheImpl implements ZipArchiveCache {
     @Override
     public ZipEntry getFirstEntry() {
         return this.archive.getFirstEntry();
+    }
+
+    @Override
+    public Path getPath() {
+        return this.archive.getPath();
     }
 }

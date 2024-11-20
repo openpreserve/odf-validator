@@ -3,18 +3,14 @@ package org.openpreservation.odf.validation.rules;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
-import java.nio.file.Paths;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
-import org.openpreservation.odf.pkg.OdfPackage;
-import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ProfileResult;
@@ -22,11 +18,10 @@ import org.xml.sax.SAXException;
 
 public class ProfileImplTest {
     @Test
-    public void testCheck() throws IOException, URISyntaxException, ParseException, ParserConfigurationException, SAXException {
+    public void testCheck() throws URISyntaxException, ParseException, ParserConfigurationException, SAXException , FileNotFoundException {
         Profile profile = Rules.getDnaProfile();
-        PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
-        ProfileResult result = profile.check(pkg);
+        OpenDocument doc = Utils.getDocument(TestFiles.EMPTY_ODS);
+        ProfileResult result = profile.check(doc);
         assertNotNull(result);
         assertTrue(result.getValidationReport().isValid());
         assertTrue(result.isValid());

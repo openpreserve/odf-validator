@@ -5,19 +5,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Test;
 import org.openpreservation.messages.MessageLog;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
-import org.openpreservation.odf.pkg.OdfPackage;
-import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.validation.Rule;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 import com.helger.commons.io.resource.URLResource;
 import com.helger.schematron.pure.SchematronResourcePure;
@@ -35,24 +30,14 @@ public class ExternalDataTest {
     @Test
     public void testCheckNullXmlDoc() {
         Rule rule = Rules.odf5();
-        OdfXmlDocument nullDoc = null;
-        assertThrows("UnsupportedOperationException expected",
-        UnsupportedOperationException.class,
+        OpenDocument nullDoc = null;
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     rule.check(nullDoc);
                 });
     }
 
-    @Test
-    public void testCheckNullPackage() {
-        Rule rule = Rules.odf5();
-        OdfPackage nullPkg = null;
-        assertThrows("NullPointerException expected",
-        NullPointerException.class,
-                () -> {
-                    rule.check(nullPkg);
-                });
-    }
 
     @Test
     public void testSchematronExternalDataFail() throws Exception {
@@ -78,22 +63,17 @@ public class ExternalDataTest {
 
     @Test
     public void testPackageExternalDataFail() throws Exception {
-        final Rule odf5 = Rules.odf5();
-        PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.SCHEMATRON_CHECKER_ODS.toURI()).getAbsolutePath()));
-        MessageLog messages = odf5.check(pkg);
+        MessageLog messages = Utils.getMessages(TestFiles.SCHEMATRON_CHECKER_ODS, Rules.odf5());
         assertNotNull(messages);
         assertEquals(0, messages.getErrors().size());
         assertEquals(1, messages.getInfos().size());
-        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_5")).count() > 0).count());
+        assertEquals(1, messages.getMessages().values().stream()
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_5")).count() > 0).count());
     }
 
     @Test
     public void testPackageExternalDataPass() throws Exception {
-        final Rule odf5 = Rules.odf5();
-        PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.MACRO_PACKAGE.toURI()).getAbsolutePath()));
-        MessageLog messages = odf5.check(pkg);
+        MessageLog messages = Utils.getMessages(TestFiles.MACRO_PACKAGE, Rules.odf5());
         assertNotNull(messages);
         assertEquals(0, messages.getErrors().size());
     }

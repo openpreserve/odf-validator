@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.ValidationReport;
@@ -56,8 +57,13 @@ abstract class AbstractRule implements Rule {
         if (report.document == null) {
             return Messages.messageLogInstance();
         }
-        return report.document.isPackage() ? check(report.document.getPackage())
-                : check(report.document.getDocument().getXmlDocument());
+        return check(report.document);
+    }
+
+    @Override
+    public MessageLog check(final OpenDocument document) throws ParseException {
+        Objects.requireNonNull(document, "document must not be null");
+        return Messages.messageLogInstance();
     }
 
     @Override

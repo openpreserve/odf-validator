@@ -1,20 +1,23 @@
 package org.openpreservation.odf.validation.rules;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Objects;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.openpreservation.messages.Message;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 import com.helger.schematron.pure.SchematronResourcePure;
 import com.helger.schematron.svrl.AbstractSVRLMessage;
@@ -37,31 +40,52 @@ final class SchematronRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfXmlDocument document) throws ParseException {
-        throw new UnsupportedOperationException("Unimplemented method 'check'");
+    public MessageLog check(final OpenDocument document) throws ParseException {
+        Objects.requireNonNull(document, "document must not be null");
+        if (document.isPackage()) {
+            return this.check(document.getPackage());
+        }
+        try (final InputStream is = new FileInputStream(document.getPath().toFile())) {
+            return check(document.getPath().toString(), is);
+        } catch (IOException e) {
+            throw new ParseException("Unexpected Exception caught when executing Schematron checks.", e);
+        }
     }
 
-    @Override
     public MessageLog check(final OdfPackage odfPackage) throws ParseException {
-        Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
         for (final FileEntry entry : odfPackage.getXmlEntries()) {
             if (!OdfPackages.isOdfXml(entry.getFullPath()) || entry.isEncrypted()) {
                 continue;
             }
             try (InputStream is = odfPackage.getEntryStream(entry)) {
-                final SchematronOutputType schResult = this.schematron
-                        .applySchematronValidationToSVRL(new StreamSource(is));
-                for (final AbstractSVRLMessage result : SVRLHelper
-                        .getAllFailedAssertionsAndSuccessfulReports(schResult)) {
-                    messageLog.add(entry.getFullPath(),
-                            Messages.getMessageInstance(this.id, Message.Severity.valueOf(result.getRole()),
-                                    this.getName(),
-                                    result.getText()));
-                }
-            } catch (final Exception e) {
-                throw new ParseException("Unexpected Exception caught when executing Schematron checks.", e);
+                messageLog.add(check(entry.getFullPath(), is).getMessages());
+            } catch (IOException e) {
+                // No need to catch stream close exception
             }
+        }
+        return messageLog;
+    }
+
+    private MessageLog check(final String entryName, final InputStream is) throws ParseException {
+        SchematronOutputType schResult;
+        Source source = new StreamSource(is);
+        try {
+            schResult = this.schematron
+                    .applySchematronValidationToSVRL(source);
+        } catch (IllegalArgumentException e) {
+            // Ignore unparsable schematron
+            return Messages.messageLogInstance();
+        } catch (Exception e) {
+            throw new ParseException("Unexpected Exception caught when executing Schematron checks.", e);
+        }
+        final MessageLog messageLog = Messages.messageLogInstance();
+        for (final AbstractSVRLMessage result : SVRLHelper
+                .getAllFailedAssertionsAndSuccessfulReports(schResult)) {
+            messageLog.add(entryName,
+                    Messages.getMessageInstance(this.id, Message.Severity.valueOf(result.getRole()),
+                            this.getName(),
+                            result.getText()));
         }
         return messageLog;
     }

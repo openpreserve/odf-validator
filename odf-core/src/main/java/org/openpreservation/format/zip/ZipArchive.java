@@ -1,11 +1,19 @@
 package org.openpreservation.format.zip;
 
+import java.nio.file.Path;
 import java.util.List;
 
 /**
  * An interface for accessing the contents of a Zip archive.
  */
 public interface ZipArchive {
+    /**
+     * Get the path to the archive
+     *
+     * @return the <code>Path</code> to the archive
+     */
+    public Path getPath();
+
     /**
      * Returns the first physical {@link ZipEntry} in the archive.
      *

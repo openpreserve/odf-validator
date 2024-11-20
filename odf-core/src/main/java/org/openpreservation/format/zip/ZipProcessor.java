@@ -2,6 +2,7 @@ package org.openpreservation.format.zip;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 /**
  * Interface for a processor that processes an {@link InputStream} and a factory

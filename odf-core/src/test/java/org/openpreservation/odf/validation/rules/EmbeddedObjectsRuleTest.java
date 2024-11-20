@@ -6,23 +6,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Test;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
-import org.openpreservation.odf.pkg.OdfPackage;
-import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 import com.helger.commons.io.resource.URLResource;
 import com.helger.schematron.pure.SchematronResourcePure;
@@ -32,6 +28,7 @@ import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 
 public class EmbeddedObjectsRuleTest {
     private final Rule rule = Rules.odf6();
+
     @Test
     public void testGetInstance() {
         final SchematronResourcePure schematron = EmbeddedObjectsRule.getInstance(Severity.INFO).schematron.schematron;
@@ -40,21 +37,11 @@ public class EmbeddedObjectsRuleTest {
 
     @Test
     public void testCheckNullXmlDoc() {
-        OdfXmlDocument nullDoc = null;
-        assertThrows("UnsupportedOperationException expected",
-        UnsupportedOperationException.class,
+        OpenDocument nullDoc = null;
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
                 () -> {
                     rule.check(nullDoc);
-                });
-    }
-
-    @Test
-    public void testCheckNullPackage() {
-        OdfPackage nullPkg = null;
-        assertThrows("NullPointerException expected",
-        NullPointerException.class,
-                () -> {
-                    rule.check(nullPkg);
                 });
     }
 
@@ -81,19 +68,15 @@ public class EmbeddedObjectsRuleTest {
     }
 
     @Test
-    public void testCheckValidPackage() throws IOException, URISyntaxException, ParseException {
-        PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
-        MessageLog results = rule.check(pkg);
-        assertFalse("Valid Package should not return errors", results.hasErrors());
+    public void testCheckValidPackage() throws URISyntaxException, ParseException, FileNotFoundException {
+        MessageLog messages = Utils.getMessages(TestFiles.EMPTY_ODS, rule);
+        assertFalse("Valid Package should not return errors", messages.hasErrors());
     }
 
     @Test
     public void testCheckEmbeddedPackage() throws IOException, URISyntaxException, ParseException {
-        PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.OLE_EMBEDDED_PACKAGE.toURI()).getAbsolutePath()));
-        MessageLog results = rule.check(pkg);
-        assertFalse("Valid Package should not return errors.", results.hasErrors());
-        assertTrue("Valid Package should have info messages.", results.hasInfos());
+        MessageLog messages = Utils.getMessages(TestFiles.OLE_EMBEDDED_PACKAGE, rule);
+        assertFalse("Valid Package should not return errors.", messages.hasErrors());
+        assertTrue("Valid Package should have info messages.", messages.hasInfos());
     }
 }

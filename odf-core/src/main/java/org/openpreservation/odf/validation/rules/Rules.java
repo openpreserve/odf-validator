@@ -23,11 +23,7 @@ public class Rules {
     }
 
     public static final Rule odf2() {
-        try {
             return ValidPackageRule.getInstance(Severity.ERROR);
-        } catch (ParserConfigurationException | SAXException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     public static final Rule odf3() {
