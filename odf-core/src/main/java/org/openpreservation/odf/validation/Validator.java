@@ -106,7 +106,7 @@ public class Validator {
             throws ParserConfigurationException, SAXException, ParseException, FileNotFoundException {
         ValidatingParser parser = Validators.getValidatingParser();
         OdfPackage pckg = parser.parsePackage(toValidate);
-        return parser.validatePackage(pckg);
+        return parser.validatePackage(toValidate, pckg);
     }
 
     private ValidationReport validateOpenDocumentXml(final Path toValidate)
@@ -115,7 +115,7 @@ public class Validator {
         ParseResult parseResult = checker.parse(toValidate);
         final ValidationReport report = (parseResult.isWellFormed())
                 ? ValidationReport.of(toValidate.toString(),
-                        Documents.openDocumentOf(Documents.odfDocumentOf(parseResult)))
+                        Documents.openDocumentOf(toValidate, Documents.odfDocumentOf(parseResult)))
                 : ValidationReport.of(toValidate.toString());
         if (parseResult.isWellFormed()) {
             Version version = Version.ODF_13;

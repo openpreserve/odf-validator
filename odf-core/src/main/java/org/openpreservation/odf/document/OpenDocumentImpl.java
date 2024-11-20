@@ -1,5 +1,6 @@
 package org.openpreservation.odf.document;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,23 +12,30 @@ import org.openpreservation.odf.pkg.OdfPackageDocument;
 import org.openpreservation.odf.xml.Version;
 
 final class OpenDocumentImpl implements OpenDocument {
+    private final Path path;
     private final OdfDocument document;
     private final OdfPackage pkg;
 
-    private OpenDocumentImpl(OdfDocument document, OdfPackage pkg) {
+    private OpenDocumentImpl(final Path path, OdfDocument document, OdfPackage pkg) {
         super();
+        this.path = path;
         this.document = document;
         this.pkg = pkg;
     }
 
-    static final OpenDocument of(OdfDocument document) {
+    static final OpenDocument of(final Path path, OdfDocument document) {
         Objects.requireNonNull(document, "OdfDocument parameter document cannot be null");
-        return new OpenDocumentImpl(document, null);
+        return new OpenDocumentImpl(path, document, null);
     }
 
-    static final OpenDocument of(OdfPackage pkg) {
+    static final OpenDocument of(final Path path, OdfPackage pkg) {
         Objects.requireNonNull(pkg, "OdfPackage pkg document cannot be null");
-        return new OpenDocumentImpl(pkg.getDocument(), pkg);
+        return new OpenDocumentImpl(path, pkg.getDocument(), pkg);
+    }
+
+    @Override
+    public Path getPath() {
+        return this.path;
     }
 
     @Override
@@ -74,7 +82,7 @@ final class OpenDocumentImpl implements OpenDocument {
 
     @Override
     public int hashCode() {
-        return Objects.hash(document, pkg);
+        return Objects.hash(path, document, pkg);
     }
 
     @Override
@@ -84,7 +92,7 @@ final class OpenDocumentImpl implements OpenDocument {
         if (!(obj instanceof OpenDocumentImpl))
             return false;
         OpenDocumentImpl other = (OpenDocumentImpl) obj;
-        return Objects.equals(document, other.document) && Objects.equals(pkg, other.pkg);
+        return Objects.equals(path, other.path) && Objects.equals(document, other.document) && Objects.equals(pkg, other.pkg);
     }
 
 }

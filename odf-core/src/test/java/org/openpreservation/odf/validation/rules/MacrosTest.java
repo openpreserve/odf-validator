@@ -5,20 +5,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Test;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Message.Severity;
+import org.openpreservation.messages.MessageLog;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
-import org.openpreservation.odf.pkg.OdfPackage;
-import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.validation.Rule;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 import com.helger.commons.io.resource.URLResource;
 import com.helger.schematron.pure.SchematronResourcePure;
@@ -37,21 +32,11 @@ public class MacrosTest {
 
     @Test
     public void testCheckNullXmlDoc() {
-        OdfXmlDocument nullDoc = null;
+        OpenDocument nullDoc = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
                     rule.check(nullDoc);
-                });
-    }
-
-    @Test
-    public void testCheckNullPackage() {
-        OdfPackage nullPkg = null;
-        assertThrows("NullPointerException expected",
-                NullPointerException.class,
-                () -> {
-                    rule.check(nullPkg);
                 });
     }
 
@@ -79,9 +64,7 @@ public class MacrosTest {
 
     @Test
     public void testPackageMacroFail() throws Exception {
-        PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.MACRO_PACKAGE.toURI()).getAbsolutePath()));
-        MessageLog messages = rule.check(pkg);
+        MessageLog messages = Utils.getMessages(TestFiles.MACRO_PACKAGE, rule);
         assertNotNull(messages);
         assertEquals(2, messages.getErrors().size());
         assertEquals(2, messages.getMessages().values().stream()
@@ -90,18 +73,14 @@ public class MacrosTest {
 
     @Test
     public void testPackageNoMacroPass() throws Exception {
-        PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath()));
-        MessageLog messages = rule.check(pkg);
+        MessageLog messages = Utils.getMessages(TestFiles.EMPTY_ODS, rule);
         assertNotNull(messages);
         assertEquals(0, messages.getErrors().size());
     }
 
     @Test
     public void testPackageStarBasicFail() throws Exception {
-        PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(Paths.get(new File(TestFiles.STAR_BASIC.toURI()).getAbsolutePath()));
-        MessageLog messages = rule.check(pkg);
+        MessageLog messages = Utils.getMessages(TestFiles.STAR_BASIC, rule);
         assertNotNull(messages);
         assertEquals(1, messages.getErrors().size());
         assertEquals(1, messages.getMessages().values().stream()

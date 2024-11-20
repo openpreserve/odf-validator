@@ -1,8 +1,11 @@
 package org.openpreservation.odf.document;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import org.openpreservation.format.xml.ParseResult;
+import org.openpreservation.format.zip.ZipArchive;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.xml.Metadata;
 import org.openpreservation.odf.xml.OdfXmlDocument;
@@ -13,14 +16,15 @@ public class Documents {
         throw new AssertionError("Utility class 'Documents' should not be instantiated");
     }
 
-    public static final OpenDocument openDocumentOf(OdfDocument document) {
+    public static final OpenDocument openDocumentOf(final Path path, final OdfDocument document) {
         Objects.requireNonNull(document, "OdfDocument parameter document cannot be null");
-        return OpenDocumentImpl.of(document);
+        return OpenDocumentImpl.of(path, document);
     }
 
-    public static final OpenDocument openDocumentOf(OdfPackage pkg) {
+    public static final OpenDocument openDocumentOf(final Path path, final OdfPackage pkg) {
+        Objects.requireNonNull(path, "Path path document cannot be null");
         Objects.requireNonNull(pkg, "OdfPackage pkg document cannot be null");
-        return OpenDocumentImpl.of(pkg);
+        return OpenDocumentImpl.of(path, pkg);
     }
 
     public static final OdfDocument odfDocumentOf(final OdfXmlDocument xmlDocument, final Metadata metadata) {

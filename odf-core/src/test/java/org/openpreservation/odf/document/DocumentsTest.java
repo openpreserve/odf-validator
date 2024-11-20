@@ -7,8 +7,11 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -35,38 +38,53 @@ public class DocumentsTest {
     @Test
     public void testOpenDocInstantiationOfNullDocument() {
         OdfDocument nullDoc = null;
+        Path path = Paths.get("");
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    Documents.openDocumentOf(nullDoc);
+                    Documents.openDocumentOf(path, nullDoc);
                 });
     }
 
     @Test
     public void testOpenDocInstantiationOfDocument() throws IOException, ParserConfigurationException, SAXException {
         OdfDocument doc = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
-        OpenDocument openDoc = Documents.openDocumentOf(doc);
+        OpenDocument openDoc = Documents.openDocumentOf(Paths.get(""), doc);
         assertNotNull("Parsed OpenDocument should not be null.", openDoc);
         assertFalse("Parsed document should be a package", openDoc.isPackage());
         assertEquals("Document should be a spreadsheet.", Formats.ODS, openDoc.getFormat());
     }
 
     @Test
-    public void testOpenDocInstantiationOfNullPackage() {
-        OdfPackage nullPkg = null;
+    public void testOpenDocInstantiationOfNullPath() throws FileNotFoundException, ParseException, URISyntaxException {
+        PackageParser parser = OdfPackages.getPackageParser();
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        Path nullPath = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    Documents.openDocumentOf(nullPkg);
+                    Documents.openDocumentOf(nullPath, pkg);
+                });
+    }
+
+    @Test
+    public void testOpenDocInstantiationOfNullPackage() {
+        OdfPackage nullPkg = null;
+        Path path = Paths.get("");
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
+                () -> {
+                    Documents.openDocumentOf(path, nullPkg);
                 });
     }
 
     @Test
     public void testOpenDocInstantiationOfPackage()
-            throws IOException, ParseException, URISyntaxException {
+            throws ParseException, URISyntaxException, FileNotFoundException {
         PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
-        OpenDocument openDoc = Documents.openDocumentOf(pkg);
+        File file = new File(TestFiles.EMPTY_ODS.toURI());
+        OdfPackage pkg = parser.parsePackage(file);
+        OpenDocument openDoc = Documents.openDocumentOf(file.toPath(), pkg);
         assertNotNull("Parsed OpenDocument should not be null.", openDoc);
         assertTrue("Parsed document should be a package", openDoc.isPackage());
         assertEquals("Document should be a spreadsheet.", Formats.ODS, openDoc.getFormat());

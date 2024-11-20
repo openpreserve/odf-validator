@@ -5,10 +5,9 @@ import java.util.Objects;
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.FileEntry;
-import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 
 final class EncryptionRule extends AbstractRule {
 
@@ -23,18 +22,13 @@ final class EncryptionRule extends AbstractRule {
     }
 
     @Override
-    public MessageLog check(final OdfXmlDocument document) {
-        return Messages.messageLogInstance();
-    }
-
-    @Override
-    public MessageLog check(final OdfPackage odfPackage) throws ParseException {
-        Objects.requireNonNull(odfPackage, "odfPackage must not be null");
+    public MessageLog check(final OpenDocument document) {
+        Objects.requireNonNull(document, "document must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
-        if (!odfPackage.hasManifest()) {
+        if (!document.isPackage() || !document.getPackage().hasManifest()) {
             return messageLog;
         }
-        for (final FileEntry entry : odfPackage.getManifest().getEntries()) {
+        for (final FileEntry entry : document.getPackage().getManifest().getEntries()) {
             if (entry.isEncrypted()) {
                 messageLog.add(entry.getFullPath(), Messages.getMessageInstance(this.id, this.severity, this.getName(),
                         this.getDescription()));

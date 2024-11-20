@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -34,7 +35,7 @@ public class OpenDocumentImplTest {
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    OpenDocumentImpl.of(nullDoc);
+                    OpenDocumentImpl.of(Paths.get(""), nullDoc);
                 });
     }
 
@@ -44,14 +45,14 @@ public class OpenDocumentImplTest {
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    OpenDocumentImpl.of(nullPkg);
+                    OpenDocumentImpl.of(Paths.get(""), nullPkg);
                 });
     }
 
     @Test
     public void testGetDocumentSingle() throws IOException, ParserConfigurationException, SAXException {
         OdfDocument odfDoc = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
-        OpenDocument openDoc = OpenDocumentImpl.of(odfDoc);
+        OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), odfDoc);
         assertEquals("Expected instantiating and return document to be equal", odfDoc, openDoc.getDocument());
     }
 
@@ -59,14 +60,14 @@ public class OpenDocumentImplTest {
     public void testGetDocumentPackage() throws IOException, ParseException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
-        OpenDocument openDoc = OpenDocumentImpl.of(pkg);
+        OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), pkg);
         assertEquals("Expected instantiating and return document to be equal", pkg.getDocument(), openDoc.getDocument());
     }
 
     @Test
     public void testGetFileTypeSingle() throws IOException, ParserConfigurationException, SAXException {
         OdfDocument odfDoc = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
-        OpenDocument openDoc = OpenDocumentImpl.of(odfDoc);
+        OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), odfDoc);
         assertEquals(FileType.SINGLE, openDoc.getFileType());
     }
 
@@ -74,7 +75,7 @@ public class OpenDocumentImplTest {
     public void testGetFileTypePackage() throws IOException, ParseException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
-        OpenDocument openDoc = OpenDocumentImpl.of(pkg);
+        OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), pkg);
         assertEquals(FileType.PACKAGE, openDoc.getFileType());
     }
 
@@ -82,7 +83,7 @@ public class OpenDocumentImplTest {
     public void testGetPackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
-        OpenDocument openDoc = OpenDocumentImpl.of(pkg);
+        OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), pkg);
         assertEquals("Expected instantiating and return package to be equal", pkg, openDoc.getPackage());
     }
 
@@ -90,7 +91,7 @@ public class OpenDocumentImplTest {
     public void testGetSubDocuments() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
-        OpenDocument openDoc = OpenDocumentImpl.of(pkg);
+        OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), pkg);
         assertEquals("Expected instantiating and return package sub-docs to be equal", pkg.getSubDocument("Configurations2/"), openDoc.getSubDocuments().toArray()[0]);
         assertEquals("Expected one sub-document", 1, openDoc.getSubDocuments().size());
     }
@@ -98,7 +99,7 @@ public class OpenDocumentImplTest {
     @Test
     public void testIsPackageSingle() throws IOException, ParserConfigurationException, SAXException {
         OdfDocument odfDoc = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
-        OpenDocument openDoc = OpenDocumentImpl.of(odfDoc);
+        OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), odfDoc);
         assertFalse(openDoc.isPackage());
     }
 
@@ -106,7 +107,7 @@ public class OpenDocumentImplTest {
     public void testIsPackagePackage() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = OdfPackages.getPackageParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
-        OpenDocument openDoc = OpenDocumentImpl.of(pkg);
+        OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), pkg);
         assertTrue(openDoc.isPackage());
     }
 }
