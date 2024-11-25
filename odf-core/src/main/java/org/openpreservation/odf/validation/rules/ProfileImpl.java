@@ -1,6 +1,7 @@
 package org.openpreservation.odf.validation.rules;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.openpreservation.odf.validation.ProfileResult;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.ValidatingParser;
 import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.Validators;
 import org.xml.sax.SAXException;
 
@@ -39,9 +41,14 @@ final class ProfileImpl extends AbstractProfile {
     public ProfileResult check(final OpenDocument document) throws ParseException {
         Objects.requireNonNull(document, "document must not be null");
         try {
-            return check(this.validatingParser.validatePackage(document.getPath(), document.getPackage()));
+            ValidationReport report = document.isPackage()
+                    ? this.validatingParser.validatePackage(document.getPath(), document.getPackage())
+                    : new Validator().validateOpenDocument(document);
+            return check(report);
         } catch (FileNotFoundException e) {
             throw new ParseException("File not found exception when processing package.", e);
+        } catch (IOException e) {
+            throw new ParseException("IO exception when processing package.", e);
         }
     }
 

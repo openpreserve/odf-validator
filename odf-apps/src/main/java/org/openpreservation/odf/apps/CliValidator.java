@@ -81,7 +81,7 @@ class CliValidator implements Callable<Integer> {
     private ProfileResult profileReport(final ValidationReport toProfile, final Path path) {
         try {
             final Profile dnaProfile = Rules.getDnaProfile();
-            return dnaProfile.check(toProfile.document);
+            return dnaProfile.check(toProfile);
         } catch (IllegalArgumentException e) {
             this.logMessage(path, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
         } catch (ParseException | ParserConfigurationException | SAXException e) {
