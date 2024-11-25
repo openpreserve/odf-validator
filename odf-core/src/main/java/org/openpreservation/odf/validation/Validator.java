@@ -16,6 +16,7 @@ import org.openpreservation.format.xml.XmlValidator;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.Documents;
+import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
@@ -113,6 +114,17 @@ public class Validator {
             throws ParserConfigurationException, SAXException, IOException {
         final XmlParser checker = new XmlParser();
         ParseResult parseResult = checker.parse(toValidate);
+        return validateParseResult(toValidate, parseResult);
+    }
+
+    public ValidationReport validateOpenDocument(final OpenDocument toValidate)
+            throws IOException {
+        ParseResult parseResult = toValidate.getDocument().getXmlDocument().getParseResult();
+        return validateParseResult(toValidate.getPath(), parseResult);
+    }
+
+    private ValidationReport validateParseResult(final Path toValidate, ParseResult parseResult)
+            throws IOException {
         final ValidationReport report = (parseResult.isWellFormed())
                 ? ValidationReport.of(toValidate.toString(),
                         Documents.openDocumentOf(toValidate, Documents.odfDocumentOf(parseResult)))
