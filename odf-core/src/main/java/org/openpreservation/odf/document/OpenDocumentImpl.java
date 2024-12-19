@@ -40,7 +40,7 @@ final class OpenDocumentImpl implements OpenDocument {
 
     @Override
     public FileType getFileType() {
-        return this.pkg != null ? FileType.PACKAGE : FileType.SINGLE;
+        return this.pkg != null ? FileType.PACKAGE : FileType.FLAT_XML;
     }
 
     @Override

@@ -15,7 +15,7 @@ public interface ZipArchive {
     public Path getPath();
 
     /**
-     * Returns the first physical {@link ZipEntry} in the archive.
+     * Returns the first physical {@link ZipEntry} in the archive. Used to ensure that the MIMETYPE entry is the first in the archive.
      *
      * @return the first physical <code>ZipEntry</code> in the archive
      */
@@ -24,7 +24,7 @@ public interface ZipArchive {
     /**
      * Get a <code>List<ZipEntry></code> of all of the zip entries in the archive
      *
-     * @return an ordered <code>List<ZipEntry></code> of all of the zip entries in
+     * @return a <code>List<ZipEntry></code> of all of the zip entries in
      *         the archive
      */
     public List<ZipEntry> getZipEntries();

@@ -147,10 +147,22 @@ public enum Messages {
         return MessageFactoryImpl.getInstance(messageBundle);
     }
 
+    /**
+     * Get the new MessageLog instance
+     *
+     * @return a new message log instance with the default path and no messages
+     */
     public static MessageLog messageLogInstance() {
         return MessageLogImpl.of();
     }
 
+    /**
+     * Create a new MessageLog instance with the given values
+     *
+     * @param path the path reference for the message log, i.e. the path to the entity that the log is associated with
+     * @param messages the list of messages to be added to the log
+     * @return the new MessageLog instance created with the given values
+     */
     public static MessageLog messageLogInstance(final String path, final List<Message> messages) {
         return MessageLogImpl.of(path, messages);
     }
