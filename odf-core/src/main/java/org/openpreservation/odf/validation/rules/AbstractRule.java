@@ -4,11 +4,9 @@ import java.util.Objects;
 
 import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
-import org.openpreservation.odf.validation.ValidationReport;
 
 abstract class AbstractRule implements Rule {
     final String id;
@@ -53,17 +51,9 @@ abstract class AbstractRule implements Rule {
     }
 
     @Override
-    public MessageLog check(ValidationReport report) throws ParseException {
-        if (report.document == null) {
-            return Messages.messageLogInstance();
-        }
-        return check(report.document);
-    }
-
-    @Override
     public MessageLog check(final OpenDocument document) throws ParseException {
         Objects.requireNonNull(document, "document must not be null");
-        return Messages.messageLogInstance();
+        return check(document);
     }
 
     @Override

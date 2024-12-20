@@ -23,7 +23,7 @@ public class Rules {
     }
 
     public static final Rule odf2() {
-            return ValidPackageRule.getInstance(Severity.ERROR);
+        return ValidPackageRule.getInstance(Severity.ERROR);
     }
 
     public static final Rule odf3() {

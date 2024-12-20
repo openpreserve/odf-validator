@@ -31,7 +31,7 @@ final class ExtensionMimeTypeRule extends AbstractRule {
         if (document.isPackage()) {
             return this.check(document.getPackage());
         }
-        return this.check(document.getDocument());
+        return (document.getDocument() != null) ? this.check(document.getDocument()) : Messages.messageLogInstance();
     }
 
     public MessageLog check(final OdfDocument document) {

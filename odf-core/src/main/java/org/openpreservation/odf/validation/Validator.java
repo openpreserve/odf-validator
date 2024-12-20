@@ -1,6 +1,5 @@
 package org.openpreservation.odf.validation;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,11 +14,13 @@ import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.xml.XmlValidator;
 import org.openpreservation.messages.MessageFactory;
 import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.Source;
 import org.openpreservation.odf.document.Documents;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.OdfNamespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
@@ -38,43 +39,21 @@ public class Validator {
         super();
     }
 
-    public ValidationReport validateSpreadsheet(final Path toValidate) throws ParseException, FileNotFoundException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
-        return validateSingleFormat(toValidate, Formats.ODS);
-    }
-
-    public ValidationReport validateSpreadsheet(final File toValidate) throws ParseException, FileNotFoundException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
-        return validateSingleFormat(toValidate, Formats.ODS);
-    }
-
-    public ValidationReport validateSingleFormat(final File toValidate, final Formats legal)
-            throws ParseException, FileNotFoundException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "File", TO_VAL_STRING));
-        Objects.requireNonNull(legal, String.format(Checks.NOT_NULL, "Formats", "legal"));
-        return validateSingleFormat(toValidate.toPath(), legal);
-    }
-
     public ValidationReport validateSingleFormat(final Path toValidate, final Formats legal)
             throws ParseException, FileNotFoundException {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
         Objects.requireNonNull(legal, String.format(Checks.NOT_NULL, "Formats", "legal"));
         Checks.existingFileCheck(toValidate);
         ValidationReport report = validate(toValidate);
-        if (report.document == null || report.document.getFormat() == null) {
+        if (report.detectedFormat == null || report.detectedFormat == Formats.UNKNOWN) {
             report.add(toValidate.toString(), FACTORY.getError("DOC-6"));
         } else {
-            Formats detectedFmt = report.document.getFormat();
+            Formats detectedFmt = report.detectedFormat;
             if (detectedFmt != legal) {
                 report.add(toValidate.toString(), FACTORY.getError("DOC-7", legal.mime, detectedFmt.mime));
             }
         }
         return report;
-    }
-
-    public ValidationReport validate(final File toValidate) throws ParseException, FileNotFoundException {
-        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "File", TO_VAL_STRING));
-        return validate(toValidate.toPath());
     }
 
     public ValidationReport validate(final Path toValidate)
@@ -85,9 +64,9 @@ public class Validator {
         Checks.existingFileCheck(toValidate);
 
         try {
-            if (OdfPackages.isZip(toValidate)) {
+            if (Source.isZip(toValidate)) {
                 return validatePackage(toValidate);
-            } else if (OdfXmlDocuments.isXml(toValidate)) {
+            } else if (Source.isXml(toValidate)) {
                 return validateOpenDocumentXml(toValidate);
             }
         } catch (IOException | ParserConfigurationException | SAXException e) {
@@ -95,6 +74,15 @@ public class Validator {
         }
 
         return notOdf(toValidate);
+    }
+
+    public ProfileResult profile(final Path toValidate, final Profile profile)
+            throws ParseException, FileNotFoundException {
+        Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
+        Objects.requireNonNull(profile, String.format(Checks.NOT_NULL, "Profile", TO_VAL_STRING));
+        // Check if the path exists and is not a directory
+        Checks.existingFileCheck(toValidate);
+        return profile.check(Documents.openDocumentOf(toValidate));
     }
 
     private static final ValidationReport notOdf(final Path toValidate) {
@@ -105,9 +93,14 @@ public class Validator {
 
     private ValidationReport validatePackage(final Path toValidate)
             throws ParserConfigurationException, SAXException, ParseException, FileNotFoundException {
+        OdfPackage pckg = OdfPackages.getPackageParser().parsePackage(toValidate);
+        return validatePackage(pckg);
+    }
+
+    private ValidationReport validatePackage(final OdfPackage toValidate)
+            throws ParserConfigurationException, SAXException, ParseException, FileNotFoundException {
         ValidatingParser parser = Validators.getValidatingParser();
-        OdfPackage pckg = parser.parsePackage(toValidate);
-        return parser.validatePackage(toValidate, pckg);
+        return parser.validatePackage(toValidate);
     }
 
     private ValidationReport validateOpenDocumentXml(final Path toValidate)
@@ -119,6 +112,9 @@ public class Validator {
 
     public ValidationReport validateOpenDocument(final OpenDocument toValidate)
             throws IOException {
+        if (toValidate.getFormat() == Formats.UNKNOWN) {
+            return notOdf(toValidate.getPath());
+        }
         ParseResult parseResult = toValidate.getDocument().getXmlDocument().getParseResult();
         return validateParseResult(toValidate.getPath(), parseResult);
     }

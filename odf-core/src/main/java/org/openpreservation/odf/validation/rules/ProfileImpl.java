@@ -41,10 +41,20 @@ final class ProfileImpl extends AbstractProfile {
     public ProfileResult check(final OpenDocument document) throws ParseException {
         Objects.requireNonNull(document, "document must not be null");
         try {
+            final MessageLog messages = Messages.messageLogInstance();
             ValidationReport report = document.isPackage()
-                    ? this.validatingParser.validatePackage(document.getPath(), document.getPackage())
+                    ? this.validatingParser.validatePackage(document.getPackage())
                     : new Validator().validateOpenDocument(document);
-            return check(report);
+                    messages.add(getRulesetMessages(document,
+                    this.rules.stream().filter(Rule::isPrerequisite).collect(Collectors.toList())));
+            if (!messages.hasErrors()) {
+                messages.add(getRulesetMessages(document,
+                        this.rules.stream().filter(rule -> !rule.isPrerequisite()).collect(Collectors.toList())));
+            }
+            final String packageName = document == null || document.getPackage() == null ? ""
+                    : document.getPackage().getName();
+            return ProfileResultImpl.of(packageName, this.name,
+                    report, messages);
         } catch (FileNotFoundException e) {
             throw new ParseException("File not found exception when processing package.", e);
         } catch (IOException e) {
@@ -52,26 +62,11 @@ final class ProfileImpl extends AbstractProfile {
         }
     }
 
-    @Override
-    public ProfileResult check(final ValidationReport report) throws ParseException {
-        final MessageLog messages = Messages.messageLogInstance();
-        messages.add(getRulesetMessages(report,
-                this.rules.stream().filter(Rule::isPrerequisite).collect(Collectors.toList())));
-        if (!messages.hasErrors()) {
-            messages.add(getRulesetMessages(report,
-                    this.rules.stream().filter(rule -> !rule.isPrerequisite()).collect(Collectors.toList())));
-        }
-        final String packageName = report.document == null || report.document.getPackage() == null ? ""
-                : report.document.getPackage().getName();
-        return ProfileResultImpl.of(packageName, this.name,
-                report, messages);
-    }
-
-    private final Map<String, List<Message>> getRulesetMessages(final ValidationReport report,
+    private final Map<String, List<Message>> getRulesetMessages(final OpenDocument document,
             final Collection<Rule> rules) throws ParseException {
         final MessageLog messages = Messages.messageLogInstance();
         for (final Rule rule : rules) {
-            final MessageLog ruleMessages = rule.check(report);
+            final MessageLog ruleMessages = rule.check(document);
             messages.add(ruleMessages.getMessages());
         }
         return messages.getMessages();

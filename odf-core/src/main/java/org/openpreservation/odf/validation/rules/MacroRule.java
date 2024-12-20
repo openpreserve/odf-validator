@@ -42,6 +42,9 @@ final class MacroRule extends AbstractRule {
         if (document.isPackage()) {
             return this.check(document.getPackage());
         }
+        if (document.getDocument() == null) {
+            return Messages.messageLogInstance();
+        }
         MessageLog messageLog = checkOdfScriptParseResult(document.getPath().toString(),
                 document.getDocument().getXmlDocument().getParseResult());
         messageLog.add(this.schematron.check(document).getMessages());

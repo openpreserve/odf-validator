@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Test;
+import org.openpreservation.odf.Source;
 import org.openpreservation.odf.fmt.TestFiles;
 
 public class PackagesTest {
@@ -27,37 +28,37 @@ public class PackagesTest {
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    OdfPackages.isValidZip(path);
+                    Source.isValidZip(path);
                 });
     }
 
     @Test
     public void testIsZip() throws URISyntaxException, IOException {
         Path path = Paths.get(new File(TestFiles.FAKEMIME_TEXT.toURI()).getAbsolutePath());
-        assertTrue("Empty test file should be a zip file.", OdfPackages.isZip(path));
+        assertTrue("Empty test file should be a zip file.", Source.isZip(path));
     }
 
     @Test
     public void testIsFakeZip() throws URISyntaxException, IOException {
         Path path = Paths.get(TestFiles.FAKEMIME_TEXT.toURI());
-        assertTrue("Fake MIME test file should be a valid zip file.", OdfPackages.isZip(path));
+        assertTrue("Fake MIME test file should be a valid zip file.", Source.isZip(path));
     }
 
     @Test
     public void testIsNotZip() throws URISyntaxException, IOException {
         Path path = Paths.get(TestFiles.FLAT_NOT_WF.toURI());
-        assertFalse("Flat XML test file should NOT be a zip file.", OdfPackages.isZip(path));
+        assertFalse("Flat XML test file should NOT be a zip file.", Source.isZip(path));
     }
 
     @Test
     public void testIsValidZip() throws URISyntaxException, IOException {
         Path path = Paths.get(new File(TestFiles.EMPTY_ODS.toURI()).getAbsolutePath());
-        assertTrue("Empty test file should be a valid zip.", OdfPackages.isValidZip(path));
+        assertTrue("Empty test file should be a valid zip.", Source.isValidZip(path));
     }
 
     @Test
     public void testInValidZip() throws URISyntaxException, IOException {
         Path path = Paths.get(TestFiles.FAKEMIME_TEXT.toURI());
-        assertFalse("Fake MIME test file should NOT be a valid zip.", OdfPackages.isValidZip(path));
+        assertFalse("Fake MIME test file should NOT be a valid zip.", Source.isValidZip(path));
     }
 }

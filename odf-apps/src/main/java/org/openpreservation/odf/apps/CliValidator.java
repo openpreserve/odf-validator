@@ -52,7 +52,7 @@ class CliValidator implements Callable<Integer> {
             if (validationReport != null) {
                 retStatus = Math.max(retStatus, results(toValidate, validationReport));
                 if (this.profileFlag) {
-                    final ProfileResult profileResult = profileReport(validationReport, toValidate);
+                    final ProfileResult profileResult = profilePath(toValidate);
                     if (profileResult != null) {
                         retStatus = Math.max(retStatus, results(toValidate, profileResult));
                     }
@@ -78,11 +78,11 @@ class CliValidator implements Callable<Integer> {
         return null;
     }
 
-    private ProfileResult profileReport(final ValidationReport toProfile, final Path path) {
+    private ProfileResult profilePath(final Path path) {
         try {
             final Profile dnaProfile = Rules.getDnaProfile();
-            return dnaProfile.check(toProfile);
-        } catch (IllegalArgumentException e) {
+            return validator.profile(path, dnaProfile);
+        } catch (IllegalArgumentException | FileNotFoundException e) {
             this.logMessage(path, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
         } catch (ParseException | ParserConfigurationException | SAXException e) {
             this.logMessage(path, Messages.getMessageInstance("SYS-1", Severity.ERROR,
@@ -122,12 +122,8 @@ class CliValidator implements Callable<Integer> {
             ConsoleFormatter.info(FACTORY.getInfo("APP-3").getMessage());
         }
         results(report.documentMessages.getMessages());
-        outputSummary(isEncrypted(report), report.documentMessages);
+        outputSummary(report.isEncrypted, report.documentMessages);
         return status;
-    }
-
-    private static boolean isEncrypted(final ValidationReport report) {
-        return report.document != null && report.document.isPackage() && report.document.getPackage().isEncrypted();
     }
 
     private static Integer results(final Map<String, List<Message>> messageMap) {
@@ -151,7 +147,7 @@ class CliValidator implements Callable<Integer> {
                 ? report.getValidationReport().documentMessages
                 : Messages.messageLogInstance();
         profileMessages.add(report.getMessageLog().getMessages());
-        outputSummary(isEncrypted(report.getValidationReport()), profileMessages);
+        outputSummary(report.getValidationReport().isEncrypted, profileMessages);
         return status;
     }
 

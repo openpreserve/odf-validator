@@ -5,21 +5,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Test;
 import org.openpreservation.messages.MessageLog;
-import org.openpreservation.odf.document.Documents;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
-import org.openpreservation.odf.pkg.OdfPackage;
-import org.openpreservation.odf.pkg.OdfPackages;
-import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
 

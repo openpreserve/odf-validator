@@ -2,7 +2,6 @@ package org.openpreservation.odf.validation;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Path;
 
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.PackageParser;
@@ -16,6 +15,6 @@ public interface ValidatingParser extends PackageParser {
      * @throws IOException if there's a problem reading package elements from the
      *                     zip file.
      */
-    public ValidationReport validatePackage(final Path path, final OdfPackage odfPackage)
+    public ValidationReport validatePackage(final OdfPackage odfPackage)
             throws ParseException, FileNotFoundException;
 }

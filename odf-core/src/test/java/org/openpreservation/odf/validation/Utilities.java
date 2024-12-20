@@ -1,11 +1,9 @@
 package org.openpreservation.odf.validation;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -20,6 +18,6 @@ public class Utilities {
         ValidatingParser parser = Validators.getValidatingParser();
         InputStream is = resource.openStream();
         OdfPackage pkg = parser.parsePackage(is, resource.toString());
-        return parser.validatePackage(Paths.get(new File(resource.toURI()).getAbsolutePath()), pkg);
+        return parser.validatePackage(pkg);
     }
 }

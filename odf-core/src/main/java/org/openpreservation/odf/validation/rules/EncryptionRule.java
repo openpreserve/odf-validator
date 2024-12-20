@@ -7,7 +7,6 @@ import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.FileEntry;
-import org.openpreservation.odf.pkg.PackageParser.ParseException;
 
 final class EncryptionRule extends AbstractRule {
 

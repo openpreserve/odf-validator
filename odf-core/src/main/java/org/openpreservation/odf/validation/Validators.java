@@ -3,10 +3,7 @@ package org.openpreservation.odf.validation;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.zip.ZipEntry;
-import org.openpreservation.odf.document.OpenDocument;
 import org.xml.sax.SAXException;
-
-import net.sf.saxon.lib.Validation;
 
 public class Validators {
 
@@ -33,10 +30,6 @@ public class Validators {
 
     public static final ValidationReport reportOf(final String name) {
         return ValidationReport.of(name);
-    }
-
-    public static final ValidationReport reportOf(final String name, final OpenDocument document) {
-        return ValidationReport.of(name, document);
     }
 
     private Validators() {

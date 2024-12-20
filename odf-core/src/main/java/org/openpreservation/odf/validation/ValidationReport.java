@@ -9,42 +9,40 @@ import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
+import org.openpreservation.odf.fmt.Formats;
 
 public final class ValidationReport {
     public final String name;
-    public final OpenDocument document;
+    public final Formats detectedFormat;
+    public final boolean isEncrypted;
     public final MessageLog documentMessages;
 
-    private ValidationReport(final String name) {
-        this(name, null);
-    }
-
-    private ValidationReport(final String name, final OpenDocument document) {
-        this(name, document, Messages.messageLogInstance());
-    }
-
-    private ValidationReport(final String name, final OpenDocument document, final MessageLog documentMessages) {
+    private ValidationReport(final String name, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
         super();
         this.name = name;
-        this.document = document;
+        this.detectedFormat = detectedFormat;
+        this.isEncrypted = isEncrypted;
         this.documentMessages = documentMessages;
     }
 
     static final ValidationReport of(final String name) {
-        return new ValidationReport(name);
+        return ValidationReport.of(name, Formats.UNKNOWN);
+    }
+
+    static final ValidationReport of(final String name, final Formats detectedFormat) {
+        return ValidationReport.of(name, detectedFormat, false);
+    }
+
+    static final ValidationReport of(final String name, final Formats detectedFormat, final boolean isEncrypted) {
+        return ValidationReport.of(name, detectedFormat, isEncrypted, Messages.messageLogInstance());
+    }
+
+    static final ValidationReport of(final String name, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
+        return new ValidationReport(name, detectedFormat, isEncrypted, documentMessages);
     }
 
     static final ValidationReport of(final String name, final OpenDocument document) {
-        return new ValidationReport(name, document);
-    }
-
-    static final ValidationReport of(final String name, final MessageLog documentMessages) {
-        return new ValidationReport(name, null, documentMessages);
-    }
-
-    static final ValidationReport of(final String name, final OpenDocument document,
-            final MessageLog documentMessages) {
-        return new ValidationReport(name, document, documentMessages);
+        return ValidationReport.of(name, document.getFormat(), (document.getPackage() != null) ? document.getPackage().isEncrypted() : false);
     }
 
     @Override
@@ -76,13 +74,18 @@ public final class ValidationReport {
         return documentMessages.getMessages().values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
+    public Formats getDetectedFormat() {
+        return this.detectedFormat;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((detectedFormat == null) ? 0 : detectedFormat.hashCode());
+        result = prime * result + ((isEncrypted) ? 1231 : 1237);
         result = prime * result + ((documentMessages == null) ? 0 : documentMessages.hashCode());
-        result = prime * result + ((document == null) ? 0 : document.hashCode());
         return result;
     }
 
@@ -100,15 +103,17 @@ public final class ValidationReport {
                 return false;
         } else if (!name.equals(other.name))
             return false;
+        if (detectedFormat == null) {
+            if (other.detectedFormat != null)
+                return false;
+        } else if (!detectedFormat.equals(other.detectedFormat))
+            return false;
+        if (isEncrypted != other.isEncrypted)
+            return false;
         if (documentMessages == null) {
             if (other.documentMessages != null)
                 return false;
         } else if (!documentMessages.equals(other.documentMessages))
-            return false;
-        if (document == null) {
-            if (other.document != null)
-                return false;
-        } else if (!document.equals(other.document))
             return false;
         return true;
     }

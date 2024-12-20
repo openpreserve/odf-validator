@@ -8,7 +8,6 @@ public enum FileType {
      * OpenDocument flat XML files.
      */
     FLAT_XML,
-
     /**
      * OpenDocument package files.
      */

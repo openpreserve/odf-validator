@@ -14,7 +14,5 @@ public interface Profile {
 
     public ProfileResult check(final OpenDocument document) throws ParseException;
 
-    public ProfileResult check(final ValidationReport report) throws ParseException;
-
     public Set<Rule> getRules();
 }

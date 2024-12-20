@@ -17,6 +17,4 @@ public interface Rule {
     public boolean isPrerequisite();
 
     public MessageLog check(final OpenDocument document) throws ParseException;
-
-    public MessageLog check(final ValidationReport report) throws ParseException;
 }

@@ -33,36 +33,24 @@ class ValidPackageRule extends AbstractRule {
     public MessageLog check(final OpenDocument document) throws ParseException {
         Objects.requireNonNull(document, "document must not be null");
         try {
+            final MessageLog messageLog = Messages.messageLogInstance();
             Validator validator = new Validator();
             ValidationReport report = validator.validate(document.getPath());
-            return check(report);
+            if (!report.isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {
+                String message = (!document.isPackage()) ? PACK_MESS : "";
+                if (document != null && !document.getVersion().equals(Version.ODF_13)) {
+                    message = String.format(VER_MESS, document.getVersion());
+                }
+                if (!report.isValid()) {
+                    message += INV_MESS;
+                }
+                messageLog.add(report.name,
+                        Messages.getMessageInstance(this.id, Message.Severity.ERROR,
+                                this.getName(), message + this.getDescription()));
+            }
+            return messageLog;
         } catch (FileNotFoundException e) {
             throw new ParseException("File not found exception when processing package.", e);
         }
-    }
-
-    @Override
-    public MessageLog check(final ValidationReport report) {
-        Objects.requireNonNull(report, "report must not be null");
-        final MessageLog messageLog = Messages.messageLogInstance();
-        if (report.document == null) {
-            messageLog.add(report.name,
-                    Messages.getMessageInstance(this.id, Message.Severity.ERROR,
-                            this.getName(), PACK_MESS + this.getDescription()));
-            return messageLog;
-        }
-        if (!report.isValid() || !report.document.getVersion().equals(Version.ODF_13) || !report.document.isPackage()) {
-            String message = (!report.document.isPackage()) ? PACK_MESS : "";
-            if (report.document != null && !report.document.getVersion().equals(Version.ODF_13)) {
-                message = String.format(VER_MESS, report.document.getVersion());
-            }
-            if (!report.isValid()) {
-                message += INV_MESS;
-            }
-            messageLog.add(report.name,
-                    Messages.getMessageInstance(this.id, Message.Severity.ERROR,
-                            this.getName(), message + this.getDescription()));
-        }
-        return messageLog;
     }
 }
