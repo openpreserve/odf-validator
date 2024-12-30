@@ -235,9 +235,9 @@ public enum Formats {
     }
 
     /**
-     * Get the maximum length of the signatures for the format.
+     * Get the maximum length of a signature for the format.
      *
-     * @return the maximum length of the signatures for the format
+     * @return the maximum length of a signature for the format
      */
     public int getMaxSignatureLength() {
         int max = 0;

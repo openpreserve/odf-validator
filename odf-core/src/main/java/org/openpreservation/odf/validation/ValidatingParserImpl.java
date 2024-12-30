@@ -17,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 
 import org.openpreservation.format.xml.ParseResult;
-import org.openpreservation.format.xml.ValidationResult;
+import org.openpreservation.format.xml.XmlValidationResult;
 import org.openpreservation.format.xml.XmlValidator;
 import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.messages.Message;
@@ -50,7 +50,7 @@ final class ValidatingParserImpl implements ValidatingParser {
 
     private final PackageParser packageParser;
 
-    private final Map<String, ValidationResult> results = new HashMap<>();
+    private final Map<String, XmlValidationResult> results = new HashMap<>();
 
     private ValidatingParserImpl()
             throws ParserConfigurationException, SAXException {
@@ -60,13 +60,13 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     @Override
-    public ValidationReport validatePackage(final OdfPackage toValidate) {
+    public ValidationResult validatePackage(final OdfPackage toValidate) {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, TO_VALIDATE, "OdfPackage"));
         this.results.clear();
         if (!toValidate.isWellFormedZip()) {
-            final ValidationReport report = ValidationReport.of(toValidate.getName());
-            report.add(toValidate.getName(), FACTORY.getError("PKG-1"));
-            return report;
+            final ValidationResult result = ValidationResultImpl.of(toValidate.getName());
+            result.getMessageLog().add(toValidate.getName(), FACTORY.getError("PKG-1"));
+            return result;
         }
         return validate(toValidate);
     }
@@ -86,20 +86,20 @@ final class ValidatingParserImpl implements ValidatingParser {
         return this.packageParser.parsePackage(toParse, name);
     }
 
-    private ValidationReport validate(final OdfPackage odfPackage) {
-        final ValidationReport report = ValidationReport.of(odfPackage.getName(), odfPackage.getDetectedFormat(), odfPackage.isEncrypted());
-        report.add("package", FACTORY.getInfo("DOC-2", odfPackage.getDetectedVersion().version));
-        report.add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
-        report.add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));
+    private ValidationResult validate(final OdfPackage odfPackage) {
+        final ValidationResult result = ValidationResultImpl.of(odfPackage.getName(), odfPackage.getDetectedFormat(), odfPackage.isEncrypted());
+        result.getMessageLog().add("package", FACTORY.getInfo("DOC-2", odfPackage.getDetectedVersion().version));
+        result.getMessageLog().add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
+        result.getMessageLog().add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));
         if (!odfPackage.hasThumbnail()) {
-            report.add(OdfPackages.PATH_THUMBNAIL, FACTORY.getWarning("PKG-7"));
+            result.getMessageLog().add(OdfPackages.PATH_THUMBNAIL, FACTORY.getWarning("PKG-7"));
         }
-        report.addAll(this.auditZipEntries(odfPackage));
-        report.addAll(this.validateOdfXmlEntries(odfPackage));
-        for (final Entry<String, ValidationResult> entry : this.results.entrySet()) {
-            report.add(entry.getKey(), entry.getValue().getMessages());
+        result.getMessageLog().add(this.auditZipEntries(odfPackage));
+        result.getMessageLog().add(this.validateOdfXmlEntries(odfPackage));
+        for (final Entry<String, XmlValidationResult> entry : this.results.entrySet()) {
+            result.getMessageLog().add(entry.getKey(), entry.getValue().getMessages());
         }
-        return report;
+        return result;
     }
 
     private final Map<String, List<Message>> validateOdfXmlEntries(final OdfPackage odfPackage) {
@@ -150,7 +150,7 @@ final class ValidatingParserImpl implements ValidatingParser {
                         getVersionFromPath(odfPackage, xmlPath));
         if (schema != null) {
             try {
-                ValidationResult validationResult = this.validator.validate(parseResult,
+                XmlValidationResult validationResult = this.validator.validate(parseResult,
                         odfPackage.getEntryXmlStream(xmlPath), schema);
                 this.results.put(xmlPath, validationResult);
             } catch (IOException e) {

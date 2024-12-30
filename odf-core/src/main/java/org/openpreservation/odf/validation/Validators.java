@@ -28,8 +28,14 @@ public class Validators {
         return ValidatingParserImpl.isCompressionValid(entry);
     }
 
-    public static final ValidationReport reportOf(final String name) {
-        return ValidationReport.of(name);
+    /**
+     * Create a mimimal validation report.
+     *
+     * @param name a name for the report
+     * @return the minimal validation report with the given name
+     */
+    public static final ValidationResult reportOf(final String name) {
+        return ValidationResultImpl.of(name);
     }
 
     private Validators() {

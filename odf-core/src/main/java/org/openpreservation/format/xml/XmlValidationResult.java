@@ -4,7 +4,7 @@ package org.openpreservation.format.xml;
  * Simple extension of {@link ParseResult} to indicate whether the result of XML
  * validation is valid or not.
  */
-public interface ValidationResult extends ParseResult {
+public interface XmlValidationResult extends ParseResult {
     /**
      * Is the XML document valid according to the supplied schema?
      * 

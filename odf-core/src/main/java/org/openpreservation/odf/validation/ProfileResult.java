@@ -7,7 +7,7 @@ public interface ProfileResult {
 
     public String getName();
 
-    public ValidationReport getValidationReport();
+    public ValidationResult getValidationReport();
 
     public MessageLog getMessageLog();
 

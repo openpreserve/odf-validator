@@ -11,13 +11,30 @@ import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.Formats;
 
-public final class ValidationReport {
-    public final String name;
-    public final Formats detectedFormat;
-    public final boolean isEncrypted;
-    public final MessageLog documentMessages;
+public final class ValidationResultImpl implements ValidationResult {
+    static final ValidationResult of(final String name) {
+        return ValidationResultImpl.of(name, Formats.UNKNOWN);
+    }
+    static final ValidationResult of(final String name, final Formats detectedFormat) {
+        return ValidationResultImpl.of(name, detectedFormat, false);
+    }
+    static final ValidationResult of(final String name, final Formats detectedFormat, final boolean isEncrypted) {
+        return ValidationResultImpl.of(name, detectedFormat, isEncrypted, Messages.messageLogInstance());
+    }
+    static final ValidationResult of(final String name, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
+        return new ValidationResultImpl(name, detectedFormat, isEncrypted, documentMessages);
+    }
 
-    private ValidationReport(final String name, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
+    static final ValidationResult of(final String name, final OpenDocument document) {
+        return ValidationResultImpl.of(name, document.getFormat(), (document.getPackage() != null) ? document.getPackage().isEncrypted() : false);
+    }
+
+    private final String name;
+    private final Formats detectedFormat;
+    private final boolean isEncrypted;
+    private final MessageLog documentMessages;
+
+    private ValidationResultImpl(final String name, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
         super();
         this.name = name;
         this.detectedFormat = detectedFormat;
@@ -25,31 +42,12 @@ public final class ValidationReport {
         this.documentMessages = documentMessages;
     }
 
-    static final ValidationReport of(final String name) {
-        return ValidationReport.of(name, Formats.UNKNOWN);
-    }
-
-    static final ValidationReport of(final String name, final Formats detectedFormat) {
-        return ValidationReport.of(name, detectedFormat, false);
-    }
-
-    static final ValidationReport of(final String name, final Formats detectedFormat, final boolean isEncrypted) {
-        return ValidationReport.of(name, detectedFormat, isEncrypted, Messages.messageLogInstance());
-    }
-
-    static final ValidationReport of(final String name, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
-        return new ValidationReport(name, detectedFormat, isEncrypted, documentMessages);
-    }
-
-    static final ValidationReport of(final String name, final OpenDocument document) {
-        return ValidationReport.of(name, document.getFormat(), (document.getPackage() != null) ? document.getPackage().isEncrypted() : false);
-    }
-
     @Override
     public String toString() {
         return "ValidationReport [name=" + name + ", documentMessages=" + documentMessages + "]";
     }
 
+    @Override
     public boolean isValid() {
         return !documentMessages.hasErrors();
     }
@@ -66,16 +64,34 @@ public final class ValidationReport {
         messages.entrySet().stream().forEach(e -> add(e.getKey(), e.getValue()));
     }
 
+    @Override
     public List<Message> getErrors() {
         return documentMessages.getErrors().values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
+    @Override
     public List<Message> getMessages() {
         return documentMessages.getMessages().values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
+    @Override
+    public MessageLog getMessageLog() {
+        return this.documentMessages;
+    }
+
+    @Override
     public Formats getDetectedFormat() {
         return this.detectedFormat;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public boolean isEncrypted() {
+        return this.isEncrypted;
     }
 
     @Override
@@ -97,7 +113,7 @@ public final class ValidationReport {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final ValidationReport other = (ValidationReport) obj;
+        final ValidationResultImpl other = (ValidationResultImpl) obj;
         if (name == null) {
             if (other.name != null)
                 return false;

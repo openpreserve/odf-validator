@@ -19,7 +19,7 @@ import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.ProfileResult;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.ValidatingParser;
-import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.ValidationResult;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.Validators;
 import org.xml.sax.SAXException;
@@ -42,7 +42,7 @@ final class ProfileImpl extends AbstractProfile {
         Objects.requireNonNull(document, "document must not be null");
         try {
             final MessageLog messages = Messages.messageLogInstance();
-            ValidationReport report = document.isPackage()
+            ValidationResult result = document.isPackage()
                     ? this.validatingParser.validatePackage(document.getPackage())
                     : new Validator().validateOpenDocument(document);
                     messages.add(getRulesetMessages(document,
@@ -54,7 +54,7 @@ final class ProfileImpl extends AbstractProfile {
             final String packageName = document == null || document.getPackage() == null ? ""
                     : document.getPackage().getName();
             return ProfileResultImpl.of(packageName, this.name,
-                    report, messages);
+                    result, messages);
         } catch (FileNotFoundException e) {
             throw new ParseException("File not found exception when processing package.", e);
         } catch (IOException e) {

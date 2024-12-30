@@ -13,7 +13,7 @@ import org.xml.sax.SAXException;
 
 public class Utilities {
 
-    static ValidationReport getValidationReport(final URL resource)
+    static ValidationResult getValidationReport(final URL resource)
             throws URISyntaxException, ParseException, ParserConfigurationException, SAXException, IOException {
         ValidatingParser parser = Validators.getValidatingParser();
         InputStream is = resource.openStream();

@@ -35,7 +35,7 @@ public class Source {
     /**
      * Uses the {@link FormatSniffer} to see if the supplied path resolves to a ZIP
      * instance.
-     * 
+     *
      * This check only tests the file header bytes and doesn't parse
      * the resolved path to ensure the zip is valid. See
      * {@link Source#isValidZip(Path)} for that.
@@ -53,7 +53,7 @@ public class Source {
     /**
      * Check if the supplied <code>Path</code> resolves to a valid zip archive
      * instance.
-     * 
+     *
      * This is a full library parse of the resolved <code>Path<code>.
      *
      * @param toCheck a <code>Path</code> to resolve and test

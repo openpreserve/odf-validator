@@ -5,10 +5,10 @@ import java.util.List;
 import org.openpreservation.messages.Message;
 
 /**
- * A factory for creating {@link ParseResult} and {@link ValidationResult}
+ * A factory for creating {@link ParseResult} and {@link XmlValidationResult}
  * objects.
  */
-public final class ValidationResults {
+public final class XmlValidationResults {
     /**
      * Create a new {@link ParseResult} object from the supplied values.
      * 
@@ -29,11 +29,11 @@ public final class ValidationResults {
     }
 
     /**
-     * Creates a new {@link ValidationResult} object from the supplied values.
+     * Creates a new {@link XmlValidationResult} object from the supplied values.
      * 
      * @param parseResult
      *                    the {@link ParseResult} to be used for the
-     *                    {@link ValidationResult}
+     *                    {@link XmlValidationResult}
      * @param valid
      *                    <code>true</code> if the result is for a valid XML
      *                    document, otherwise <code>false</code>
@@ -43,12 +43,12 @@ public final class ValidationResults {
      * @return a new <code>ValidationResult</code> object created from the supplied
      *         values
      */
-    public static final ValidationResult of(final ParseResult parseResult, final boolean valid,
+    public static final XmlValidationResult of(final ParseResult parseResult, final boolean valid,
             final List<Message> messages) {
-        return ValidationResultImpl.of(parseResult, valid, messages);
+        return XmlValidationResultImpl.of(parseResult, valid, messages);
     }
 
-    private ValidationResults() {
+    private XmlValidationResults() {
         throw new AssertionError("No instances of ValidationResults");
     }
 }

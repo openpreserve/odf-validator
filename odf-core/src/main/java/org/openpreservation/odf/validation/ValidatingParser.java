@@ -15,6 +15,6 @@ public interface ValidatingParser extends PackageParser {
      * @throws IOException if there's a problem reading package elements from the
      *                     zip file.
      */
-    public ValidationReport validatePackage(final OdfPackage odfPackage)
+    public ValidationResult validatePackage(final OdfPackage odfPackage)
             throws ParseException, FileNotFoundException;
 }

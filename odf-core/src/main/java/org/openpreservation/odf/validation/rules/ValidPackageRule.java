@@ -9,7 +9,7 @@ import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.ValidationResult;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.xml.Version;
 
@@ -35,16 +35,16 @@ class ValidPackageRule extends AbstractRule {
         try {
             final MessageLog messageLog = Messages.messageLogInstance();
             Validator validator = new Validator();
-            ValidationReport report = validator.validate(document.getPath());
-            if (!report.isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {
+            ValidationResult result = validator.validate(document.getPath());
+            if (!result.isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {
                 String message = (!document.isPackage()) ? PACK_MESS : "";
                 if (document != null && !document.getVersion().equals(Version.ODF_13)) {
                     message = String.format(VER_MESS, document.getVersion());
                 }
-                if (!report.isValid()) {
+                if (!result.isValid()) {
                     message += INV_MESS;
                 }
-                messageLog.add(report.name,
+                messageLog.add(result.getName(),
                         Messages.getMessageInstance(this.id, Message.Severity.ERROR,
                                 this.getName(), message + this.getDescription()));
             }

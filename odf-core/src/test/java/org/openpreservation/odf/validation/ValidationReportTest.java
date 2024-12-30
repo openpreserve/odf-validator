@@ -7,6 +7,6 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 public class ValidationReportTest {
     @Test
     public void testEqualsContract() {
-        EqualsVerifier.forClass(ValidationReport.class).verify();
+        EqualsVerifier.forClass(ValidationResultImpl.class).verify();
     }
 }
