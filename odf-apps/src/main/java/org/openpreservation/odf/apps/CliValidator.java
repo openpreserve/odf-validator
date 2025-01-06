@@ -19,10 +19,15 @@ import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ProfileResult;
-import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.ValidationResult;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.rules.Rules;
 import org.xml.sax.SAXException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -38,23 +43,25 @@ class CliValidator implements Callable<Integer> {
     private boolean profileFlag;
     @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format spreadsheet files to validate.")
     private File[] toValidateFiles;
+    @Option(names = { "--json" }, description = "Output results as JSON.")
+    private boolean jsonFlag;
     private final Validator validator = new Validator();
     private MessageLog appMessages = Messages.messageLogInstance();
 
     @Override
-    public Integer call() {
+    public Integer call() throws JsonProcessingException {
         Integer retStatus = 0;
         for (File file : this.toValidateFiles) {
             Path toValidate = file.toPath();
             this.appMessages = Messages.messageLogInstance();
             ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", toValidate.toString()));
-            final ValidationReport validationReport = validatePath(toValidate);
-            if (validationReport != null) {
-                retStatus = Math.max(retStatus, results(toValidate, validationReport));
+            final ValidationResult validationResult = validatePath(toValidate);
+            if (validationResult != null) {
+                retStatus = Math.max(retStatus, outputValidationResult(toValidate, validationResult, this.jsonFlag));
                 if (this.profileFlag) {
                     final ProfileResult profileResult = profilePath(toValidate);
                     if (profileResult != null) {
-                        retStatus = Math.max(retStatus, results(toValidate, profileResult));
+                        retStatus = Math.max(retStatus, outputProfileResult(toValidate, profileResult, this.jsonFlag));
                     }
                 }
             }
@@ -66,7 +73,7 @@ class CliValidator implements Callable<Integer> {
         return retStatus;
     }
 
-    private ValidationReport validatePath(final Path toValidate) {
+    private ValidationResult validatePath(final Path toValidate) {
         try {
             return validator.validate(toValidate);
         } catch (IllegalArgumentException | FileNotFoundException e) {
@@ -115,51 +122,69 @@ class CliValidator implements Callable<Integer> {
         return status;
     }
 
-    private static Integer results(final Path path, final ValidationReport report) {
-        Integer status = 0;
+    private static Integer outputValidationResult(final Path path, final ValidationResult result, boolean jsonFlag) throws JsonProcessingException {
         ConsoleFormatter.colourise(FACTORY.getInfo("APP-4", path.toString(), "bold"));
-        if (report.getMessages().isEmpty()) {
+        if (result.getMessages().isEmpty()) {
             ConsoleFormatter.info(FACTORY.getInfo("APP-3").getMessage());
         }
-        results(report.documentMessages.getMessages());
-        outputSummary(report.isEncrypted, report.documentMessages);
+        Integer status = result.getMessageLog().hasFatals() || result.getMessageLog().hasErrors() ? 1 : 0;
+        if (jsonFlag)
+            ouptutJson(result);
+        else
+            outputMessageLog(result.getMessageLog().getMessages());
+        outputSummary(result.isEncrypted(), result.getMessageLog());
         return status;
     }
 
-    private static Integer results(final Map<String, List<Message>> messageMap) {
-        Integer status = 0;
-        for (Map.Entry<String, List<Message>> entry : messageMap.entrySet()) {
-            status = Math.max(status, results(entry.getKey(), entry.getValue()));
-        }
-        return status;
-    }
-
-    private static Integer results(final Path path, final ProfileResult report) {
-        Integer status = 0;
-        ConsoleFormatter.colourise(FACTORY.getInfo("APP-5", report.getName(), path.toString(), "bold"));
-        for (Map.Entry<String, List<Message>> entry : report.getMessageLog().getMessages().entrySet()) {
-            status = Math.max(status, results(entry.getKey(), entry.getValue()));
-        }
-        if (report.getValidationReport() != null && report.getValidationReport().documentMessages.hasErrors()) {
+    private static Integer outputProfileResult(final Path path, final ProfileResult result, boolean jsonFlag) throws JsonProcessingException {
+        ConsoleFormatter.colourise(FACTORY.getInfo("APP-5", result.getName(), path.toString(), "bold"));
+        Integer status = result.getMessageLog().hasFatals() || result.getMessageLog().hasErrors() ? 1 : 0;
+        if (result.getValidationResult() != null && result.getValidationResult().getMessageLog().hasErrors() || result
+                .getValidationResult().getMessageLog().hasFatals()) {
             status = 1;
         }
-        MessageLog profileMessages = (report.getValidationReport() != null)
-                ? report.getValidationReport().documentMessages
+        MessageLog profileMessages = (result.getValidationResult() != null)
+                ? result.getValidationResult().getMessageLog()
                 : Messages.messageLogInstance();
-        profileMessages.add(report.getMessageLog().getMessages());
-        outputSummary(report.getValidationReport().isEncrypted, profileMessages);
+        profileMessages.add(result.getMessageLog().getMessages());
+        if (jsonFlag)
+            ouptutJson(result);
+        else
+            outputMessageLog(result.getMessageLog().getMessages());
+        outputSummary(result.getValidationResult().isEncrypted(), profileMessages);
         return status;
     }
 
-    private static Integer results(final String path, final List<Message> messages) {
-        Integer status = 0;
+    private static void outputMessageLog(final Map<String, List<Message>> messageMap) {
+        for (Map.Entry<String, List<Message>> entry : messageMap.entrySet()) {
+            outputMessage(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private static void outputMessage(final String path, final List<Message> messages) {
         for (Message message : messages) {
             ConsoleFormatter.colourise(Paths.get(path), message);
-            if (message.isError() || message.isFatal()) {
-                status = 1;
-            }
         }
-        return status;
+    }
+
+    private static void ouptutJson(final ValidationResult result) throws JsonProcessingException {
+        var mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        ConsoleFormatter.info(mapper.writeValueAsString(result));
+    }
+
+    private static void ouptutJson(final ProfileResult result) throws JsonProcessingException {
+        var mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        ConsoleFormatter.info(mapper.writeValueAsString(result));
+    }
+
+    private static void ouptutXml(final ValidationResult result) throws JsonProcessingException {
+        XmlMapper xmlMapper = new XmlMapper();
+        ConsoleFormatter.info(xmlMapper.writeValueAsString(result));
+    }
+
+    private static void ouptutXml(final ProfileResult result) throws JsonProcessingException {
+        var mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        ConsoleFormatter.info(mapper.writeValueAsString(result));
     }
 
     private static void outputSummary(final boolean isEncrypted, final MessageLog messageLog) {

@@ -94,6 +94,11 @@ final class MessageLogImpl implements MessageLog {
     }
 
     @Override
+    public boolean hasFatals() {
+        return containsSeverity(Message.Severity.FATAL);
+    }
+
+    @Override
     public boolean hasErrors() {
         return containsSeverity(Message.Severity.ERROR);
     }

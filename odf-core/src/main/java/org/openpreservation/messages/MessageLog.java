@@ -4,9 +4,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /**
  * Interface for a log of {@link Message} objects.
  */
+@JsonSerialize(as = MessageLogImpl.class)
 public interface MessageLog {
     /**
      * Get the number of messages in the log.
@@ -20,6 +25,7 @@ public interface MessageLog {
      *
      * @return <code>true</code> if the log is empty, <code>false</code> otherwise
      */
+    @JsonIgnore
     public boolean isEmpty();
 
     /**
@@ -53,6 +59,7 @@ public interface MessageLog {
      *
      * @return a <code>Map&lt;String, List&lt;Message&gt;&gt;</code> of error messages
      */
+    @JsonIgnore
     public Map<String, List<Message>> getErrors();
 
     /**
@@ -60,6 +67,7 @@ public interface MessageLog {
      *
      * @return a <code>Map&lt;String, List&lt;Message&gt;&gt;</code> of warning messages
      */
+    @JsonIgnore
     public Map<String, List<Message>> getWarnings();
 
     /**
@@ -67,6 +75,7 @@ public interface MessageLog {
      *
      * @return a <code>Map&lt;String, List&lt;Message&gt;&gt;</code> of info messages
      */
+    @JsonIgnore
     public Map<String, List<Message>> getInfos();
 
     /**
@@ -81,6 +90,7 @@ public interface MessageLog {
      *
      * @return <code>true</code> if the log contains error messages, <code>false</code> otherwise
      */
+    @JsonIgnore
     public boolean hasErrors();
 
     /**
@@ -88,6 +98,7 @@ public interface MessageLog {
      *
      * @return <code>true</code> if the log contains warning messages, <code>false</code> otherwise
      */
+    @JsonIgnore
     public boolean hasWarnings();
 
     /**
@@ -95,13 +106,23 @@ public interface MessageLog {
      *
      * @return <code>true</code> if the log contains info messages, <code>false</code> otherwise
      */
+    @JsonIgnore
     public boolean hasInfos();
+
+    /**
+     * Does the log contain any fatal error messages?
+     *
+     * @return <code>true</code> if the log contains fatal messages, <code>false</code> otherwise
+     */
+    @JsonIgnore
+    public boolean hasFatals();
 
     /**
      * Get the number of error messages in the log.
      *
      * @return the <code>int</code> number of error messages in the log
      */
+    @JsonProperty("error_count")
     public int getErrorCount();
 
     /**
@@ -109,6 +130,7 @@ public interface MessageLog {
      *
      * @return the <code>int</code> number of warning messages in the log
      */
+    @JsonProperty("warning_count")
     public int getWarningCount();
 
     /**
@@ -116,6 +138,7 @@ public interface MessageLog {
      *
      * @return
      */
+    @JsonProperty("info_count")
     public int getInfoCount();
 
     /**

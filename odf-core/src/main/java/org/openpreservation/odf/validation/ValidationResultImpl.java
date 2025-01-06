@@ -11,6 +11,10 @@ import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.Formats;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+@JacksonXmlRootElement(localName = "ValidationResult")
 public final class ValidationResultImpl implements ValidationResult {
     static final ValidationResult of(final String name) {
         return ValidationResultImpl.of(name, Formats.UNKNOWN);
@@ -89,6 +93,7 @@ public final class ValidationResultImpl implements ValidationResult {
         return this.name;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEncrypted() {
         return this.isEncrypted;

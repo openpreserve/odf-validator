@@ -29,7 +29,7 @@ final class ProfileResultImpl implements ProfileResult {
     }
 
     @Override
-    public ValidationResult getValidationReport() {
+    public ValidationResult getValidationResult() {
         return this.validationReport;
     }
 
