@@ -58,7 +58,7 @@ public class ExtensionMimeTypeRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.EMPTY_FODS, rule);
         assertTrue("Document XML should return errors", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-4")).count() > 0).count());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ExtensionMimeTypeRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.BADLY_FORMED_PKG, rule);
         assertTrue("Badly formed package should return errors", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-4")).count() > 0).count());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class ExtensionMimeTypeRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.DSIG_INVALID, rule);
         assertTrue("DSIG file has wrong MIME and extension", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-4")).count() > 0).count());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ExtensionMimeTypeRuleTest {
         MessageLog results = rule.check(doc);
         assertTrue("Bad extension only but should be invalid", results.hasErrors());
         assertEquals(1, results.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-4")).count() > 0).count());
     }
 
     @Test
@@ -107,6 +107,6 @@ public class ExtensionMimeTypeRuleTest {
         MessageLog results = rule.check(doc);
         assertTrue("Bad extension only but should be invalid", results.hasErrors());
         assertEquals(1, results.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-4")).count() > 0).count());
     }
 }

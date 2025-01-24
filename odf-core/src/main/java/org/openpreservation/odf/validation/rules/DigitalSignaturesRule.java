@@ -11,7 +11,7 @@ import org.openpreservation.odf.pkg.OdfPackages;
 final class DigitalSignaturesRule extends AbstractRule {
 
     static final DigitalSignaturesRule getInstance(final Severity severity) {
-        return new DigitalSignaturesRule("POL_9", "Digital Signatures",
+        return new DigitalSignaturesRule("POL-9", "Digital Signatures",
                 "The package MUST NOT contain any digital signatures.", severity, false);
     }
 

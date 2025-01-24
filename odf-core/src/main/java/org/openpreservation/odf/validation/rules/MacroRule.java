@@ -22,7 +22,7 @@ final class MacroRule extends AbstractRule {
     static final String NS_SCRIPTS = "http://openoffice.org/2000/script";
 
     static final MacroRule getInstance(final Severity severity) {
-        return new MacroRule("POL_8", "Macros check",
+        return new MacroRule("POL-8", "Macros check",
                 "The file MUST NOT contain any macros.", severity, false);
     }
 

@@ -10,8 +10,9 @@ public interface ValidatingParser extends PackageParser {
     /**
      * Validates the given ODF package.
      * 
+     * @see ValidationResult
      * @param odfPackage the ODF Package to validate, this must not be null
-     * @return a ValidationReport containing the results of the validation
+     * @return a ValidationResult containing the results of the validation
      * @throws IOException if there's a problem reading package elements from the
      *                     zip file.
      */

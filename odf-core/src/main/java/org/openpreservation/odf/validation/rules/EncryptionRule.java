@@ -11,7 +11,7 @@ import org.openpreservation.odf.pkg.FileEntry;
 final class EncryptionRule extends AbstractRule {
 
     static final EncryptionRule getInstance(final Severity severity) {
-        return new EncryptionRule("POL_1", "Encryption",
+        return new EncryptionRule("POL-1", "Encryption",
                 "The package MUST NOT contain any encrypted entries.", severity, false);
     }
 

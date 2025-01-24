@@ -11,7 +11,7 @@ import org.openpreservation.odf.pkg.OdfPackages;
 final class PackageMimeTypeRule extends AbstractRule {
 
     static final PackageMimeTypeRule getInstance(final Severity severity) {
-        return new PackageMimeTypeRule("POL_3", "Package mimetype entry",
+        return new PackageMimeTypeRule("POL-3", "Package mimetype entry",
                 "An ODF package MUST have a mimetype entry as specified in the Section 3.3 of the ODF specification v1.3.",
                 severity, false);
     }

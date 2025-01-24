@@ -12,7 +12,7 @@ import org.openpreservation.odf.pkg.PackageParser.ParseException;
 final class SubDocumentRule extends AbstractRule {
 
     static final SubDocumentRule getInstance(final Severity severity) {
-        return new SubDocumentRule("POL_10", "Sub Documents",
+        return new SubDocumentRule("POL-10", "Sub Documents",
                 "The package MUST NOT contain sub documents.", severity, false);
     }
 

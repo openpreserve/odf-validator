@@ -70,6 +70,6 @@ public class EncryptionRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.ENCRYPTED_PASSWORDS, rule);
         assertTrue("File contains valid digital signatures.", messages.hasErrors());
         assertEquals(5, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_1")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-1")).count() > 0).count());
     }
 }

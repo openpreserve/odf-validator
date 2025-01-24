@@ -57,7 +57,7 @@ public class ValidPackageRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.EMPTY_FODS, rule);
         assertTrue("Document XML should return errors", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_2")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-2")).count() > 0).count());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ValidPackageRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.BADLY_FORMED_PKG, rule);
         assertTrue("Document XML should return errors", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_2")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-2")).count() > 0).count());
     }
 
     @Test
@@ -75,6 +75,6 @@ public class ValidPackageRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.MIME_EXTRA_ODS, rule);
         assertTrue("Document XML should return errors", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_2")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-2")).count() > 0).count());
     }
 }

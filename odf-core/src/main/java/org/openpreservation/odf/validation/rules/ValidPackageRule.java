@@ -9,7 +9,7 @@ import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.validation.ValidationResult;
+import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.xml.Version;
 
@@ -19,7 +19,7 @@ class ValidPackageRule extends AbstractRule {
     private static final String INV_MESS = "Package does not comply with specification. ";
 
     static final ValidPackageRule getInstance(final Severity severity) {
-        return new ValidPackageRule("POL_2", "Standard Compliance",
+        return new ValidPackageRule("POL-2", "Standard Compliance",
                 "The file MUST comply with the standard \"OASIS Open Document Format for Office Applications (OpenDocument) v1.3\".",
                 severity, false);
     }
@@ -35,16 +35,16 @@ class ValidPackageRule extends AbstractRule {
         try {
             final MessageLog messageLog = Messages.messageLogInstance();
             Validator validator = new Validator();
-            ValidationResult result = validator.validate(document.getPath());
-            if (!result.isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {
+            ValidationReport report = validator.validate(document.getPath());
+            if (!report.getValidationResult().isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {
                 String message = (!document.isPackage()) ? PACK_MESS : "";
                 if (document != null && !document.getVersion().equals(Version.ODF_13)) {
                     message = String.format(VER_MESS, document.getVersion());
                 }
-                if (!result.isValid()) {
+                if (!report.getValidationResult().isValid()) {
                     message += INV_MESS;
                 }
-                messageLog.add(result.getName(),
+                messageLog.add(report.getValidationResult().getName(),
                         Messages.getMessageInstance(this.id, Message.Severity.ERROR,
                                 this.getName(), message + this.getDescription()));
             }

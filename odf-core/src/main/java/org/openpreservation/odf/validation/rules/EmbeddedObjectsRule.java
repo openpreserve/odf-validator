@@ -11,7 +11,7 @@ public class EmbeddedObjectsRule extends AbstractRule {
     static final String ODF6_SCHEMATRON = "org/openpreservation/odf/core/odf/validation/rules/odf-6.sch";
 
     static final EmbeddedObjectsRule getInstance(final Severity severity) {
-        return new EmbeddedObjectsRule("POL_6", "Embedded Objects",
+        return new EmbeddedObjectsRule("POL-6", "Embedded Objects",
                 "Embedded files MAY be present in the ODS file.", severity, false);
     }
 

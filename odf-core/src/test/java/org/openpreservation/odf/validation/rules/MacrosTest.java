@@ -68,7 +68,7 @@ public class MacrosTest {
         assertNotNull(messages);
         assertEquals(2, messages.getErrors().size());
         assertEquals(2, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-8")).count() > 0).count());
     }
 
     @Test
@@ -84,6 +84,6 @@ public class MacrosTest {
         assertNotNull(messages);
         assertEquals(1, messages.getErrors().size());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-8")).count() > 0).count());
     }
 }

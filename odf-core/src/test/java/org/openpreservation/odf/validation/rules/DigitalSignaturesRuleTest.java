@@ -71,6 +71,6 @@ public class DigitalSignaturesRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.DSIG_VALID, rule);
         assertTrue("File contains valid digital signatures.", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_9")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-9")).count() > 0).count());
     }
 }

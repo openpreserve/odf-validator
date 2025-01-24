@@ -34,6 +34,12 @@ public class Validator {
     private static final String TO_VAL_STRING = "toValidate";
     private static final MessageFactory FACTORY = Messages.getInstance();
 
+    private static final ValidationResult notOdf(final Path toValidate) {
+        final ValidationResult result = ValidationResultImpl.of(toValidate.toString());
+        result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-1"));
+        return result;
+    }
+
     public Validator() {
         super();
     }
@@ -48,21 +54,21 @@ public class Validator {
      * @throws ParseException if the document cannot be parsed
      * @throws FileNotFoundException if the document cannot be found
      */
-    public ValidationResult validateSingleFormat(final Path toValidate, final Formats legal)
+    public ValidationReport validateSingleFormat(final Path toValidate, final Formats legal)
             throws ParseException, FileNotFoundException {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
         Objects.requireNonNull(legal, String.format(Checks.NOT_NULL, "Formats", "legal"));
         Checks.existingFileCheck(toValidate);
-        ValidationResult result = validate(toValidate);
-        Formats detectedFmt = result.getDetectedFormat();
+        final ValidationReport report = validate(toValidate);
+        final Formats detectedFmt = report.getValidationResult().getDetectedFormat();
         if (detectedFmt == null || detectedFmt == Formats.UNKNOWN) {
-            result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-6"));
+            report.getValidationResult().getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-6"));
         } else {
             if (detectedFmt != legal) {
-                result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-7", legal.mime, detectedFmt.mime));
+                report.getValidationResult().getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-7", legal.mime, detectedFmt.mime));
             }
         }
-        return result;
+        return report;
     }
 
     /**
@@ -73,7 +79,7 @@ public class Validator {
      * @throws ParseException if the document cannot be parsed
      * @throws FileNotFoundException if the document cannot be found
      */
-    public ValidationResult validate(final Path toValidate)
+    public ValidationReport validate(final Path toValidate)
             throws ParseException, FileNotFoundException {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
 
@@ -90,7 +96,7 @@ public class Validator {
             throw new ParseException("Exception thrown when validating ODF document.", e);
         }
 
-        return notOdf(toValidate);
+        return ValidationReportImpl.of(notOdf(toValidate));
     }
 
     /**
@@ -102,7 +108,7 @@ public class Validator {
      * @throws ParseException if the document cannot be parsed
      * @throws FileNotFoundException if the document cannot be found
      */
-    public ProfileResult profile(final Path toProfile, final Profile profile)
+    public ValidationReport profile(final Path toProfile, final Profile profile)
             throws ParseException, FileNotFoundException {
         Objects.requireNonNull(toProfile, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
         Objects.requireNonNull(profile, String.format(Checks.NOT_NULL, "Profile", TO_VAL_STRING));
@@ -123,33 +129,21 @@ public class Validator {
         if (toValidate.getFormat() == Formats.UNKNOWN) {
             return notOdf(toValidate.getPath());
         }
-        ParseResult parseResult = toValidate.getDocument().getXmlDocument().getParseResult();
+        final ParseResult parseResult = toValidate.getDocument().getXmlDocument().getParseResult();
         return validateParseResult(toValidate.getPath(), parseResult);
     }
 
-    private static final ValidationResult notOdf(final Path toValidate) {
-        final ValidationResult result = ValidationResultImpl.of(toValidate.toString());
-        result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-1"));
-        return result;
-    }
-
-    private ValidationResult validatePackage(final Path toValidate)
+    private ValidationReport validatePackage(final Path toValidate)
             throws ParserConfigurationException, SAXException, ParseException, FileNotFoundException {
-        OdfPackage pckg = OdfPackages.getPackageParser().parsePackage(toValidate);
-        return validatePackage(pckg);
+        final OdfPackage pckg = OdfPackages.getPackageParser().parsePackage(toValidate);
+        return ValidationReportImpl.of(pckg, Validators.getValidatingParser().validatePackage(pckg));
     }
 
-    private ValidationResult validatePackage(final OdfPackage toValidate)
-            throws ParserConfigurationException, SAXException, ParseException, FileNotFoundException {
-        ValidatingParser parser = Validators.getValidatingParser();
-        return parser.validatePackage(toValidate);
-    }
-
-    private ValidationResult validateOpenDocumentXml(final Path toValidate)
+    private ValidationReport validateOpenDocumentXml(final Path toValidate)
             throws ParserConfigurationException, SAXException, IOException {
         final XmlParser checker = new XmlParser();
-        ParseResult parseResult = checker.parse(toValidate);
-        return validateParseResult(toValidate, parseResult);
+        final ParseResult parseResult = checker.parse(toValidate);
+        return ValidationReportImpl.of(validateParseResult(toValidate, parseResult));
     }
 
     private ValidationResult validateParseResult(final Path toValidate, ParseResult parseResult)
@@ -176,7 +170,7 @@ public class Validator {
                         FACTORY.getError("DOC-8", Utils.collectNsPrefixes(
                                 OdfXmlDocuments.odfXmlDocumentOf(parseResult).getForeignNamespaces())));
             } else {
-                Schema schema = new OdfSchemaFactory().getSchema(OdfNamespaces.OFFICE, version);
+                final Schema schema = new OdfSchemaFactory().getSchema(OdfNamespaces.OFFICE, version);
                 parseResult = validator.validate(parseResult, Files.newInputStream(toValidate), schema);
             }
         } else {

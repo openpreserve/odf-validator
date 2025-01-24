@@ -35,7 +35,7 @@ public class Rules {
     }
 
     public static final Rule odf5() {
-        return SchematronRule.getInstance("POL_5", "External data check",
+        return SchematronRule.getInstance("POL-5", "External data check",
                 "The file MUST NOT have any references to external data.", Severity.INFO, false,
                 ClassLoader.getSystemResource(ODF5_SCHEMATRON));
     }
@@ -45,7 +45,7 @@ public class Rules {
     }
 
     public static final Rule odf7() {
-        return SchematronRule.getInstance("POL_7", "Content check",
+        return SchematronRule.getInstance("POL-7", "Content check",
                 "The file MUST have values or objects in at least one cell.", Severity.INFO, false,
                 ClassLoader.getSystemResource(ODF7_SCHEMATRON));
     }

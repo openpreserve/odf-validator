@@ -27,7 +27,7 @@ public class ValidationReportTest {
     public void testJsonSerialisation() throws JsonProcessingException, FileNotFoundException, ParseException, URISyntaxException {
         var mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         Validator validator = new Validator();
-        ValidationResult report = validator.validate(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).toPath());
+        ValidationReport report = validator.validate(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).toPath());
         String json = mapper.writeValueAsString(report);
         assertFalse(json.isEmpty());
     }
@@ -35,7 +35,7 @@ public class ValidationReportTest {
     @Test
     public void testXmlSerialisation() throws FileNotFoundException, ParseException, URISyntaxException, JsonProcessingException {
         Validator validator = new Validator();
-        ValidationResult report = validator.validate(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).toPath());
+        ValidationReport report = validator.validate(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).toPath());
         XmlMapper xmlMapper = new XmlMapper();
         String xml = xmlMapper.writeValueAsString(report);
         assertFalse(xml.isEmpty());

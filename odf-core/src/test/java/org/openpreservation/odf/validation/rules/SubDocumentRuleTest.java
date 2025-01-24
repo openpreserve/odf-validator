@@ -46,7 +46,7 @@ public class SubDocumentRuleTest {
     public void testCheckValidPackage() throws URISyntaxException, ParseException, FileNotFoundException {
         MessageLog messages = Utils.getMessages(TestFiles.EMPTY_ODS, rule);
         assertTrue("Valid Package should not return errors", messages.hasWarnings());
-        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_10")).count() > 0).count());
+        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL-10")).count() > 0).count());
     }
 
     @Test
@@ -65,13 +65,13 @@ public class SubDocumentRuleTest {
     public void testCheckInvalidPackage() throws URISyntaxException, ParseException, FileNotFoundException {
         MessageLog messages = Utils.getMessages(TestFiles.MIME_EXTRA_ODS, rule);
         assertFalse("Invalid extra headers for contains an empty subdocument.", messages.hasErrors());
-        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_10")).count() > 0).count());
+        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL-10")).count() > 0).count());
     }
 
     @Test
     public void testCheckValidDsigPackage() throws IOException, URISyntaxException, ParseException {
         MessageLog messages = Utils.getMessages(TestFiles.DSIG_VALID, rule);
         assertTrue("File contains an empty sub document.", messages.hasWarnings());
-        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL_10")).count() > 0).count());
+        assertEquals(1, messages.getMessages().values().stream().filter(m -> m.stream().filter(e -> e.getId().equals("POL-10")).count() > 0).count());
     }
 }
