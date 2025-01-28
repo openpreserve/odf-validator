@@ -2,6 +2,10 @@ package org.openpreservation.odf.validation;
 
 import org.openpreservation.messages.MessageLog;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@JsonSerialize( as = ProfileResultImpl.class )
 public interface ProfileResult {
     /**
      * Get the id of the profile
@@ -23,6 +27,7 @@ public interface ProfileResult {
      * @see MessageLog
      * @return the MessageLog associated with the profile
      */
+    @JsonProperty("messages")
     public MessageLog getMessageLog();
 
     /**

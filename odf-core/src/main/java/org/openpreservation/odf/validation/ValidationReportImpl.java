@@ -4,6 +4,9 @@ import org.openpreservation.odf.pkg.Manifest;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.xml.Metadata;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+@JacksonXmlRootElement(localName = "validation_report")
 public class ValidationReportImpl implements ValidationReport {
     public static ValidationReportImpl of(final OdfPackage pkg, final ValidationResult validationResult) {
         final Metadata metadata = (pkg.getDocument() != null) ? pkg.getDocument().getMetadata() : null;

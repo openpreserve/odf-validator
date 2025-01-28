@@ -1,7 +1,6 @@
-package org.openpreservation.odf.validation.rules;
+package org.openpreservation.odf.validation;
 
 import org.openpreservation.messages.MessageLog;
-import org.openpreservation.odf.validation.ProfileResult;
 
 final class ProfileResultImpl implements ProfileResult {
     private final String id;

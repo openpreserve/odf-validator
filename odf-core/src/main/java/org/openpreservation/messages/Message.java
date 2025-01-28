@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
@@ -91,6 +92,7 @@ public interface Message {
      *
      * @return the <code>String</code> sub-message
      */
+    @JsonProperty("sub_message")
     public String getSubMessage();
 
     /**

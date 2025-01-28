@@ -16,6 +16,7 @@ import org.openpreservation.messages.MessageLog;
 import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.ProfileResult;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.ValidatingParser;
 import org.openpreservation.odf.validation.ValidationReport;
@@ -54,7 +55,7 @@ final class ProfileImpl extends AbstractProfile {
             }
             final String packageName = document == null || document.getPackage() == null ? ""
                     : document.getPackage().getName();
-            return ValidationReportImpl.of(document.getDocument().getMetadata(), document.getPackage().getManifest(), result, ProfileResultImpl.of(packageName, this.name, messages));
+            return ValidationReportImpl.of(document.getDocument().getMetadata(), document.getPackage().getManifest(), result, Validators.profileResultOf(packageName, this.name, messages));
         } catch (FileNotFoundException e) {
             throw new ParseException("File not found exception when processing package.", e);
         } catch (IOException e) {
