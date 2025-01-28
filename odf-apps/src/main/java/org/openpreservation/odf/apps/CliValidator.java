@@ -148,7 +148,7 @@ class CliValidator implements Callable<Integer> {
         MessageLog profileMessages = (report.getValidationResult() != null)
                 ? report.getValidationResult().getMessageLog()
                 : Messages.messageLogInstance();
-        profileMessages.add(report.getProfileResult().getMessageLog().getMessages());
+        // profileMessages.add(report.getProfileResult().getMessageLog().getMessages());
         if (format == FormatOption.JSON)
             ouptutJson(report);
         else if (format == FormatOption.XML)
