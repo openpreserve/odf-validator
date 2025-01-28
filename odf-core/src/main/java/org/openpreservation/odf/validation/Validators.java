@@ -3,6 +3,7 @@ package org.openpreservation.odf.validation;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.zip.ZipEntry;
+import org.openpreservation.messages.MessageLog;
 import org.xml.sax.SAXException;
 
 public class Validators {
@@ -36,6 +37,10 @@ public class Validators {
      */
     public static final ValidationResult reportOf(final String name) {
         return ValidationResultImpl.of(name);
+    }
+
+    public static final ProfileResult profileResultOf(final String id, final String name, final MessageLog messageLog) {
+        return ProfileResultImpl.of(id, name, messageLog);
     }
 
     private Validators() {
