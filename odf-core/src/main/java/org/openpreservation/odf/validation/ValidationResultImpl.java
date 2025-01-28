@@ -14,7 +14,7 @@ import org.openpreservation.odf.fmt.Formats;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-@JacksonXmlRootElement(localName = "ValidationResult")
+@JacksonXmlRootElement(localName = "validation_result")
 public final class ValidationResultImpl implements ValidationResult {
     static final ValidationResult of(final String name) {
         return ValidationResultImpl.of(name, Formats.UNKNOWN);
