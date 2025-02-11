@@ -7,8 +7,6 @@ import java.util.Set;
 
 import org.openpreservation.utils.Checks;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * The {@code Formats} enum represents the different formats supported by the ODF validator.
  * Each enum constant corresponds to a specific format, defined by its MIME type, file extension,

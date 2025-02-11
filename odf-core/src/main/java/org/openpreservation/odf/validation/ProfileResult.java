@@ -1,7 +1,11 @@
 package org.openpreservation.odf.validation;
 
+import java.util.List;
+
+import org.openpreservation.messages.Message;
 import org.openpreservation.messages.MessageLog;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -12,23 +16,32 @@ public interface ProfileResult {
      *
      * @return the id of the profile
      */
-    public String getId();
+    public String getFilename();
 
     /**
      * Get the name of the profile
      *
      * @return the name of the profile
      */
-    public String getName();
+    public String getProfile();
 
     /**
      * Get the profile message log
      *
      * @see MessageLog
-     * @return the MessageLog associated with the profile
+     * @return the MessageLog associated with the profile result
      */
     @JsonProperty("messages")
     public MessageLog getMessageLog();
+
+    /**
+     * Get the profile message list
+     *
+     * @see Message
+     * @return the Messages associated with the profile result
+     */
+    @JsonIgnore
+    public List<Message> getMessages();
 
     /**
      * Check if the profile is valid

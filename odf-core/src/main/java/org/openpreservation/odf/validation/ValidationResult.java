@@ -17,7 +17,7 @@ public interface ValidationResult {
      *
      * @return the name of the document being validated
      */
-    public String getName();
+    public String getFilename();
     /**
      * Determine if the OpenDocument is encrypted.
      *

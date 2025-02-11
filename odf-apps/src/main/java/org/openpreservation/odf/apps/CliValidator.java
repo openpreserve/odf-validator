@@ -55,16 +55,8 @@ class CliValidator implements Callable<Integer> {
             Path toValidate = file.toPath();
             this.appMessages = Messages.messageLogInstance();
             ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", toValidate.toString()));
-            final ValidationReport validationResult = validatePath(toValidate);
-            if (validationResult != null) {
-                retStatus = Math.max(retStatus, outputValidationResult(toValidate, validationResult, this.format));
-                if (this.profileFlag) {
-                    final ValidationReport profileResult = profilePath(toValidate);
-                    if (profileResult != null) {
-                        retStatus = Math.max(retStatus, outputProfileResult(toValidate, profileResult, this.format));
-                    }
-                }
-            }
+            ValidationReport validationResult = (!this.profileFlag) ? validatePath(toValidate) : profilePath(toValidate);
+            retStatus = outputValidationReport(toValidate, validationResult, this.format);
             if (this.appMessages.hasErrors()) {
                 retStatus = Math.max(retStatus,
                         processMessageLists(this.appMessages.getMessages().values()));
@@ -122,46 +114,39 @@ class CliValidator implements Callable<Integer> {
         return status;
     }
 
-    private static Integer outputValidationResult(final Path path, final ValidationReport report, FormatOption format) throws JsonProcessingException {
+    private static Integer outputValidationReport(final Path path, final ValidationReport report, FormatOption format) throws JsonProcessingException {
         ConsoleFormatter.colourise(FACTORY.getInfo("APP-4", path.toString(), "bold"));
-        if (report.getValidationResult().getMessages().isEmpty()) {
+        if (report.getMessages().isEmpty()) {
             ConsoleFormatter.info(FACTORY.getInfo("APP-3").getMessage());
         }
-        Integer status = report.getValidationResult().getMessageLog().hasFatals() || report.getValidationResult().getMessageLog().hasErrors() ? 1 : 0;
-        if (format == FormatOption.JSON)
-            ouptutJson(report);
-        else if (format == FormatOption.XML)
-            ouptutXml(report);
-        else
-            outputMessageLog(report.getValidationResult().getMessageLog().getMessages());
-        outputSummary(report.getValidationResult().isEncrypted(), report.getValidationResult().getMessageLog());
-        return status;
-    }
 
-    private static Integer outputProfileResult(final Path path, final ValidationReport report, FormatOption format) throws JsonProcessingException {
-        ConsoleFormatter.colourise(FACTORY.getInfo("APP-5", report.getProfileResult().getName(), path.toString(), "bold"));
-        Integer status = report.getProfileResult().getMessageLog().hasFatals() || report.getProfileResult().getMessageLog().hasErrors() ? 1 : 0;
-        if (report.getValidationResult() != null && report.getValidationResult().getMessageLog().hasErrors() || report
-                .getValidationResult().getMessageLog().hasFatals()) {
-            status = 1;
+        Integer status = report.hasSeverity(Severity.FATAL) || report.hasSeverity(Severity.ERROR)  ? 1 : 0;
+        MessageLog profileMessages = Messages.messageLogInstance();
+        if (report.getValidationResult() != null) {
+            profileMessages.add(report.getValidationResult().getMessageLog().getMessages());
         }
-        MessageLog profileMessages = (report.getValidationResult() != null)
-                ? report.getValidationResult().getMessageLog()
-                : Messages.messageLogInstance();
-        // profileMessages.add(report.getProfileResult().getMessageLog().getMessages());
+        if (report.getProfileResult() != null)
+            profileMessages.add(report.getProfileResult().getMessageLog().getMessages());
         if (format == FormatOption.JSON)
             ouptutJson(report);
         else if (format == FormatOption.XML)
             ouptutXml(report);
         else
-            outputMessageLog(report.getProfileResult().getMessageLog().getMessages());
+            outputText(report);
         outputSummary(report.getValidationResult().isEncrypted(), profileMessages);
         return status;
     }
 
-    private static void outputMessageLog(final Map<String, List<Message>> messageMap) {
-        for (Map.Entry<String, List<Message>> entry : messageMap.entrySet()) {
-            outputMessage(entry.getKey(), entry.getValue());
+    private static void outputText(final ValidationReport report) {
+        if (report.getValidationResult() != null) {
+            for (Map.Entry<String, List<Message>> entry : report.getValidationResult().getMessageLog().getMessages().entrySet()) {
+                outputMessage(entry.getKey(), entry.getValue());
+            }
+        }
+        if (report.getProfileResult() != null) {
+            for (Map.Entry<String, List<Message>> entry : report.getProfileResult().getMessageLog().getMessages().entrySet()) {
+                outputMessage(entry.getKey(), entry.getValue());
+            }
         }
     }
 
@@ -172,14 +157,12 @@ class CliValidator implements Callable<Integer> {
     }
 
     private static void ouptutJson(final ValidationReport result) throws JsonProcessingException {
-        var mapper = new ObjectMapper().registerModule(new JavaTimeModule()).enable(SerializationFeature.INDENT_OUTPUT);
-        ConsoleFormatter.info(mapper.writeValueAsString(result));
+        var jsonMapper = new ObjectMapper().registerModule(new JavaTimeModule()).enable(SerializationFeature.INDENT_OUTPUT);
+        ConsoleFormatter.info(jsonMapper.writeValueAsString(result));
     }
 
     private static void ouptutXml(final ValidationReport result) throws JsonProcessingException {
-        XmlMapper xmlMapper = new XmlMapper();
-        xmlMapper.registerModule(new JavaTimeModule());
-        xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        var xmlMapper = new XmlMapper().registerModule(new JavaTimeModule()).enable(SerializationFeature.INDENT_OUTPUT);
         ConsoleFormatter.info(xmlMapper.writeValueAsString(result));
     }
 
