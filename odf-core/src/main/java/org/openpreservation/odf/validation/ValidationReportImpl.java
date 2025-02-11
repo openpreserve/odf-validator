@@ -1,5 +1,10 @@
 package org.openpreservation.odf.validation;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openpreservation.messages.Message;
+import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.odf.pkg.Manifest;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.xml.Metadata;
@@ -24,7 +29,6 @@ public class ValidationReportImpl implements ValidationReport {
     private final Metadata metadata;
     private final Manifest manifest;
     private final ValidationResult validationResult;
-
     private final ProfileResult profileResult;
 
     private ValidationReportImpl(final Metadata metadata, final Manifest manifest, final ValidationResult validationResult, final ProfileResult profileResult) {
@@ -97,4 +101,22 @@ public class ValidationReportImpl implements ValidationReport {
         return profileResult;
     }
 
+    @Override
+    public List<Message> getMessages() {
+        List<Message> messages =  (this.validationResult == null) ? new ArrayList<>() : this.validationResult.getMessages();
+        if (this.profileResult != null) {
+            messages.addAll(this.profileResult.getMessages());
+        }
+        return messages;
+    }
+
+    @Override
+    public boolean hasSeverity(Severity severity) {
+        for (Message msg : this.getMessages()) {
+            if (msg.getSeverity() == severity) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

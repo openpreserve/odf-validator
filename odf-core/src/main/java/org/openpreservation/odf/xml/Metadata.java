@@ -3,8 +3,6 @@ package org.openpreservation.odf.xml;
 import java.util.List;
 import java.util.Map;
 
-import org.openpreservation.odf.validation.ValidationResultImpl;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
