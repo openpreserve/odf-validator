@@ -2,11 +2,11 @@ package org.openpreservation.odf.validation.rules;
 
 import java.util.Objects;
 
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 
 abstract class AbstractRule implements Rule {
     final String id;

@@ -3,16 +3,22 @@ package org.openpreservation.odf.validation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.odf.pkg.Manifest;
 import org.openpreservation.odf.pkg.OdfPackage;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.xml.Metadata;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JacksonXmlRootElement(localName = "validation_report")
 public class ValidationReportImpl implements ValidationReport {
+
+    private final Metadata metadata;
+    private final Manifest manifest;
+    private final ValidationResult validationResult;
+    private final ProfileResult profileResult;
+
     public static ValidationReportImpl of(final OdfPackage pkg, final ValidationResult validationResult) {
         final Metadata metadata = (pkg.getDocument() != null) ? pkg.getDocument().getMetadata() : null;
         return new ValidationReportImpl(metadata, pkg.getManifest(), validationResult, null);
@@ -25,11 +31,6 @@ public class ValidationReportImpl implements ValidationReport {
     public static ValidationReportImpl of(final Metadata metadata, final Manifest manifest, final ValidationResult validationResult, final ProfileResult profileResult) {
         return new ValidationReportImpl(metadata, manifest, validationResult, profileResult);
     }
-
-    private final Metadata metadata;
-    private final Manifest manifest;
-    private final ValidationResult validationResult;
-    private final ProfileResult profileResult;
 
     private ValidationReportImpl(final Metadata metadata, final Manifest manifest, final ValidationResult validationResult, final ProfileResult profileResult) {
         this.metadata = metadata;

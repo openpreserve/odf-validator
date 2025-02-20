@@ -9,11 +9,13 @@ import java.net.URL;
 import java.util.List;
 
 import org.junit.Test;
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Message.Severity;
+import org.openpreservation.odf.validation.rules.MacroRule;
+import org.openpreservation.odf.validation.rules.Rules;
 
 import com.helger.commons.io.resource.URLResource;
 import com.helger.schematron.pure.SchematronResourcePure;

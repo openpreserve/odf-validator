@@ -7,13 +7,13 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.document.Documents;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.messages.MessageLog;
 
 public class Utils {
     private static final PackageParser parser = OdfPackages.getPackageParser();

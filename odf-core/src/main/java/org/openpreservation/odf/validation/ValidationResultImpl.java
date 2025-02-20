@@ -5,17 +5,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Messages;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JacksonXmlRootElement(localName = "validation_result")
 public final class ValidationResultImpl implements ValidationResult {
+
+    private final String filename;
+    private final Formats detectedFormat;
+    private final boolean isEncrypted;
+    private final MessageLog documentMessages;
+
     static final ValidationResult of(final String name) {
         return ValidationResultImpl.of(name, Formats.UNKNOWN);
     }
@@ -32,11 +38,6 @@ public final class ValidationResultImpl implements ValidationResult {
     static final ValidationResult of(final String name, final OpenDocument document) {
         return ValidationResultImpl.of(name, document.getFormat(), (document.getPackage() != null) ? document.getPackage().isEncrypted() : false);
     }
-
-    private final String filename;
-    private final Formats detectedFormat;
-    private final boolean isEncrypted;
-    private final MessageLog documentMessages;
 
     private ValidationResultImpl(final String filename, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
         super();

@@ -1,4 +1,4 @@
-package org.openpreservation.messages;
+package org.openpreservation.odf.validation.messages;
 
 import org.junit.Test;
 

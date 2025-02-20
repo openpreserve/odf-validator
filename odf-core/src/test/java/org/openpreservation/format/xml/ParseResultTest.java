@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 

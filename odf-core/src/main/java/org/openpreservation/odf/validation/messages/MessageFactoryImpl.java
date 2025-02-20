@@ -1,10 +1,10 @@
-package org.openpreservation.messages;
+package org.openpreservation.odf.validation.messages;
 
 import java.util.MissingResourceException;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
-import org.openpreservation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 
 /**
  * @author <a href="mailto:carl@openpreservation.org">Carl Wilson</a>

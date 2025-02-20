@@ -7,9 +7,9 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.xml.sax.SAXException;
 
 public class Rules {

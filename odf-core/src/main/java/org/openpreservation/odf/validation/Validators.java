@@ -3,7 +3,7 @@ package org.openpreservation.odf.validation;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.zip.ZipEntry;
-import org.openpreservation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.MessageLog;
 import org.xml.sax.SAXException;
 
 public class Validators {

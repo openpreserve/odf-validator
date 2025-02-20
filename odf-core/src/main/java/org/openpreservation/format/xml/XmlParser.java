@@ -14,9 +14,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageFactory;
-import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageFactory;
+import org.openpreservation.odf.validation.messages.Messages;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

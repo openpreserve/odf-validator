@@ -9,6 +9,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.ValidatingParser;
+import org.openpreservation.odf.validation.ValidationResult;
+import org.openpreservation.odf.validation.Validators;
 import org.xml.sax.SAXException;
 
 public class Utilities {
