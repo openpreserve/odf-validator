@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.utils.Checks;
 
 final class ParseResultImpl implements ParseResult {

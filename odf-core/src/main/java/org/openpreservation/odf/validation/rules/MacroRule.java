@@ -8,13 +8,13 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.xml.sax.SAXException;
 
 final class MacroRule extends AbstractRule {

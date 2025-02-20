@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.openpreservation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 

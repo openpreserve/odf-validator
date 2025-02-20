@@ -11,9 +11,6 @@ import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
@@ -23,6 +20,9 @@ import org.openpreservation.odf.validation.ValidationReportImpl;
 import org.openpreservation.odf.validation.ValidationResult;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.Validators;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Messages;
 import org.xml.sax.SAXException;
 
 final class ProfileImpl extends AbstractProfile {

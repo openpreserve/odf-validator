@@ -10,11 +10,13 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 
 import org.junit.Test;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.rules.EncryptionRule;
+import org.openpreservation.odf.validation.rules.Rules;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 

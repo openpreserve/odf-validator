@@ -9,9 +9,9 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageFactory;
-import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageFactory;
+import org.openpreservation.odf.validation.messages.Messages;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 

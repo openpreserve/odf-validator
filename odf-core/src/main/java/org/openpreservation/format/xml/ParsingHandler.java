@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.openpreservation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 

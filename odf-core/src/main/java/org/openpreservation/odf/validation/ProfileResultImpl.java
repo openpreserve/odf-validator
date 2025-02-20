@@ -3,8 +3,8 @@ package org.openpreservation.odf.validation;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageLog;
 
 final class ProfileResultImpl implements ProfileResult {
     private final String filename;

@@ -1,4 +1,4 @@
-package org.openpreservation.messages;
+package org.openpreservation.odf.validation.messages;
 
 import java.util.Collection;
 import java.util.List;

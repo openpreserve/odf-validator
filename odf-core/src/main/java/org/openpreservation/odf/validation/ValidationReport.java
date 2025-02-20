@@ -2,9 +2,9 @@ package org.openpreservation.odf.validation;
 
 import java.util.List;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.Message.Severity;
 import org.openpreservation.odf.pkg.Manifest;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.xml.Metadata;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
