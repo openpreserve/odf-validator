@@ -41,16 +41,14 @@ final class ValidatingParserImpl implements ValidatingParser {
     private static final MessageFactory FACTORY = Messages.getInstance();
     private static final OdfSchemaFactory SCHEMA_FACTORY = new OdfSchemaFactory();
 
+    private final XmlValidator validator;
+    private final PackageParser packageParser;
+    private final Map<String, XmlValidationResult> results = new HashMap<>();
+
     static final ValidatingParserImpl getInstance()
             throws ParserConfigurationException, SAXException {
         return new ValidatingParserImpl();
     }
-
-    private final XmlValidator validator;
-
-    private final PackageParser packageParser;
-
-    private final Map<String, XmlValidationResult> results = new HashMap<>();
 
     private ValidatingParserImpl()
             throws ParserConfigurationException, SAXException {
