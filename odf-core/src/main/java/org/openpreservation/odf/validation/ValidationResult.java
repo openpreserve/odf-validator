@@ -2,9 +2,9 @@ package org.openpreservation.odf.validation;
 
 import java.util.List;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageLog;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +17,7 @@ public interface ValidationResult {
      *
      * @return the name of the document being validated
      */
-    public String getName();
+    public String getFilename();
     /**
      * Determine if the OpenDocument is encrypted.
      *

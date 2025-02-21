@@ -1,6 +1,10 @@
 package org.openpreservation.odf.validation;
 
+import java.util.List;
+
 import org.openpreservation.odf.pkg.Manifest;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.xml.Metadata;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,4 +48,19 @@ public interface ValidationReport {
      */
     @JsonProperty("profile_result")
     public ProfileResult getProfileResult();
+
+    /**
+     * Get a list of all messages, from all Results contained in the file.
+     *
+     * @return 
+     */
+    @JsonIgnore
+    public List<Message> getMessages();
+
+    /**
+     * Do any of the contained results contain the specified severity?
+     *
+     * @return true if any of the validation result messages contain the specified severity.
+     */
+    public boolean hasSeverity(Severity severity);
 }

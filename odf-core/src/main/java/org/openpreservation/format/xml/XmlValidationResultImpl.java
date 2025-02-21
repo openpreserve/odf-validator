@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.openpreservation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.utils.Checks;
 
 final class XmlValidationResultImpl implements XmlValidationResult {

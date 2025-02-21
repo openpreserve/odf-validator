@@ -5,17 +5,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.Formats;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Messages;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JacksonXmlRootElement(localName = "validation_result")
 public final class ValidationResultImpl implements ValidationResult {
+
+    private final String filename;
+    private final Formats detectedFormat;
+    private final boolean isEncrypted;
+    private final MessageLog documentMessages;
+
     static final ValidationResult of(final String name) {
         return ValidationResultImpl.of(name, Formats.UNKNOWN);
     }
@@ -33,14 +39,9 @@ public final class ValidationResultImpl implements ValidationResult {
         return ValidationResultImpl.of(name, document.getFormat(), (document.getPackage() != null) ? document.getPackage().isEncrypted() : false);
     }
 
-    private final String name;
-    private final Formats detectedFormat;
-    private final boolean isEncrypted;
-    private final MessageLog documentMessages;
-
-    private ValidationResultImpl(final String name, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
+    private ValidationResultImpl(final String filename, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
         super();
-        this.name = name;
+        this.filename = filename;
         this.detectedFormat = detectedFormat;
         this.isEncrypted = isEncrypted;
         this.documentMessages = documentMessages;
@@ -48,7 +49,7 @@ public final class ValidationResultImpl implements ValidationResult {
 
     @Override
     public String toString() {
-        return "ValidationReport [name=" + name + ", documentMessages=" + documentMessages + "]";
+        return "ValidationReport [name=" + filename + ", documentMessages=" + documentMessages + "]";
     }
 
     @Override
@@ -89,8 +90,8 @@ public final class ValidationResultImpl implements ValidationResult {
     }
 
     @Override
-    public String getName() {
-        return this.name;
+    public String getFilename() {
+        return this.filename;
     }
 
     @JsonIgnore
@@ -103,7 +104,7 @@ public final class ValidationResultImpl implements ValidationResult {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((filename == null) ? 0 : filename.hashCode());
         result = prime * result + ((detectedFormat == null) ? 0 : detectedFormat.hashCode());
         result = prime * result + ((isEncrypted) ? 1231 : 1237);
         result = prime * result + ((documentMessages == null) ? 0 : documentMessages.hashCode());
@@ -119,10 +120,10 @@ public final class ValidationResultImpl implements ValidationResult {
         if (getClass() != obj.getClass())
             return false;
         final ValidationResultImpl other = (ValidationResultImpl) obj;
-        if (name == null) {
-            if (other.name != null)
+        if (filename == null) {
+            if (other.filename != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!filename.equals(other.filename))
             return false;
         if (detectedFormat == null) {
             if (other.detectedFormat != null)

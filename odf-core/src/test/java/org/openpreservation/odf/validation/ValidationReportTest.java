@@ -9,6 +9,9 @@ import java.net.URISyntaxException;
 import org.junit.Test;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.ValidationResultImpl;
+import org.openpreservation.odf.validation.Validator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

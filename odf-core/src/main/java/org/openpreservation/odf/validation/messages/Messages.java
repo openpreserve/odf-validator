@@ -1,10 +1,10 @@
-package org.openpreservation.messages;
+package org.openpreservation.odf.validation.messages;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.openpreservation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 
 /**
  * Utility class that handles creation of Message type instances, etc.

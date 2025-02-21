@@ -20,15 +20,15 @@ import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlValidationResult;
 import org.openpreservation.format.xml.XmlValidator;
 import org.openpreservation.format.zip.ZipEntry;
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageFactory;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.Manifest;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageFactory;
+import org.openpreservation.odf.validation.messages.Messages;
 import org.openpreservation.odf.xml.OdfNamespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
@@ -41,16 +41,14 @@ final class ValidatingParserImpl implements ValidatingParser {
     private static final MessageFactory FACTORY = Messages.getInstance();
     private static final OdfSchemaFactory SCHEMA_FACTORY = new OdfSchemaFactory();
 
+    private final XmlValidator validator;
+    private final PackageParser packageParser;
+    private final Map<String, XmlValidationResult> results = new HashMap<>();
+
     static final ValidatingParserImpl getInstance()
             throws ParserConfigurationException, SAXException {
         return new ValidatingParserImpl();
     }
-
-    private final XmlValidator validator;
-
-    private final PackageParser packageParser;
-
-    private final Map<String, XmlValidationResult> results = new HashMap<>();
 
     private ValidatingParserImpl()
             throws ParserConfigurationException, SAXException {

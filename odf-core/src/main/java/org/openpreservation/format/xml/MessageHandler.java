@@ -3,9 +3,9 @@ package org.openpreservation.format.xml;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageFactory;
-import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageFactory;
+import org.openpreservation.odf.validation.messages.Messages;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 

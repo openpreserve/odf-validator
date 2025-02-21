@@ -3,14 +3,14 @@ package org.openpreservation.odf.validation.rules;
 import java.io.FileNotFoundException;
 import java.util.Objects;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.Validator;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.xml.Version;
 
 class ValidPackageRule extends AbstractRule {
@@ -44,7 +44,7 @@ class ValidPackageRule extends AbstractRule {
                 if (!report.getValidationResult().isValid()) {
                     message += INV_MESS;
                 }
-                messageLog.add(report.getValidationResult().getName(),
+                messageLog.add(report.getValidationResult().getFilename(),
                         Messages.getMessageInstance(this.id, Message.Severity.ERROR,
                                 this.getName(), message + this.getDescription()));
             }

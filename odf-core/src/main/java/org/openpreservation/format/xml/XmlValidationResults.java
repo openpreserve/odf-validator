@@ -2,7 +2,7 @@ package org.openpreservation.format.xml;
 
 import java.util.List;
 
-import org.openpreservation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message;
 
 /**
  * A factory for creating {@link ParseResult} and {@link XmlValidationResult}
