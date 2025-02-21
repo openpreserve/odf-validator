@@ -12,11 +12,13 @@ import java.net.URISyntaxException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.rules.Rules;
+import org.openpreservation.odf.validation.rules.ValidPackageRule;
 import org.xml.sax.SAXException;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -57,7 +59,7 @@ public class ValidPackageRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.EMPTY_FODS, rule);
         assertTrue("Document XML should return errors", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_2")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-2")).count() > 0).count());
     }
 
     @Test
@@ -66,7 +68,7 @@ public class ValidPackageRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.BADLY_FORMED_PKG, rule);
         assertTrue("Document XML should return errors", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_2")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-2")).count() > 0).count());
     }
 
     @Test
@@ -75,6 +77,6 @@ public class ValidPackageRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.MIME_EXTRA_ODS, rule);
         assertTrue("Document XML should return errors", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_2")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-2")).count() > 0).count());
     }
 }

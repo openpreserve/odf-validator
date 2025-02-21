@@ -9,10 +9,12 @@ import java.net.URL;
 import java.util.List;
 
 import org.junit.Test;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.rules.Rules;
+import org.openpreservation.odf.validation.rules.SchematronRule;
 
 import com.helger.commons.io.resource.URLResource;
 import com.helger.schematron.pure.SchematronResourcePure;
@@ -68,7 +70,7 @@ public class ExternalDataTest {
         assertEquals(0, messages.getErrors().size());
         assertEquals(1, messages.getInfos().size());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_5")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-5")).count() > 0).count());
     }
 
     @Test

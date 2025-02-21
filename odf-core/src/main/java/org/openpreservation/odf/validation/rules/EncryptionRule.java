@@ -2,17 +2,16 @@ package org.openpreservation.odf.validation.rules;
 
 import java.util.Objects;
 
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.FileEntry;
-import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 
 final class EncryptionRule extends AbstractRule {
 
     static final EncryptionRule getInstance(final Severity severity) {
-        return new EncryptionRule("POL_1", "Encryption",
+        return new EncryptionRule("POL-1", "Encryption",
                 "The package MUST NOT contain any encrypted entries.", severity, false);
     }
 

@@ -1,6 +1,11 @@
-package org.openpreservation.messages;
+package org.openpreservation.odf.validation.messages;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * Defines behaviour of validation messages.
@@ -11,7 +16,7 @@ import java.util.Date;
  * @author <a href="mailto:carl@openpreservation.org">Carl Wilson</a>
  *         <a href="https://github.com/carlwilson">carlwilson AT github</a>
  */
-
+@JsonSerialize(as = MessageImpl.class)
 public interface Message {
     /**
      * An enum set that defines the severity of a message.
@@ -56,6 +61,7 @@ public interface Message {
      *
      * @return the {@link Date} timestamp of the message, or {@code null} if not set
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm z")
     public Date getTimestamp();
 
     /**
@@ -78,6 +84,7 @@ public interface Message {
      * @return <code>true</code> if the message has a sub-message,
      *         <code>false</code> otherwise
      */
+    @JsonIgnore
     public boolean hasSubMessage();
 
     /**
@@ -85,6 +92,7 @@ public interface Message {
      *
      * @return the <code>String</code> sub-message
      */
+    @JsonProperty("sub_message")
     public String getSubMessage();
 
     /**
@@ -93,6 +101,7 @@ public interface Message {
      * @return <code>true</code> if the message has <code>Severity.ERROR</code>,
      *         <code>false</code> otherwise
      */
+    @JsonIgnore
     public boolean isError();
 
     /**
@@ -101,6 +110,7 @@ public interface Message {
      * @return <code>true</code> if the message has <code>Severity.FATAL</code>,
      *         <code>false</code> otherwise
      */
+    @JsonIgnore
     public boolean isFatal();
 
     /**
@@ -109,6 +119,7 @@ public interface Message {
      * @return <code>true</code> if the message has <code>Severity.INFO</code>,
      *         <code>false</code> otherwise
      */
+    @JsonIgnore
     public boolean isInfo();
 
     /**
@@ -117,5 +128,6 @@ public interface Message {
      * @return <code>true</code> if the message has <code>Severity.WARNING</code>,
      *         <code>false</code> otherwise
      */
+    @JsonIgnore
     public boolean isWarning();
 }

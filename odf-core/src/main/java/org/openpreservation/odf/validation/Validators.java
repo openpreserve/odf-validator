@@ -3,10 +3,8 @@ package org.openpreservation.odf.validation;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.zip.ZipEntry;
-import org.openpreservation.odf.document.OpenDocument;
+import org.openpreservation.odf.validation.messages.MessageLog;
 import org.xml.sax.SAXException;
-
-import net.sf.saxon.lib.Validation;
 
 public class Validators {
 
@@ -31,12 +29,18 @@ public class Validators {
         return ValidatingParserImpl.isCompressionValid(entry);
     }
 
-    public static final ValidationReport reportOf(final String name) {
-        return ValidationReport.of(name);
+    /**
+     * Create a mimimal validation report.
+     *
+     * @param filename a name for the report
+     * @return the minimal validation report with the given name
+     */
+    public static final ValidationResult reportOf(final String filename) {
+        return ValidationResultImpl.of(filename);
     }
 
-    public static final ValidationReport reportOf(final String name, final OpenDocument document) {
-        return ValidationReport.of(name, document);
+    public static final ProfileResult profileResultOf(final String filename, final String profile, final MessageLog messageLog) {
+        return ProfileResultImpl.of(filename, profile, messageLog);
     }
 
     private Validators() {

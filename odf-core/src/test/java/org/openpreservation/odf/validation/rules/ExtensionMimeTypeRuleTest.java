@@ -12,7 +12,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import org.junit.Test;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.document.Documents;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.Formats;
@@ -21,6 +20,9 @@ import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.rules.ExtensionMimeTypeRule;
+import org.openpreservation.odf.validation.rules.Rules;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -58,7 +60,7 @@ public class ExtensionMimeTypeRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.EMPTY_FODS, rule);
         assertTrue("Document XML should return errors", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-4")).count() > 0).count());
     }
 
     @Test
@@ -66,7 +68,7 @@ public class ExtensionMimeTypeRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.BADLY_FORMED_PKG, rule);
         assertTrue("Badly formed package should return errors", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-4")).count() > 0).count());
     }
 
     @Test
@@ -80,7 +82,7 @@ public class ExtensionMimeTypeRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.DSIG_INVALID, rule);
         assertTrue("DSIG file has wrong MIME and extension", messages.hasErrors());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-4")).count() > 0).count());
     }
 
     @Test
@@ -93,7 +95,7 @@ public class ExtensionMimeTypeRuleTest {
         MessageLog results = rule.check(doc);
         assertTrue("Bad extension only but should be invalid", results.hasErrors());
         assertEquals(1, results.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-4")).count() > 0).count());
     }
 
     @Test
@@ -107,6 +109,6 @@ public class ExtensionMimeTypeRuleTest {
         MessageLog results = rule.check(doc);
         assertTrue("Bad extension only but should be invalid", results.hasErrors());
         assertEquals(1, results.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_4")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-4")).count() > 0).count());
     }
 }

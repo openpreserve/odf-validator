@@ -29,7 +29,7 @@ public class XmlValidatorTest {
             throws IOException {
         ParseResult parseResult = xmlParser.parse(TestFiles.EMPTY_FODS.openStream());
         assertNotNull("Parse result is not null", parseResult);
-        ValidationResult validationResult = xmlValidator.validate(parseResult,
+        XmlValidationResult validationResult = xmlValidator.validate(parseResult,
                 TestFiles.EMPTY_FODS.openStream(), schema);
         assertNotNull("Validation result is not null", validationResult);
         assertTrue("Validation result should be well formed", validationResult.isWellFormed());
@@ -42,7 +42,7 @@ public class XmlValidatorTest {
         ParseResult parseResult = xmlParser.parse(TestFiles.FLAT_NOT_WF.openStream());
         assertNotNull("Parse result is not null", parseResult);
         assertFalse("Parse result should NOT be well formed", parseResult.isWellFormed());
-        ValidationResult validationResult = xmlValidator.validate(parseResult,
+        XmlValidationResult validationResult = xmlValidator.validate(parseResult,
                 TestFiles.FLAT_NOT_WF.openStream(),
                 schema);
         assertNotNull("Validation result is not null", validationResult);
@@ -55,7 +55,7 @@ public class XmlValidatorTest {
         ParseResult parseResult = xmlParser.parse(TestFiles.EMPTY_FODS.openStream());
         assertNotNull("Parse result is not null", parseResult);
         assertTrue("Parse result should be well formed", parseResult.isWellFormed());
-        ValidationResult validationResult = xmlValidator.validate(parseResult,
+        XmlValidationResult validationResult = xmlValidator.validate(parseResult,
                 TestFiles.FLAT_NOT_WF.openStream(),
                 schema);
         assertNotNull("Validation result is not null", validationResult);
@@ -69,7 +69,7 @@ public class XmlValidatorTest {
         ParseResult parseResult = xmlParser.parse(TestFiles.FLAT_NOT_VALID.openStream());
         assertNotNull("Parse result is not null", parseResult);
         assertTrue("Parse result should be well formed", parseResult.isWellFormed());
-        ValidationResult validationResult = xmlValidator.validate(parseResult,
+        XmlValidationResult validationResult = xmlValidator.validate(parseResult,
                 TestFiles.FLAT_NOT_VALID.openStream(),
                 schema);
         assertNotNull("Validation result is not null", validationResult);
@@ -83,7 +83,7 @@ public class XmlValidatorTest {
         ParseResult parseResult = xmlParser.parse(TestFiles.FLAT_NO_VERSION.openStream());
         assertNotNull("Parse result is not null", parseResult);
         assertTrue("Parse result should be well formed", parseResult.isWellFormed());
-        ValidationResult validationResult = xmlValidator.validate(parseResult,
+        XmlValidationResult validationResult = xmlValidator.validate(parseResult,
                 TestFiles.FLAT_NO_VERSION.openStream(),
                 schema);
         assertNotNull("Validation result is not null", validationResult);
@@ -97,7 +97,7 @@ public class XmlValidatorTest {
         ParseResult parseResult = xmlParser.parse(TestFiles.FLAT_NO_MIME.openStream());
         assertNotNull("Parse result is not null", parseResult);
         assertTrue("Parse result should be well formed", parseResult.isWellFormed());
-        ValidationResult validationResult = xmlValidator.validate(parseResult,
+        XmlValidationResult validationResult = xmlValidator.validate(parseResult,
                 TestFiles.FLAT_NO_MIME.openStream(),
                 schema);
         assertNotNull("Validation result is not null", validationResult);

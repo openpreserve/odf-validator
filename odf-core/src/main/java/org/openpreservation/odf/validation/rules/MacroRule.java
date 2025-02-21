@@ -8,13 +8,13 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.xml.sax.SAXException;
 
 final class MacroRule extends AbstractRule {
@@ -22,7 +22,7 @@ final class MacroRule extends AbstractRule {
     static final String NS_SCRIPTS = "http://openoffice.org/2000/script";
 
     static final MacroRule getInstance(final Severity severity) {
-        return new MacroRule("POL_8", "Macros check",
+        return new MacroRule("POL-8", "Macros check",
                 "The file MUST NOT contain any macros.", severity, false);
     }
 
@@ -41,6 +41,9 @@ final class MacroRule extends AbstractRule {
         Objects.requireNonNull(document, "document must not be null");
         if (document.isPackage()) {
             return this.check(document.getPackage());
+        }
+        if (document.getDocument() == null) {
+            return Messages.messageLogInstance();
         }
         MessageLog messageLog = checkOdfScriptParseResult(document.getPath().toString(),
                 document.getDocument().getXmlDocument().getParseResult());

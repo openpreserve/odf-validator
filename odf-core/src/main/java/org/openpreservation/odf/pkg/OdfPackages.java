@@ -1,14 +1,7 @@
 package org.openpreservation.odf.pkg;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openpreservation.odf.fmt.FormatSniffer;
-import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.OdfFormats;
 import org.xml.sax.SAXException;
 
@@ -45,42 +38,6 @@ public final class OdfPackages {
      */
     public static final PackageParser getPackageParser() {
         return PackageParserImpl.getInstance();
-    }
-
-    /**
-     * Uses the {@link FormatSniffer} to see if the supplied path resolves to a ZIP instance.
-     * 
-     * This check only tests the file header bytes and doesn't parse
-     * the resolved path to ensure the zip is valid. See {@link #isValidZip(Path)} for that.
-     *
-     * @param toCheck a <code>Path<code> to sniff as a zip file
-     * @return <code>true</code> if the supplied path has a zip signature, <code>false</code> otherwise.
-     * @throws IOException if there's an issue reading the resolved <code>Path</code>
-     */
-    public static final boolean isZip(final Path toCheck) throws IOException {
-        return FormatSniffer.sniff(toCheck, Formats.ZIP.getMaxSignatureLength()) == Formats.ZIP;
-    }
-
-    /**
-     * Check if the supplied <code>Path</code> resolves to a valid zip archive
-     * instance.
-     * 
-     * This is a full library parse of the resolved <code>Path<code>.
-     *
-     * @param toCheck a <code>Path</code> to resolve and test
-     * @return <code>true</code> if the supplied path resolves to a valid zip file, else <code>false</code>.
-     * @throws IOException if there's an issue reading the resolved <code>Path<code>
-     */
-    public static final boolean isValidZip(final Path toCheck) throws IOException {
-        try (ZipFile zipFile = new ZipFile(toCheck.toFile())) {
-            return true;
-        } catch (final ZipException e) {
-            /**
-             * No need to report this as an error as it simply means that the file is not a
-             * ZIP
-             */
-        }
-        return false;
     }
 
     /**

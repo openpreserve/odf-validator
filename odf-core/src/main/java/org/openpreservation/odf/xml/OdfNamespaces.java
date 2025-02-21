@@ -7,6 +7,14 @@ import java.util.Objects;
 import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.utils.Checks;
 
+/**
+ * Enum representing the XML namespaces used by ODF (OpenDocument Format).
+ * The enum implements the {@link Namespace} interface, so that it plays nicely with the XML classes in the ODF library.
+ *
+ * Each instance ties the namespace URI to a prefix and a description of the namespace.
+ * The instance names are the official prefix values in uppercase.
+ * Read the descriptions of each instance for more info.
+ */
 public enum OdfNamespaces implements Namespace {
     ANIM("urn:oasis:names:tc:opendocument:xmlns:animation:1.0",
             "Elements and attributes that describe animation content."),
@@ -69,6 +77,12 @@ public enum OdfNamespaces implements Namespace {
     SMIL("urn:oasis:names:tc:opendocument:xmlns:smil-compatible:1.0",
             "Attributes that are derived from to attributes defined in https://docs.oasis-open.org/office/OpenDocument/v1.3/os/part3-schema/OpenDocument-v1.3-os-part3-schema.html#nref-smil20");
 
+    /**
+     * Get an instance of OdfNamespaces from a prefix.
+     *
+     * @param prefix the prefix to search for
+     * @return the OdfNamespaces instance with the given prefix, or null if not found
+     */
     public static final OdfNamespaces fromPrefix(final String prefix) {
         Objects.requireNonNull(prefix, String.format(Checks.NOT_NULL, "String", "prefix"));
         for (final OdfNamespaces ns : OdfNamespaces.values()) {
@@ -79,12 +93,24 @@ public enum OdfNamespaces implements Namespace {
         return null;
     }
 
+    /**
+     * Get an instance of OdfNamespaces from a namespace ID string.
+     *
+     * @param id the URI string to search for
+     * @return the OdfNamespaces instance with the given URI, or null if not found
+     */
     public static final OdfNamespaces fromId(final String id) {
         Objects.requireNonNull(id, String.format(Checks.NOT_NULL, "String", "id"));
         final URI uri = URI.create(id);
         return fromId(uri);
     }
 
+    /**
+     * Get an instance of OdfNamespaces from a namespace ID URI.
+     *
+     * @param id the URI to search for
+     * @return the OdfNamespaces instance with the given URI, or null if not found
+     */
     public static final OdfNamespaces fromId(final URI id) {
         for (final OdfNamespaces ns : OdfNamespaces.values()) {
             if (ns.id.equals(id)) {
@@ -106,6 +132,11 @@ public enum OdfNamespaces implements Namespace {
         this.description = description;
     }
 
+    /**
+     * Get a description of the namespace.
+     *
+     * @return a String description of the namespace
+     */
     public String getDescription() {
         return this.description;
     }

@@ -3,14 +3,14 @@ package org.openpreservation.odf.validation.rules;
 import java.io.FileNotFoundException;
 import java.util.Objects;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.Validator;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.xml.Version;
 
 class ValidPackageRule extends AbstractRule {
@@ -19,7 +19,7 @@ class ValidPackageRule extends AbstractRule {
     private static final String INV_MESS = "Package does not comply with specification. ";
 
     static final ValidPackageRule getInstance(final Severity severity) {
-        return new ValidPackageRule("POL_2", "Standard Compliance",
+        return new ValidPackageRule("POL-2", "Standard Compliance",
                 "The file MUST comply with the standard \"OASIS Open Document Format for Office Applications (OpenDocument) v1.3\".",
                 severity, false);
     }
@@ -33,36 +33,24 @@ class ValidPackageRule extends AbstractRule {
     public MessageLog check(final OpenDocument document) throws ParseException {
         Objects.requireNonNull(document, "document must not be null");
         try {
+            final MessageLog messageLog = Messages.messageLogInstance();
             Validator validator = new Validator();
             ValidationReport report = validator.validate(document.getPath());
-            return check(report);
+            if (!report.getValidationResult().isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {
+                String message = (!document.isPackage()) ? PACK_MESS : "";
+                if (document != null && !document.getVersion().equals(Version.ODF_13)) {
+                    message = String.format(VER_MESS, document.getVersion());
+                }
+                if (!report.getValidationResult().isValid()) {
+                    message += INV_MESS;
+                }
+                messageLog.add(report.getValidationResult().getFilename(),
+                        Messages.getMessageInstance(this.id, Message.Severity.ERROR,
+                                this.getName(), message + this.getDescription()));
+            }
+            return messageLog;
         } catch (FileNotFoundException e) {
             throw new ParseException("File not found exception when processing package.", e);
         }
-    }
-
-    @Override
-    public MessageLog check(final ValidationReport report) {
-        Objects.requireNonNull(report, "report must not be null");
-        final MessageLog messageLog = Messages.messageLogInstance();
-        if (report.document == null) {
-            messageLog.add(report.name,
-                    Messages.getMessageInstance(this.id, Message.Severity.ERROR,
-                            this.getName(), PACK_MESS + this.getDescription()));
-            return messageLog;
-        }
-        if (!report.isValid() || !report.document.getVersion().equals(Version.ODF_13) || !report.document.isPackage()) {
-            String message = (!report.document.isPackage()) ? PACK_MESS : "";
-            if (report.document != null && !report.document.getVersion().equals(Version.ODF_13)) {
-                message = String.format(VER_MESS, report.document.getVersion());
-            }
-            if (!report.isValid()) {
-                message += INV_MESS;
-            }
-            messageLog.add(report.name,
-                    Messages.getMessageInstance(this.id, Message.Severity.ERROR,
-                            this.getName(), message + this.getDescription()));
-        }
-        return messageLog;
     }
 }

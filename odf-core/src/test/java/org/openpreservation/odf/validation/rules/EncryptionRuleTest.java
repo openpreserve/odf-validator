@@ -10,11 +10,13 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 
 import org.junit.Test;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.rules.EncryptionRule;
+import org.openpreservation.odf.validation.rules.Rules;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -70,6 +72,6 @@ public class EncryptionRuleTest {
         MessageLog messages = Utils.getMessages(TestFiles.ENCRYPTED_PASSWORDS, rule);
         assertTrue("File contains valid digital signatures.", messages.hasErrors());
         assertEquals(5, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_1")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-1")).count() > 0).count());
     }
 }

@@ -3,7 +3,7 @@ package org.openpreservation.odf.apps;
 import java.io.PrintStream;
 import java.nio.file.Path;
 
-import org.openpreservation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message;
 
 import picocli.CommandLine.Help.Ansi;
 

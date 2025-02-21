@@ -1,4 +1,4 @@
-package org.openpreservation.messages;
+package org.openpreservation.odf.validation.messages;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -91,6 +91,11 @@ final class MessageLogImpl implements MessageLog {
     public Map<String, List<Message>> getMessagesById(final String id) {
         return this.messageMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey,
                 e -> e.getValue().stream().filter(m -> m.getId().equals(id)).collect(Collectors.toUnmodifiableList())));
+    }
+
+    @Override
+    public boolean hasFatals() {
+        return containsSeverity(Message.Severity.FATAL);
     }
 
     @Override

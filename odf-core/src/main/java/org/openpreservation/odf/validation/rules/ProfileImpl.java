@@ -11,17 +11,18 @@ import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.validation.ProfileResult;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.ValidatingParser;
 import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.ValidationReportImpl;
+import org.openpreservation.odf.validation.ValidationResult;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.Validators;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Messages;
 import org.xml.sax.SAXException;
 
 final class ProfileImpl extends AbstractProfile {
@@ -38,13 +39,24 @@ final class ProfileImpl extends AbstractProfile {
     }
 
     @Override
-    public ProfileResult check(final OpenDocument document) throws ParseException {
+    public ValidationReport check(final OpenDocument document) throws ParseException {
         Objects.requireNonNull(document, "document must not be null");
         try {
-            ValidationReport report = document.isPackage()
-                    ? this.validatingParser.validatePackage(document.getPath(), document.getPackage())
+            final MessageLog messages = Messages.messageLogInstance();
+            ValidationResult result = document.isPackage()
+                    ? this.validatingParser.validatePackage(document.getPackage())
                     : new Validator().validateOpenDocument(document);
-            return check(report);
+             messages.add(getRulesetMessages(document,
+                    this.rules.stream().filter(Rule::isPrerequisite).collect(Collectors.toList())));
+            if (!messages.hasErrors()) {
+                messages.add(getRulesetMessages(document,
+                        this.rules.stream().filter(rule -> !rule.isPrerequisite()).collect(Collectors.toList())));
+            }
+            final String packageName = document == null || document.getPackage() == null ? ""
+                    : document.getPackage().getName();
+            return ValidationReportImpl.of((document.getDocument() != null) ? document.getDocument().getMetadata() : null,
+                                           (document.getPackage() != null) ? document.getPackage().getManifest() : null,
+                                           result, Validators.profileResultOf(packageName, this.name, messages));
         } catch (FileNotFoundException e) {
             throw new ParseException("File not found exception when processing package.", e);
         } catch (IOException e) {
@@ -52,26 +64,11 @@ final class ProfileImpl extends AbstractProfile {
         }
     }
 
-    @Override
-    public ProfileResult check(final ValidationReport report) throws ParseException {
-        final MessageLog messages = Messages.messageLogInstance();
-        messages.add(getRulesetMessages(report,
-                this.rules.stream().filter(Rule::isPrerequisite).collect(Collectors.toList())));
-        if (!messages.hasErrors()) {
-            messages.add(getRulesetMessages(report,
-                    this.rules.stream().filter(rule -> !rule.isPrerequisite()).collect(Collectors.toList())));
-        }
-        final String packageName = report.document == null || report.document.getPackage() == null ? ""
-                : report.document.getPackage().getName();
-        return ProfileResultImpl.of(packageName, this.name,
-                report, messages);
-    }
-
-    private final Map<String, List<Message>> getRulesetMessages(final ValidationReport report,
+    private final Map<String, List<Message>> getRulesetMessages(final OpenDocument document,
             final Collection<Rule> rules) throws ParseException {
         final MessageLog messages = Messages.messageLogInstance();
         for (final Rule rule : rules) {
-            final MessageLog ruleMessages = rule.check(report);
+            final MessageLog ruleMessages = rule.check(document);
             messages.add(ruleMessages.getMessages());
         }
         return messages.getMessages();

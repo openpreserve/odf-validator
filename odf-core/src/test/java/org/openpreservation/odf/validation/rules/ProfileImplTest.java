@@ -13,7 +13,8 @@ import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Profile;
-import org.openpreservation.odf.validation.ProfileResult;
+import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.rules.Rules;
 import org.xml.sax.SAXException;
 
 public class ProfileImplTest {
@@ -21,10 +22,9 @@ public class ProfileImplTest {
     public void testCheck() throws URISyntaxException, ParseException, ParserConfigurationException, SAXException , FileNotFoundException {
         Profile profile = Rules.getDnaProfile();
         OpenDocument doc = Utils.getDocument(TestFiles.EMPTY_ODS);
-        ProfileResult result = profile.check(doc);
-        assertNotNull(result);
-        assertTrue(result.getValidationReport().isValid());
-        assertTrue(result.isValid());
+        ValidationReport report = profile.check(doc);
+        assertNotNull(report);
+        assertTrue(report.getValidationResult().isValid());
     }
 
     @Test

@@ -1,9 +1,9 @@
 package org.openpreservation.odf.validation;
 
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 
 public interface Rule {
     public String getId();
@@ -17,6 +17,4 @@ public interface Rule {
     public boolean isPrerequisite();
 
     public MessageLog check(final OpenDocument document) throws ParseException;
-
-    public MessageLog check(final ValidationReport report) throws ParseException;
 }

@@ -71,7 +71,7 @@ $ odf-validator --profile ./ODF_7/WithZeroCellData.ods
 APP-1: [INFO] Validating ./ODF_7/WithZeroCellData.ods. 
 APP-5: [INFO] DNA ODF Spreadsheets Preservation Specification Profile report for ./ODF_7/WithZeroCellData.ods.
 DOC-3: mimetype [INFO] OpenDocument MIMETYPE application/vnd.oasis.opendocument.spreadsheet detected
-POL_7: content.xml [ERROR] Content check | The file MUST have values or objects in at least one cell.
+POL-7: content.xml [ERROR] Content check | The file MUST have values or objects in at least one cell.
 NOT VALID, 1 errors, 0 warnings and 1 info messages.
 ```
 
@@ -82,7 +82,7 @@ $ odf-validator --profile ./ODF_6/WithTwoEmbeddedWordDocument.ods
 APP-1: [INFO] Validating ./ODF_6/WithTwoEmbeddedWordDocument.ods.
 APP-5: [INFO] DNA ODF Spreadsheets Preservation Specification Profile report for ./ODF_6/WithTwoEmbeddedWordDocument.ods.
 DOC-3: mimetype [INFO] OpenDocument MIMETYPE application/vnd.oasis.opendocument.spreadsheet detected
-POL_6: content.xml [INFO] Embedded Objects | The spreadsheet MAY reference Embedded OpenDocument objects.
-POL_6: content.xml [INFO] Embedded Objects | The spreadsheet MAY reference OLE objects.
+POL-6: content.xml [INFO] Embedded Objects | The spreadsheet MAY reference Embedded OpenDocument objects.
+POL-6: content.xml [INFO] Embedded Objects | The spreadsheet MAY reference OLE objects.
 VALID, no errors, no warnings and 3 info message found.
 ```

@@ -3,10 +3,13 @@ package org.openpreservation.odf.xml;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 /**
  * Interface for retrieving any useful metadata from an ODF package meta.xml
  * file.
  */
+@JsonDeserialize(as = MetadataImpl.class)
 public interface Metadata {
     /**
      * Interface that handles basic user defined field information.

@@ -6,28 +6,28 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.openpreservation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.utils.Checks;
 
-final class ValidationResultImpl implements ValidationResult {
+final class XmlValidationResultImpl implements XmlValidationResult {
     private static final String PARSE_RESULT_NAME = "parseResult";
     private static final String PARSE_RESULT_TYPE = "ParseResult";
     private static final String MESSAGES_NAME = "messages";
     private static final String MESSAGES_TYPE = "List<Message>";
 
-    static final ValidationResult of(final ParseResult parseResult, final boolean valid, final List<Message> messages) {
+    static final XmlValidationResult of(final ParseResult parseResult, final boolean valid, final List<Message> messages) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));
         Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
-        return new ValidationResultImpl(parseResult, valid, messages);
+        return new XmlValidationResultImpl(parseResult, valid, messages);
     }
 
-    static final ValidationResult valid(final ParseResult parseResult, final List<Message> messages) {
+    static final XmlValidationResult valid(final ParseResult parseResult, final List<Message> messages) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));
         Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
         return of(parseResult, true, messages);
     }
 
-    static final ValidationResult notValid(final ParseResult parseResult, final List<Message> messages) {
+    static final XmlValidationResult notValid(final ParseResult parseResult, final List<Message> messages) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, PARSE_RESULT_NAME, PARSE_RESULT_TYPE));
         Objects.requireNonNull(messages, String.format(Checks.NOT_NULL, MESSAGES_NAME, MESSAGES_TYPE));
         return of(parseResult, false, messages);
@@ -45,7 +45,7 @@ final class ValidationResultImpl implements ValidationResult {
 
     private final List<Message> messages;
 
-    private ValidationResultImpl(final ParseResult parseResult, final boolean valid, final List<Message> messages) {
+    private XmlValidationResultImpl(final ParseResult parseResult, final boolean valid, final List<Message> messages) {
         this.parseResult = parseResult;
         this.valid = valid;
         this.messages = Collections.unmodifiableList(combineMessages(parseResult, messages));
@@ -124,7 +124,7 @@ final class ValidationResultImpl implements ValidationResult {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final ValidationResultImpl other = (ValidationResultImpl) obj;
+        final XmlValidationResultImpl other = (XmlValidationResultImpl) obj;
         if (parseResult == null) {
             if (other.parseResult != null)
                 return false;

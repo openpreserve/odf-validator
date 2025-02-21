@@ -1,8 +1,8 @@
-package org.openpreservation.messages;
+package org.openpreservation.odf.validation.messages;
 
 import java.util.NoSuchElementException;
 
-import org.openpreservation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 
 /**
  * Factory interface for {@link Message} creation

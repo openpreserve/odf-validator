@@ -23,12 +23,19 @@ final class OpenDocumentImpl implements OpenDocument {
         this.pkg = pkg;
     }
 
+    static final OpenDocument of(final Path path) {
+        Objects.requireNonNull(path, "Path parameter path cannot be null");
+        return new OpenDocumentImpl(path, null, null);
+    }
+
     static final OpenDocument of(final Path path, OdfDocument document) {
+        Objects.requireNonNull(path, "Path parameter path cannot be null");
         Objects.requireNonNull(document, "OdfDocument parameter document cannot be null");
         return new OpenDocumentImpl(path, document, null);
     }
 
     static final OpenDocument of(final Path path, OdfPackage pkg) {
+        Objects.requireNonNull(path, "Path parameter path cannot be null");
         Objects.requireNonNull(pkg, "OdfPackage pkg document cannot be null");
         return new OpenDocumentImpl(path, pkg.getDocument(), pkg);
     }
@@ -40,7 +47,7 @@ final class OpenDocumentImpl implements OpenDocument {
 
     @Override
     public FileType getFileType() {
-        return this.pkg != null ? FileType.PACKAGE : FileType.SINGLE;
+        return this.pkg != null ? FileType.PACKAGE : FileType.FLAT_XML;
     }
 
     @Override
@@ -72,12 +79,12 @@ final class OpenDocumentImpl implements OpenDocument {
     @Override
     public Formats getFormat() {
         return (this.isPackage()) ? this.pkg.getDetectedFormat()
-                : Formats.fromMime(this.document.getXmlDocument().getMimeType());
+                : (this.document != null) ? Formats.fromMime(this.document.getXmlDocument().getMimeType()) : Formats.UNKNOWN;
     }
 
     @Override
     public Version getVersion() {
-        return (this.isPackage()) ? this.pkg.getDetectedVersion() : this.document.getVersion();
+        return (this.isPackage()) ? this.pkg.getDetectedVersion() : (this.document != null) ? this.document.getVersion() : Version.UNKNOWN;
     }
 
     @Override

@@ -68,7 +68,7 @@ public class OpenDocumentImplTest {
     public void testGetFileTypeSingle() throws IOException, ParserConfigurationException, SAXException {
         OdfDocument odfDoc = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
         OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), odfDoc);
-        assertEquals(FileType.SINGLE, openDoc.getFileType());
+        assertEquals(FileType.FLAT_XML, openDoc.getFileType());
     }
 
     @Test

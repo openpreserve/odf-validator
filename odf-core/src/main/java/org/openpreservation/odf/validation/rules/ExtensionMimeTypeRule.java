@@ -2,18 +2,18 @@ package org.openpreservation.odf.validation.rules;
 
 import java.util.Objects;
 
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.MessageLog;
-import org.openpreservation.messages.Messages;
 import org.openpreservation.odf.document.OdfDocument;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 
 final class ExtensionMimeTypeRule extends AbstractRule {
 
     static final ExtensionMimeTypeRule getInstance(final Severity severity) {
-        return new ExtensionMimeTypeRule("POL_4", "Extension and MIME type",
+        return new ExtensionMimeTypeRule("POL-4", "Extension and MIME type",
                 "The MIME type value MUST be: \"application/vnd.oasis.opendocument.spreadsheet\" and the file extension MUST be \".ods\"."
                         + //
                         "",
@@ -31,7 +31,7 @@ final class ExtensionMimeTypeRule extends AbstractRule {
         if (document.isPackage()) {
             return this.check(document.getPackage());
         }
-        return this.check(document.getDocument());
+        return (document.getDocument() != null) ? this.check(document.getDocument()) : Messages.messageLogInstance();
     }
 
     public MessageLog check(final OdfDocument document) {

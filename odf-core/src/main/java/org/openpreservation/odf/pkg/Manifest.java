@@ -2,6 +2,9 @@ package org.openpreservation.odf.pkg;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = ManifestImpl.class)
 public interface Manifest {
     /**
      * Get the declared version of the Manifest from the root element.
@@ -41,7 +44,8 @@ public interface Manifest {
 
     /**
      * Get the Set of FileEntry objects in the Manifest.
-     * 
+     *
+     * @see FileEntry
      * @return the set of file entries.
      */
     public Set<FileEntry> getEntries();
@@ -50,6 +54,7 @@ public interface Manifest {
      * Get the Set of FileEntry objects in the Manifest that have the supplied media
      * type.
      * 
+     * @see FileEntry
      * @param mediaType the media type to filter the entries by.
      * @return the Set of FileEntry objects that have the supplied media type.
      */
@@ -59,6 +64,7 @@ public interface Manifest {
      * Get the Set of FileEntry objects fior all manifest entries with encryption
      * XML data.
      * 
+     * @see FileEntry
      * @return the Set of FileEntry objects that have encryption XML data.
      */
     public Set<FileEntry> getEncryptedEntries();
@@ -66,6 +72,7 @@ public interface Manifest {
     /**
      * Get a manifest entry by name
      * 
+     * @see FileEntry
      * @param entryName the name to find the entry by.
      * @return the FileEntry object for the supplied name, or null if not found.
      */
@@ -83,7 +90,8 @@ public interface Manifest {
      * Get the set of FileEntry objects that are documents, i.e. have a media type
      * that is an ODF document.
      * 
-     * @return
+     * @see FileEntry
+     * @return the set of FileEntry objects that are documents.
      */
     public Set<FileEntry> getDocumentEntries();
 }

@@ -9,11 +9,13 @@ import java.net.URL;
 import java.util.List;
 
 import org.junit.Test;
-import org.openpreservation.messages.Message.Severity;
-import org.openpreservation.messages.MessageLog;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.validation.Rule;
+import org.openpreservation.odf.validation.messages.MessageLog;
+import org.openpreservation.odf.validation.messages.Message.Severity;
+import org.openpreservation.odf.validation.rules.MacroRule;
+import org.openpreservation.odf.validation.rules.Rules;
 
 import com.helger.commons.io.resource.URLResource;
 import com.helger.schematron.pure.SchematronResourcePure;
@@ -68,7 +70,7 @@ public class MacrosTest {
         assertNotNull(messages);
         assertEquals(2, messages.getErrors().size());
         assertEquals(2, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-8")).count() > 0).count());
     }
 
     @Test
@@ -84,6 +86,6 @@ public class MacrosTest {
         assertNotNull(messages);
         assertEquals(1, messages.getErrors().size());
         assertEquals(1, messages.getMessages().values().stream()
-                .filter(m -> m.stream().filter(e -> e.getId().equals("POL_8")).count() > 0).count());
+                .filter(m -> m.stream().filter(e -> e.getId().equals("POL-8")).count() > 0).count());
     }
 }

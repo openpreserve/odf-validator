@@ -3,7 +3,7 @@ package org.openpreservation.format.xml;
 import java.util.List;
 import java.util.Set;
 
-import org.openpreservation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message;
 
 /**
  * An interface defining the properties of XML document parsing results.

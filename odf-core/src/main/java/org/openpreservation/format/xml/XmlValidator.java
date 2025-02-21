@@ -9,9 +9,9 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
-import org.openpreservation.messages.Message;
-import org.openpreservation.messages.MessageFactory;
-import org.openpreservation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.MessageFactory;
+import org.openpreservation.odf.validation.messages.Messages;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -38,20 +38,20 @@ public final class XmlValidator {
      *                    using {@link XmlParser}
      * @param toValidate  an <code>InputStream</code> to validate
      * @param schema      the {@link Schema} to validate against
-     * @return a {@link ValidationResult} containing the result of the validation
+     * @return a {@link XmlValidationResult} containing the result of the validation
      * @throws IOException if there is an error reading supplied
      *                     <code>InputStream</code>.
      */
-    public ValidationResult validate(final ParseResult parseResult, final InputStream toValidate, final Schema schema)
+    public XmlValidationResult validate(final ParseResult parseResult, final InputStream toValidate, final Schema schema)
             throws IOException {
         if (!parseResult.isWellFormed()) {
-            return ValidationResultImpl.of(parseResult, false, new ArrayList<>());
+            return XmlValidationResultImpl.of(parseResult, false, new ArrayList<>());
         }
         final List<Message> messages = validateSource(new StreamSource(toValidate), schema);
         if (!this.isWellFormed) {
-            return ValidationResultImpl.of(ParseResultImpl.invertWellFormed(parseResult), false, messages);
+            return XmlValidationResultImpl.of(ParseResultImpl.invertWellFormed(parseResult), false, messages);
         }
-        return ValidationResultImpl.of(parseResult, isValid(messages), messages);
+        return XmlValidationResultImpl.of(parseResult, isValid(messages), messages);
     }
 
     private List<Message> validateSource(final StreamSource toValidate, final Schema schema) throws IOException {
