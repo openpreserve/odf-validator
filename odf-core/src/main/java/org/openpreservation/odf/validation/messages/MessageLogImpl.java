@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
+
+import org.openpreservation.odf.validation.Check;
+import org.openpreservation.odf.validation.CheckImpl;
 
 final class MessageLogImpl implements MessageLog {
     static final MessageLog of() {
@@ -58,39 +60,55 @@ final class MessageLogImpl implements MessageLog {
     }
 
     @Override
-    public Map<String, List<Message>> getErrors() {
-        return getMessagesBySeverity(Message.Severity.ERROR);
+    public List<Check> getErrors() {
+        return getChecksBySeverity(Message.Severity.ERROR);
     }
 
     @Override
-    public Map<String, List<Message>> getWarnings() {
-        return getMessagesBySeverity(Message.Severity.WARNING);
+    public List<Check> getWarnings() {
+        return getChecksBySeverity(Message.Severity.WARNING);
     }
 
     @Override
-    public Map<String, List<Message>> getInfos() {
-        return getMessagesBySeverity(Message.Severity.INFO);
+    public List<Check> getInfos() {
+        return getChecksBySeverity(Message.Severity.INFO);
     }
 
     @Override
-    public Map<String, List<Message>> getMessagesBySeverity(final Message.Severity severity) {
-        return this.messageMap.entrySet().stream()
-                .collect(Collectors.toMap(Entry::getKey,
-                        e -> e.getValue().stream().filter(m -> m.getSeverity().equals(severity))
-                                .collect(Collectors.toUnmodifiableList())))
-                .entrySet().stream().filter(e -> !e.getValue().isEmpty())
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    public List<Check> getChecksBySeverity(final Message.Severity severity) {
+        final List<Check> checks = new ArrayList<>();
+        for (final Entry<String, List<Message>> entry : this.messageMap.entrySet()) {
+            for (final Message message : entry.getValue()) {
+                if (message.getSeverity().equals(severity)) {
+                    checks.add(new CheckImpl(message, entry.getKey(), new ArrayList<>()));
+                }
+            }
+        }
+        return checks;
     }
 
     @Override
-    public Map<String, List<Message>> getMessages() {
-        return Collections.unmodifiableMap(this.messageMap);
+    public List<Check> getChecks() {
+        final List<Check> checks = new ArrayList<>();
+        for (final Entry<String, List<Message>> entry : this.messageMap.entrySet()) {
+            for (final Message message : entry.getValue()) {
+                checks.add(new CheckImpl(message, entry.getKey(), new ArrayList<>()));
+            }
+        }
+        return checks;
     }
 
     @Override
-    public Map<String, List<Message>> getMessagesById(final String id) {
-        return this.messageMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey,
-                e -> e.getValue().stream().filter(m -> m.getId().equals(id)).collect(Collectors.toUnmodifiableList())));
+    public List<Check> getChecksById(final String id) {
+        final List<Check> checks = new ArrayList<>();
+        for (final Entry<String, List<Message>> entry : this.messageMap.entrySet()) {
+            for (final Message message : entry.getValue()) {
+                if (message.getId().equals(id)) {
+                    checks.add(new CheckImpl(message, entry.getKey(), new ArrayList<>()));
+                }
+            }
+        }
+        return checks;
     }
 
     @Override
@@ -114,12 +132,21 @@ final class MessageLogImpl implements MessageLog {
     }
 
     @Override
-    public List<Message> getMessagesForPath(final String path) {
-        return Collections.unmodifiableList(this.messageMap.getOrDefault(path, new ArrayList<>()));
+    public List<Check> getChecksForPath(final String path) {
+        final List<Check> checks = new ArrayList<>();
+        for (final Message message : this.messageMap.getOrDefault(path, Collections.emptyList())) {
+            checks.add(new CheckImpl(message, path, new ArrayList<>()));
+        }
+        return checks;
+    }
+
+    @Override
+    public Map<String, List<Message>> getMessages() {
+        return this.messageMap;
     }
 
     private boolean containsSeverity(final Message.Severity severity) {
-        return this.getMessagesBySeverity(severity).size() > 0;
+        return this.getChecksBySeverity(severity).size() > 0;
     }
 
     @Override
@@ -130,16 +157,16 @@ final class MessageLogImpl implements MessageLog {
 
     @Override
     public int getErrorCount() {
-        return this.getErrors().values().stream().mapToInt(List::size).sum();
+        return this.getErrors().size();
     }
 
     @Override
     public int getWarningCount() {
-        return this.getWarnings().values().stream().mapToInt(List::size).sum();
+        return this.getWarnings().size();
     }
 
     @Override
     public int getInfoCount() {
-        return this.getInfos().values().stream().mapToInt(List::size).sum();
+        return this.getInfos().size();
     }
 }

@@ -1,9 +1,7 @@
 package org.openpreservation.odf.validation;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.MessageLog;
 
 final class ProfileResultImpl implements ProfileResult {
@@ -34,8 +32,8 @@ final class ProfileResultImpl implements ProfileResult {
     }
 
     @Override
-    public List<Message> getMessages() {
-        return this.messageLog.getMessages().values().stream().flatMap(List::stream).collect(Collectors.toList());
+    public List<Check> getChecks() {
+        return this.messageLog.getChecks();
     }
 
     @Override

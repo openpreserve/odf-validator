@@ -16,8 +16,6 @@ import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.messages.MessageLog;
-import org.openpreservation.odf.validation.rules.DigitalSignaturesRule;
-import org.openpreservation.odf.validation.rules.Rules;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 

@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.openpreservation.odf.validation.Check;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -60,7 +62,7 @@ public interface MessageLog {
      * @return a <code>Map&lt;String, List&lt;Message&gt;&gt;</code> of error messages
      */
     @JsonIgnore
-    public Map<String, List<Message>> getErrors();
+    public List<Check> getErrors();
 
     /**
      * Get all warning messages in the log.
@@ -68,7 +70,7 @@ public interface MessageLog {
      * @return a <code>Map&lt;String, List&lt;Message&gt;&gt;</code> of warning messages
      */
     @JsonIgnore
-    public Map<String, List<Message>> getWarnings();
+    public List<Check> getWarnings();
 
     /**
      * Get all info messages in the log.
@@ -76,7 +78,14 @@ public interface MessageLog {
      * @return a <code>Map&lt;String, List&lt;Message&gt;&gt;</code> of info messages
      */
     @JsonIgnore
-    public Map<String, List<Message>> getInfos();
+    public List<Check> getInfos();
+
+    /**
+     * Get all messages in the log.
+     *
+     * @return a <code>Map&lt;String, List&lt;Message&gt;&gt;</code> of all messages
+     */
+    public List<Check> getChecks();
 
     /**
      * Get all messages in the log.
@@ -147,7 +156,7 @@ public interface MessageLog {
      * @param severity the {@link Message.Severity} of the messages to be retrieved
      * @return a <code>Map&lt;String, List&lt;Message&gt;&gt;</code> of messages of the specified severity
      */
-    public Map<String, List<Message>> getMessagesBySeverity(final Message.Severity severity);
+    public List<Check> getChecksBySeverity(final Message.Severity severity);
 
     /**
      * Get all messages in the log for a particular ID
@@ -155,7 +164,7 @@ public interface MessageLog {
      * @param id the <code>String</code> ID of the messages to be retrieved
      * @return a <code>Map&lt;String, List&lt;Message&gt;&gt;</code> of messages for the specified ID
      */
-    public Map<String, List<Message>> getMessagesById(final String id);
+    public List<Check> getChecksById(final String id);
 
     /**
      * Get all messages in the log for a particular path
@@ -163,5 +172,5 @@ public interface MessageLog {
      * @param path the <code>String</code> path of the messages to be retrieved
      * @return a <code>List&lt;Message&gt;</code> of messages for the specified path
      */
-    public List<Message> getMessagesForPath(final String path);
+    public List<Check> getChecksForPath(final String path);
 }

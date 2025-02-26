@@ -21,8 +21,6 @@ import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.messages.MessageLog;
-import org.openpreservation.odf.validation.rules.ExtensionMimeTypeRule;
-import org.openpreservation.odf.validation.rules.Rules;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 

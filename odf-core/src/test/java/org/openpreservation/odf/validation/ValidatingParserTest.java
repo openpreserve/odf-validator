@@ -20,9 +20,6 @@ import org.junit.Test;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.validation.ValidatingParser;
-import org.openpreservation.odf.validation.ValidationResult;
-import org.openpreservation.odf.validation.Validators;
 import org.xml.sax.SAXException;
 
 public class ValidatingParserTest {
@@ -116,7 +113,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.FAKEMIME_TEXT);
         assertFalse("FAKEMIME should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-1")).count() > 0);
+        assertTrue(hasMessage(report, "PKG-1"));
     }
 
     @Test
@@ -124,9 +121,9 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.BADLY_FORMED_PKG);
         assertFalse("BADLY_FORMED_PKG should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-4")).count() > 0);
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-3")).count() > 0);
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-7")).count() > 0);
+        assertTrue(hasMessage(report, "PKG-3"));
+        assertTrue(hasMessage(report, "PKG-4"));
+        assertTrue(hasMessage(report, "PKG-7"));
     }
 
     @Test
@@ -134,7 +131,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.NO_MANIFEST_ODS);
         assertFalse("NO_MANIFEST_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-3")).count() > 0);
+        assertTrue(hasMessage(report, "PKG-3"));
     }
 
     @Test
@@ -142,7 +139,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MANIFEST_ROOT_NO_MIME_ODS);
         assertFalse("MANIFEST_ROOT_NO_MIME_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-4")).count() > 0);
+        assertTrue(hasMessage(report, "MIM-4"));
     }
 
     @Test
@@ -150,7 +147,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MANIFEST_RAND_MIMETYPE_ODS);
         assertFalse("MANIFEST_RAND_MIMETYPE_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-5")).count() > 0);
+        assertTrue(hasMessage(report, "MIM-5"));
     }
 
     @Test
@@ -158,7 +155,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MANIFEST_RAND_ROOT_MIME_ODS);
         assertFalse("MANIFEST_RAND_ROOT_MIME_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-5")).count() > 0);
+        assertTrue(hasMessage(report, "MIM-5"));
     }
 
     @Test
@@ -166,7 +163,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MANIFEST_DIFF_MIME_ODS);
         assertFalse("MANIFEST_DIFF_MIME_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-5")).count() > 0);
+        assertTrue(hasMessage(report, "MIM-5"));
     }
 
     @Test
@@ -174,7 +171,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MANIFEST_EMPTY_ROOT_MIME_ODS);
         assertFalse("MANIFEST_EMPTY_ROOT_MIME_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-5")).count() > 0);
+        assertTrue(hasMessage(report, "MIM-5"));
     }
 
     @Test
@@ -182,7 +179,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MANIFEST_ENTRY_ODS);
         assertFalse("MANIFEST_ENTRY_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-2")).count() > 0);
+        assertTrue(hasMessage(report, "MAN-2"));
     }
 
     @Test
@@ -190,7 +187,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MIMETYPE_ENTRY_ODS);
         assertFalse("MIMETYPE_ENTRY_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-3")).count() > 0);
+        assertTrue(hasMessage(report, "MAN-3"));
     }
 
     @Test
@@ -198,7 +195,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.METAINF_ENTRY_ODT);
         assertFalse("METAINF_ENTRY_ODT should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-6")).count() > 0);
+        assertTrue(hasMessage(report, "MAN-6"));
     }
 
     @Test
@@ -206,7 +203,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MANIFEST_MISSING_ENTRY_ODS);
         assertFalse("MANIFEST_MISSING_ENTRY_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-1")).count() > 0);
+        assertTrue(hasMessage(report, "MAN-1"));
     }
 
     @Test
@@ -214,7 +211,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MANIFEST_MISSING_XML_ENTRY_ODS);
         assertFalse("MANIFEST_MISSING_XML_ENTRY_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-1")).count() > 0);
+        assertTrue(hasMessage(report, "MAN-1"));
     }
 
     @Test
@@ -222,7 +219,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MISSING_FILE_ODS);
         assertFalse("MISSING_FILE_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-4")).count() > 0);
+        assertTrue(hasMessage(report, "MAN-4"));
     }
 
     @Test
@@ -230,7 +227,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.NO_MIME_ROOT_ODS);
         assertFalse("NO_MIME_ROOT_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-4")).count() > 0);
+        assertTrue(hasMessage(report, "MIM-4"));
     }
 
     @Test
@@ -238,7 +235,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MANIFEST_NO_ROOT_MIMETYPE_ODS);
         assertFalse("MANIFEST_NO_ROOT_MIMETYPE_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-5")).count() > 0);
+        assertTrue(hasMessage(report, "MAN-5"));
     }
 
     @Test
@@ -246,8 +243,8 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.NO_MIME_NO_ROOT_ODS);
         assertTrue("NO_MIME_NO_ROOT_ODS should be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-4")).count() > 0);
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MAN-7")).count() > 0);
+        assertTrue(hasMessage(report, "PKG-4"));
+        assertTrue(hasMessage(report, "MAN-7"));
     }
 
     @Test
@@ -255,7 +252,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MIME_LAST_ODS);
         assertFalse("MIME_LAST_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-1")).count() > 0);
+        assertTrue(hasMessage(report, "MIM-1"));
     }
 
     @Test
@@ -263,7 +260,7 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MIME_COMPRESSED_ODS);
         assertFalse("MIME_COMPRESSED_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-2")).count() > 0);
+        assertTrue(hasMessage(report, "MIM-2"));
     }
 
     @Test
@@ -271,8 +268,8 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MIME_COMPRESSED_LAST_ODS);
         assertFalse("MIME_COMPRESSED_LAST_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-1")).count() > 0);
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-2")).count() > 0);
+        assertTrue(hasMessage(report, "MIM-1"));
+        assertTrue(hasMessage(report, "MIM-2"));
     }
 
     @Test
@@ -280,14 +277,14 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.MIME_EXTRA_ODS);
         assertFalse("MIME_EXTRA_ODS should NOT be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("MIM-3")).count() > 0);
+        assertTrue(hasMessage(report, "MIM-3"));
     }
 
     @Test
     public void testNoThumbnail()
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.NO_THUMBNAIL_ODS);
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-7")).count() > 0);
+        assertTrue(hasMessage(report, "PKG-7"));
     }
 
     @Test
@@ -302,7 +299,11 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.ENCRYPTED_PASSWORDS);
         assertTrue("ENCRYPTED_PASSWORDS should be valid", report.isValid());
-        assertTrue(report.getMessages().stream().filter(m -> m.getId().equals("PKG-10")).count() > 0);
+        assertTrue(hasMessage(report, "PKG-10"));
+    }
+
+    private boolean hasMessage(ValidationResult report, String id) {
+        return report.getChecks().stream().filter(c -> c.getMessage().getId().equals(id)).count() > 0;
     }
 
     @Test
@@ -324,6 +325,6 @@ public class ValidatingParserTest {
             throws ParserConfigurationException, SAXException, IOException, ParseException, URISyntaxException {
         ValidationResult report = Utilities.getValidationReport(TestFiles.DSIG_BADNAME);
         assertFalse("Package should be NOT be valid, badly named META-INF file.", report.isValid());
-        assertEquals(1, report.getMessages().stream().filter(m -> m.getId().equals("PKG-5")).count());
+        assertEquals(1, report.getChecks().stream().filter(m -> m.getMessage().getId().equals("PKG-5")).count());
     }
 }

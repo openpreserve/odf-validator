@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -12,14 +11,15 @@ import java.util.concurrent.Callable;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.Check;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageFactory;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.openpreservation.odf.validation.messages.Messages;
-import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.rules.Rules;
 import org.xml.sax.SAXException;
 
@@ -59,7 +59,7 @@ class CliValidator implements Callable<Integer> {
             retStatus = outputValidationReport(toValidate, validationResult, this.format);
             if (this.appMessages.hasErrors()) {
                 retStatus = Math.max(retStatus,
-                        processMessageLists(this.appMessages.getMessages().values()));
+                        processCheckList(this.appMessages.getChecks()));
             }
         }
         return retStatus;
@@ -95,19 +95,11 @@ class CliValidator implements Callable<Integer> {
         System.exit(exitCode);
     }
 
-    private Integer processMessageLists(Collection<List<Message>> messageLists) {
+    private Integer processCheckList(final List<Check> checks) {
         Integer status = 0;
-        for (List<Message> messages : messageLists) {
-            status = Math.max(status, processMessageList(messages));
-        }
-        return status;
-    }
-
-    private Integer processMessageList(final List<Message> messages) {
-        Integer status = 0;
-        for (Message message : messages) {
-            ConsoleFormatter.colourise(message);
-            if (message.isFatal()) {
+        for (Check check : checks) {
+            ConsoleFormatter.colourise(check.getMessage());
+            if (check.getMessage().isFatal()) {
                 status = 1;
             }
         }
@@ -116,7 +108,7 @@ class CliValidator implements Callable<Integer> {
 
     private static Integer outputValidationReport(final Path path, final ValidationReport report, FormatOption format) throws JsonProcessingException {
         ConsoleFormatter.colourise(FACTORY.getInfo("APP-4", path.toString(), "bold"));
-        if (report.getMessages().isEmpty()) {
+        if (report.getChecks().isEmpty()) {
             ConsoleFormatter.info(FACTORY.getInfo("APP-3").getMessage());
         }
 
