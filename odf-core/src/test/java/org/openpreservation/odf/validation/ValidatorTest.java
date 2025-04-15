@@ -18,8 +18,6 @@ import org.junit.Test;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.validation.ValidationReport;
-import org.openpreservation.odf.validation.Validator;
 import org.xml.sax.SAXException;
 
 public class ValidatorTest {
@@ -70,7 +68,7 @@ public class ValidatorTest {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY.toURI()).toPath());
         assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResult().isValid());
-        assertEquals(1, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("DOC-1")).count());
+        assertEquals(1, getMessageCountById(report, "DOC-1"));
     }
 
     @Test
@@ -92,7 +90,7 @@ public class ValidatorTest {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.FLAT_NOT_VALID.toURI()).toPath());
         assertFalse("Document should NOT be valid.", report.getValidationResult().isValid());
-        assertEquals(1, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("XML-4")).count());
+        assertEquals(1, getMessageCountById(report, "XML-4"));
     }
 
     @Test
@@ -100,8 +98,8 @@ public class ValidatorTest {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.FLAT_NOT_WF.toURI()).toPath());
         assertFalse("Document should NOT be valid.", report.getValidationResult().isValid());
-        assertEquals(1, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("DOC-1")).count());
-        assertEquals(1, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("XML-3")).count());
+        assertEquals(1, getMessageCountById(report, "DOC-1"));
+        assertEquals(1, getMessageCountById(report, "XML-3"));
     }
 
     @Test
@@ -109,7 +107,7 @@ public class ValidatorTest {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.DSIG_INVALID.toURI()).toPath(), Formats.ODS);
         assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResult().isValid());
-        assertEquals(1, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("DOC-7")).count());
+        assertEquals(1, getMessageCountById(report, "DOC-7"));
     }
 
     @Test
@@ -117,7 +115,7 @@ public class ValidatorTest {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.EMPTY.toURI()).toPath(), Formats.ODS);
         assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResult().isValid());
-        assertEquals(1, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("DOC-6")).count());
+        assertEquals(1, getMessageCountById(report, "DOC-6"));
     }
 
     @Test
@@ -126,7 +124,7 @@ public class ValidatorTest {
         ValidationReport report = validator
                 .validateSingleFormat(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).toPath(), Formats.ODS);
         assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResult().isValid());
-        assertEquals(1, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("DOC-7")).count());
+        assertEquals(1, getMessageCountById(report, "DOC-7"));
     }
 
     @Test
@@ -141,7 +139,7 @@ public class ValidatorTest {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.FLAT_NOT_VALID.toURI()).toPath(), Formats.ODS);
         assertFalse("Document should NOT be valid.", report.getValidationResult().isValid());
-        assertEquals(1, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("XML-4")).count());
+        assertEquals(1, getMessageCountById(report, "XML-4"));
     }
 
     @Test
@@ -149,8 +147,8 @@ public class ValidatorTest {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.FLAT_NOT_WF.toURI()).toPath(), Formats.ODS);
         assertFalse("Document should NOT be valid.", report.getValidationResult().isValid());
-        assertEquals(1, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("DOC-1")).count());
-        assertEquals(1, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("XML-3")).count());
+        assertEquals(1, getMessageCountById(report, "DOC-1"));
+        assertEquals(1, getMessageCountById(report, "XML-3"));
     }
 
     @Test
@@ -158,7 +156,11 @@ public class ValidatorTest {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.EXTENDED_SPREADSHEET.toURI()).toPath(), Formats.ODS);
         assertFalse("Document should NOT be valid.", report.getValidationResult().isValid());
-        assertEquals(2, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("DOC-8")).count());
-        assertEquals(0, report.getValidationResult().getMessages().stream().filter(m -> m.getId().equals("XML-3")).count());
+        assertEquals(2, getMessageCountById(report, "DOC-8"));
+        assertEquals(0, getMessageCountById(report, "XML-3"));
+    }
+
+    private int getMessageCountById(ValidationReport report, String id) {
+        return report.getValidationResult().getChecks().stream().filter(c -> c.getMessage().getId().equals(id)).mapToInt(m -> 1).sum();
     }
 }

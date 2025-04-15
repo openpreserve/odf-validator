@@ -3,7 +3,6 @@ package org.openpreservation.odf.validation;
 import java.util.List;
 
 import org.openpreservation.odf.fmt.Formats;
-import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.MessageLog;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,20 +43,15 @@ public interface ValidationResult {
      *
      * @return a list of all of the validation messages for the OpenDocument
      */
-    @JsonIgnore
-    List<Message> getMessages();
+    @JsonProperty("checks")
+    List<Check> getChecks();
+
     /**
-     * Get all of the validation errors for the OpenDocument.
+     * Get the profile message log
      *
-     * @return a list of all of the validation errors for the OpenDocument
+     * @see MessageLog
+     * @return the MessageLog associated with the profile result
      */
     @JsonIgnore
-    List<Message> getErrors();
-    /**
-     * Get the message log instance for the report
-     *
-     * @return the message log instance for the report
-     */
-    @JsonProperty("messages")
-    MessageLog getMessageLog();
+    public MessageLog getMessageLog();
 }

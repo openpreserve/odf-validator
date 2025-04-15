@@ -3,7 +3,6 @@ package org.openpreservation.odf.validation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.Formats;
@@ -70,18 +69,13 @@ public final class ValidationResultImpl implements ValidationResult {
     }
 
     @Override
-    public List<Message> getErrors() {
-        return documentMessages.getErrors().values().stream().flatMap(List::stream).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Message> getMessages() {
-        return documentMessages.getMessages().values().stream().flatMap(List::stream).collect(Collectors.toList());
-    }
-
-    @Override
     public MessageLog getMessageLog() {
         return this.documentMessages;
+    }
+
+    @Override
+    public List<Check> getChecks() {
+        return documentMessages.getChecks();
     }
 
     @Override

@@ -31,7 +31,7 @@ public interface ProfileResult {
      * @see MessageLog
      * @return the MessageLog associated with the profile result
      */
-    @JsonProperty("messages")
+    @JsonIgnore
     public MessageLog getMessageLog();
 
     /**
@@ -40,8 +40,8 @@ public interface ProfileResult {
      * @see Message
      * @return the Messages associated with the profile result
      */
-    @JsonIgnore
-    public List<Message> getMessages();
+    @JsonProperty("checks")
+    public List<Check> getChecks();
 
     /**
      * Check if the profile is valid

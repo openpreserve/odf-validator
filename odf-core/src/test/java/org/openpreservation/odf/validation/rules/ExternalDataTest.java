@@ -13,8 +13,6 @@ import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.messages.MessageLog;
-import org.openpreservation.odf.validation.rules.Rules;
-import org.openpreservation.odf.validation.rules.SchematronRule;
 
 import com.helger.commons.io.resource.URLResource;
 import com.helger.schematron.pure.SchematronResourcePure;

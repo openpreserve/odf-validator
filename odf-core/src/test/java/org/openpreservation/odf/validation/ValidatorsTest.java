@@ -9,8 +9,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.format.zip.Zips;
-import org.openpreservation.odf.validation.ValidatingParser;
-import org.openpreservation.odf.validation.Validators;
 import org.xml.sax.SAXException;
 
 public class ValidatorsTest {
