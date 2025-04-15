@@ -62,7 +62,7 @@ final class ValidatingParserImpl implements ValidatingParser {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, TO_VALIDATE, "OdfPackage"));
         this.results.clear();
         if (!toValidate.isWellFormedZip()) {
-            final ValidationResult result = ValidationResultImpl.of(toValidate.getName());
+            final ValidationResult result = ValidationResultImpl.of("ODF Specification Validation", toValidate.getName());
             result.getMessageLog().add(toValidate.getName(), FACTORY.getError("PKG-1"));
             return result;
         }
@@ -85,7 +85,7 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     private ValidationResult validate(final OdfPackage odfPackage) {
-        final ValidationResult result = ValidationResultImpl.of(odfPackage.getName(), odfPackage.getDetectedFormat(), odfPackage.isEncrypted());
+        final ValidationResult result = ValidationResultImpl.of("ODF Specification Validation", odfPackage.getName(), odfPackage.getDetectedFormat(), odfPackage.isEncrypted());
         result.getMessageLog().add("package", FACTORY.getInfo("DOC-2", Messages.parameterListInstance().add("version", odfPackage.getDetectedVersion().version)));
         result.getMessageLog().add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
         result.getMessageLog().add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));

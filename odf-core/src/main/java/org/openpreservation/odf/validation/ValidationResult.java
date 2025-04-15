@@ -12,6 +12,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ValidationResultImpl.class)
 public interface ValidationResult {
     /**
+     * Get the name of the validation profile been used.
+     *
+     * @return the name of the validation profile
+     */
+    public String getName();
+    /**
      * Get the name of the document being validated.
      *
      * @return the name of the document being validated

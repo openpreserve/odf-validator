@@ -23,7 +23,7 @@ public class ProfileImplTest {
         OpenDocument doc = Utils.getDocument(TestFiles.EMPTY_ODS);
         ValidationReport report = profile.check(doc);
         assertNotNull(report);
-        assertTrue(report.getValidationResult().isValid());
+        assertTrue(report.getValidationResults().get(0).isValid());
     }
 
     @Test

@@ -14,6 +14,7 @@ import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Check;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.ValidationResult;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.Message.Severity;
@@ -116,29 +117,22 @@ class CliValidator implements Callable<Integer> {
 
         Integer status = report.hasSeverity(Severity.FATAL) || report.hasSeverity(Severity.ERROR)  ? 1 : 0;
         MessageLog profileMessages = Messages.messageLogInstance();
-        if (report.getValidationResult() != null) {
-            profileMessages.add(report.getValidationResult().getMessageLog().getMessages());
+        for (ValidationResult result : report.getValidationResults()) {
+            profileMessages.add(result.getMessageLog().getMessages());
         }
-        if (report.getProfileResult() != null)
-            profileMessages.add(report.getProfileResult().getMessageLog().getMessages());
         if (format == FormatOption.JSON)
             ouptutJson(report);
         else if (format == FormatOption.XML)
             ouptutXml(report);
         else
             outputText(report);
-        outputSummary(report.getValidationResult().isEncrypted(), profileMessages);
+        outputSummary(report.getValidationResults().get(0).isEncrypted(), profileMessages);
         return status;
     }
 
     private static void outputText(final ValidationReport report) {
-        if (report.getValidationResult() != null) {
-            for (Map.Entry<String, List<Message>> entry : report.getValidationResult().getMessageLog().getMessages().entrySet()) {
-                outputMessage(entry.getKey(), entry.getValue());
-            }
-        }
-        if (report.getProfileResult() != null) {
-            for (Map.Entry<String, List<Message>> entry : report.getProfileResult().getMessageLog().getMessages().entrySet()) {
+        for (ValidationResult result : report.getValidationResults()) {
+            for (Map.Entry<String, List<Message>> entry : result.getMessageLog().getMessages().entrySet()) {
                 outputMessage(entry.getKey(), entry.getValue());
             }
         }

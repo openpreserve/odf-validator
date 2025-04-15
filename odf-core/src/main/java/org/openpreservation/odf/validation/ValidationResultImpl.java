@@ -16,30 +16,35 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 @JacksonXmlRootElement(localName = "validation_result")
 public final class ValidationResultImpl implements ValidationResult {
 
+    private final String name;
     private final String filename;
     private final Formats detectedFormat;
     private final boolean isEncrypted;
     private final MessageLog documentMessages;
 
-    static final ValidationResult of(final String name) {
-        return ValidationResultImpl.of(name, Formats.UNKNOWN);
+    static final ValidationResult of(final String name, final String filename) {
+        return ValidationResultImpl.of(name, filename, Formats.UNKNOWN);
     }
-    static final ValidationResult of(final String name, final Formats detectedFormat) {
-        return ValidationResultImpl.of(name, detectedFormat, false);
+    static final ValidationResult of(final String name, final String filename, final Formats detectedFormat) {
+        return ValidationResultImpl.of(name, filename, detectedFormat, false);
     }
-    static final ValidationResult of(final String name, final Formats detectedFormat, final boolean isEncrypted) {
-        return ValidationResultImpl.of(name, detectedFormat, isEncrypted, Messages.messageLogInstance());
+    static final ValidationResult of(final String name, final String filename, final Formats detectedFormat, final boolean isEncrypted) {
+        return ValidationResultImpl.of(name, filename, detectedFormat, isEncrypted, Messages.messageLogInstance());
     }
-    static final ValidationResult of(final String name, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
-        return new ValidationResultImpl(name, detectedFormat, isEncrypted, documentMessages);
+    static final ValidationResult of(final String name, final String filename, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
+        return new ValidationResultImpl(name, filename, detectedFormat, isEncrypted, documentMessages);
+    }
+    static final ValidationResult of(final String name, final String filename, final MessageLog documentMessages) {
+        return new ValidationResultImpl(name, filename, Formats.UNKNOWN, false, documentMessages);
     }
 
-    static final ValidationResult of(final String name, final OpenDocument document) {
-        return ValidationResultImpl.of(name, document.getFormat(), (document.getPackage() != null) ? document.getPackage().isEncrypted() : false);
+    static final ValidationResult of(final String name, final String filename, final OpenDocument document) {
+        return ValidationResultImpl.of(name, filename, document.getFormat(), (document.getPackage() != null) ? document.getPackage().isEncrypted() : false);
     }
 
-    private ValidationResultImpl(final String filename, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
+    private ValidationResultImpl(final String name, final String filename, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
         super();
+        this.name = name;
         this.filename = filename;
         this.detectedFormat = detectedFormat;
         this.isEncrypted = isEncrypted;
@@ -84,6 +89,11 @@ public final class ValidationResultImpl implements ValidationResult {
     }
 
     @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
     public String getFilename() {
         return this.filename;
     }
@@ -98,6 +108,7 @@ public final class ValidationResultImpl implements ValidationResult {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((filename == null) ? 0 : filename.hashCode());
         result = prime * result + ((detectedFormat == null) ? 0 : detectedFormat.hashCode());
         result = prime * result + ((isEncrypted) ? 1231 : 1237);
@@ -118,6 +129,11 @@ public final class ValidationResultImpl implements ValidationResult {
             if (other.filename != null)
                 return false;
         } else if (!filename.equals(other.filename))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
             return false;
         if (detectedFormat == null) {
             if (other.detectedFormat != null)

@@ -36,17 +36,8 @@ public interface ValidationReport {
      * @see ValidationResult
      * @return The ValidationResult object for the ODF document.
      */
-    @JsonProperty("validation_result")
-    public ValidationResult getValidationResult();
-
-    /**
-     * The Profile result for the ODF document, if a profile was used.
-     * 
-     * @see ProfileResult
-     * @return
-     */
-    @JsonProperty("profile_result")
-    public ProfileResult getProfileResult();
+    @JsonProperty("validation_results")
+    public List<ValidationResult> getValidationResults();
 
     /**
      * Get a list of all messages, from all Results contained in the file.

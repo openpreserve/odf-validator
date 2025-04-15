@@ -1,6 +1,7 @@
 package org.openpreservation.odf.validation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.openpreservation.odf.pkg.Manifest;
@@ -15,27 +16,26 @@ public class ValidationReportImpl implements ValidationReport {
 
     private final Metadata metadata;
     private final Manifest manifest;
-    private final ValidationResult validationResult;
-    private final ProfileResult profileResult;
+    private final List<ValidationResult> validationResults;
+;
 
-    public static ValidationReportImpl of(final OdfPackage pkg, final ValidationResult validationResult) {
+    public static ValidationReportImpl of(final OdfPackage pkg, final List<ValidationResult> validationResults) {
         final Metadata metadata = (pkg.getDocument() != null) ? pkg.getDocument().getMetadata() : null;
-        return new ValidationReportImpl(metadata, pkg.getManifest(), validationResult, null);
+        return new ValidationReportImpl(metadata, pkg.getManifest(), validationResults);
     }
 
-    public static ValidationReportImpl of(final ValidationResult validationResult) {
-        return new ValidationReportImpl(null, null, validationResult, null);
+    public static ValidationReportImpl of(final List<ValidationResult> validationResults) {
+        return new ValidationReportImpl(null, null, validationResults);
     }
 
-    public static ValidationReportImpl of(final Metadata metadata, final Manifest manifest, final ValidationResult validationResult, final ProfileResult profileResult) {
-        return new ValidationReportImpl(metadata, manifest, validationResult, profileResult);
+    public static ValidationReportImpl of(final Metadata metadata, final Manifest manifest, final List<ValidationResult> validationResults) {
+        return new ValidationReportImpl(metadata, manifest, validationResults);
     }
 
-    private ValidationReportImpl(final Metadata metadata, final Manifest manifest, final ValidationResult validationResult, final ProfileResult profileResult) {
+    private ValidationReportImpl(final Metadata metadata, final Manifest manifest, final List<ValidationResult> validationResults) {
         this.metadata = metadata;
         this.manifest = manifest;
-        this.validationResult = validationResult;
-        this.profileResult = profileResult;
+        this.validationResults = Collections.unmodifiableList(validationResults);
     }
 
     @Override
@@ -44,8 +44,7 @@ public class ValidationReportImpl implements ValidationReport {
         int result = 1;
         result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
         result = prime * result + ((manifest == null) ? 0 : manifest.hashCode());
-        result = prime * result + ((validationResult == null) ? 0 : validationResult.hashCode());
-        result = prime * result + ((profileResult == null) ? 0 : profileResult.hashCode());
+        result = prime * result + ((validationResults == null) ? 0 : validationResults.hashCode());
         return result;
     }
 
@@ -68,15 +67,10 @@ public class ValidationReportImpl implements ValidationReport {
                 return false;
         } else if (!manifest.equals(other.manifest))
             return false;
-        if (validationResult == null) {
-            if (other.validationResult != null)
+        if (validationResults == null) {
+            if (other.validationResults != null)
                 return false;
-        } else if (!validationResult.equals(other.validationResult))
-            return false;
-        if (profileResult == null) {
-            if (other.profileResult != null)
-                return false;
-        } else if (!profileResult.equals(other.profileResult))
+        } else if (!validationResults.equals(other.validationResults))
             return false;
         return true;
     }
@@ -92,20 +86,17 @@ public class ValidationReportImpl implements ValidationReport {
     }
 
     @Override
-    public ValidationResult getValidationResult() {
-        return validationResult;
-    }
-
-    @Override
-    public ProfileResult getProfileResult() {
-        return profileResult;
+    public List<ValidationResult> getValidationResults() {
+        return validationResults;
     }
 
     @Override
     public List<Check> getChecks() {
-        List<Check> messages =  (this.validationResult == null) ? new ArrayList<>() : this.validationResult.getChecks();
-        if (this.profileResult != null) {
-            messages.addAll(this.profileResult.getChecks());
+        List<Check> messages =  new ArrayList<>();
+        if (this.validationResults != null) {
+            for (ValidationResult result : this.validationResults) {
+                messages.addAll(result.getChecks());
+            }
         }
         return messages;
     }

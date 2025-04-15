@@ -35,12 +35,18 @@ public class Validators {
      * @param filename a name for the report
      * @return the minimal validation report with the given name
      */
-    public static final ValidationResult reportOf(final String filename) {
-        return ValidationResultImpl.of(filename);
+    public static final ValidationResult resultOf(final String name, final String filename) {
+        return ValidationResultImpl.of(name, filename);
     }
 
-    public static final ProfileResult profileResultOf(final String filename, final String profile, final MessageLog messageLog) {
-        return ProfileResultImpl.of(filename, profile, messageLog);
+    /**
+     * Create a mimimal validation report.
+     *
+     * @param filename a name for the report
+     * @return the minimal validation report with the given name
+     */
+    public static final ValidationResult resultOf(final String name, final String filename, final MessageLog messages) {
+        return ValidationResultImpl.of(name, filename, messages);
     }
 
     private Validators() {

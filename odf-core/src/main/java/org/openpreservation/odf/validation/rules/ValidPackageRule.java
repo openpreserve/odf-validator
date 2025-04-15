@@ -36,15 +36,15 @@ class ValidPackageRule extends AbstractRule {
             final MessageLog messageLog = Messages.messageLogInstance();
             Validator validator = new Validator();
             ValidationReport report = validator.validate(document.getPath());
-            if (!report.getValidationResult().isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {
+            if (!report.getValidationResults().get(0).isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {
                 String message = (!document.isPackage()) ? PACK_MESS : "";
                 if (document != null && !document.getVersion().equals(Version.ODF_13)) {
                     message = String.format(VER_MESS, document.getVersion());
                 }
-                if (!report.getValidationResult().isValid()) {
+                if (!report.getValidationResults().get(0).isValid()) {
                     message += INV_MESS;
                 }
-                messageLog.add(report.getValidationResult().getFilename(),
+                messageLog.add(report.getValidationResults().get(0).getFilename(),
                         Messages.getMessageInstance(this.id, Message.Severity.ERROR,
                                 this.getName(), message + this.getDescription()));
             }
