@@ -1,10 +1,14 @@
 package org.openpreservation.odf.validation.messages;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.openpreservation.odf.validation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
+import org.openpreservation.odf.validation.messages.ParameterImpl.ParameterListImpl;
 
 /**
  * Utility class that handles creation of Message type instances, etc.
@@ -22,7 +26,7 @@ public enum Messages {
     public static final String NO_ID = "NO-ID";
     public static final String EMPTY_MESSAGE = "";
     public static final Message DEFAULT_MESSAGE = getMessageInstance(NO_ID,
-            Severity.INFO, EMPTY_MESSAGE);
+            Severity.INFO, EMPTY_MESSAGE, parameterListInstance());
 
     /**
      * Create a new message instance with a DEFAULT_ID
@@ -35,7 +39,7 @@ public enum Messages {
      */
     public static Message getMessageInstance(final String message)
             throws IllegalArgumentException {
-        return getMessageInstance(NO_ID, Severity.INFO, message);
+        return getMessageInstance(NO_ID, Severity.INFO, message, parameterListInstance());
     }
 
     /**
@@ -51,7 +55,23 @@ public enum Messages {
      */
     public static Message getMessageInstance(final String id, final Severity severity,
             final String message) throws IllegalArgumentException {
-        return getMessageInstance(id, severity, message, EMPTY_MESSAGE);
+        return getMessageInstance(id, severity, message, EMPTY_MESSAGE, parameterListInstance());
+    }
+
+    /**
+     * Create a Message instance with the give id and message value
+     *
+     * @param id
+     *                the id of the new message
+     * @param message
+     *                the message of the new message
+     * @return the new message instance
+     * @throws IllegalArgumentException
+     *                                  if the id or message is null or empty
+     */
+    public static Message getMessageInstance(final String id, final Severity severity,
+            final String message, final ParameterList parameters) throws IllegalArgumentException {
+        return getMessageInstance(id, severity, message, EMPTY_MESSAGE, parameters);
     }
 
     /**
@@ -77,7 +97,33 @@ public enum Messages {
         if (message == null)
             throw new IllegalArgumentException(
                     "message cannot be null.");
-        return MessageImpl.getInstance(id, severity, message, subMessage);
+        return MessageImpl.getInstance(id, severity, message, subMessage, parameterListInstance());
+    }
+
+    /**
+     * Create a new Message instance with the given id, message and
+     * sub-message
+     *
+     * @param id
+     *                   the id of the new message
+     * @param message
+     *                   the message of the new message
+     * @param subMessage
+     *                   the sub-message of the new message
+     * @return the new message instance
+     * @throws IllegalArgumentException
+     *                                  if the id or message is null or empty
+     */
+    public static Message getMessageInstance(final String id, final Severity severity,
+            final String message, final String subMessage, final ParameterList parameters)
+            throws IllegalArgumentException {
+        if (id == null || id.isEmpty())
+            throw new IllegalArgumentException(
+                    "id cannot be null or an empty string.");
+        if (message == null)
+            throw new IllegalArgumentException(
+                    "message cannot be null.");
+        return MessageImpl.getInstance(id, severity, message, subMessage, parameters);
     }
 
     /**
@@ -165,5 +211,13 @@ public enum Messages {
      */
     public static MessageLog messageLogInstance(final String path, final List<Message> messages) {
         return MessageLogImpl.of(path, messages);
+    }
+
+    public static Parameter parameterOf(final String name, final String value) {
+        return ParameterImpl.of(name, value);
+    }
+
+    public static ParameterList parameterListInstance() {
+        return ParameterListImpl.of(new ArrayList<>());
     }
 }

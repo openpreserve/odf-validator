@@ -20,6 +20,7 @@ import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageFactory;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
 import org.openpreservation.odf.validation.rules.Rules;
 import org.xml.sax.SAXException;
 
@@ -54,7 +55,7 @@ class CliValidator implements Callable<Integer> {
         for (File file : this.toValidateFiles) {
             Path toValidate = file.toPath();
             this.appMessages = Messages.messageLogInstance();
-            ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", toValidate.toString()));
+            ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", Messages.parameterListInstance().add("file", toValidate.toString())));
             ValidationReport validationResult = (!this.profileFlag) ? validatePath(toValidate) : profilePath(toValidate);
             retStatus = outputValidationReport(toValidate, validationResult, this.format);
             if (this.appMessages.hasErrors()) {
@@ -107,7 +108,8 @@ class CliValidator implements Callable<Integer> {
     }
 
     private static Integer outputValidationReport(final Path path, final ValidationReport report, FormatOption format) throws JsonProcessingException {
-        ConsoleFormatter.colourise(FACTORY.getInfo("APP-4", path.toString(), "bold"));
+        ParameterList parameters = Messages.parameterListInstance().add("file", path.toString()).add("format", "bold");
+        ConsoleFormatter.colourise(FACTORY.getInfo("APP-4", parameters));
         if (report.getChecks().isEmpty()) {
             ConsoleFormatter.info(FACTORY.getInfo("APP-3").getMessage());
         }

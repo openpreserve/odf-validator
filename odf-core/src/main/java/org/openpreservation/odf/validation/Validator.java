@@ -65,7 +65,12 @@ public class Validator {
             report.getValidationResult().getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-6"));
         } else {
             if (detectedFmt != legal) {
-                report.getValidationResult().getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-7", legal.mime, detectedFmt.mime));
+                report.getValidationResult().getMessageLog()
+                        .add(toValidate.toString(),
+                             FACTORY.getError("DOC-7",
+                                              Messages.parameterListInstance()
+                                              .add("expectedMime", legal.mime)
+                                              .add("detectedMime", detectedFmt.mime)));
             }
         }
         return report;
@@ -158,17 +163,17 @@ public class Validator {
             final XmlValidator validator = new XmlValidator();
             if (parseResult.isRootName(TAG_DOC)) {
                 version = Version.fromVersion(doc.getVersion());
-                result.getMessageLog().add(toValidate.toString(), FACTORY.getInfo("DOC-2", doc.getVersion()));
+                result.getMessageLog().add(toValidate.toString(), FACTORY.getInfo("DOC-2", Messages.parameterListInstance().add("version", doc.getVersion())));
                 if (Formats.fromMime(doc.getMimeType()).isPackage()) {
-                    result.getMessageLog().add(toValidate.toString(), FACTORY.getInfo("DOC-3", doc.getMimeType()));
+                    result.getMessageLog().add(toValidate.toString(), FACTORY.getInfo("DOC-3", Messages.parameterListInstance().add("mimetype", doc.getMimeType())));
                 } else {
-                    result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-4", doc.getMimeType()));
+                    result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-4", Messages.parameterListInstance().add("mimetype", doc.getMimeType())));
                 }
             }
             if (doc.isExtended()) {
                 result.getMessageLog().add(toValidate.toString(),
-                        FACTORY.getError("DOC-8", Utils.collectNsPrefixes(
-                                OdfXmlDocuments.odfXmlDocumentOf(parseResult).getForeignNamespaces())));
+                        FACTORY.getError("DOC-8", Messages.parameterListInstance().add("namespaces", Utils.collectNsPrefixes(
+                                OdfXmlDocuments.odfXmlDocumentOf(parseResult).getForeignNamespaces()))));
             } else {
                 final Schema schema = new OdfSchemaFactory().getSchema(OdfNamespaces.OFFICE, version);
                 parseResult = validator.validate(parseResult, Files.newInputStream(toValidate), schema);

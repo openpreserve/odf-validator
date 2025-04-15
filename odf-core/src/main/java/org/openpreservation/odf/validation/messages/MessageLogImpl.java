@@ -80,7 +80,7 @@ final class MessageLogImpl implements MessageLog {
         for (final Entry<String, List<Message>> entry : this.messageMap.entrySet()) {
             for (final Message message : entry.getValue()) {
                 if (message.getSeverity().equals(severity)) {
-                    checks.add(new CheckImpl(message, entry.getKey(), new ArrayList<>()));
+                    checks.add(CheckImpl.of(message, entry.getKey()));
                 }
             }
         }
@@ -92,7 +92,7 @@ final class MessageLogImpl implements MessageLog {
         final List<Check> checks = new ArrayList<>();
         for (final Entry<String, List<Message>> entry : this.messageMap.entrySet()) {
             for (final Message message : entry.getValue()) {
-                checks.add(new CheckImpl(message, entry.getKey(), new ArrayList<>()));
+                checks.add(CheckImpl.of(message, entry.getKey()));
             }
         }
         return checks;
@@ -104,7 +104,7 @@ final class MessageLogImpl implements MessageLog {
         for (final Entry<String, List<Message>> entry : this.messageMap.entrySet()) {
             for (final Message message : entry.getValue()) {
                 if (message.getId().equals(id)) {
-                    checks.add(new CheckImpl(message, entry.getKey(), new ArrayList<>()));
+                    checks.add(CheckImpl.of(message, entry.getKey()));
                 }
             }
         }
@@ -135,7 +135,7 @@ final class MessageLogImpl implements MessageLog {
     public List<Check> getChecksForPath(final String path) {
         final List<Check> checks = new ArrayList<>();
         for (final Message message : this.messageMap.getOrDefault(path, Collections.emptyList())) {
-            checks.add(new CheckImpl(message, path, new ArrayList<>()));
+            checks.add(CheckImpl.of(message, path));
         }
         return checks;
     }

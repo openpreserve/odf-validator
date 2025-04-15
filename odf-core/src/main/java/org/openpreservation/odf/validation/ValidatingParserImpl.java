@@ -86,7 +86,7 @@ final class ValidatingParserImpl implements ValidatingParser {
 
     private ValidationResult validate(final OdfPackage odfPackage) {
         final ValidationResult result = ValidationResultImpl.of(odfPackage.getName(), odfPackage.getDetectedFormat(), odfPackage.isEncrypted());
-        result.getMessageLog().add("package", FACTORY.getInfo("DOC-2", odfPackage.getDetectedVersion().version));
+        result.getMessageLog().add("package", FACTORY.getInfo("DOC-2", Messages.parameterListInstance().add("version", odfPackage.getDetectedVersion().version)));
         result.getMessageLog().add(OdfFormats.MIMETYPE, checkMimeEntry(odfPackage));
         result.getMessageLog().add(OdfPackages.PATH_MANIFEST, validateManifest(odfPackage));
         if (!odfPackage.hasThumbnail()) {
@@ -117,7 +117,7 @@ final class ValidatingParserImpl implements ValidatingParser {
             return new ArrayList<>();
         }
         if (xmlEntry.isEncrypted()) {
-            return Arrays.asList(FACTORY.getWarning("PKG-10", xmlPath));
+            return Arrays.asList(FACTORY.getWarning("PKG-10", Messages.parameterListInstance().add("xmlPath", xmlPath)));
         }
         return validatePackageXml(xmlPath, odfPackage, odfPackage.getEntryXmlParseResult(xmlPath));
 
@@ -139,8 +139,8 @@ final class ValidatingParserImpl implements ValidatingParser {
         OdfNamespaces ns = OdfNamespaces.fromId(parseResult.getRootNamespace().getId());
         if (OdfXmlDocuments.odfXmlDocumentOf(parseResult).isExtended()) {
             messageList
-                    .add(FACTORY.getError("DOC-8", Utils.collectNsPrefixes(OdfXmlDocuments.odfXmlDocumentOf(parseResult)
-                            .getForeignNamespaces())));
+                    .add(FACTORY.getError("DOC-8", Messages.parameterListInstance().add("namespaces", Utils.collectNsPrefixes(OdfXmlDocuments.odfXmlDocumentOf(parseResult)
+                            .getForeignNamespaces()))));
             return messageList;
         }
         Schema schema = (ns == null) ? null
@@ -152,7 +152,7 @@ final class ValidatingParserImpl implements ValidatingParser {
                         odfPackage.getEntryXmlStream(xmlPath), schema);
                 this.results.put(xmlPath, validationResult);
             } catch (IOException e) {
-                messageList.add(FACTORY.getError("CORE-3", e.getMessage(), xmlPath));
+                messageList.add(FACTORY.getError("CORE-3", Messages.parameterListInstance().add("message", e.getMessage()).add("xmlPath", xmlPath)));
             }
         }
         return messageList;
@@ -178,7 +178,7 @@ final class ValidatingParserImpl implements ValidatingParser {
         if (odfPackage.hasMimeEntry()) {
             messages.addAll(this.validateMimeEntry(odfPackage.getZipArchive().getZipEntry(OdfFormats.MIMETYPE),
                     odfPackage.isMimeFirst()));
-            messages.add(FACTORY.getInfo("DOC-3", odfPackage.getMimeType()));
+            messages.add(FACTORY.getInfo("DOC-3", Messages.parameterListInstance().add("mimetype", odfPackage.getMimeType())));
         } else {
             if (odfPackage.hasManifest() && odfPackage.getManifest().getRootMediaType() != null) {
                 messages.add(FACTORY.getError("MIM-4"));
@@ -219,7 +219,7 @@ final class ValidatingParserImpl implements ValidatingParser {
             }
         } else if (hasManifestRootMime(manifest) && (odfPackage.hasMimeEntry()
                 && !manifest.getRootMediaType().equals(odfPackage.getMimeType()))) {
-            messages.add(FACTORY.getError("MIM-5", manifest.getRootMediaType(), odfPackage.getMimeType()));
+            messages.add(FACTORY.getError("MIM-5", Messages.parameterListInstance().add("rootMimeType", manifest.getRootMediaType()).add("packageMimeType", odfPackage.getMimeType())));
         }
         messages.addAll(checkManifestEntries(odfPackage));
         return messages;
@@ -239,10 +239,10 @@ final class ValidatingParserImpl implements ValidatingParser {
             } else if (!isLegitimateManifestEntry(entryPath)) {
                 messages.add(getManifestError(entryPath));
             } else if (zipEntry == null) {
-                messages.add(FACTORY.getError("MAN-4", entryPath));
+                messages.add(FACTORY.getError("MAN-4", Messages.parameterListInstance().add("entryPath", entryPath)));
             }
             if (entry.isEncrypted() && zipEntry != null && !zipEntry.isStored()) {
-                messages.add(FACTORY.getError("PKG-8", entryPath));
+                messages.add(FACTORY.getError("PKG-8", Messages.parameterListInstance().add("entryPath", entryPath)));
             }
         }
         return messages;
@@ -255,20 +255,20 @@ final class ValidatingParserImpl implements ValidatingParser {
             final List<Message> messages = new ArrayList<>();
             if (!isCompressionValid(zipEntry)) {
                 // Entries SHALL be uncompressesed (Stored) or use deflate compression
-                messages.add(FACTORY.getError("PKG-2", zipEntry.getName()));
+                messages.add(FACTORY.getError("PKG-2", Messages.parameterListInstance().add("entryPath", zipEntry.getName())));
                 messageMap.put(zipEntry.getName(), messages);
             }
             if (zipEntry.getName().startsWith(OdfPackages.NAME_META_INF)
                     && (!zipEntry.isDirectory() && !OdfPackages.PATH_MANIFEST.equals(zipEntry.getName())
                             && !OdfPackages.isDsig(zipEntry.getName()))) {
-                messages.add(FACTORY.getError("PKG-5", zipEntry.getName()));
+                messages.add(FACTORY.getError("PKG-5", Messages.parameterListInstance().add("entryPath", zipEntry.getName())));
                 messageMap.put(zipEntry.getName(), messages);
             }
             if (zipEntry.isDirectory() || !isLegitimateManifestEntry(zipEntry.getName())) {
                 continue;
             }
             if (manifest != null && odfPackage.getManifest().getEntry(zipEntry.getName()) == null) {
-                messages.add(FACTORY.getError("MAN-1", zipEntry.getName()));
+                messages.add(FACTORY.getError("MAN-1", Messages.parameterListInstance().add("entryPath", zipEntry.getName())));
             }
             messageMap.put(zipEntry.getName(), messages);
         }
@@ -288,11 +288,11 @@ final class ValidatingParserImpl implements ValidatingParser {
 
     private final Message getManifestError(final String entryPath) {
         if (OdfFormats.MIMETYPE.equals(entryPath)) {
-            return FACTORY.getError("MAN-3", entryPath);
+            return FACTORY.getError("MAN-3", Messages.parameterListInstance().add("entryPath", entryPath));
         } else if (OdfPackages.PATH_MANIFEST.equals(entryPath)) {
-            return FACTORY.getError("MAN-2", entryPath);
+            return FACTORY.getError("MAN-2", Messages.parameterListInstance().add("entryPath", entryPath));
         } else if (entryPath.startsWith(OdfPackages.NAME_META_INF)) {
-            return FACTORY.getInfo("MAN-6", entryPath);
+            return FACTORY.getInfo("MAN-6", Messages.parameterListInstance().add("entryPath", entryPath));
         }
         return null;
     }

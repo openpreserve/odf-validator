@@ -3,6 +3,7 @@ package org.openpreservation.odf.validation.messages;
 import java.util.NoSuchElementException;
 
 import org.openpreservation.odf.validation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
 
 /**
  * Factory interface for {@link Message} creation
@@ -89,7 +90,7 @@ public interface MessageFactory {
      * @throws NoSuchElementException
      *                                if no message with id can be retrieved
      */
-    public Message getMessage(final String id, final Severity severity, final Object... args)
+    public Message getMessage(final String id, final Severity severity, final ParameterList parameters)
             throws NoSuchElementException;
 
     /**
@@ -105,7 +106,7 @@ public interface MessageFactory {
      * @throws NoSuchElementException
      *                                if no message with id can be retrieved
      */
-    public Message getError(final String id, final Object... args)
+    public Message getError(final String id, final ParameterList parameters)
             throws NoSuchElementException;
 
     /**
@@ -121,7 +122,7 @@ public interface MessageFactory {
      * @throws NoSuchElementException
      *                                if no message with id can be retrieved
      */
-    public Message getFatal(final String id, final Object... args)
+    public Message getFatal(final String id, final ParameterList parameters)
             throws NoSuchElementException;
 
     /**
@@ -137,7 +138,7 @@ public interface MessageFactory {
      * @throws NoSuchElementException
      *                                if no message with id can be retrieved
      */
-    public Message getInfo(final String id, final Object... args)
+    public Message getInfo(final String id, ParameterList parameters)
             throws NoSuchElementException;
 
     /**
@@ -153,6 +154,6 @@ public interface MessageFactory {
      * @throws NoSuchElementException
      *                                if no message with id can be retrieved
      */
-    public Message getWarning(final String id, final Object... args)
+    public Message getWarning(final String id, final ParameterList parameters)
             throws NoSuchElementException;
 }

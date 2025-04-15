@@ -1,7 +1,5 @@
 package org.openpreservation.odf.validation;
 
-import java.util.List;
-
 import org.openpreservation.odf.validation.messages.Message;
 
 /**
@@ -21,11 +19,4 @@ public interface Check {
      * @return the path
      */
     public String getPath();
-
-    /**
-     * Get the parameters associated with the check.
-     *
-     * @return the parameters
-     */
-    public List<Parameter> getParameters();
 }

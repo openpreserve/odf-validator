@@ -1,18 +1,14 @@
 package org.openpreservation.odf.validation;
 
-import java.util.List;
-
 import org.openpreservation.odf.validation.messages.Message;
 
 public class CheckImpl implements Check {
     private final Message message;
     private final String path;
-    private final List<Parameter> parameters;
 
-    public CheckImpl(final Message message, final String path, final List<Parameter> parameters) {
+    private CheckImpl(final Message message, final String path) {
         this.message = message;
         this.path = path;
-        this.parameters = parameters;
     }
 
     @Override
@@ -25,9 +21,7 @@ public class CheckImpl implements Check {
         return path;
     }
 
-    @Override
-    public List<Parameter> getParameters() {
-        return parameters;
+    public static Check of(final Message message, final String path) {
+        return new CheckImpl(message, path);
     }
-
 }
