@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.format.xml.ParseResult;
+import org.openpreservation.odf.fmt.Formats;
 
 public interface OdfXmlDocument {
     /**
@@ -32,7 +33,7 @@ public interface OdfXmlDocument {
      *
      * @return true if the document declares a MIME type, otherwise false
      */
-    public boolean hasMimeType();
+    public boolean hasFormat();
 
     /**
      * Get the declared ODF MIME type of the document, parsed from a root element
@@ -40,7 +41,7 @@ public interface OdfXmlDocument {
      *
      * @return the value of the mimetype attribute or null if no attribute found.
      */
-    public String getMimeType();
+    public Formats getFormat();
 
     /**
      * Does the document declare a version?
@@ -54,7 +55,7 @@ public interface OdfXmlDocument {
      *
      * @return The value of the version attribute or null if no attribute found
      */
-    public String getVersion();
+    public Version getVersion();
 
     /**
      * Get the set of foreign namespaces used in the document, e.g. all of the

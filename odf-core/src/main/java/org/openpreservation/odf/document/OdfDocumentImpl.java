@@ -68,12 +68,12 @@ final class OdfDocumentImpl implements OdfDocument {
 
     @Override
     public Version getVersion() {
-        return Version.fromVersion(this.getXmlDocument().getVersion());
+        return this.getXmlDocument().getVersion();
     }
 
     @Override
     public DocumentType getDocumentType() {
-        return DocumentType.getTypeByMimeString(this.getXmlDocument().getMimeType());
+        return DocumentType.getTypeByMimeString(this.getXmlDocument().getFormat().mime);
     }
 
     @Override

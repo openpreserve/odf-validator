@@ -44,7 +44,7 @@ class ValidPackageRule extends AbstractRule {
                 if (!report.getValidationResults().get(0).isValid()) {
                     message += INV_MESS;
                 }
-                messageLog.add(report.getValidationResults().get(0).getFilename(),
+                messageLog.add(report.getFilename(),
                         Messages.getMessageInstance(this.id, Message.Severity.ERROR,
                                 this.getName(), message + this.getDescription()));
             }

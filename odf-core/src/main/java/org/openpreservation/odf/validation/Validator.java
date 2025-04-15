@@ -36,7 +36,7 @@ public class Validator {
     private static final MessageFactory FACTORY = Messages.getInstance();
 
     private static final ValidationResult notOdf(final Path toValidate) {
-        final ValidationResult result = ValidationResultImpl.of("ODF Specification Validation", toValidate.toString());
+        final ValidationResult result = ValidationResultImpl.of("ODF Specification Validation");
         result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-1"));
         return result;
     }
@@ -61,7 +61,7 @@ public class Validator {
         Objects.requireNonNull(legal, String.format(Checks.NOT_NULL, "Formats", "legal"));
         Checks.existingFileCheck(toValidate);
         final ValidationReport report = validate(toValidate);
-        final Formats detectedFmt = report.getValidationResults().get(0).getDetectedFormat();
+        final Formats detectedFmt = report.getDetectedFormat();
         if (detectedFmt == null || detectedFmt == Formats.UNKNOWN) {
             report.getValidationResults().get(0).getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-6"));
         } else {
@@ -102,7 +102,7 @@ public class Validator {
             throw new ParseException("Exception thrown when validating ODF document.", e);
         }
 
-        return ValidationReportImpl.of(Collections.singletonList(notOdf(toValidate)));
+        return ValidationReportImpl.of(toValidate.toString(), Collections.singletonList(notOdf(toValidate)));
     }
 
     /**
@@ -142,33 +142,29 @@ public class Validator {
     private ValidationReport validatePackage(final Path toValidate)
             throws ParserConfigurationException, SAXException, ParseException, FileNotFoundException {
         final OdfPackage pckg = OdfPackages.getPackageParser().parsePackage(toValidate);
-        return ValidationReportImpl.of(pckg, Collections.singletonList(Validators.getValidatingParser().validatePackage(pckg)));
+        return ValidationReportImpl.of(toValidate.toString(), pckg, Collections.singletonList(Validators.getValidatingParser().validatePackage(pckg)));
     }
 
     private ValidationReport validateOpenDocumentXml(final Path toValidate)
             throws ParserConfigurationException, SAXException, IOException {
         final XmlParser checker = new XmlParser();
         final ParseResult parseResult = checker.parse(toValidate);
-        return ValidationReportImpl.of(Collections.singletonList(validateParseResult(toValidate, parseResult)));
+        return ValidationReportImpl.of(toValidate.toString(), OdfXmlDocuments.odfXmlDocumentOf(parseResult), Collections.singletonList(validateParseResult(toValidate, parseResult)));
     }
 
     private ValidationResult validateParseResult(final Path toValidate, ParseResult parseResult)
             throws IOException {
-        final ValidationResult result = (parseResult.isWellFormed())
-                ? ValidationResultImpl.of("ODF Specification", toValidate.toString(),
-                        Documents.openDocumentOf(toValidate, Documents.odfDocumentOf(parseResult)))
-                : ValidationResultImpl.of("ODF Specification", toValidate.toString());
+        final ValidationResult result = ValidationResultImpl.of("ODF Specification");
         if (parseResult.isWellFormed()) {
             Version version = Version.ODF_13;
             final OdfXmlDocument doc = OdfXmlDocuments.odfXmlDocumentOf(parseResult);
             final XmlValidator validator = new XmlValidator();
             if (parseResult.isRootName(TAG_DOC)) {
-                version = Version.fromVersion(doc.getVersion());
-                result.getMessageLog().add(toValidate.toString(), FACTORY.getInfo("DOC-2", Messages.parameterListInstance().add("version", doc.getVersion())));
-                if (Formats.fromMime(doc.getMimeType()).isPackage()) {
-                    result.getMessageLog().add(toValidate.toString(), FACTORY.getInfo("DOC-3", Messages.parameterListInstance().add("mimetype", doc.getMimeType())));
+                result.getMessageLog().add(toValidate.toString(), FACTORY.getInfo("DOC-2", Messages.parameterListInstance().add("version", doc.getVersion().version)));
+                if (doc.getFormat().isPackage()) {
+                    result.getMessageLog().add(toValidate.toString(), FACTORY.getInfo("DOC-3", Messages.parameterListInstance().add("mimetype", doc.getFormat().mime)));
                 } else {
-                    result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-4", Messages.parameterListInstance().add("mimetype", doc.getMimeType())));
+                    result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-4", Messages.parameterListInstance().add("mimetype", doc.getFormat().mime)));
                 }
             }
             if (doc.isExtended()) {

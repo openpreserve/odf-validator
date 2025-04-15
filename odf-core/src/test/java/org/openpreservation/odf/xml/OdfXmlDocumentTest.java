@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.xml.sax.SAXException;
 
@@ -43,10 +44,10 @@ public class OdfXmlDocumentTest {
         ParseResult parseResult = xmlParser.parse(TestFiles.EMPTY_FODS.openStream());
         OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
         assertNotNull(odfDocument);
-        assertEquals("application/vnd.oasis.opendocument.spreadsheet", odfDocument.getMimeType());
+        assertEquals("application/vnd.oasis.opendocument.spreadsheet", odfDocument.getFormat().mime);
         assertTrue(odfDocument.hasVersion());
-        assertTrue(odfDocument.hasMimeType());
-        assertEquals("1.3", odfDocument.getVersion());
+        assertTrue(odfDocument.hasFormat());
+        assertEquals(Version.ODF_13, odfDocument.getVersion());
         assertEquals("office", odfDocument.getRootNamespace().getPrefix());
         assertEquals("document", odfDocument.getLocalRootName());
     }
@@ -64,10 +65,10 @@ public class OdfXmlDocumentTest {
         ParseResult parseResult = xmlParser.parse(TestFiles.FLAT_NOT_VALID.openStream());
         OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
         assertNotNull(odfDocument);
-        assertTrue("File should have a MIME type", odfDocument.hasMimeType());
+        assertTrue("File should have a MIME type", odfDocument.hasFormat());
         assertTrue("File should have a version", odfDocument.hasVersion());
-        assertEquals("application/vnd.oasis.opendocument.spreadsheet", odfDocument.getMimeType());
-        assertEquals("1.3", odfDocument.getVersion());
+        assertEquals("application/vnd.oasis.opendocument.spreadsheet", odfDocument.getFormat().mime);
+        assertEquals(Version.ODF_13, odfDocument.getVersion());
         assertEquals("office", odfDocument.getRootNamespace().getPrefix());
         assertEquals("document", odfDocument.getLocalRootName());
     }
@@ -77,10 +78,10 @@ public class OdfXmlDocumentTest {
         ParseResult parseResult = xmlParser.parse(TestFiles.FLAT_NO_MIME.openStream());
         OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
         assertNotNull(odfDocument);
-        assertFalse("File should NOT have a mimetype", odfDocument.hasMimeType());
-        assertEquals("", odfDocument.getMimeType());
+        assertFalse("File should NOT have a mimetype", odfDocument.hasFormat());
+        assertEquals(Formats.UNKNOWN, odfDocument.getFormat());
         assertTrue("File should have a version", odfDocument.hasVersion());
-        assertEquals("1.3", odfDocument.getVersion());
+        assertEquals(Version.ODF_13, odfDocument.getVersion());
         assertEquals("office", odfDocument.getRootNamespace().getPrefix());
         assertEquals("document", odfDocument.getLocalRootName());
     }
@@ -90,10 +91,10 @@ public class OdfXmlDocumentTest {
         ParseResult parseResult = xmlParser.parse(TestFiles.FLAT_NO_VERSION.openStream());
         OdfXmlDocument odfDocument = OdfXmlDocumentImpl.of(parseResult);
         assertNotNull(odfDocument);
-        assertTrue("File should have a MIME type", odfDocument.hasMimeType());
+        assertTrue("File should have a MIME type", odfDocument.hasFormat());
         assertFalse("File should NOT have a version", odfDocument.hasVersion());
-        assertEquals("application/vnd.oasis.opendocument.spreadsheet", odfDocument.getMimeType());
-        assertEquals("", odfDocument.getVersion());
+        assertEquals("application/vnd.oasis.opendocument.spreadsheet", odfDocument.getFormat().mime);
+        assertEquals(Version.UNKNOWN, odfDocument.getVersion());
         assertEquals("office", odfDocument.getRootNamespace().getPrefix());
         assertEquals("document", odfDocument.getLocalRootName());
     }

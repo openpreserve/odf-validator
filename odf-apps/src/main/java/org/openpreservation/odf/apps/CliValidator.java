@@ -126,7 +126,7 @@ class CliValidator implements Callable<Integer> {
             ouptutXml(report);
         else
             outputText(report);
-        outputSummary(report.getValidationResults().get(0).isEncrypted(), profileMessages);
+        outputSummary(report.isEncrypted(), profileMessages);
         return status;
     }
 
