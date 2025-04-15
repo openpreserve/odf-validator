@@ -1,10 +1,12 @@
 package org.openpreservation.odf.validation.messages;
 
+import java.util.Collections;
 import java.util.MissingResourceException;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
 import org.openpreservation.odf.validation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
 
 /**
  * @author <a href="mailto:carl@openpreservation.org">Carl Wilson</a>
@@ -25,7 +27,7 @@ final class MessageFactoryImpl implements MessageFactory {
 
     @Override
     public Message getMessage(final String id, final Severity severity) throws NoSuchElementException {
-        return getMessage(id, severity, (Object[]) null);
+        return getMessage(id, severity, ParameterImpl.ParameterListImpl.of(Collections.emptyList()));
     }
 
     @Override
@@ -50,34 +52,38 @@ final class MessageFactoryImpl implements MessageFactory {
 
     @Override
     public Message getMessage(final String id, final Severity severity,
-            final Object... args) throws NoSuchElementException {
+            final ParameterList parameters) throws NoSuchElementException {
         try {
-            final String message = (args == null || args.length < 1) ? this.messageBundle.getString(id)
-                    : String.format(this.messageBundle.getString(id), args);
-            return Messages.getMessageInstance(id, severity, message);
+            final String message = (parameters == null || parameters.size() < 1) ? this.messageBundle.getString(id)
+                    : String.format(this.messageBundle.getString(id), getArgs(parameters));
+            return Messages.getMessageInstance(id, severity, message, parameters);
         } catch (final MissingResourceException ex) {
             throw createEleException(id, ex);
         }
     }
 
-    @Override
-    public Message getError(final String id, final Object... args) throws NoSuchElementException {
-        return getMessage(id, Severity.ERROR, args);
+    private final Object[] getArgs(final ParameterList parameters) {
+        return parameters.toList().stream().map(Parameter::getValue).toArray();
     }
 
     @Override
-    public Message getFatal(final String id, final Object... args) throws NoSuchElementException {
-        return getMessage(id, Severity.FATAL, args);
+    public Message getError(final String id, final ParameterList parameters) throws NoSuchElementException {
+        return getMessage(id, Severity.ERROR, parameters);
     }
 
     @Override
-    public Message getInfo(final String id, final Object... args) throws NoSuchElementException {
-        return getMessage(id, Severity.INFO, args);
+    public Message getFatal(final String id, final ParameterList parameters) throws NoSuchElementException {
+        return getMessage(id, Severity.FATAL, parameters);
     }
 
     @Override
-    public Message getWarning(final String id, final Object... args) throws NoSuchElementException {
-        return getMessage(id, Severity.WARNING, args);
+    public Message getInfo(final String id, final ParameterList parameters) throws NoSuchElementException {
+        return getMessage(id, Severity.INFO, parameters);
+    }
+
+    @Override
+    public Message getWarning(final String id, final ParameterList parameters) throws NoSuchElementException {
+        return getMessage(id, Severity.WARNING, parameters);
     }
 
     private NoSuchElementException createEleException(final String id, final Throwable cause) {

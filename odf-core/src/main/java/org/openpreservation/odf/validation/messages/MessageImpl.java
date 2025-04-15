@@ -1,6 +1,9 @@
 package org.openpreservation.odf.validation.messages;
 
 import java.util.Date;
+import java.util.List;
+
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
 
 /**
  * @author <a href="mailto:carl@openpreservation.org">Carl Wilson</a>
@@ -16,18 +19,20 @@ final class MessageImpl implements Message {
     final Severity severity;
     private final String message;
     private final String subMessage;
+    private final ParameterList parameters;
     private final Date timestamp = new Date();
 
-    private MessageImpl(final String id, final Severity severity, final String message, final String subMessage) {
+    private MessageImpl(final String id, final Severity severity, final String message, final String subMessage, final ParameterList parameters) {
         this.id = id;
         this.severity = severity;
         this.message = message;
         this.subMessage = subMessage;
+        this.parameters = ParameterImpl.ParameterListImpl.of(parameters.toList());
     }
 
     static Message getInstance(final String id, final Severity severity, final String message,
-            final String subMessage) {
-        return new MessageImpl(id, severity, message, subMessage);
+            final String subMessage, final ParameterList parameters) {
+        return new MessageImpl(id, severity, message, subMessage, parameters);
     }
 
     @Override
@@ -48,6 +53,11 @@ final class MessageImpl implements Message {
     @Override
     public String getMessage() {
         return this.message;
+    }
+
+    @Override
+    public List<Parameter> getParameters() {
+        return this.parameters.toList();
     }
 
     @Override
@@ -86,7 +96,7 @@ final class MessageImpl implements Message {
     @Override
     public String toString() {
         return "Messsage [id=" + this.id + ", message=" + this.message
-                + ", subMessage=" + this.subMessage + "]";
+                + ", subMessage=" + this.subMessage + ", parameters" + this.parameters + ", severity=" + this.severity + ", timestamp=" + this.timestamp + "]";
     }
 
     /**
@@ -103,6 +113,7 @@ final class MessageImpl implements Message {
         result = prime * result
                 + ((this.subMessage == null) ? 0 : this.subMessage.hashCode());
         result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
+        result = prime * result + ((this.parameters == null) ? 0 : this.parameters.hashCode());
         return result;
     }
 
@@ -154,6 +165,13 @@ final class MessageImpl implements Message {
                 return false;
             }
         } else if (!this.timestamp.equals(other.timestamp)) {
+            return false;
+        }
+        if (this.parameters == null) {
+            if (other.parameters != null) {
+                return false;
+            }
+        } else if (!this.parameters.equals(other.parameters)) {
             return false;
         }
         return true;

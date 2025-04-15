@@ -17,6 +17,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.MessageFactory;
 import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -112,10 +113,9 @@ public final class XmlParser {
             messages.addAll(messageHandler.messages);
             return handler.getResult(true, messages);
         } catch (final SAXParseException e) {
-            messages.add(FACTORY.getError("XML-3", e.getLineNumber(),
-                    e.getColumnNumber(), e.getMessage()));
+            messages.add(FACTORY.getError("XML-3", excepToParameterList(e)));
         } catch (final SAXException e) {
-            messages.add(FACTORY.getError("XML-1", e.getMessage()));
+            messages.add(FACTORY.getError("XML-1", Messages.parameterListInstance().add("message", e.getMessage())));
         }
         return handler.getResult(false, messages);
     }
@@ -133,4 +133,10 @@ public final class XmlParser {
         Objects.requireNonNull(toTest, "Parameter toTest can not be null.");
         return parse(Files.newInputStream(toTest));
     }
+
+    static ParameterList excepToParameterList(SAXParseException e) {
+        return Messages.parameterListInstance().clear().add("line", Integer.toString(e.getLineNumber())).add("column", Integer.toString(e.getColumnNumber()))
+                .add("message", e.getMessage());
+    }
+
 }

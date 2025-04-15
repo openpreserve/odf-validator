@@ -63,10 +63,9 @@ public final class XmlValidator {
             validator.validate(toValidate);
             this.isWellFormed = true;
         } catch (final SAXParseException e) {
-            messages.add(FACTORY.getError("XML-3", e.getLineNumber(),
-                    e.getColumnNumber(), e.getMessage()));
+            messages.add(FACTORY.getError("XML-3", XmlParser.excepToParameterList(e)));
         } catch (final SAXException e) {
-            messages.add(FACTORY.getError("XML-1", e.getMessage()));
+            messages.add(FACTORY.getError("XML-1", Messages.parameterListInstance().add("message", e.getMessage())));
         }
         messages.addAll(handler.messages);
         return messages;

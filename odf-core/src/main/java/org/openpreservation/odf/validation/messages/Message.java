@@ -1,6 +1,7 @@
 package org.openpreservation.odf.validation.messages;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -94,6 +95,13 @@ public interface Message {
      */
     @JsonProperty("sub_message")
     public String getSubMessage();
+
+    /**
+     * Get the parameters
+     *
+     * @return
+     */
+    public List<Parameter> getParameters();
 
     /**
      * Test whether the message has {@link Severity} ERROR.
