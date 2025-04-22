@@ -51,7 +51,7 @@ final class MessageImpl implements Message {
     }
 
     @Override
-    public String getMessage() {
+    public String getTitle() {
         return this.message;
     }
 
@@ -61,12 +61,12 @@ final class MessageImpl implements Message {
     }
 
     @Override
-    public boolean hasSubMessage() {
+    public boolean hasText() {
         return !(this.subMessage == null || this.subMessage.isEmpty());
     }
 
     @Override
-    public String getSubMessage() {
+    public String getText() {
         return this.subMessage;
     }
 
