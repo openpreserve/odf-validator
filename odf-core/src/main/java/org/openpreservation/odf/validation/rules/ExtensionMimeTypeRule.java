@@ -51,7 +51,11 @@ final class ExtensionMimeTypeRule extends AbstractRule {
                 || !"application/vnd.oasis.opendocument.spreadsheet".equals(odfPackage.getMimeType())
                 || !odfPackage.getName().endsWith(".ods")) {
                 parameters.add("mimeType", !odfPackage.hasMimeEntry() ? "missing" : odfPackage.getMimeType());
-                parameters.add("extension",  odfPackage.getName().substring(odfPackage.getName().lastIndexOf('.')));
+                String packageName = odfPackage.getName();
+                String extension = (packageName.lastIndexOf('.') >= 0) 
+                    ? packageName.substring(packageName.lastIndexOf('.')) 
+                    : "no extension";
+                parameters.add("extension",  extension);
             messageLog.add(OdfPackages.MIMETYPE, Messages.getMessageInstance(this.id, this.severity, this.getName(),
                     this.getDescription(), parameters));
         }

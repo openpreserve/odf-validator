@@ -95,7 +95,7 @@ public enum Messages {
                     "id cannot be null or an empty string.");
         if (title == null)
             throw new IllegalArgumentException(
-                    "message cannot be null.");
+                    "title cannot be null.");
         return MessageImpl.getInstance(id, severity, title, text, parameterListInstance());
     }
 
@@ -121,7 +121,7 @@ public enum Messages {
                     "id cannot be null or an empty string.");
         if (title == null)
             throw new IllegalArgumentException(
-                    "message cannot be null.");
+                    "title cannot be null.");
         return MessageImpl.getInstance(id, severity, title, text, parameters);
     }
 
