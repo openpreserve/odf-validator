@@ -6,9 +6,10 @@ import org.openpreservation.odf.document.OdfDocument;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.openpreservation.odf.validation.messages.Messages;
-import org.openpreservation.odf.validation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
 
 final class ExtensionMimeTypeRule extends AbstractRule {
 
@@ -45,11 +46,14 @@ final class ExtensionMimeTypeRule extends AbstractRule {
     public MessageLog check(final OdfPackage odfPackage) {
         Objects.requireNonNull(odfPackage, "odfPackage must not be null");
         final MessageLog messageLog = Messages.messageLogInstance();
+        ParameterList parameters = Messages.parameterListInstance();
         if (!odfPackage.hasMimeEntry()
                 || !"application/vnd.oasis.opendocument.spreadsheet".equals(odfPackage.getMimeType())
                 || !odfPackage.getName().endsWith(".ods")) {
+                parameters.add("mimeType", !odfPackage.hasMimeEntry() ? "missing" : odfPackage.getMimeType());
+                parameters.add("extension",  odfPackage.getName().substring(odfPackage.getName().lastIndexOf('.')));
             messageLog.add(OdfPackages.MIMETYPE, Messages.getMessageInstance(this.id, this.severity, this.getName(),
-                    this.getDescription()));
+                    this.getDescription(), parameters));
         }
         return messageLog;
     }

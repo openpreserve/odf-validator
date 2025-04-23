@@ -4,9 +4,9 @@ import java.util.Objects;
 
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.FileEntry;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.openpreservation.odf.validation.messages.Messages;
-import org.openpreservation.odf.validation.messages.Message.Severity;
 
 final class EncryptionRule extends AbstractRule {
 
@@ -30,7 +30,7 @@ final class EncryptionRule extends AbstractRule {
         for (final FileEntry entry : document.getPackage().getManifest().getEntries()) {
             if (entry.isEncrypted()) {
                 messageLog.add(entry.getFullPath(), Messages.getMessageInstance(this.id, this.severity, this.getName(),
-                        this.getDescription()));
+                        this.getDescription(), Messages.parameterListInstance().add("entryPath", entry.getFullPath())));
             }
         }
         return messageLog;
