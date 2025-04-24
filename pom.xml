@@ -105,6 +105,7 @@
     <junit.version>4.13.2</junit.version>
     <mvn.target.release>11</mvn.target.release>
     <mycila.license.version>4.2</mycila.license.version>
+    <native.maven.plugin.version>0.10.6</native.maven.plugin.version>
   </properties>
 
   <build>
