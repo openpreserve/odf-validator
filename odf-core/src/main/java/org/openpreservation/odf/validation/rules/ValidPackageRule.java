@@ -40,7 +40,10 @@ class ValidPackageRule extends AbstractRule {
             ParameterList parameters = Messages.parameterListInstance();
             if (!report.getValidationResults().get(0).isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {
                 String message = (!document.isPackage()) ? PACK_MESS : "";
-                if (document != null && !document.getVersion().equals(Version.ODF_13)) {
+                if (document != null &&
+                        !document.getVersion().equals(Version.ODF_13) &&
+                        document.getVersion() != null &&
+                        document.getVersion() != Version.UNKNOWN) {
                     message = String.format(VER_MESS, document.getVersion());
                     parameters.add("version", document.getVersion().version);
                 }
