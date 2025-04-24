@@ -44,7 +44,7 @@ class ValidPackageRule extends AbstractRule {
                         document.getVersion() != null &&
                         !document.getVersion().equals(Version.ODF_13) &&
                         document.getVersion() != Version.UNKNOWN) {
-                    message = String.format(VER_MESS, document.getVersion());
+                    message = String.format(VER_MESS, document.getVersion().version);
                     parameters.add("version", document.getVersion().version);
                 }
                 if (!report.getValidationResults().get(0).isValid()) {
