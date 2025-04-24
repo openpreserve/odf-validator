@@ -95,7 +95,7 @@ final class MessageImpl implements Message {
      */
     @Override
     public String toString() {
-        return "Messsage [id=" + this.id + ", message=" + this.title
+        return "Message [id=" + this.id + ", message=" + this.title
                 + ", subMessage=" + this.text + ", parameters" + this.parameters + ", severity=" + this.severity + ", timestamp=" + this.timestamp + "]";
     }
 
