@@ -58,7 +58,9 @@ class CliValidator implements Callable<Integer> {
             this.appMessages = Messages.messageLogInstance();
             ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", Messages.parameterListInstance().add("file", toValidate.toString())));
             ValidationReport validationResult = (!this.profileFlag) ? validatePath(toValidate) : profilePath(toValidate);
-            retStatus = outputValidationReport(toValidate, validationResult, this.format);
+            if (validationResult != null) {
+                retStatus = outputValidationReport(toValidate, validationResult, this.format);
+            }
             if (this.appMessages.hasErrors()) {
                 retStatus = Math.max(retStatus,
                         processCheckList(this.appMessages.getChecks()));
