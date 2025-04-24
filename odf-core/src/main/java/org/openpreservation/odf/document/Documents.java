@@ -1,5 +1,7 @@
 package org.openpreservation.odf.document;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -34,13 +36,13 @@ public class Documents {
         return OpenDocumentImpl.of(path, pkg);
     }
 
-    public static final OpenDocument openDocumentOf(final Path toParse) throws ParseException {
+    public static final OpenDocument openDocumentFrom(final Path toParse) throws ParseException {
         Objects.requireNonNull(toParse, "Path path document cannot be null");
         try {
             if (Source.isZip(toParse)) {
                 return openDocumentOf(toParse, OdfPackages.getPackageParser().parsePackage(toParse));
             } else if (Source.isXml(toParse)) {
-                return openDocumentOf(toParse, from(toParse));
+                return openDocumentOf(toParse, odfDocumentFrom(toParse));
             }
         } catch (IOException e) {
             throw new ParseException("IOException thrown when validating ODF document.", e);
@@ -65,9 +67,31 @@ public class Documents {
         return OdfDocumentImpl.of(parseResult);
     }
 
-    static final OdfDocument from(final Path path) throws ParseException {
+    public static final OdfDocument odfDocumentFrom(final Path path) throws ParseException {
         try (final InputStream is = Files.newInputStream(path)) {
-            return OdfDocumentImpl.from(is);
+            return Documents.odfDocumentFrom(is);
+        } catch (IOException e) {
+            throw new ParseException("IOException thrown when parsing ODF document.", e);
+        }
+    }
+
+    public static final OdfDocument odfDocumentFrom(InputStream docStream) throws ParseException {
+        try {
+            Objects.requireNonNull(docStream, "InputStream parameter docStream cannot be null");
+            byte[] bytes = null;
+            OdfXmlDocument xmlDocument = null;
+            Metadata metadata = null;
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                docStream.transferTo(bos);
+                bytes = bos.toByteArray();
+            }
+            try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {
+                xmlDocument = OdfXmlDocuments.xmlDocumentFrom(is);
+            }
+            try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {
+                metadata = OdfXmlDocuments.metadataFrom(is);
+            }
+            return OdfDocumentImpl.of(xmlDocument, metadata);
         } catch (IOException | ParserConfigurationException | SAXException e) {
             throw new ParseException("Exception thrown when validating ODF document.", e);
         }

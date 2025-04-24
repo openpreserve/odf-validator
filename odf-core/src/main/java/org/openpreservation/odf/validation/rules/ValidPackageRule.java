@@ -21,7 +21,7 @@ class ValidPackageRule extends AbstractRule {
 
     static final ValidPackageRule getInstance(final Severity severity) {
         return new ValidPackageRule("POL-2", "Standard Compliance",
-                "The file MUST comply with the standard \"OASIS Open Document Format for Office Applications (OpenDocument) v1.3\".",
+                "The file MUST comply with the standard 'OASIS Open Document Format for Office Applications (OpenDocument) v1.3'.",
                 severity, false);
     }
 

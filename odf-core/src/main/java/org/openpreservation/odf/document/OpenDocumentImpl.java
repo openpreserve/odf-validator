@@ -63,9 +63,11 @@ final class OpenDocumentImpl implements OpenDocument {
     @Override
     public Collection<OdfDocument> getSubDocuments() {
         List<OdfDocument> subDocs = new ArrayList<>();
-        for (OdfPackageDocument doc : this.pkg.getDocumentMap().values()) {
-            if (!doc.equals(this.document)) {
-                subDocs.add(doc);
+        if (this.isPackage()) {
+            for (OdfPackageDocument doc : this.pkg.getDocumentMap().values()) {
+                if (!doc.equals(this.document)) {
+                    subDocs.add(doc);
+                }
             }
         }
         return subDocs;
