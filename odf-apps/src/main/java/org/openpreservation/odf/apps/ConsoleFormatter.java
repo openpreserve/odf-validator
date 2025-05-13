@@ -50,20 +50,20 @@ public enum ConsoleFormatter {
     }
 
     public static final void colourise(final Message message, final String colour) {
-        final String formatted = (message.hasSubMessage())
+        final String formatted = (message.hasText())
                 ? String.format("%s: [%s] %s | %s", message.getId(), message.getSeverity(),
-                        message.getMessage(), message.getSubMessage())
+                        message.getTitle(), message.getText())
                 : String.format("%s: [%s] %s", message.getId(), message.getSeverity(),
-                        message.getMessage());
+                        message.getTitle());
         colourise(formatted, colour, message.isFatal() ? System.err : System.out);
     }
 
     public static final void colourise(final Path path, final Message message, final String colour) {
-        final String formatted = (message.hasSubMessage())
+        final String formatted = (message.hasText())
                 ? String.format("%s: [%s] %s %s | %s", message.getId(), message.getSeverity(), path,
-                        message.getMessage(), message.getSubMessage())
+                        message.getTitle(), message.getText())
                 : String.format("%s: [%s] %s %s", message.getId(), message.getSeverity(), path,
-                        message.getMessage());
+                        message.getTitle());
         colourise(formatted, colour, message.isFatal() ? System.err : System.out);
     }
 

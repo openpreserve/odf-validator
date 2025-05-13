@@ -112,7 +112,7 @@ class CliValidator implements Callable<Integer> {
         ParameterList parameters = Messages.parameterListInstance().add("file", path.toString()).add("format", "bold");
         ConsoleFormatter.colourise(FACTORY.getInfo("APP-4", parameters));
         if (report.getChecks().isEmpty()) {
-            ConsoleFormatter.info(FACTORY.getInfo("APP-3").getMessage());
+            ConsoleFormatter.info(FACTORY.getInfo("APP-3").getTitle());
         }
 
         Integer status = report.hasSeverity(Severity.FATAL) || report.hasSeverity(Severity.ERROR)  ? 1 : 0;

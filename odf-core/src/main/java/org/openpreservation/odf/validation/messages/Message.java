@@ -77,7 +77,7 @@ public interface Message {
      *
      * @return the <code>String</code> message
      */
-    public String getMessage();
+    public String getTitle();
 
     /**
      * Test whether the message has a sub-message
@@ -86,15 +86,15 @@ public interface Message {
      *         <code>false</code> otherwise
      */
     @JsonIgnore
-    public boolean hasSubMessage();
+    public boolean hasText();
 
     /**
      * Get the sub-message
      *
      * @return the <code>String</code> sub-message
      */
-    @JsonProperty("sub_message")
-    public String getSubMessage();
+    @JsonProperty("text")
+    public String getText();
 
     /**
      * Get the parameters
