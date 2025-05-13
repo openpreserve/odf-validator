@@ -60,14 +60,14 @@ public class ValidatorTest {
     public void validatePath() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
-        assertTrue("Package should be valid.", report.getValidationResult().isValid());
+        assertTrue("Package should be valid.", report.getValidationResults().get(0).isValid());
     }
 
     @Test
     public void validateEmpty() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY.toURI()).toPath());
-        assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResult().isValid());
+        assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-1"));
     }
 
@@ -75,21 +75,21 @@ public class ValidatorTest {
     public void validateNoMimeNoRoot() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).toPath());
-        assertTrue("Package should be valid.", report.getValidationResult().isValid());
+        assertTrue("Package should be valid.", report.getValidationResults().get(0).isValid());
     }
 
     @Test
     public void validateDocXml() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY_FODS.toURI()).toPath());
-        assertTrue("Package should be valid.", report.getValidationResult().isValid());
+        assertTrue("Package should be valid.", report.getValidationResults().get(0).isValid());
     }
 
     @Test
     public void validateDocInvalidXml() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.FLAT_NOT_VALID.toURI()).toPath());
-        assertFalse("Document should NOT be valid.", report.getValidationResult().isValid());
+        assertFalse("Document should NOT be valid.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "XML-4"));
     }
 
@@ -97,7 +97,7 @@ public class ValidatorTest {
     public void validateDocNotWellFormedXml() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validate(new File(TestFiles.FLAT_NOT_WF.toURI()).toPath());
-        assertFalse("Document should NOT be valid.", report.getValidationResult().isValid());
+        assertFalse("Document should NOT be valid.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-1"));
         assertEquals(1, getMessageCountById(report, "XML-3"));
     }
@@ -106,7 +106,7 @@ public class ValidatorTest {
     public void validateSingleFormatInvalid() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.DSIG_INVALID.toURI()).toPath(), Formats.ODS);
-        assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResult().isValid());
+        assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-7"));
     }
 
@@ -114,7 +114,7 @@ public class ValidatorTest {
     public void validateSingleFormatEmpty() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.EMPTY.toURI()).toPath(), Formats.ODS);
-        assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResult().isValid());
+        assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-6"));
     }
 
@@ -123,7 +123,7 @@ public class ValidatorTest {
         Validator validator = new Validator();
         ValidationReport report = validator
                 .validateSingleFormat(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).toPath(), Formats.ODS);
-        assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResult().isValid());
+        assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-7"));
     }
 
@@ -131,14 +131,14 @@ public class ValidatorTest {
     public void validateSingleFormatDocXml() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.EMPTY_FODS.toURI()).toPath(), Formats.ODS);
-        assertTrue("Package should be valid.", report.getValidationResult().isValid());
+        assertTrue("Package should be valid.", report.getValidationResults().get(0).isValid());
     }
 
     @Test
     public void validateSpreadsheetDocInvalidXml() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.FLAT_NOT_VALID.toURI()).toPath(), Formats.ODS);
-        assertFalse("Document should NOT be valid.", report.getValidationResult().isValid());
+        assertFalse("Document should NOT be valid.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "XML-4"));
     }
 
@@ -146,7 +146,7 @@ public class ValidatorTest {
     public void validateSpreadsheetDocNotWellFormedXml() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.FLAT_NOT_WF.toURI()).toPath(), Formats.ODS);
-        assertFalse("Document should NOT be valid.", report.getValidationResult().isValid());
+        assertFalse("Document should NOT be valid.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-1"));
         assertEquals(1, getMessageCountById(report, "XML-3"));
     }
@@ -155,12 +155,12 @@ public class ValidatorTest {
     public void validateExtendedSpreadsheet() throws ParseException, IOException, URISyntaxException {
         Validator validator = new Validator();
         ValidationReport report = validator.validateSingleFormat(new File(TestFiles.EXTENDED_SPREADSHEET.toURI()).toPath(), Formats.ODS);
-        assertFalse("Document should NOT be valid.", report.getValidationResult().isValid());
+        assertFalse("Document should NOT be valid.", report.getValidationResults().get(0).isValid());
         assertEquals(2, getMessageCountById(report, "DOC-8"));
         assertEquals(0, getMessageCountById(report, "XML-3"));
     }
 
     private int getMessageCountById(ValidationReport report, String id) {
-        return report.getValidationResult().getChecks().stream().filter(c -> c.getMessage().getId().equals(id)).mapToInt(m -> 1).sum();
+        return report.getValidationResults().get(0).getChecks().stream().filter(c -> c.getMessage().getId().equals(id)).mapToInt(m -> 1).sum();
     }
 }

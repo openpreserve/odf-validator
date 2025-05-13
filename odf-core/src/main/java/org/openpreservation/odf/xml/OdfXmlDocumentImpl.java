@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
@@ -22,14 +23,14 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
 
     static final OdfXmlDocumentImpl of(final ParseResult parseResult) {
         Objects.requireNonNull(parseResult, String.format(Checks.NOT_NULL, "parseResult", "ParseResult"));
-        final String version = parseResult.getRootAttributeValue("office:version") != null
-                ? parseResult.getRootAttributeValue("office:version")
-                : "";
-        final String mime = parseResult.getRootAttributeValue(Constants.ELENAME_MIME) != null
-                ? parseResult.getRootAttributeValue(Constants.ELENAME_MIME)
-                : "";
+        final Version version = parseResult.getRootAttributeValue("office:version") != null
+                ? Version.fromVersion(parseResult.getRootAttributeValue("office:version"))
+                : Version.UNKNOWN;
+        final Formats format = parseResult.getRootAttributeValue(Constants.ELENAME_MIME) != null
+                ? Formats.fromMime(parseResult.getRootAttributeValue(Constants.ELENAME_MIME))
+                : Formats.UNKNOWN;
 
-        return new OdfXmlDocumentImpl(parseResult, mime, version);
+        return new OdfXmlDocumentImpl(parseResult, format, version);
     }
 
     static final OdfXmlDocumentImpl from(final InputStream docStream)
@@ -41,37 +42,37 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
     }
 
     private final ParseResult parseResult;
-    private final String mimeType;
-    private final String version;
+    private final Formats format;
+    private final Version version;
     private final Set<Namespace> foreignNamespaces;
 
-    private OdfXmlDocumentImpl(final ParseResult parseResult, final String mimeType,
-            final String version) {
+    private OdfXmlDocumentImpl(final ParseResult parseResult, final Formats format,
+            final Version version) {
         super();
         this.parseResult = parseResult;
-        this.mimeType = mimeType;
+        this.format = format;
         this.version = version;
         this.foreignNamespaces = Collections.unmodifiableSet(getForeignNamespaces(parseResult));
     }
 
     @Override
     public boolean hasVersion() {
-        return this.version != null && !this.version.isEmpty();
+        return this.version != null && this.version != Version.UNKNOWN;
     }
 
     @Override
-    public String getVersion() {
+    public Version getVersion() {
         return this.version;
     }
 
     @Override
-    public boolean hasMimeType() {
-        return this.mimeType != null && !this.mimeType.isEmpty();
+    public boolean hasFormat() {
+        return this.format != null && this.format != Formats.UNKNOWN;
     }
 
     @Override
-    public String getMimeType() {
-        return this.mimeType;
+    public Formats getFormat() {
+        return this.format;
     }
 
     @Override
@@ -109,7 +110,7 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((parseResult == null) ? 0 : parseResult.hashCode());
-        result = prime * result + ((mimeType == null) ? 0 : mimeType.hashCode());
+        result = prime * result + ((format == null) ? 0 : format.hashCode());
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         result = prime * result + ((foreignNamespaces == null) ? 0 : foreignNamespaces.hashCode());
         return result;
@@ -129,10 +130,10 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
                 return false;
         } else if (!parseResult.equals(other.parseResult))
             return false;
-        if (mimeType == null) {
-            if (other.mimeType != null)
+        if (format == null) {
+            if (other.format != null)
                 return false;
-        } else if (!mimeType.equals(other.mimeType))
+        } else if (!format.equals(other.format))
             return false;
         if (version == null) {
             if (other.version != null)
@@ -149,8 +150,8 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
 
     @Override
     public String toString() {
-        return "OdfDocumentImpl [parseResult=" + this.parseResult + ", rootName=" + this.getRootName() + ", mimeType="
-                + mimeType
+        return "OdfDocumentImpl [parseResult=" + this.parseResult + ", rootName=" + this.getRootName() + ", format="
+                + format.mime
                 + ", version=" + version + "]";
     }
 

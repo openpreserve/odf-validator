@@ -79,7 +79,7 @@ final class OpenDocumentImpl implements OpenDocument {
     @Override
     public Formats getFormat() {
         return (this.isPackage()) ? this.pkg.getDetectedFormat()
-                : (this.document != null) ? Formats.fromMime(this.document.getXmlDocument().getMimeType()) : Formats.UNKNOWN;
+                : (this.document != null) ? this.document.getXmlDocument().getFormat() : Formats.UNKNOWN;
     }
 
     @Override

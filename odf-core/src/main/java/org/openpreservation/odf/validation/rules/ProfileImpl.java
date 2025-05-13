@@ -2,6 +2,8 @@ package org.openpreservation.odf.validation.rules;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -54,9 +56,9 @@ final class ProfileImpl extends AbstractProfile {
             }
             final String packageName = document == null || document.getPackage() == null ? ""
                     : document.getPackage().getName();
-            return ValidationReportImpl.of((document.getDocument() != null) ? document.getDocument().getMetadata() : null,
-                                           (document.getPackage() != null) ? document.getPackage().getManifest() : null,
-                                           result, Validators.profileResultOf(packageName, this.name, messages));
+            return ValidationReportImpl.of(packageName,
+                                           document,
+                                           new ArrayList<>(Arrays.asList(result, Validators.resultOf(name, messages))));
         } catch (FileNotFoundException e) {
             throw new ParseException("File not found exception when processing package.", e);
         } catch (IOException e) {

@@ -5,50 +5,34 @@ import java.util.List;
 import java.util.Map;
 
 import org.openpreservation.odf.document.OpenDocument;
-import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.openpreservation.odf.validation.messages.Messages;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JacksonXmlRootElement(localName = "validation_result")
 public final class ValidationResultImpl implements ValidationResult {
 
-    private final String filename;
-    private final Formats detectedFormat;
-    private final boolean isEncrypted;
+    private final String name;
     private final MessageLog documentMessages;
 
     static final ValidationResult of(final String name) {
-        return ValidationResultImpl.of(name, Formats.UNKNOWN);
+        return ValidationResultImpl.of(name, Messages.messageLogInstance());
     }
-    static final ValidationResult of(final String name, final Formats detectedFormat) {
-        return ValidationResultImpl.of(name, detectedFormat, false);
-    }
-    static final ValidationResult of(final String name, final Formats detectedFormat, final boolean isEncrypted) {
-        return ValidationResultImpl.of(name, detectedFormat, isEncrypted, Messages.messageLogInstance());
-    }
-    static final ValidationResult of(final String name, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
-        return new ValidationResultImpl(name, detectedFormat, isEncrypted, documentMessages);
+    static final ValidationResult of(final String name, final MessageLog documentMessages) {
+        return new ValidationResultImpl(name, documentMessages);
     }
 
-    static final ValidationResult of(final String name, final OpenDocument document) {
-        return ValidationResultImpl.of(name, document.getFormat(), (document.getPackage() != null) ? document.getPackage().isEncrypted() : false);
-    }
-
-    private ValidationResultImpl(final String filename, final Formats detectedFormat, final boolean isEncrypted, final MessageLog documentMessages) {
+    private ValidationResultImpl(final String name, final MessageLog documentMessages) {
         super();
-        this.filename = filename;
-        this.detectedFormat = detectedFormat;
-        this.isEncrypted = isEncrypted;
+        this.name = name;
         this.documentMessages = documentMessages;
     }
 
     @Override
     public String toString() {
-        return "ValidationReport [name=" + filename + ", documentMessages=" + documentMessages + "]";
+        return "ValidationReport [name=" + name + ", documentMessages=" + documentMessages + "]";
     }
 
     @Override
@@ -79,28 +63,15 @@ public final class ValidationResultImpl implements ValidationResult {
     }
 
     @Override
-    public Formats getDetectedFormat() {
-        return this.detectedFormat;
-    }
-
-    @Override
-    public String getFilename() {
-        return this.filename;
-    }
-
-    @JsonIgnore
-    @Override
-    public boolean isEncrypted() {
-        return this.isEncrypted;
+    public String getName() {
+        return this.name;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((filename == null) ? 0 : filename.hashCode());
-        result = prime * result + ((detectedFormat == null) ? 0 : detectedFormat.hashCode());
-        result = prime * result + ((isEncrypted) ? 1231 : 1237);
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((documentMessages == null) ? 0 : documentMessages.hashCode());
         return result;
     }
@@ -114,17 +85,10 @@ public final class ValidationResultImpl implements ValidationResult {
         if (getClass() != obj.getClass())
             return false;
         final ValidationResultImpl other = (ValidationResultImpl) obj;
-        if (filename == null) {
-            if (other.filename != null)
+        if (name == null) {
+            if (other.name != null)
                 return false;
-        } else if (!filename.equals(other.filename))
-            return false;
-        if (detectedFormat == null) {
-            if (other.detectedFormat != null)
-                return false;
-        } else if (!detectedFormat.equals(other.detectedFormat))
-            return false;
-        if (isEncrypted != other.isEncrypted)
+        } else if (!name.equals(other.name))
             return false;
         if (documentMessages == null) {
             if (other.documentMessages != null)
