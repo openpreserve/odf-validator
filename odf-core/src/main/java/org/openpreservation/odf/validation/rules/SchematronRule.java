@@ -15,9 +15,10 @@ import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.openpreservation.odf.validation.messages.Messages;
-import org.openpreservation.odf.validation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
 
 import com.helger.schematron.pure.SchematronResourcePure;
 import com.helger.schematron.svrl.AbstractSVRLMessage;
@@ -80,12 +81,13 @@ final class SchematronRule extends AbstractRule {
             throw new ParseException("Unexpected Exception caught when executing Schematron checks.", e);
         }
         final MessageLog messageLog = Messages.messageLogInstance();
+        ParameterList parameters = Messages.parameterListInstance().add("entryPath", entryName);
         for (final AbstractSVRLMessage result : SVRLHelper
                 .getAllFailedAssertionsAndSuccessfulReports(schResult)) {
             messageLog.add(entryName,
                     Messages.getMessageInstance(this.id, Message.Severity.valueOf(result.getRole()),
                             this.getName(),
-                            result.getText()));
+                            result.getText(), parameters));
         }
         return messageLog;
     }

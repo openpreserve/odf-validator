@@ -8,9 +8,10 @@ import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.messages.Message;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.openpreservation.odf.validation.messages.Messages;
-import org.openpreservation.odf.validation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
 import org.openpreservation.odf.xml.Version;
 
 class ValidPackageRule extends AbstractRule {
@@ -36,17 +37,19 @@ class ValidPackageRule extends AbstractRule {
             final MessageLog messageLog = Messages.messageLogInstance();
             Validator validator = new Validator();
             ValidationReport report = validator.validate(document.getPath());
+            ParameterList parameters = Messages.parameterListInstance();
             if (!report.getValidationResults().get(0).isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {
                 String message = (!document.isPackage()) ? PACK_MESS : "";
                 if (document != null && !document.getVersion().equals(Version.ODF_13)) {
                     message = String.format(VER_MESS, document.getVersion());
+                    parameters.add("version", document.getVersion().version);
                 }
                 if (!report.getValidationResults().get(0).isValid()) {
                     message += INV_MESS;
                 }
                 messageLog.add(report.getFilename(),
                         Messages.getMessageInstance(this.id, Message.Severity.ERROR,
-                                this.getName(), message + this.getDescription()));
+                                this.getName(), message + this.getDescription(), parameters));
             }
             return messageLog;
         } catch (FileNotFoundException e) {

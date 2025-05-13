@@ -94,7 +94,8 @@ final class MacroRule extends AbstractRule {
         }
         if (NS_SCRIPTS.equals(result.getRootNamespace().getId().toASCIIString())
                 && "module".equals(result.getRootName())) {
-            messageLog.add(fullPath, Messages.getMessageInstance(id, severity, name, description));
+            messageLog.add(fullPath, Messages.getMessageInstance(id, severity, name, description, Messages.parameterListInstance()
+                    .add("entryPath", fullPath)));
         }
         return messageLog;
 

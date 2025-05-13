@@ -30,15 +30,15 @@ public enum Messages {
     /**
      * Create a new message instance with a DEFAULT_ID
      *
-     * @param message
+     * @param title
      *                the message of the new message
      * @return the new message instance
      * @throws IllegalArgumentException
      *                                  if the id or message is null or empty
      */
-    public static Message getMessageInstance(final String message)
+    public static Message getMessageInstance(final String title)
             throws IllegalArgumentException {
-        return getMessageInstance(NO_ID, Severity.INFO, message, parameterListInstance());
+        return getMessageInstance(NO_ID, Severity.INFO, title, parameterListInstance());
     }
 
     /**
@@ -46,15 +46,15 @@ public enum Messages {
      *
      * @param id
      *                the id of the new message
-     * @param message
+     * @param title
      *                the message of the new message
      * @return the new message instance
      * @throws IllegalArgumentException
      *                                  if the id or message is null or empty
      */
     public static Message getMessageInstance(final String id, final Severity severity,
-            final String message) throws IllegalArgumentException {
-        return getMessageInstance(id, severity, message, EMPTY_MESSAGE, parameterListInstance());
+            final String title) throws IllegalArgumentException {
+        return getMessageInstance(id, severity, title, EMPTY_MESSAGE, parameterListInstance());
     }
 
     /**
@@ -62,15 +62,15 @@ public enum Messages {
      *
      * @param id
      *                the id of the new message
-     * @param message
+     * @param title
      *                the message of the new message
      * @return the new message instance
      * @throws IllegalArgumentException
      *                                  if the id or message is null or empty
      */
     public static Message getMessageInstance(final String id, final Severity severity,
-            final String message, final ParameterList parameters) throws IllegalArgumentException {
-        return getMessageInstance(id, severity, message, EMPTY_MESSAGE, parameters);
+            final String title, final ParameterList parameters) throws IllegalArgumentException {
+        return getMessageInstance(id, severity, title, EMPTY_MESSAGE, parameters);
     }
 
     /**
@@ -79,24 +79,24 @@ public enum Messages {
      *
      * @param id
      *                   the id of the new message
-     * @param message
+     * @param title
      *                   the message of the new message
-     * @param subMessage
+     * @param text
      *                   the sub-message of the new message
      * @return the new message instance
      * @throws IllegalArgumentException
      *                                  if the id or message is null or empty
      */
     public static Message getMessageInstance(final String id, final Severity severity,
-            final String message, final String subMessage)
+            final String title, final String text)
             throws IllegalArgumentException {
         if (id == null || id.isEmpty())
             throw new IllegalArgumentException(
                     "id cannot be null or an empty string.");
-        if (message == null)
+        if (title == null)
             throw new IllegalArgumentException(
-                    "message cannot be null.");
-        return MessageImpl.getInstance(id, severity, message, subMessage, parameterListInstance());
+                    "title cannot be null.");
+        return MessageImpl.getInstance(id, severity, title, text, parameterListInstance());
     }
 
     /**
@@ -105,24 +105,24 @@ public enum Messages {
      *
      * @param id
      *                   the id of the new message
-     * @param message
+     * @param title
      *                   the message of the new message
-     * @param subMessage
+     * @param text
      *                   the sub-message of the new message
      * @return the new message instance
      * @throws IllegalArgumentException
      *                                  if the id or message is null or empty
      */
     public static Message getMessageInstance(final String id, final Severity severity,
-            final String message, final String subMessage, final ParameterList parameters)
+            final String title, final String text, final ParameterList parameters)
             throws IllegalArgumentException {
         if (id == null || id.isEmpty())
             throw new IllegalArgumentException(
                     "id cannot be null or an empty string.");
-        if (message == null)
+        if (title == null)
             throw new IllegalArgumentException(
-                    "message cannot be null.");
-        return MessageImpl.getInstance(id, severity, message, subMessage, parameters);
+                    "title cannot be null.");
+        return MessageImpl.getInstance(id, severity, title, text, parameters);
     }
 
     /**
@@ -209,13 +209,37 @@ public enum Messages {
      * @return the new MessageLog instance created with the given values
      */
     public static MessageLog messageLogInstance(final String path, final List<Message> messages) {
+        if (path == null || path.isEmpty()) {
+            throw new IllegalArgumentException("Path cannot be null or empty.");
+        }
+        if (messages == null) {
+            throw new IllegalArgumentException("Messages cannot be null.");
+        }
         return MessageLogImpl.of(path, messages);
     }
 
+    /**
+     * Create a new Parameter instance with the given name and value
+     *
+     * @param name the name of the parameter
+     * @param value the value of the parameter
+     * @return the new Parameter instance created with the given name and value
+     */
     public static Parameter parameterOf(final String name, final String value) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Parameter name cannot be null or empty.");
+        }
+        if (value == null) {
+            throw new IllegalArgumentException("Parameter value cannot be null.");
+        }
         return ParameterImpl.of(name, value);
     }
 
+    /**
+     * Create a new empty ParameterList instance
+     *
+     * @return the new ParameterList instance
+     */
     public static ParameterList parameterListInstance() {
         return ParameterListImpl.of(new ArrayList<>());
     }

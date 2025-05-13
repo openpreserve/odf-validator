@@ -17,22 +17,22 @@ import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
 final class MessageImpl implements Message {
     private final String id;
     final Severity severity;
-    private final String message;
-    private final String subMessage;
+    private final String title;
+    private final String text;
     private final ParameterList parameters;
     private final Date timestamp = new Date();
 
-    private MessageImpl(final String id, final Severity severity, final String message, final String subMessage, final ParameterList parameters) {
+    private MessageImpl(final String id, final Severity severity, final String title, final String text, final ParameterList parameters) {
         this.id = id;
         this.severity = severity;
-        this.message = message;
-        this.subMessage = subMessage;
+        this.title = title;
+        this.text = text;
         this.parameters = ParameterImpl.ParameterListImpl.of(parameters.toList());
     }
 
-    static Message getInstance(final String id, final Severity severity, final String message,
-            final String subMessage, final ParameterList parameters) {
-        return new MessageImpl(id, severity, message, subMessage, parameters);
+    static Message getInstance(final String id, final Severity severity, final String title,
+            final String text, final ParameterList parameters) {
+        return new MessageImpl(id, severity, title, text, parameters);
     }
 
     @Override
@@ -52,7 +52,7 @@ final class MessageImpl implements Message {
 
     @Override
     public String getTitle() {
-        return this.message;
+        return this.title;
     }
 
     @Override
@@ -62,12 +62,12 @@ final class MessageImpl implements Message {
 
     @Override
     public boolean hasText() {
-        return !(this.subMessage == null || this.subMessage.isEmpty());
+        return !(this.text == null || this.text.isEmpty());
     }
 
     @Override
     public String getText() {
-        return this.subMessage;
+        return this.text;
     }
 
     @Override
@@ -95,8 +95,8 @@ final class MessageImpl implements Message {
      */
     @Override
     public String toString() {
-        return "Messsage [id=" + this.id + ", message=" + this.message
-                + ", subMessage=" + this.subMessage + ", parameters" + this.parameters + ", severity=" + this.severity + ", timestamp=" + this.timestamp + "]";
+        return "Messsage [id=" + this.id + ", message=" + this.title
+                + ", subMessage=" + this.text + ", parameters" + this.parameters + ", severity=" + this.severity + ", timestamp=" + this.timestamp + "]";
     }
 
     /**
@@ -109,9 +109,9 @@ final class MessageImpl implements Message {
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.severity == null) ? 0 : this.severity.hashCode());
         result = prime * result
-                + ((this.message == null) ? 0 : this.message.hashCode());
+                + ((this.title == null) ? 0 : this.title.hashCode());
         result = prime * result
-                + ((this.subMessage == null) ? 0 : this.subMessage.hashCode());
+                + ((this.text == null) ? 0 : this.text.hashCode());
         result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
         result = prime * result + ((this.parameters == null) ? 0 : this.parameters.hashCode());
         return result;
@@ -146,18 +146,18 @@ final class MessageImpl implements Message {
         } else if (!this.severity.equals(other.severity)) {
             return false;
         }
-        if (this.message == null) {
-            if (other.message != null) {
+        if (this.title == null) {
+            if (other.title != null) {
                 return false;
             }
-        } else if (!this.message.equals(other.message)) {
+        } else if (!this.title.equals(other.title)) {
             return false;
         }
-        if (this.subMessage == null) {
-            if (other.subMessage != null) {
+        if (this.text == null) {
+            if (other.text != null) {
                 return false;
             }
-        } else if (!this.subMessage.equals(other.subMessage)) {
+        } else if (!this.text.equals(other.text)) {
             return false;
         }
         if (this.timestamp == null) {
