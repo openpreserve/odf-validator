@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.zip.ZipInputStream;
 
@@ -76,22 +75,6 @@ public final class Zips {
             }
             return ZipArchiveImpl.from(Paths.get(""),  entries);
         }));
-    }
-
-    /**
-     * Create a {@link ZipArchiveCache} instance that caches the contents of the
-     * archive and provides access to the <code>InputStream</code>s.
-     * 
-     * @param archive the <code>ZipArchive</code> to cache
-     * @param cache   the Map to use for caching
-     * @return a <code>ZipArchiveCache</code> instance that caches the contents of
-     *         the archive and provides access to the <code>InputStream</code>s
-     */
-    public static final ZipArchiveCache zipArchiveCacheInstance(final ZipArchive archive,
-            final Map<String, byte[]> cache) {
-        Objects.requireNonNull(archive, String.format(Checks.NOT_NULL, "ZipArchive", "archive"));
-        Objects.requireNonNull(cache, String.format(Checks.NOT_NULL, "Map<String, byte[]>", "cache"));
-        return ZipArchiveCacheImpl.of(archive, cache);
     }
 
     /**
