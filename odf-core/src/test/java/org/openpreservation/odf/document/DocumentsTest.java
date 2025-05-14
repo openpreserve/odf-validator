@@ -25,6 +25,7 @@ import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.xml.DocumentType;
+import org.openpreservation.odf.xml.Metadata;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.xml.sax.SAXException;
@@ -47,8 +48,8 @@ public class DocumentsTest {
     }
 
     @Test
-    public void testOpenDocInstantiationOfDocument() throws IOException, ParserConfigurationException, SAXException {
-        OdfDocument doc = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
+    public void testOpenDocInstantiationOfDocument() throws ParseException, IOException {
+        OdfDocument doc = Documents.odfDocumentFrom(TestFiles.EMPTY_FODS.openStream());
         OpenDocument openDoc = Documents.openDocumentOf(Paths.get(""), doc);
         assertNotNull("Parsed OpenDocument should not be null.", openDoc);
         assertFalse("Parsed document should be a package", openDoc.isPackage());
@@ -171,5 +172,38 @@ public class DocumentsTest {
         assertNotNull("Parsed OdfDocument should not be null.", odfDoc);
         assertEquals("Parse result of document should same as original", result, odfDoc.getXmlDocument().getParseResult());
         assertEquals("Document should be a spreadsheet.", DocumentType.SPREADSHEET, odfDoc.getDocumentType());
+    }
+
+    @Test
+    public void testFrom() throws IOException, ParserConfigurationException, SAXException, ParseException {
+        Path path = null;
+        assertThrows("NullPointerException expected",
+                NullPointerException.class,
+                () -> {
+                    Documents.odfDocumentFrom(path);
+                });
+        Metadata md = OdfXmlDocuments.metadataFrom(TestFiles.EMPTY_FODS.openStream());
+        OdfDocument doc = Documents.odfDocumentFrom(TestFiles.EMPTY_FODS.openStream());
+        assertEquals("Expected synthetic metadata parsed copy and parsed from document ", md, doc.getMetadata());
+    }
+
+    @Test
+    public void testOfDocument() throws IOException, ParserConfigurationException, SAXException, ParseException {
+        Metadata md = OdfXmlDocuments.metadataFrom(TestFiles.EMPTY_FODS.openStream());
+        OdfXmlDocument xmlDoc = OdfXmlDocuments.xmlDocumentFrom(TestFiles.EMPTY_FODS.openStream());
+        OdfDocument docFrom = Documents.odfDocumentFrom(TestFiles.EMPTY_FODS.openStream());
+        OdfDocument docOf = OdfDocumentImpl.of(xmlDoc, md);
+        assertEquals("Expected synthetic metadata parsed copy and parsed from document ", docOf.getMetadata(), docFrom.getMetadata());
+        assertEquals("Expectd synthetic document and parsed document to be equal", xmlDoc, docFrom.getXmlDocument());
+    }
+
+    @Test
+    public void testOfResult() throws IOException, ParserConfigurationException, SAXException, ParseException {
+        XmlParser parser = new XmlParser();
+        Metadata md = OdfXmlDocuments.metadataFrom(TestFiles.EMPTY_FODS.openStream());
+        ParseResult result = parser.parse(TestFiles.EMPTY_FODS.openStream());
+        OdfDocument docFrom = Documents.odfDocumentFrom(TestFiles.EMPTY_FODS.openStream());
+        OdfDocument docOf = OdfDocumentImpl.of(result, md);
+        assertEquals("Expected synthetic metadata parsed copy and parsed from document ", docOf.getMetadata(), docFrom.getMetadata());
     }
 }

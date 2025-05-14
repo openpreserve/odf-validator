@@ -1,12 +1,6 @@
 package org.openpreservation.odf.document;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.odf.xml.DocumentType;
@@ -14,7 +8,6 @@ import org.openpreservation.odf.xml.Metadata;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
 import org.openpreservation.odf.xml.Version;
-import org.xml.sax.SAXException;
 
 final class OdfDocumentImpl implements OdfDocument {
     static final OdfDocument of(final OdfXmlDocument xmlDocument, final Metadata metadata) {
@@ -32,25 +25,6 @@ final class OdfDocumentImpl implements OdfDocument {
     static final OdfDocument of(final ParseResult parseResult) {
         Objects.requireNonNull(parseResult, "ParseResult parameter parseResult cannot be null");
         return new OdfDocumentImpl(OdfXmlDocuments.odfXmlDocumentOf(parseResult));
-    }
-
-    static final OdfDocument from(final InputStream docStream)
-            throws IOException, ParserConfigurationException, SAXException {
-        Objects.requireNonNull(docStream, "InputStream parameter docStream cannot be null");
-        byte[] bytes = null;
-        OdfXmlDocument xmlDocument = null;
-        Metadata metadata = null;
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            docStream.transferTo(bos);
-            bytes = bos.toByteArray();
-        }
-        try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {
-            xmlDocument = OdfXmlDocuments.xmlDocumentFrom(is);
-        }
-        try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {
-            metadata = OdfXmlDocuments.metadataFrom(is);
-        }
-        return OdfDocumentImpl.of(xmlDocument, metadata);
     }
 
     private final OdfXmlDocument xmlDocument;

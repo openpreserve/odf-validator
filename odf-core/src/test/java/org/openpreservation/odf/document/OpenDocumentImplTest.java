@@ -50,8 +50,8 @@ public class OpenDocumentImplTest {
     }
 
     @Test
-    public void testGetDocumentSingle() throws IOException, ParserConfigurationException, SAXException {
-        OdfDocument odfDoc = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
+    public void testGetDocumentSingle() throws IOException, ParserConfigurationException, SAXException, ParseException {
+        OdfDocument odfDoc = Documents.odfDocumentFrom(TestFiles.EMPTY_FODS.openStream());
         OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), odfDoc);
         assertEquals("Expected instantiating and return document to be equal", odfDoc, openDoc.getDocument());
     }
@@ -65,8 +65,8 @@ public class OpenDocumentImplTest {
     }
 
     @Test
-    public void testGetFileTypeSingle() throws IOException, ParserConfigurationException, SAXException {
-        OdfDocument odfDoc = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
+    public void testGetFileTypeSingle() throws IOException, ParserConfigurationException, SAXException, ParseException {
+        OdfDocument odfDoc = Documents.odfDocumentFrom(TestFiles.EMPTY_FODS.openStream());
         OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), odfDoc);
         assertEquals(FileType.FLAT_XML, openDoc.getFileType());
     }
@@ -97,8 +97,8 @@ public class OpenDocumentImplTest {
     }
 
     @Test
-    public void testIsPackageSingle() throws IOException, ParserConfigurationException, SAXException {
-        OdfDocument odfDoc = OdfDocumentImpl.from(TestFiles.EMPTY_FODS.openStream());
+    public void testIsPackageSingle() throws IOException, ParserConfigurationException, SAXException, ParseException {
+        OdfDocument odfDoc = Documents.odfDocumentFrom(TestFiles.EMPTY_FODS.openStream());
         OpenDocument openDoc = OpenDocumentImpl.of(Paths.get(""), odfDoc);
         assertFalse(openDoc.isPackage());
     }

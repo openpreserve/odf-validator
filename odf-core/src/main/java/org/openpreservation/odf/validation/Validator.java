@@ -120,7 +120,7 @@ public class Validator {
         Objects.requireNonNull(profile, String.format(Checks.NOT_NULL, "Profile", TO_VAL_STRING));
         // Check if the path exists and is not a directory
         Checks.existingFileCheck(toProfile);
-        return profile.check(Documents.openDocumentOf(toProfile));
+        return profile.check(Documents.openDocumentFrom(toProfile));
     }
 
     /**
