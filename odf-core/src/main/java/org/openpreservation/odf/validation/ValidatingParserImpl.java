@@ -112,14 +112,14 @@ final class ValidatingParserImpl implements ValidatingParser {
     }
 
     private final List<Message> validateXmlEntry(final FileEntry xmlEntry, final OdfPackage odfPackage) {
-        final String xmlPath = xmlEntry.getFullPath();
-        if (xmlPath.equals("/")) {
+        final String xmlEntryPath = xmlEntry.getFullPath();
+        if (xmlEntryPath.equals("/")) {
             return new ArrayList<>();
         }
         if (xmlEntry.isEncrypted()) {
-            return Arrays.asList(FACTORY.getWarning("PKG-10", Messages.parameterListInstance().add("xmlPath", xmlPath)));
+            return Arrays.asList(FACTORY.getWarning("PKG-10", Messages.parameterListInstance().add("entryPath", xmlEntryPath)));
         }
-        return validatePackageXml(xmlPath, odfPackage, odfPackage.getEntryXmlParseResult(xmlPath));
+        return validatePackageXml(xmlEntryPath, odfPackage, odfPackage.getEntryXmlParseResult(xmlEntryPath));
 
     }
 
