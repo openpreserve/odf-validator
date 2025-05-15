@@ -1,0 +1,80 @@
+name: Get release details
+
+on:
+  workflow_call:
+    outputs:
+      release_date:
+        description: "Release date only with timestamp removed"
+        value: ${{ jobs.release_details.outputs.release_details }}
+      release_version:
+        description: "Last release version with 'v' removed"
+        value: ${{ jobs.release_details.outputs.release_version }}
+      release_timestamp:
+        description: "Release date with full timestamp information"
+        value: ${{ jobs.release_details.outputs.release_timestamp }}
+      release_tag:
+        description: "Last release tag"
+        value: ${{ jobs.release_details.outputs.release_tag }}
+
+jobs:
+  release_details:
+    runs-on: ubuntu-latest
+    outputs:
+        release_details: ${{ steps.cut_release_date.outputs.substring }}
+        release_version: ${{ steps.cut_release_version.outputs.substring }}
+        release_timestamp: ${{ steps.release_timestamp.outputs.TIMESTAMP }}
+        release_tag: ${{ steps.release_tag.outputs.TAG }}
+
+    steps:
+      - if: github.event.release != null
+        # If this a release event then set the release vars from the event
+        name: set release vars from release event
+        run: |
+          echo "TIMESTAMP=${{ github.event.release.published_at }}" >> $GITHUB_ENV
+          echo "TAG=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+
+      - if: github.event.release == null
+        # If this is not a release event then get the last release details
+        name: Get previous release
+        id: previousrelease
+        uses: InsonusK/get-latest-release@v1.0.1
+        with:
+          myToken: ${{ github.token }}
+          exclude_types: draft|prerelease
+          view_top: 1
+
+      - if: github.event.release == null
+        # Use the last release details to set the release vars
+        # This is used for the case when this workflow is called from another workflow
+        # and not from a release event
+        name: set release vars from previous release
+        run: |
+          echo "TIMESTAMP=${{ steps.previousrelease.outputs.created_at }}" >> $GITHUB_ENV
+          echo "TAG=${{ steps.previousrelease.outputs.tag_name }}" >> $GITHUB_ENV
+
+      # Shortens the release date to just the date
+      - name: "Shorten release date"
+        uses: bhowell2/github-substring-action@1.0.2
+        id: cut_release_date
+        with:
+          value: ${{ env.TIMESTAMP }}
+          length_from_start: 10
+  
+      # Remove the 'v' from the release version
+      - name: "Remove 'v' from release version"
+        uses: bhowell2/github-substring-action@1.0.2
+        id: cut_release_version
+        with:
+          value: ${{ env.TAG }}
+          index_of_str: "v"
+
+      - name: "Output the release timestamp"
+        id: release_timestamp
+        run: |
+            echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_OUTPUT
+  
+      - name: "Output the release Tag"
+        id: release_tag
+        run: |
+            echo "TAG=$TAG" >> $GITHUB_OUTPUT
+

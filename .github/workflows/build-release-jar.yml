@@ -1,0 +1,66 @@
+name: "Publish Release Artifacts"
+
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
+
+jobs:
+  release_details:
+    uses: carlwilson/odf-validator/.github/workflows/release-details.yml@main
+
+  build:
+    name: "Checkout, build and publish JAR"
+    runs-on: ubuntu-latest
+    needs: release_details
+    outputs:
+      release_version: ${{ needs.release_details.outputs.release_version }}
+      release_tag: ${{ needs.release_details.outputs.release_tag }}
+      pom_version: ${{ steps.pom-version.outputs.version }}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+      - name: "JDK setup"
+        uses: actions/setup-java@v4
+        with:
+          java-version: 11
+          distribution: 'temurin'
+          cache: maven
+
+      - name: "Run pre-commit tests"
+        uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --all-files --verbose
+
+      - name: "Get Maven POM version"
+        id: pom-version
+        run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+        
+  
+      - name: "Package using Maven"
+        run: mvn --batch-mode package -DjacocoAgg
+  
+      - name: "Publish JAR"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "odf-validator-${{ needs.release_details.outputs.release_version }}-all.jar"
+          path: "odf-apps/target/odf-apps-*-jar-with-dependencies.jar"
+
+      - name: "Upload release binaries"
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: "odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar"
+          asset_name: "odf-validator-${{ needs.release_details.outputs.release_version }}-all.jar"
+          tag: "${{ needs.release_details.outputs.release_tag }}"
+          overwrite: true
+          draft: false
+          prerelease: false
+
+  publish_non_windows:
+    needs: [build]
+    uses: carlwilson/odf-validator/.github/workflows/build-non-windows-image.yml@main
+    with:
+      release_version: ${{ needs.build.outputs.release_version }}
+      release_tag: ${{ needs.build.outputs.release_tag }}
+      pom_version: ${{ needs.build.outputs.pom_version }}
