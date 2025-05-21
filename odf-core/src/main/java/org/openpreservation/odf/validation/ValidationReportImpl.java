@@ -31,7 +31,7 @@ public class ValidationReportImpl implements ValidationReport {
                                         pkg.getDetectedFormat(),
                                         pkg.getDetectedVersion(),
                                         pkg.isEncrypted(),
-                                        (pkg.getDocument() != null) ? pkg.getDocument().getMetadata() : null,
+                                        pkg.getDocument() != null ? pkg.getDocument().getMetadata() : null,
                                         pkg.getManifest(),
                                         validationResults);
     }
@@ -55,7 +55,7 @@ public class ValidationReportImpl implements ValidationReport {
                                         document.getFormat(),
                                         document.getVersion(),
                                         document.isPackage() ? document.getPackage().isEncrypted() : false,
-                                        document.getDocument().getMetadata(),
+                                        document.getDocument() != null ? document.getDocument().getMetadata() : null,
                                         document.isPackage() ? document.getPackage().getManifest() : null,
                                         validationResults);
     }
