@@ -59,14 +59,7 @@ final class XmlParserImpl implements XmlParser {
         this.reader.setEntityResolver(new DummyEntityResolver());
     }
 
-    /**
-     * Parses the supplied <code>InputStream</code> for well-formedness and returns
-     * a {@link ParseResult} object.
-     *
-     * @param toTest an <code>InputStream</code> to be parsed.
-     * @return a <code>ParseResult</code> object containing the result of the parse.
-     * @throws IOException if the supplied <code>InputStream</code> can not be read.
-     */
+    @Override
     public ParseResult parse(final InputStream toTest)
             throws IOException {
         Objects.requireNonNull(toTest, "Parameter toTest can not be null.");
@@ -87,14 +80,7 @@ final class XmlParserImpl implements XmlParser {
         return handler.getResult(false, messages);
     }
 
-    /**
-     * Parses the supplied <code>Path</code> for well-formedness and returns a
-     * {@link ParseResult} object.
-     *
-     * @param toTest a <code>Path</code> to be parsed.
-     * @return a <code>ParseResult</code> object containing the result of the parse.
-     * @throws IOException if the supplied <code>Path</code> can not be read.
-     */
+    @Override
     public ParseResult parse(final Path toTest)
             throws IOException {
         Objects.requireNonNull(toTest, "Parameter toTest can not be null.");

@@ -12,10 +12,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Check;
+import org.openpreservation.odf.validation.OdfValidator;
+import org.openpreservation.odf.validation.OdfValidators;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.ValidationResult;
-import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageFactory;
@@ -47,7 +48,7 @@ class CliValidator implements Callable<Integer> {
     private File[] toValidateFiles;
     @Option(names = { "--format" }, description = "Output results as TEXT, JSON or XML.", defaultValue = "TEXT")
     private FormatOption format = FormatOption.TEXT;
-    private final Validator validator = new Validator();
+    private final OdfValidator validator = OdfValidators.getOdfValidator();
     private MessageLog appMessages = Messages.messageLogInstance();
 
     @Override

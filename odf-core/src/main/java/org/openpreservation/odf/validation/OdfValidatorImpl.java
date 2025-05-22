@@ -31,7 +31,7 @@ import org.openpreservation.odf.xml.Version;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
-public class Validator {
+final class OdfValidatorImpl implements OdfValidator {
     private static final String TAG_DOC = "office:document";
     private static final String TO_VAL_STRING = "toValidate";
     private static final MessageFactory FACTORY = Messages.getInstance();
@@ -42,21 +42,16 @@ public class Validator {
         return result;
     }
 
-    public Validator() {
+    static final OdfValidator getInstance() {
+        return new OdfValidatorImpl();
+    }
+
+    private OdfValidatorImpl() {
         super();
     }
 
-    /**
-     * Validate a single document as a specific ODF format
-     *.
-     * @param toValidate the path to the document to validate
-     * @param legal the expected format of the document
-     *
-     * @return the validation result
-     * @throws ParseException if the document cannot be parsed
-     * @throws FileNotFoundException if the document cannot be found
-     */
-    public ValidationReport validateSingleFormat(final Path toValidate, final Formats legal)
+    @Override
+    public ValidationReport validate(final Path toValidate, final Formats legal)
             throws ParseException, FileNotFoundException {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
         Objects.requireNonNull(legal, String.format(Checks.NOT_NULL, "Formats", "legal"));
@@ -78,14 +73,7 @@ public class Validator {
         return report;
     }
 
-    /**
-     * Validate a document.
-     *
-     * @param toValidate the path to the document to validate
-     * @return the <code>ValidationResult</code> for the document
-     * @throws ParseException if the document cannot be parsed
-     * @throws FileNotFoundException if the document cannot be found
-     */
+    @Override
     public ValidationReport validate(final Path toValidate)
             throws ParseException, FileNotFoundException {
         Objects.requireNonNull(toValidate, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
@@ -106,15 +94,7 @@ public class Validator {
         return ValidationReportImpl.of(toValidate.toString(), Collections.singletonList(notOdf(toValidate)));
     }
 
-    /**
-     * Profile check a document using a specific profile.
-     *
-     * @param toProfile the path to the document to profile
-     * @param profile the profile to use
-     * @return the <code>ProfileResult</code> for the document
-     * @throws ParseException if the document cannot be parsed
-     * @throws FileNotFoundException if the document cannot be found
-     */
+    @Override
     public ValidationReport profile(final Path toProfile, final Profile profile)
             throws ParseException, FileNotFoundException {
         Objects.requireNonNull(toProfile, String.format(Checks.NOT_NULL, "Path", TO_VAL_STRING));
@@ -124,14 +104,8 @@ public class Validator {
         return profile.check(Documents.openDocumentFrom(toProfile));
     }
 
-    /**
-     * Validate an OpenDocument.
-     *
-     * @param toValidate the OpenDocument to validate
-     * @return the <code>ValidationResult</code> for the document
-     * @throws IOException if the document cannot be read
-     */
-    public ValidationResult validateOpenDocument(final OpenDocument toValidate)
+    @Override
+    public ValidationResult validate(final OpenDocument toValidate)
             throws IOException {
         if (toValidate.getFormat() == Formats.UNKNOWN) {
             return notOdf(toValidate.getPath());
@@ -143,7 +117,7 @@ public class Validator {
     private ValidationReport validatePackage(final Path toValidate)
             throws ParserConfigurationException, SAXException, ParseException, FileNotFoundException {
         final OdfPackage pckg = OdfPackages.getPackageParser().parsePackage(toValidate);
-        return ValidationReportImpl.of(toValidate.toString(), pckg, Collections.singletonList(Validators.getValidatingParser().validatePackage(pckg)));
+        return ValidationReportImpl.of(toValidate.toString(), pckg, Collections.singletonList(OdfValidators.getValidatingParser().validatePackage(pckg)));
     }
 
     private ValidationReport validateOpenDocumentXml(final Path toValidate)

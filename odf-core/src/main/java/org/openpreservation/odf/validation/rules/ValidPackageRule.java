@@ -5,8 +5,9 @@ import java.util.Objects;
 
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.OdfValidator;
+import org.openpreservation.odf.validation.OdfValidators;
 import org.openpreservation.odf.validation.ValidationReport;
-import org.openpreservation.odf.validation.Validator;
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageLog;
@@ -35,7 +36,7 @@ class ValidPackageRule extends AbstractRule {
         Objects.requireNonNull(document, "document must not be null");
         try {
             final MessageLog messageLog = Messages.messageLogInstance();
-            Validator validator = new Validator();
+            OdfValidator validator = OdfValidators.getOdfValidator();
             ValidationReport report = validator.validate(document.getPath());
             ParameterList parameters = Messages.parameterListInstance();
             if (!report.getValidationResults().get(0).isValid() || !document.getVersion().equals(Version.ODF_13) || !document.isPackage()) {

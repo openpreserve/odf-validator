@@ -15,7 +15,7 @@ public class Utilities {
 
     static ValidationResult getValidationReport(final URL resource)
             throws URISyntaxException, ParseException, ParserConfigurationException, SAXException, IOException {
-        ValidatingParser parser = Validators.getValidatingParser();
+        ValidatingParser parser = OdfValidators.getValidatingParser();
         InputStream is = resource.openStream();
         OdfPackage pkg = parser.parsePackage(is, resource.toString());
         return parser.validatePackage(pkg);
