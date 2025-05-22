@@ -13,7 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.format.xml.XmlParsers;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -165,7 +165,7 @@ final class MetadataImpl implements Metadata {
     static final MetadataImpl from(final InputStream metaStream)
             throws ParserConfigurationException, SAXException, IOException {
         Objects.requireNonNull(metaStream, String.format(Checks.NOT_NULL, "metaStream", "InputStream"));
-        final SAXParserFactory nonValidatingFactory = XmlParser.getNonValidatingFactory();
+        final SAXParserFactory nonValidatingFactory = XmlParsers.getNonValidatingFactory();
         final SAXParser parser = nonValidatingFactory.newSAXParser();
         final XMLReader reader = parser.getXMLReader();
         final MetadataHandler handler = new MetadataHandler();

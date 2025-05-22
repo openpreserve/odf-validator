@@ -7,14 +7,14 @@ import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.format.xml.ParseResult;
-import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.format.xml.XmlParsers;
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.openpreservation.odf.validation.messages.Messages;
-import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.xml.sax.SAXException;
 
 final class MacroRule extends AbstractRule {
@@ -79,7 +79,7 @@ final class MacroRule extends AbstractRule {
                 if (entryStream == null) {
                     return null;
                 }
-                result = new XmlParser().parse(entryStream);
+                result = XmlParsers.getNonValidatingParser().parse(entryStream);
             } catch (IOException | ParserConfigurationException | SAXException e) {
                 throw new IllegalStateException(e);
             }

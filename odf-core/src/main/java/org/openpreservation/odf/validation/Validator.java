@@ -12,6 +12,7 @@ import javax.xml.validation.Schema;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.format.xml.XmlParsers;
 import org.openpreservation.format.xml.XmlValidator;
 import org.openpreservation.odf.Source;
 import org.openpreservation.odf.document.Documents;
@@ -147,7 +148,7 @@ public class Validator {
 
     private ValidationReport validateOpenDocumentXml(final Path toValidate)
             throws ParserConfigurationException, SAXException, IOException {
-        final XmlParser checker = new XmlParser();
+        final XmlParser checker = XmlParsers.getNonValidatingParser();
         final ParseResult parseResult = checker.parse(toValidate);
         return ValidationReportImpl.of(toValidate.toString(), OdfXmlDocuments.odfXmlDocumentOf(parseResult), Collections.singletonList(validateParseResult(toValidate, parseResult)));
     }

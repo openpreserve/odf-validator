@@ -18,7 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.compress.archivers.zip.UnsupportedZipFeatureException;
 import org.openpreservation.format.xml.ParseResult;
-import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.format.xml.XmlParsers;
 import org.openpreservation.format.zip.ZipArchiveCache;
 import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.format.zip.Zips;
@@ -152,7 +152,7 @@ final class PackageParserImpl implements PackageParser {
         for (final String versionPath : VERSION_FILE_PATHS) {
             try (InputStream is = this.cache.getEntryInputStream(versionPath)) {
                 if (is != null) {
-                    ParseResult result = new XmlParser().parse(is);
+                    ParseResult result = XmlParsers.getNonValidatingParser().parse(is);
                     detectedVersion = Version.fromVersion(
                             result.getRootAttributeValue(String.format("%s:version", result.getRootPrefix())));
                     if (!Version.UNKNOWN.equals(detectedVersion)) {

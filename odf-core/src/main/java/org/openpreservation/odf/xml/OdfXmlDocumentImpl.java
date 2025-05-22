@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.format.xml.XmlParsers;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
@@ -36,7 +37,7 @@ final class OdfXmlDocumentImpl implements OdfXmlDocument {
     static final OdfXmlDocumentImpl from(final InputStream docStream)
             throws ParserConfigurationException, SAXException, IOException {
         Objects.requireNonNull(docStream, String.format(Checks.NOT_NULL, "docStream", "InputStream"));
-        final XmlParser checker = new XmlParser();
+        final XmlParser checker = XmlParsers.getNonValidatingParser();
         ParseResult result = checker.parse(docStream);
         return OdfXmlDocumentImpl.of(result);
     }
