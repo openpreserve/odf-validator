@@ -1,40 +1,6 @@
 # ODF Validation developer documentation
 
-For developers wishing to integrate the ODF Validator into their own applications, the following information may be useful. You'll need to use the odf-core package which is currently in the OPF's Maven repository.
-
-## Setting up the Maven repository
-
-For now the Maven artefacts are hosted on the OPF's artifactory server. To use them you'll need to add the following to your Maven setting file (usually ~/.m2/settings.xml):
-
-```xml
-<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <profiles>
-    <profile>
-      <repositories>
-        <repository>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-          <id>central</id>
-          <name>opf-dev</name>
-          <url>https://artifactory.openpreservation.org/artifactory/opf-dev</url>
-        </repository>
-        <repository>
-          <snapshots />
-          <id>snapshots</id>
-          <name>opf-dev</name>
-          <url>https://artifactory.openpreservation.org/artifactory/opf-dev</url>
-        </repository>
-      </repositories>
-      <id>artifactory</id>
-    </profile>
-  </profiles>
-  <activeProfiles>
-    <activeProfile>artifactory</activeProfile>
-  </activeProfiles>
-</settings>
-```
+For developers wishing to integrate the ODF Validator into their own applications, the following information may be useful. You'll need to use the odf-core package which is available in Maven Central repositories.
 
 ## Including the core validation library
 
@@ -44,7 +10,7 @@ To include the core validation library in your project, add the following depend
 <dependency>
     <groupId>org.openpreservation.odf</groupId>
     <artifactId>odf-core</artifactId>
-    <version>1.18.1</version>
+    <version>0.18.3</version>
 </dependency>
 ```
 
@@ -57,6 +23,10 @@ The library employs a parser that parses ODF packages and creates an internal mo
 The library allows a non-validating parse of an ODF package, indeed this is a pre-requisite to valdiation which is performed against a package instance. The following code snippet shows how to parse an ODF package:
 
 ```java
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.openpreservation.odf.pkg.FileEntry;
 import org.openpreservation.odf.pkg.Manifest;
 import org.openpreservation.odf.pkg.OdfPackage;
@@ -81,6 +51,9 @@ for (FileEntry entry : manifest.getEntries()) {
     // Get the entry Input Stream
     try (InputStream is = odfPackage.getEntryStream(entry)) {
         // Do something with the entry
+    } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
     }
 }
 ```
@@ -94,75 +67,60 @@ Note the use of the factory method [`OdfPackages.getPackageParser()`](site/apido
 ## Validating an ODF package
 
 ```java
-import org.openpreservation.messages.Message;
-import org.openpreservation.odf.pkg.OdfPackage;
-import org.openpreservation.odf.validation.ValidatingParser;
+import java.nio.file.Path;
+
+import org.openpreservation.odf.validation.Check;
+import org.openpreservation.odf.validation.OdfValidator;
+import org.openpreservation.odf.validation.OdfValidators;
 import org.openpreservation.odf.validation.ValidationReport;
-import org.openpreservation.odf.validation.Validators;
 
-ValidatingParser packageParser = Validators.getValidatingParser();
-
-File packageFile = new File("path/to/package.ods");
-
-// Get the OdfPackage instance from the parser
-OdfPackage odfPackage = packageParser.parsePackage(packageFile.toPath());
-
-// Now validate the package and get the validation report
-ValidationReport report = packageParser.validatePackage(odfPackage);
-
-// Is the package valid?
-if (report.isValid()) {
-    System.out.println("Package is valid");
-    // Get any warnings or info message (no errors as the package is valid)
-    List<Message> messages = report.getMessages();
+OdfValidator validator = OdfValidators.getOdfValidator();
+ValidationReport report = validator.validate(Path.of("path/to/package.ods"), Formats.ODS);
+if (!report.isValid()) {
+    List<Check> checks = report.getChecks();
     // Loop through the messages
-    for (Message message : messages) {
+    for (Check check : checks) {
         // Get the message id
-        System.out.println(message.getId());
+        System.out.println(check.getMessage().getId());
         // Get the message severity (INFO, WARNING, ERROR)
-        System.out.println(message.getSeverity());
+        System.out.println(check.getMessage().getSeverity());
         // Print out the message text
-        System.out.println(message.getMessage());
+        System.out.println(check.getMessage().getText());
     }
 } else {
-    System.out.println("Package is not valid");
-    // Get the error messages
-    List<Message> messages = report.getErrors();
-    for (Message message : messages) {
-        // Get the message id
-        System.out.println(message.getId());
-        // Print out the message text
-        System.out.println(message.getMessage());
-    }
+    System.out.println("The document is valid");
 }
 ```
 
-This time a [`ValidatingParser`](site/apidocs/org/openpreservation/odf/validation/ValidatingParser.html) instance is used. The [`ValidatingParser.validatePackage(OdfPackage)`](site/apidocs/org/openpreservation/odf/validation/ValidatingParser.html#validatePackage(org.openpreservation.odf.pkg.OdfPackage)) method returns a [`ValidationReport`](site/apidocs/org/openpreservation/odf/validation/ValidationReport.html) instance. This can be used to determine if the package is valid or not. If the package is not valid, the report can be used to obtain the error messages.
+This time a [`OdfValidator`](site/apidocs/org/openpreservation/odf/validation/OdfValidator.html) instance is used. The [`OdfValidator.validate(Path)`](site/apidocs/org/openpreservation/odf/validation/OdfValidator.html#validate(java.nio.file.Path)) method returns a [`ValidationReport`](site/apidocs/org/openpreservation/odf/validation/ValidationReport.html) instance. This can be used to determine if the package is valid or not. If the package is not valid, the report can be used to obtain the error messages.
 
 ## Validation of Spreadsheets Only
 
 The ODF Validator can be used to validate spreadsheets only. This is useful if you want to validate a spreadsheet without having to parse the entire package. The following code snippet shows how to validate a spreadsheet:
 
 ```java
-import org.openpreservation.messages.Message;
-import org.openpreservation.odf.validation.ValidationReport;
-import org.openpreservation.odf.validation.Validator;
+import java.nio.file.Path;
+import java.util.List;
 
-Validator validator = new Validator();
-ValidationReport report = validator.validateSpreadsheet(new File("path/to/package.ods"));
+import org.openpreservation.odf.validation.Check;
+import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.OdfValidator;
+
+OdfValidator validator = OdfValidators.getOdfValidator();
+ValidationReport report = validator.validate(Path.of("path/to/spreadsheet.ods"), Formats.ODS);
 if (!report.isValid()) {
-    List<Message> messages = report.getMessages();
+    List<Check> checks = report.getChecks();
     // Loop through the messages
-    for (Message message : messages) {
+    for (Check check : checks) {
         // Get the message id
-        System.out.println(message.getId());
+        System.out.println(check.getMessage().getId());
         // Get the message severity (INFO, WARNING, ERROR)
-        System.out.println(message.getSeverity());
+        System.out.println(check.getMessage().getSeverity());
         // Print out the message text
-        System.out.println(message.getMessage());
+        System.out.println(check.getMessage().getText());
     }
 } else {
-    System.out.println("The document is valid");
+    System.out.println("The spreadsheet is valid");
 }
 ```
 
@@ -171,20 +129,28 @@ if (!report.isValid()) {
 There is an alternative profile validator that can run custom rules to check properties that are beyond the scope of the ODF specification. The following code snippet shows how to validate a spreadsheet using the Preservation Specification profile:
 
 ```java
+import java.nio.file.Path;
+import java.util.List;
+
+import org.openpreservation.odf.validation.Check;
+import org.openpreservation.odf.validation.Profile;
+import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.rules.Rules;
 
 Profile dnaProfile = Rules.getDnaProfile();
-ProfileResult result = dnaProfile.check(parser.parsePackage(Path.of("path/to/package.ods")));
+OdfValidator validator = OdfValidators.getOdfValidator();
+ValidationReport report = validator.profile(Path.of("path/to/package.ods"), dnaProfile);
 // Check if the result is valid and print out any messages found
-if (!result.isValid()) {
-    List<Message> messages = report.getProfileMessages().getMessages();
+if (!report.isValid()) {
+    List<Check> checks = report.getChecks();
     // Loop through the messages
-    for (Message message : messages) {
+    for (Check check : checks) {
         // Get the message id
-        System.out.println(message.getId());
+        System.out.println(check.getMessage().getId());
         // Get the message severity (INFO, WARNING, ERROR)
-        System.out.println(message.getSeverity());
+        System.out.println(check.getMessage().getSeverity());
         // Print out the message text
-        System.out.println(message.getMessage());
+        System.out.println(check.getMessage().getText());
     }
 } else {
     System.out.println("The document is valid");
