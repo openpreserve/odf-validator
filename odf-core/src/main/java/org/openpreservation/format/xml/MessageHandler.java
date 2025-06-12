@@ -26,16 +26,16 @@ public final class MessageHandler implements ErrorHandler {
 
     @Override
     public void warning(SAXParseException e) {
-        this.messages.add(FACTORY.getWarning(messageId, XmlParser.excepToParameterList(e)));
+        this.messages.add(FACTORY.getWarning(messageId, XmlUtils.excepToParameterList(e)));
     }
 
     @Override
     public void error(SAXParseException e) {
-        this.messages.add(FACTORY.getError(messageId, XmlParser.excepToParameterList(e)));
+        this.messages.add(FACTORY.getError(messageId, XmlUtils.excepToParameterList(e)));
     }
 
     @Override
     public void fatalError(SAXParseException e) {
-        this.messages.add(FACTORY.getError(messageId, XmlParser.excepToParameterList(e)));
+        this.messages.add(FACTORY.getError(messageId, XmlUtils.excepToParameterList(e)));
     }
 }

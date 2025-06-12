@@ -6,7 +6,7 @@ import org.openpreservation.format.zip.ZipEntry;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.xml.sax.SAXException;
 
-public class Validators {
+public class OdfValidators {
 
     /**
      * Get a validating parser instance.
@@ -39,7 +39,11 @@ public class Validators {
         return ValidationResultImpl.of(name, messages);
     }
 
-    private Validators() {
+    public static final OdfValidator getOdfValidator() {
+        return OdfValidatorImpl.getInstance();
+    }
+
+    private OdfValidators() {
         throw new AssertionError("Utility class 'Validators' should not be instantiated");
     }
 }

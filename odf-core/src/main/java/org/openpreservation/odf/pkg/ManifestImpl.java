@@ -12,7 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.format.xml.XmlParsers;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -82,7 +82,7 @@ final class ManifestImpl implements Manifest {
     static final ManifestImpl from(final InputStream manifestStream)
             throws ParserConfigurationException, SAXException, IOException {
         Objects.requireNonNull(manifestStream, String.format(Checks.NOT_NULL, "manifestStream", "InputStream"));
-        final SAXParserFactory nonValidatingFactory = XmlParser.getNonValidatingFactory();
+        final SAXParserFactory nonValidatingFactory = XmlParsers.getNonValidatingFactory();
         final SAXParser parser = nonValidatingFactory.newSAXParser();
         final XMLReader reader = parser.getXMLReader();
         final ManifestHandler handler = new ManifestHandler();

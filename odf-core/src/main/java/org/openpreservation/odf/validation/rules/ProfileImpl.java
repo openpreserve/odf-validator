@@ -15,20 +15,19 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openpreservation.odf.document.OpenDocument;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.OdfValidators;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.ValidatingParser;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.ValidationReportImpl;
 import org.openpreservation.odf.validation.ValidationResult;
-import org.openpreservation.odf.validation.Validator;
-import org.openpreservation.odf.validation.Validators;
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.openpreservation.odf.validation.messages.Messages;
 import org.xml.sax.SAXException;
 
 final class ProfileImpl extends AbstractProfile {
-    private final ValidatingParser validatingParser = Validators.getValidatingParser();
+    private final ValidatingParser validatingParser = OdfValidators.getValidatingParser();
 
     static final ProfileImpl of(final String id, final String name, final String description, final Set<Rule> rules)
             throws ParserConfigurationException, SAXException {
@@ -47,7 +46,7 @@ final class ProfileImpl extends AbstractProfile {
             final MessageLog messages = Messages.messageLogInstance();
             ValidationResult result = document.isPackage()
                     ? this.validatingParser.validatePackage(document.getPackage())
-                    : new Validator().validateOpenDocument(document);
+                    : OdfValidators.getOdfValidator().validate(document);
              messages.add(getRulesetMessages(document,
                     this.rules.stream().filter(Rule::isPrerequisite).collect(Collectors.toList())));
             if (!messages.hasErrors()) {
@@ -58,7 +57,7 @@ final class ProfileImpl extends AbstractProfile {
                     : document.getPackage().getName();
             return ValidationReportImpl.of(packageName,
                                            document,
-                                           new ArrayList<>(Arrays.asList(result, Validators.resultOf(name, messages))));
+                                           new ArrayList<>(Arrays.asList(result, OdfValidators.resultOf(name, messages))));
         } catch (FileNotFoundException e) {
             throw new ParseException("File not found exception when processing package.", e);
         } catch (IOException e) {

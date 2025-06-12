@@ -14,25 +14,25 @@ import org.xml.sax.SAXException;
 public class ValidatorsTest {
     @Test
     public void testInstantiation() throws ParserConfigurationException, SAXException {
-        ValidatingParser parser = Validators.getValidatingParser();
+        ValidatingParser parser = OdfValidators.getValidatingParser();
         assertNotNull("Validating parser should not be null", parser);
     }
 
     @Test
     public void testIsStoredValid() {
         ZipEntry entry = Zips.zipEntryInstance("name", 0, 0, 0, java.util.zip.ZipEntry.STORED, false, null);
-        assertTrue("Stored compression method should be valid", Validators.isCompressionValid(entry));
+        assertTrue("Stored compression method should be valid", OdfValidators.isCompressionValid(entry));
     }
 
     @Test
     public void testIsDefaltedValid() {
         ZipEntry entry = Zips.zipEntryInstance("name", 0, 0, 0, java.util.zip.ZipEntry.DEFLATED, false, null);
-        assertTrue("Deflated compression method should be valid", Validators.isCompressionValid(entry));
+        assertTrue("Deflated compression method should be valid", OdfValidators.isCompressionValid(entry));
     }
 
     @Test
     public void testInValidCompression() {
         ZipEntry entry = Zips.zipEntryInstance("name", 0, 0, 0, java.util.zip.ZipEntry.CENATT, false, null);
-        assertFalse("CENATT should NOT be valid", Validators.isCompressionValid(entry));
+        assertFalse("CENATT should NOT be valid", OdfValidators.isCompressionValid(entry));
     }
 }

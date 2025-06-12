@@ -16,7 +16,7 @@ import org.openpreservation.odf.xml.OdfSchemaFactory;
 import org.xml.sax.SAXException;
 
 public class XmlValidatorTest {
-    private XmlParser xmlParser = new XmlParser();
+    private XmlParserImpl xmlParser = new XmlParserImpl();
     private XmlValidator xmlValidator = new XmlValidator();
     private OdfSchemaFactory odfSchemaFactory = new OdfSchemaFactory();
     private Schema schema = odfSchemaFactory.getSchema(OdfNamespaces.OFFICE);

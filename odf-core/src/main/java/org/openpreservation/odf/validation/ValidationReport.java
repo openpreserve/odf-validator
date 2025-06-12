@@ -21,6 +21,14 @@ public interface ValidationReport {
      */
     public String getFilename();
     /**
+     * Determine if the OpenDocument is valid.
+     * This depends on all of the validation results contained in the report.
+     *
+     * @return <code>true</code> if the OpenDocument is valid, otherwise <code>false</code>
+     */
+    @JsonProperty("is_valid")
+    public boolean isValid();
+    /**
      * Determine if the OpenDocument is encrypted.
      *
      * @return <code>true</code> if the OpenDocument is encrypted, otherwise <code>false</code>
@@ -83,7 +91,7 @@ public interface ValidationReport {
     public List<ValidationResult> getValidationResults();
 
     /**
-     * Get a list of all messages, from all Results contained in the file.
+     * Get a list of all checks, from all Results contained in the file.
      *
      * @return 
      */
