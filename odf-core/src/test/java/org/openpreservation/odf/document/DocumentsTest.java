@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.format.xml.XmlParsers;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.pkg.OdfPackage;
@@ -134,7 +135,7 @@ public class DocumentsTest {
     @Test
     public void testOdfDocInstantiationOfNullParseResultMetadata()
             throws IOException, ParserConfigurationException, SAXException {
-        XmlParser parser = new XmlParser();
+        XmlParser parser = XmlParsers.getNonValidatingParser();
         ParseResult result = parser.parse(TestFiles.EMPTY_FODS.openStream());
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
@@ -145,7 +146,7 @@ public class DocumentsTest {
 
     @Test
     public void testOdfDocInstantiationOfParseResultWithMetadata() throws IOException, ParserConfigurationException, SAXException {
-        XmlParser parser = new XmlParser();
+        XmlParser parser = XmlParsers.getNonValidatingParser();
         ParseResult result = parser.parse(TestFiles.EMPTY_FODS.openStream());
         OdfDocument odfDoc = Documents.odfDocumentOf(result, utils.metadata);
         assertNotNull("Parsed OdfDocument should not be null.", odfDoc);
@@ -166,7 +167,7 @@ public class DocumentsTest {
 
     @Test
     public void testOdfDocInstantiationOfParseResult() throws IOException, ParserConfigurationException, SAXException {
-        XmlParser parser = new XmlParser();
+        XmlParser parser = XmlParsers.getNonValidatingParser();
         ParseResult result = parser.parse(TestFiles.EMPTY_FODS.openStream());
         OdfDocument odfDoc = Documents.odfDocumentOf(result);
         assertNotNull("Parsed OdfDocument should not be null.", odfDoc);
@@ -199,7 +200,7 @@ public class DocumentsTest {
 
     @Test
     public void testOfResult() throws IOException, ParserConfigurationException, SAXException, ParseException {
-        XmlParser parser = new XmlParser();
+        XmlParser parser = XmlParsers.getNonValidatingParser();
         Metadata md = OdfXmlDocuments.metadataFrom(TestFiles.EMPTY_FODS.openStream());
         ParseResult result = parser.parse(TestFiles.EMPTY_FODS.openStream());
         OdfDocument docFrom = Documents.odfDocumentFrom(TestFiles.EMPTY_FODS.openStream());

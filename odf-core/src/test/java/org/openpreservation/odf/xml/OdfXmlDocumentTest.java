@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
+import org.openpreservation.format.xml.XmlParsers;
 import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.xml.sax.SAXException;
@@ -20,7 +21,7 @@ import org.xml.sax.SAXException;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class OdfXmlDocumentTest {
-    private XmlParser xmlParser = new XmlParser();
+    private XmlParser xmlParser = XmlParsers.getNonValidatingParser();
 
     public OdfXmlDocumentTest() throws ParserConfigurationException, SAXException {
     }

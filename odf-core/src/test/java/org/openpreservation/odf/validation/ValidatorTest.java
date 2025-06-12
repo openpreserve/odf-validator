@@ -24,7 +24,7 @@ public class ValidatorTest {
 
     @Test
     public void validateNullPath() throws ParserConfigurationException, IOException, SAXException, URISyntaxException {
-        Validator validator = new Validator();
+        OdfValidator validator = OdfValidators.getOdfValidator();
         Path nullPath = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
@@ -36,7 +36,7 @@ public class ValidatorTest {
     @Test
     public void validateNoSuchPath()
             throws ParserConfigurationException, IOException, SAXException, URISyntaxException {
-        Validator validator = new Validator();
+        OdfValidator validator = OdfValidators.getOdfValidator();
         Path noSuchFile = Paths.get("n0SuchDF1l3");
         assertThrows("FileNotFoundException expected",
                 FileNotFoundException.class,
@@ -47,7 +47,7 @@ public class ValidatorTest {
 
     @Test
     public void validateDirPath() throws ParserConfigurationException, IOException, SAXException, URISyntaxException {
-        Validator validator = new Validator();
+        OdfValidator validator = OdfValidators.getOdfValidator();
         Path noSuchFile = Paths.get(".");
         assertThrows("IllegalArgumentException expected",
                 IllegalArgumentException.class,
@@ -58,14 +58,14 @@ public class ValidatorTest {
 
     @Test
     public void validatePath() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
+        OdfValidator validator = OdfValidators.getOdfValidator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         assertTrue("Package should be valid.", report.getValidationResults().get(0).isValid());
     }
 
     @Test
     public void validateEmpty() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
+        OdfValidator validator = OdfValidators.getOdfValidator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY.toURI()).toPath());
         assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-1"));
@@ -73,21 +73,21 @@ public class ValidatorTest {
 
     @Test
     public void validateNoMimeNoRoot() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
+        OdfValidator validator = OdfValidators.getOdfValidator();
         ValidationReport report = validator.validate(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).toPath());
         assertTrue("Package should be valid.", report.getValidationResults().get(0).isValid());
     }
 
     @Test
     public void validateDocXml() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
+        OdfValidator validator = OdfValidators.getOdfValidator();
         ValidationReport report = validator.validate(new File(TestFiles.EMPTY_FODS.toURI()).toPath());
         assertTrue("Package should be valid.", report.getValidationResults().get(0).isValid());
     }
 
     @Test
     public void validateDocInvalidXml() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
+        OdfValidator validator = OdfValidators.getOdfValidator();
         ValidationReport report = validator.validate(new File(TestFiles.FLAT_NOT_VALID.toURI()).toPath());
         assertFalse("Document should NOT be valid.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "XML-4"));
@@ -95,7 +95,7 @@ public class ValidatorTest {
 
     @Test
     public void validateDocNotWellFormedXml() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
+        OdfValidator validator = OdfValidators.getOdfValidator();
         ValidationReport report = validator.validate(new File(TestFiles.FLAT_NOT_WF.toURI()).toPath());
         assertFalse("Document should NOT be valid.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-1"));
@@ -104,48 +104,48 @@ public class ValidatorTest {
 
     @Test
     public void validateSingleFormatInvalid() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
-        ValidationReport report = validator.validateSingleFormat(new File(TestFiles.DSIG_INVALID.toURI()).toPath(), Formats.ODS);
+        OdfValidator validator = OdfValidators.getOdfValidator();
+        ValidationReport report = validator.validate(new File(TestFiles.DSIG_INVALID.toURI()).toPath(), Formats.ODS);
         assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-7"));
     }
 
     @Test
     public void validateSingleFormatEmpty() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
-        ValidationReport report = validator.validateSingleFormat(new File(TestFiles.EMPTY.toURI()).toPath(), Formats.ODS);
+        OdfValidator validator = OdfValidators.getOdfValidator();
+        ValidationReport report = validator.validate(new File(TestFiles.EMPTY.toURI()).toPath(), Formats.ODS);
         assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-6"));
     }
 
     @Test
     public void validateSingleFormatNoMimeNoRoot() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
+        OdfValidator validator = OdfValidators.getOdfValidator();
         ValidationReport report = validator
-                .validateSingleFormat(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).toPath(), Formats.ODS);
+                .validate(new File(TestFiles.NO_MIME_NO_ROOT_ODS.toURI()).toPath(), Formats.ODS);
         assertFalse("Package should NOT be valid, spreadsheets only.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-7"));
     }
 
     @Test
     public void validateSingleFormatDocXml() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
-        ValidationReport report = validator.validateSingleFormat(new File(TestFiles.EMPTY_FODS.toURI()).toPath(), Formats.ODS);
+        OdfValidator validator = OdfValidators.getOdfValidator();
+        ValidationReport report = validator.validate(new File(TestFiles.EMPTY_FODS.toURI()).toPath(), Formats.ODS);
         assertTrue("Package should be valid.", report.getValidationResults().get(0).isValid());
     }
 
     @Test
     public void validateSpreadsheetDocInvalidXml() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
-        ValidationReport report = validator.validateSingleFormat(new File(TestFiles.FLAT_NOT_VALID.toURI()).toPath(), Formats.ODS);
+        OdfValidator validator = OdfValidators.getOdfValidator();
+        ValidationReport report = validator.validate(new File(TestFiles.FLAT_NOT_VALID.toURI()).toPath(), Formats.ODS);
         assertFalse("Document should NOT be valid.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "XML-4"));
     }
 
     @Test
     public void validateSpreadsheetDocNotWellFormedXml() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
-        ValidationReport report = validator.validateSingleFormat(new File(TestFiles.FLAT_NOT_WF.toURI()).toPath(), Formats.ODS);
+        OdfValidator validator = OdfValidators.getOdfValidator();
+        ValidationReport report = validator.validate(new File(TestFiles.FLAT_NOT_WF.toURI()).toPath(), Formats.ODS);
         assertFalse("Document should NOT be valid.", report.getValidationResults().get(0).isValid());
         assertEquals(1, getMessageCountById(report, "DOC-1"));
         assertEquals(1, getMessageCountById(report, "XML-3"));
@@ -153,8 +153,8 @@ public class ValidatorTest {
 
     @Test
     public void validateExtendedSpreadsheet() throws ParseException, IOException, URISyntaxException {
-        Validator validator = new Validator();
-        ValidationReport report = validator.validateSingleFormat(new File(TestFiles.EXTENDED_SPREADSHEET.toURI()).toPath(), Formats.ODS);
+        OdfValidator validator = OdfValidators.getOdfValidator();
+        ValidationReport report = validator.validate(new File(TestFiles.EXTENDED_SPREADSHEET.toURI()).toPath(), Formats.ODS);
         assertFalse("Document should NOT be valid.", report.getValidationResults().get(0).isValid());
         assertEquals(2, getMessageCountById(report, "DOC-8"));
         assertEquals(0, getMessageCountById(report, "XML-3"));

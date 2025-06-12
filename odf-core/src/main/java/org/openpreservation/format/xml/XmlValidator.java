@@ -35,7 +35,7 @@ public final class XmlValidator {
      * Validate the supplied InputStream against the supplied schema.
      *
      * @param parseResult the {@link ParseResult} obtained form parsign the file
-     *                    using {@link XmlParser}
+     *                    using {@link XmlParserImpl}
      * @param toValidate  an <code>InputStream</code> to validate
      * @param schema      the {@link Schema} to validate against
      * @return a {@link XmlValidationResult} containing the result of the validation
@@ -63,7 +63,7 @@ public final class XmlValidator {
             validator.validate(toValidate);
             this.isWellFormed = true;
         } catch (final SAXParseException e) {
-            messages.add(FACTORY.getError("XML-3", XmlParser.excepToParameterList(e)));
+            messages.add(FACTORY.getError("XML-3", XmlUtils.excepToParameterList(e)));
         } catch (final SAXException e) {
             messages.add(FACTORY.getError("XML-1", Messages.parameterListInstance().add("message", e.getMessage())));
         }

@@ -25,7 +25,7 @@ import org.xml.sax.SAXException;
 public class ValidatingParserTest {
     @Test
     public void testParseNullPath() throws ParserConfigurationException, SAXException {
-        ValidatingParser parser = Validators.getValidatingParser();
+        ValidatingParser parser = OdfValidators.getValidatingParser();
         Path path = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
@@ -37,7 +37,7 @@ public class ValidatingParserTest {
     @Test
     public void testParsePath()
             throws ParseException, URISyntaxException, IOException, ParserConfigurationException, SAXException {
-        ValidatingParser parser = Validators.getValidatingParser();
+        ValidatingParser parser = OdfValidators.getValidatingParser();
         URL resourceUrl = TestFiles.EMPTY_ODS;
         Path path = Paths.get(resourceUrl.toURI());
         OdfPackage pkg = parser.parsePackage(path);
@@ -49,7 +49,7 @@ public class ValidatingParserTest {
 
     @Test
     public void testParseNullFile() throws ParserConfigurationException, SAXException {
-        ValidatingParser parser = Validators.getValidatingParser();
+        ValidatingParser parser = OdfValidators.getValidatingParser();
         File file = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
@@ -61,7 +61,7 @@ public class ValidatingParserTest {
     @Test
     public void testParseFile()
             throws ParseException, IOException, URISyntaxException, ParserConfigurationException, SAXException {
-        ValidatingParser parser = Validators.getValidatingParser();
+        ValidatingParser parser = OdfValidators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
@@ -71,7 +71,7 @@ public class ValidatingParserTest {
 
     @Test
     public void testParseNullStream() throws ParserConfigurationException, SAXException {
-        ValidatingParser parser = Validators.getValidatingParser();
+        ValidatingParser parser = OdfValidators.getValidatingParser();
         InputStream is = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
@@ -82,7 +82,7 @@ public class ValidatingParserTest {
 
     @Test
     public void testParseNullName() throws ParserConfigurationException, SAXException, IOException {
-        ValidatingParser parser = Validators.getValidatingParser();
+        ValidatingParser parser = OdfValidators.getValidatingParser();
         InputStream is = TestFiles.EMPTY_ODS.openStream();
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
@@ -93,7 +93,7 @@ public class ValidatingParserTest {
 
     @Test
     public void testParseStream() throws ParserConfigurationException, SAXException, IOException, ParseException {
-        ValidatingParser parser = Validators.getValidatingParser();
+        ValidatingParser parser = OdfValidators.getValidatingParser();
         OdfPackage pkg = parser.parsePackage(TestFiles.EMPTY_ODS.openStream(), TestFiles.EMPTY_ODS.toString());
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());

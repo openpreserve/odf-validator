@@ -6,12 +6,15 @@ The command line options are currently as follows:
 
 ```shell
 $ odf-validator --help
-Usage: odf-validator [-hpV] FILE...
+Usage: odf-validator [-hpV] [--format=<format>] FILE...
 Validates Open Document Format spreadsheets.
-      FILE...     A list of Open Document Format spreadsheet files to validate.
-  -h, --help      Show this help message and exit.
-  -p, --profile   Validate using extended Spreadsheet preservation profile.
-  -V, --version   Print version information and exit.
+      FILE...             A list of Open Document Format spreadsheet files to
+                            validate.
+      --format=<format>   Output results as TEXT, JSON or XML.
+  -h, --help              Show this help message and exit.
+  -p, --profile           Validate using extended Spreadsheet preservation
+                            profile.
+  -V, --version           Print version information and exit.
 ```
 
 ## Examples

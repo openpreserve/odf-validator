@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
 
 public class XmlParserTest {
     public void testParseNull() throws ParserConfigurationException, SAXException {
-        XmlParser xmlChecker = new XmlParser();
+        XmlParserImpl xmlChecker = new XmlParserImpl();
         InputStream nullStream = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
@@ -38,7 +38,7 @@ public class XmlParserTest {
 
     @Test
     public void testParseWF() throws ParserConfigurationException, SAXException, IOException {
-        XmlParser xmlChecker = new XmlParser();
+        XmlParserImpl xmlChecker = new XmlParserImpl();
         ParseResult result = xmlChecker.parse(TestFiles.EMPTY_FODS.openStream());
         assertNotNull("Parse result is not null", result);
         assertTrue("Parse result should be well formed", result.isWellFormed());
@@ -54,7 +54,7 @@ public class XmlParserTest {
 
     @Test
     public void testParseNotWF() throws ParserConfigurationException, SAXException, IOException {
-        XmlParser xmlChecker = new XmlParser();
+        XmlParserImpl xmlChecker = new XmlParserImpl();
         ParseResult result = xmlChecker.parse(TestFiles.FLAT_NOT_WF.openStream());
         assertNotNull("Parse result is not null", result);
         assertFalse("Parse result should NOT be well formed", result.isWellFormed());
@@ -70,7 +70,7 @@ public class XmlParserTest {
 
     @Test
     public void testParseNotValid() throws ParserConfigurationException, SAXException, IOException {
-        XmlParser xmlChecker = new XmlParser();
+        XmlParserImpl xmlChecker = new XmlParserImpl();
         ParseResult result = xmlChecker.parse(TestFiles.FLAT_NOT_VALID.openStream());
         assertNotNull("Parse result is not null", result);
         assertTrue("Parse result should be well formed", result.isWellFormed());
@@ -86,7 +86,7 @@ public class XmlParserTest {
 
     @Test
     public void testParseNotXML() throws ParserConfigurationException, SAXException, IOException {
-        XmlParser xmlChecker = new XmlParser();
+        XmlParserImpl xmlChecker = new XmlParserImpl();
         ParseResult result = xmlChecker.parse(TestFiles.FAKEMIME_TEXT.openStream());
         assertNotNull("Parse result is not null", result);
         assertFalse("Parse result should NOT be well formed", result.isWellFormed());
@@ -100,7 +100,7 @@ public class XmlParserTest {
 
     @Test
     public void testParseNoVersion() throws ParserConfigurationException, SAXException, IOException {
-        XmlParser xmlChecker = new XmlParser();
+        XmlParserImpl xmlChecker = new XmlParserImpl();
         ParseResult result = xmlChecker.parse(TestFiles.FLAT_NO_VERSION.openStream());
         assertNotNull("Parse result is not null", result);
         assertTrue("Parse result should be well formed", result.isWellFormed());
@@ -116,7 +116,7 @@ public class XmlParserTest {
 
     @Test
     public void testParseNoMime() throws ParserConfigurationException, SAXException, IOException {
-        XmlParser xmlChecker = new XmlParser();
+        XmlParserImpl xmlChecker = new XmlParserImpl();
         ParseResult result = xmlChecker.parse(TestFiles.FLAT_NO_MIME.openStream());
         assertNotNull("Parse result is not null", result);
         assertFalse("Parse result should have root name", result.getRootName().isBlank());
@@ -134,7 +134,7 @@ public class XmlParserTest {
     @Test
     public void testParseEmptyByPath()
             throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
-        XmlParser xmlChecker = new XmlParser();
+        XmlParserImpl xmlChecker = new XmlParserImpl();
         ParseResult result = xmlChecker.parse(new File(TestFiles.EMPTY.toURI()).toPath());
         assertNotNull("Parse result is not null", result);
         assertFalse("Parse result should NOT be well formed", result.isWellFormed());
@@ -149,7 +149,7 @@ public class XmlParserTest {
     @Test
     public void testParseLoExtExtended()
             throws ParserConfigurationException, SAXException, IOException, URISyntaxException {
-        XmlParser xmlChecker = new XmlParser();
+        XmlParserImpl xmlChecker = new XmlParserImpl();
         ParseResult result = xmlChecker.parse(new File(TestFiles.LOEXT_EXTENDED_CONFORMANCE.toURI()).toPath());
         assertNotNull("Parse result is not null", result);
         assertTrue("Parse result should be well formed", result.isWellFormed());

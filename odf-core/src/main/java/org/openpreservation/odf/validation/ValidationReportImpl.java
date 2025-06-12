@@ -157,6 +157,16 @@ public class ValidationReportImpl implements ValidationReport {
     }
 
     @Override
+    public boolean isValid() {
+        for (ValidationResult result : this.validationResults) {
+            if (!result.isValid()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public Metadata getMetadata() {
         return metadata;
     }
