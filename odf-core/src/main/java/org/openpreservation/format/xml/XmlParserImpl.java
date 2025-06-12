@@ -30,18 +30,7 @@ import org.xml.sax.XMLReader;
  *
  */
 final class XmlParserImpl implements XmlParser {
-    private static final class DummyEntityResolver implements EntityResolver {
-        public InputSource resolveEntity(final String publicID, final String systemID)
-                throws SAXException {
-
-            return new InputSource(new StringReader(""));
-        }
-    }
     private static final MessageFactory FACTORY = Messages.getInstance();
-    private final SAXParserFactory nonValidatingFactory;
-
-    private final SAXParser parser;
-
     private final XMLReader reader;
 
     /**
@@ -51,11 +40,11 @@ final class XmlParserImpl implements XmlParser {
      * @throws SAXException                 if the parser can not be created
      */
     XmlParserImpl() throws ParserConfigurationException, SAXException {
-        this.nonValidatingFactory = XmlUtils.getNonValidatingFactory();
-        this.parser = nonValidatingFactory.newSAXParser();
+        final SAXParserFactory nonValidatingFactory = XmlUtils.getNonValidatingFactory();
+        final SAXParser parser = nonValidatingFactory.newSAXParser();
         parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "false");
         parser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "false");
-        this.reader = this.parser.getXMLReader();
+        this.reader = parser.getXMLReader();
         this.reader.setEntityResolver(new DummyEntityResolver());
     }
 
@@ -85,5 +74,13 @@ final class XmlParserImpl implements XmlParser {
             throws IOException {
         Objects.requireNonNull(toTest, "Parameter toTest can not be null.");
         return parse(Files.newInputStream(toTest));
+    }
+
+    private static final class DummyEntityResolver implements EntityResolver {
+        public InputSource resolveEntity(final String publicID, final String systemID)
+                throws SAXException {
+
+            return new InputSource(new StringReader(""));
+        }
     }
 }
