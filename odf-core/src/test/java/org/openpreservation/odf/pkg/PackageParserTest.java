@@ -37,7 +37,7 @@ public class PackageParserTest {
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    parser.parsePackage(file);
+                    parser.parsePackage(file.toPath());
                 });
     }
 
@@ -48,7 +48,7 @@ public class PackageParserTest {
         assertThrows("FileNotFoundException expected",
                 FileNotFoundException.class,
                 () -> {
-                    parser.parsePackage(file);
+                    parser.parsePackage(file.toPath());
                 });
     }
 
@@ -59,7 +59,7 @@ public class PackageParserTest {
         assertThrows("IllegalArgumentException expected",
                 IllegalArgumentException.class,
                 () -> {
-                    parser.parsePackage(file);
+                    parser.parsePackage(file.toPath());
                 });
     }
 
@@ -127,7 +127,7 @@ public class PackageParserTest {
     public void testParsePackageFile()
             throws ParseException, URISyntaxException, IOException {
         PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet",

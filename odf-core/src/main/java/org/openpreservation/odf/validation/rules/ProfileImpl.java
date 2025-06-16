@@ -19,7 +19,7 @@ import org.openpreservation.odf.validation.OdfValidators;
 import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.ValidatingParser;
 import org.openpreservation.odf.validation.ValidationReport;
-import org.openpreservation.odf.validation.ValidationReportImpl;
+import org.openpreservation.odf.validation.ValidationReports;
 import org.openpreservation.odf.validation.ValidationResult;
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.MessageLog;
@@ -55,7 +55,7 @@ final class ProfileImpl extends AbstractProfile {
             }
             final String packageName = document == null || document.getPackage() == null ? ""
                     : document.getPackage().getName();
-            return ValidationReportImpl.of(packageName,
+            return ValidationReports.reportFromValues(packageName,
                                            document,
                                            new ArrayList<>(Arrays.asList(result, OdfValidators.resultOf(name, messages))));
         } catch (FileNotFoundException e) {

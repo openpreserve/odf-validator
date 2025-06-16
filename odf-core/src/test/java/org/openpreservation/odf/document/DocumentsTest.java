@@ -60,7 +60,7 @@ public class DocumentsTest {
     @Test
     public void testOpenDocInstantiationOfNullPath() throws FileNotFoundException, ParseException, URISyntaxException {
         PackageParser parser = OdfPackages.getPackageParser();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         Path nullPath = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
@@ -85,7 +85,7 @@ public class DocumentsTest {
             throws ParseException, URISyntaxException, FileNotFoundException {
         PackageParser parser = OdfPackages.getPackageParser();
         File file = new File(TestFiles.EMPTY_ODS.toURI());
-        OdfPackage pkg = parser.parsePackage(file);
+        OdfPackage pkg = parser.parsePackage(file.toPath());
         OpenDocument openDoc = Documents.openDocumentOf(file.toPath(), pkg);
         assertNotNull("Parsed OpenDocument should not be null.", openDoc);
         assertTrue("Parsed document should be a package", openDoc.isPackage());

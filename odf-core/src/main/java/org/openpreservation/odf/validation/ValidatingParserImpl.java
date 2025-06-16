@@ -1,6 +1,5 @@
 package org.openpreservation.odf.validation;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,11 +70,6 @@ final class ValidatingParserImpl implements ValidatingParser {
 
     @Override
     public OdfPackage parsePackage(Path toParse) throws ParseException, FileNotFoundException {
-        return this.packageParser.parsePackage(toParse);
-    }
-
-    @Override
-    public OdfPackage parsePackage(File toParse) throws ParseException, FileNotFoundException {
         return this.packageParser.parsePackage(toParse);
     }
 

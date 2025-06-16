@@ -45,48 +45,48 @@ public class OdfPackageTest {
     @Test
     public void testWellFormedZip() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         assertTrue("Package should be a well formed zip", pkg.isWellFormedZip());
     }
 
     @Test
     public void testGetName() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
-        assertEquals("Package name should be passed String", new File(TestFiles.EMPTY_ODS.toURI()).getName(), pkg.getName());
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
+        assertEquals("Package name should be passed String", new File(TestFiles.EMPTY_ODS.toURI()).toPath().getFileName().toString(), pkg.getName());
     }
 
     @Test
     public void testHasMimeEntry() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
-        pkg = parser.parsePackage(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()));
+        pkg = parser.parsePackage(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()).toPath());
         assertFalse("Package should NOT have a mimetype entry", pkg.hasMimeEntry());
     }
 
     @Test
     public void testGetFormat() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         assertEquals(Formats.ODS, pkg.getDetectedFormat());
-        pkg = parser.parsePackage(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()));
+        pkg = parser.parsePackage(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()).toPath());
         assertEquals(Formats.ZIP, pkg.getDetectedFormat());
     }
 
     @Test
     public void testHasManifest() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         assertTrue(pkg.hasManifest());
-        pkg = parser.parsePackage(new File(TestFiles.NO_MANIFEST_ODS.toURI()));
+        pkg = parser.parsePackage(new File(TestFiles.NO_MANIFEST_ODS.toURI()).toPath());
         assertFalse(pkg.hasManifest());
     }
 
     @Test
     public void testGetManifest() throws ParserConfigurationException, SAXException, IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         Manifest manifest = pkg.getManifest();
         Manifest expected = ManifestImpl
                 .from(ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/pkg/manifest.xml"));
@@ -98,7 +98,7 @@ public class OdfPackageTest {
             throws ParserConfigurationException, SAXException, IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
         OdfPackage pkg = parser
-                .parsePackage(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()));
+                .parsePackage(new File(TestFiles.NO_MIME_ROOT_ODS.toURI()).toPath());
         Manifest manifest = pkg.getManifest();
         Manifest expected = ManifestImpl
                 .from(ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/pkg/manifest.xml"));
@@ -108,7 +108,7 @@ public class OdfPackageTest {
     @Test
     public void testGetMetadata() throws ParserConfigurationException, SAXException, IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         Metadata metadata = pkg.getDocument().getMetadata();
         Metadata expected = OdfXmlDocuments
                 .metadataFrom(ClassLoader.getSystemResourceAsStream("org/openpreservation/odf/pkg/meta.xml"));
@@ -118,27 +118,27 @@ public class OdfPackageTest {
     @Test
     public void testIsMimeFirst() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         assertTrue("MIME entry should be first", pkg.isMimeFirst());
-        pkg = parser.parsePackage(new File(TestFiles.MIME_LAST_ODS.toURI()));
+        pkg = parser.parsePackage(new File(TestFiles.MIME_LAST_ODS.toURI()).toPath());
         assertFalse("MIME entry should NOT be first", pkg.isMimeFirst());
-        pkg = parser.parsePackage(new File(TestFiles.MIME_COMPRESSED_LAST_ODS.toURI()));
+        pkg = parser.parsePackage(new File(TestFiles.MIME_COMPRESSED_LAST_ODS.toURI()).toPath());
         assertFalse("MIME entry should NOT be first", pkg.isMimeFirst());
     }
 
     @Test
     public void testIsMimeCompressed() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         ZipEntry entry = pkg.getZipArchive().getZipEntry(OdfPackages.MIMETYPE);
         assertEquals("MIME entry should be stored", java.util.zip.ZipEntry.STORED, entry.getMethod());
-        pkg = parser.parsePackage(new File(TestFiles.MIME_COMPRESSED_ODS.toURI()));
+        pkg = parser.parsePackage(new File(TestFiles.MIME_COMPRESSED_ODS.toURI()).toPath());
         entry = pkg.getZipArchive().getZipEntry(OdfPackages.MIMETYPE);
         assertNotEquals("MIME entry should NOT be stored", java.util.zip.ZipEntry.STORED, entry.getMethod());
-        pkg = parser.parsePackage(new File(TestFiles.MIME_COMPRESSED_LAST_ODS.toURI()));
+        pkg = parser.parsePackage(new File(TestFiles.MIME_COMPRESSED_LAST_ODS.toURI()).toPath());
         entry = pkg.getZipArchive().getZipEntry(OdfPackages.MIMETYPE);
         assertNotEquals("MIME entry should be stored", java.util.zip.ZipEntry.STORED, entry.getMethod());
-        pkg = parser.parsePackage(new File(TestFiles.MIME_LAST_ODS.toURI()));
+        pkg = parser.parsePackage(new File(TestFiles.MIME_LAST_ODS.toURI()).toPath());
         entry = pkg.getZipArchive().getZipEntry(OdfPackages.MIMETYPE);
         assertEquals("MIME entry should be stored", java.util.zip.ZipEntry.STORED, entry.getMethod());
     }
@@ -146,16 +146,16 @@ public class OdfPackageTest {
     @Test
     public void testHasThumbnail() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         assertTrue("Package should have a thumbnail", pkg.hasThumbnail());
-        pkg = parser.parsePackage(new File(TestFiles.NO_THUMBNAIL_ODS.toURI()));
+        pkg = parser.parsePackage(new File(TestFiles.NO_THUMBNAIL_ODS.toURI()).toPath());
         assertFalse("Package should NOT have a thumbnail", pkg.hasThumbnail());
     }
 
     @Test
     public void testXmlEntryPaths() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.DSIG_INVALID.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.DSIG_INVALID.toURI()).toPath());
         final List<String> entryPaths = Collections.unmodifiableList(pkg.getXmlEntryPaths());
         assertEquals("Package should have 7 XML entries", 7, entryPaths.size());
         assertTrue("Package should have a styles.xml entry", entryPaths.contains("styles.xml"));
@@ -170,7 +170,7 @@ public class OdfPackageTest {
     @Test
     public void testXmlParseResults() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         for (String entryPath: pkg.getXmlEntryPaths()) {
             assertNotNull("Package should have a parse result for " + entryPath, pkg.getEntryXmlParseResult(entryPath));
             assertNotNull("Package should have an XML input stream for " + entryPath, pkg.getEntryXmlStream(entryPath));
@@ -180,7 +180,7 @@ public class OdfPackageTest {
     @Test
     public void testgetEntryStream() throws IOException, URISyntaxException, ParseException {
         PackageParser parser = PackageParserImpl.getInstance();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         for (FileEntry manifestEntry: pkg.getManifest().getEntries()) {
             if (!manifestEntry.isDocument())
                 assertNotNull("Package should have an entry stream for " + manifestEntry.getFullPath(), pkg.getEntryStream(manifestEntry));

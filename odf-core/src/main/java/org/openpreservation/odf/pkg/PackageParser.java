@@ -1,6 +1,5 @@
 package org.openpreservation.odf.pkg;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,19 +24,6 @@ public interface PackageParser {
      * @throws NullPointerException when <code>toParse</code> is null
      */
     public OdfPackage parsePackage(final Path is) throws ParseException, FileNotFoundException;
-
-    /**
-     * Parse a Java File instance and return an {@link OdfPackage} instance.
-     * The returned package may not be valid but is parsed leniently.
-     *
-     * @param toParse a system <code>Path</code> to parse, this must not be
-     *                <code>null</code>
-     * @return the parsed <code>ODFPackage</code>
-     * @throws IOException          when there is an issue reading entries from the
-     *                              package {@link ZipArchive}
-     * @throws NullPointerException when <code>toParse</code> is null
-     */
-    public OdfPackage parsePackage(final File toParse) throws ParseException, FileNotFoundException;
 
     /**
      * Parse an <code>InputStream</code> and return an {@link OdfPackage} instance.

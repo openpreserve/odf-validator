@@ -16,6 +16,7 @@ import org.openpreservation.odf.validation.OdfValidator;
 import org.openpreservation.odf.validation.OdfValidators;
 import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.ValidationReports;
 import org.openpreservation.odf.validation.ValidationResult;
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.Message.Severity;
@@ -27,10 +28,6 @@ import org.openpreservation.odf.validation.rules.Rules;
 import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -124,9 +121,9 @@ class CliValidator implements Callable<Integer> {
             profileMessages.add(result.getMessageLog().getMessages());
         }
         if (format == FormatOption.JSON)
-            ouptutJson(report);
+            ConsoleFormatter.info(ValidationReports.reportToJson(report));
         else if (format == FormatOption.XML)
-            ouptutXml(report);
+            ConsoleFormatter.info(ValidationReports.reportToXml(report));
         else
             outputText(report);
         outputSummary(report.isEncrypted(), profileMessages);
@@ -145,16 +142,6 @@ class CliValidator implements Callable<Integer> {
         for (Message message : messages) {
             ConsoleFormatter.colourise(Paths.get(path), message);
         }
-    }
-
-    private static void ouptutJson(final ValidationReport result) throws JsonProcessingException {
-        var jsonMapper = new ObjectMapper().registerModule(new JavaTimeModule()).enable(SerializationFeature.INDENT_OUTPUT);
-        ConsoleFormatter.info(jsonMapper.writeValueAsString(result));
-    }
-
-    private static void ouptutXml(final ValidationReport result) throws JsonProcessingException {
-        var xmlMapper = new XmlMapper().registerModule(new JavaTimeModule()).enable(SerializationFeature.INDENT_OUTPUT);
-        ConsoleFormatter.info(xmlMapper.writeValueAsString(result));
     }
 
     private static void outputSummary(final boolean isEncrypted, final MessageLog messageLog) {
