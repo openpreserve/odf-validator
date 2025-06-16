@@ -165,7 +165,7 @@ if (!report.isValid()) {
 
 ## Serialisation of ValidationReports
 
-Once you have a `ValiationReport` it can be converted to XML or JSON using the `org.openpreservation.odf.validation.ValidationReports` class.
+Once you have a `ValidationReport` it can be converted to XML or JSON using the `org.openpreservation.odf.validation.ValidationReports` class.
 
 ```java
 import java.nio.file.Path;
