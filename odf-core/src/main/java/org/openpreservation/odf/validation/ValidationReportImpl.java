@@ -13,10 +13,11 @@ import org.openpreservation.odf.xml.Metadata;
 import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.Version;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JacksonXmlRootElement(localName = "validation_report")
-public class ValidationReportImpl implements ValidationReport {
+class ValidationReportImpl implements ValidationReport {
 
     private final String filename;
     private final Formats detectedFormat;
@@ -26,7 +27,7 @@ public class ValidationReportImpl implements ValidationReport {
     private final Manifest manifest;
     private final List<ValidationResult> validationResults;
 
-    public static ValidationReportImpl of(final String filename, final OdfPackage pkg, final List<ValidationResult> validationResults) {
+    static ValidationReportImpl of(final String filename, final OdfPackage pkg, final List<ValidationResult> validationResults) {
         return new ValidationReportImpl(filename,
                                         pkg.getDetectedFormat(),
                                         pkg.getDetectedVersion(),
@@ -36,11 +37,11 @@ public class ValidationReportImpl implements ValidationReport {
                                         validationResults);
     }
 
-    public static ValidationReportImpl of(final String filename, final List<ValidationResult> validationResults) {
+    static ValidationReportImpl of(final String filename, final List<ValidationResult> validationResults) {
         return new ValidationReportImpl(filename, Formats.UNKNOWN, Version.UNKNOWN, false, null, null, validationResults);
     }
 
-    public static ValidationReportImpl of(final String filename, OdfXmlDocument document, final List<ValidationResult> validationResults) {
+    static ValidationReportImpl of(final String filename, OdfXmlDocument document, final List<ValidationResult> validationResults) {
         return new ValidationReportImpl(filename,
                                         document.getFormat(),
                                         document.getVersion(),
@@ -50,7 +51,7 @@ public class ValidationReportImpl implements ValidationReport {
                                         validationResults);
     }
 
-    public static ValidationReportImpl of(final String filename, OpenDocument document, final List<ValidationResult> validationResults) {
+    static ValidationReportImpl of(final String filename, OpenDocument document, final List<ValidationResult> validationResults) {
         return new ValidationReportImpl(filename,
                                         document.getFormat(),
                                         document.getVersion(),
@@ -60,8 +61,9 @@ public class ValidationReportImpl implements ValidationReport {
                                         validationResults);
     }
 
-    public static ValidationReportImpl of(final String filename, final Metadata metadata, final Manifest manifest, final List<ValidationResult> validationResults) {
-        return new ValidationReportImpl(filename, Formats.UNKNOWN, Version.UNKNOWN, false, metadata, manifest, validationResults);
+    @JsonCreator
+    static ValidationReportImpl of(final String filename, final Formats detectedFormat, final Version version, final boolean isEncrypted, final Metadata metadata, final Manifest manifest, final List<ValidationResult> validationResults) {
+        return new ValidationReportImpl(filename, detectedFormat, version, isEncrypted, metadata, manifest, validationResults);
     }
 
     private ValidationReportImpl(final String filename, final Formats detectedFormat, final Version version, final boolean isEncrypted, final Metadata metadata, final Manifest manifest, final List<ValidationResult> validationResults) {

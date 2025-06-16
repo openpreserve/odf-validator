@@ -54,7 +54,7 @@ public class ValidatingParserTest {
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    parser.parsePackage(file);
+                    parser.parsePackage(file.toPath());
                 });
     }
 
@@ -62,7 +62,7 @@ public class ValidatingParserTest {
     public void testParseFile()
             throws ParseException, IOException, URISyntaxException, ParserConfigurationException, SAXException {
         ValidatingParser parser = OdfValidators.getValidatingParser();
-        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()));
+        OdfPackage pkg = parser.parsePackage(new File(TestFiles.EMPTY_ODS.toURI()).toPath());
         assertNotNull("Parsed package should not be null", pkg);
         assertTrue("Package should have a mimetype entry", pkg.hasMimeEntry());
         assertEquals("Mimetype should be Spreadsheet", "application/vnd.oasis.opendocument.spreadsheet",

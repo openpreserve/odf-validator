@@ -10,7 +10,7 @@ To include the core validation library in your project, add the following depend
 <dependency>
     <groupId>org.openpreservation.odf</groupId>
     <artifactId>odf-core</artifactId>
-    <version>0.18.3</version>
+    <version>0.18.4</version>
 </dependency>
 ```
 
@@ -23,7 +23,7 @@ The library employs a parser that parses ODF packages and creates an internal mo
 The library allows a non-validating parse of an ODF package, indeed this is a pre-requisite to valdiation which is performed against a package instance. The following code snippet shows how to parse an ODF package:
 
 ```java
-import java.io.File;
+import java.nio.file.Path;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -33,11 +33,9 @@ import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser;
 
-// Get a package parser instance
+// Get a package parser instance and parse a package
 PackageParser packageParser = OdfPackages.getPackageParser();
-
-File packageFile = new File("path/to/package.ods");
-OdfPackage odfPackage = packageParser.parsePackage(packageFile);
+OdfPackage odfPackage = packageParser.parsePackage(Path.of("path/to/package.ods"));
 
 // Get the package manifest
 Manifest manifest = odfPackage.getManifest();
@@ -74,8 +72,11 @@ import org.openpreservation.odf.validation.OdfValidator;
 import org.openpreservation.odf.validation.OdfValidators;
 import org.openpreservation.odf.validation.ValidationReport;
 
+// Get a validator instance
 OdfValidator validator = OdfValidators.getOdfValidator();
-ValidationReport report = validator.validate(Path.of("path/to/package.ods"), Formats.ODS);
+
+// Validate the file at this path
+ValidationReport report = validator.validate(Path.of("path/to/package.ods"));
 if (!report.isValid()) {
     List<Check> checks = report.getChecks();
     // Loop through the messages
@@ -106,7 +107,9 @@ import org.openpreservation.odf.validation.Check;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.OdfValidator;
 
+// Get a validator instance
 OdfValidator validator = OdfValidators.getOdfValidator();
+// Use the validate method that specifies a particular format
 ValidationReport report = validator.validate(Path.of("path/to/spreadsheet.ods"), Formats.ODS);
 if (!report.isValid()) {
     List<Check> checks = report.getChecks();
@@ -137,8 +140,11 @@ import org.openpreservation.odf.validation.Profile;
 import org.openpreservation.odf.validation.ValidationReport;
 import org.openpreservation.odf.validation.rules.Rules;
 
+// Create a Profile instance for the validator
 Profile dnaProfile = Rules.getDnaProfile();
+// Create a validator instance
 OdfValidator validator = OdfValidators.getOdfValidator();
+// Validate the path with the profile using the profile method
 ValidationReport report = validator.profile(Path.of("path/to/package.ods"), dnaProfile);
 // Check if the result is valid and print out any messages found
 if (!report.isValid()) {
@@ -157,3 +163,26 @@ if (!report.isValid()) {
 }
 ```
 
+## Serialisation of ValidationReports
+
+Once you have a `ValidationReport` it can be converted to XML or JSON using the `org.openpreservation.odf.validation.ValidationReports` class.
+
+```java
+import java.nio.file.Path;
+
+import org.openpreservation.odf.validation.OdfValidator;
+import org.openpreservation.odf.validation.OdfValidators;
+import org.openpreservation.odf.validation.ValidationReport;
+import org.openpreservation.odf.validation.ValidationReports;
+
+OdfValidator validator = OdfValidators.getOdfValidator();
+ValidationReport report = validator.validate(Path.of("path/to/package.ods"));
+
+// Serialise the report using the ValidationReports method to generate a JSON string and output it
+String jsonReport = ValidationReports.reportToJson(report);
+System.out.println(jsonReport);
+
+// Serialise the report using the ValidationReports method to generate an XML string and output it
+String xmlReport = ValidationReports.reportToXml(report);
+System.out.println(xmlReport);
+```

@@ -82,12 +82,6 @@ final class PackageParserImpl implements PackageParser {
     }
 
     @Override
-    public OdfPackage parsePackage(final File toParse) throws ParseException, FileNotFoundException {
-        Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, TO_PARSE, "File"));
-        return this.parsePackage(toParse.toPath(), toParse.getName());
-    }
-
-    @Override
     public OdfPackage parsePackage(final InputStream toParse, final String name) throws ParseException {
         Objects.requireNonNull(toParse, String.format(Checks.NOT_NULL, TO_PARSE, "InputStream"));
         Objects.requireNonNull(name, String.format(Checks.NOT_NULL, name, "String"));

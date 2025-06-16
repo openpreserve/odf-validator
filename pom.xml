@@ -10,7 +10,7 @@
 
   <groupId>org.openpreservation.odf</groupId>
   <artifactId>odf-validator</artifactId>
-  <version>0.18.3</version>
+  <version>0.18.4</version>
   <packaging>pom</packaging>
 
   <modules>
