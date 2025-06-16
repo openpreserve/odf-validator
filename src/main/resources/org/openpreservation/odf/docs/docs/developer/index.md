@@ -170,7 +170,6 @@ Once you have a `ValidationReport` it can be converted to XML or JSON using the 
 ```java
 import java.nio.file.Path;
 
-import org.openpreservation.odf.validation.Check;
 import org.openpreservation.odf.validation.OdfValidator;
 import org.openpreservation.odf.validation.OdfValidators;
 import org.openpreservation.odf.validation.ValidationReport;
