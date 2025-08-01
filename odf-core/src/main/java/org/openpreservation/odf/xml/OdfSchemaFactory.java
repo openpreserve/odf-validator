@@ -132,7 +132,11 @@ public class OdfSchemaFactory {
     private final Source[] getSources(final Set<OdfNamespaces> namespaces, final Version version) {
         final List<Source> sources = new ArrayList<>();
         for (final OdfNamespaces namespace : namespaces) {
-            final String schemaPath = SCHEMA_LOCATION_MAP.get(version).get(namespace);
+            Map <OdfNamespaces, String> schemaMap = SCHEMA_LOCATION_MAP.get(version);
+            if (schemaMap == null) {
+                throw new IllegalArgumentException("No schemas found for ODF version: " + version.version + ", supported versions are: " + Version.supportedVersions());
+            }
+            final String schemaPath = schemaMap.get(namespace);
             if (schemaPath == null) {
                 continue;
             }
