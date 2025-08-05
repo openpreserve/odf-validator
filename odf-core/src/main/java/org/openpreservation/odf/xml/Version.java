@@ -46,8 +46,8 @@ public enum Version {
         for (Version v : Version.values()) {
             if (v != UNKNOWN) {
                 sb.append(prepend).append(v.version);
+                prepend = ", ";
             }
-            prepend = ", ";
         }
         return sb.toString().trim();
     }

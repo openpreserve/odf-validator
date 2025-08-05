@@ -143,7 +143,7 @@ final class ValidatingParserImpl implements ValidatingParser {
         }
         Schema schema = (ns == null) ? null
                 : SCHEMA_FACTORY.getSchema(ns,
-                        getVersionFromPath(odfPackage, xmlPath));
+                        version);
         if (schema != null) {
             try {
                 XmlValidationResult validationResult = this.validator.validate(parseResult,
