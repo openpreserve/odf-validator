@@ -137,9 +137,13 @@ final class ValidatingParserImpl implements ValidatingParser {
                             .getForeignNamespaces()))));
             return messageList;
         }
+        Version version = getVersionFromPath(odfPackage, xmlPath);
+        if (version == Version.UNKNOWN) {
+            version = Version.ODF_11;
+        }
         Schema schema = (ns == null) ? null
                 : SCHEMA_FACTORY.getSchema(ns,
-                        getVersionFromPath(odfPackage, xmlPath));
+                        version);
         if (schema != null) {
             try {
                 XmlValidationResult validationResult = this.validator.validate(parseResult,
