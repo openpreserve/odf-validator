@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
 public class ProfileImplTest {
     @Test
     public void testCheck() throws URISyntaxException, ParseException, ParserConfigurationException, SAXException , FileNotFoundException {
-        Profile profile = Rules.getDnaProfile();
+        Profile profile = Rules.getDnaProfile(false);
         OpenDocument doc = Utils.getDocument(TestFiles.EMPTY_ODS);
         ValidationReport report = profile.check(doc);
         assertNotNull(report);
@@ -28,7 +28,7 @@ public class ProfileImplTest {
 
     @Test
     public void testOf() throws ParserConfigurationException, SAXException {
-        Profile profile = Rules.getDnaProfile();
+        Profile profile = Rules.getDnaProfile(false);
         assertNotNull(profile);
     }
 }

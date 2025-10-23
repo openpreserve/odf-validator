@@ -21,8 +21,10 @@ import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
+import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageFactory;
 import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
 import org.openpreservation.odf.xml.OdfNamespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
 import org.openpreservation.odf.xml.OdfXmlDocument;
@@ -42,12 +44,15 @@ final class OdfValidatorImpl implements OdfValidator {
         return result;
     }
 
-    static final OdfValidator getInstance() {
-        return new OdfValidatorImpl();
+    static final OdfValidator getInstance(final boolean isExtended) {
+        return new OdfValidatorImpl(isExtended);
     }
 
-    private OdfValidatorImpl() {
+    private final boolean isExtended;
+
+    private OdfValidatorImpl(final boolean isExtended) {
         super();
+        this.isExtended = isExtended;
     }
 
     @Override
@@ -117,7 +122,7 @@ final class OdfValidatorImpl implements OdfValidator {
     private ValidationReport validatePackage(final Path toValidate)
             throws ParserConfigurationException, SAXException, ParseException, FileNotFoundException {
         final OdfPackage pckg = OdfPackages.getPackageParser().parsePackage(toValidate);
-        return ValidationReportImpl.of(toValidate.toString(), pckg, Collections.singletonList(OdfValidators.getValidatingParser().validatePackage(pckg)));
+        return ValidationReportImpl.of(toValidate.toString(), pckg, Collections.singletonList(OdfValidators.getValidatingParser(this.isExtended).validatePackage(pckg)));
     }
 
     private ValidationReport validateOpenDocumentXml(final Path toValidate)
@@ -143,10 +148,11 @@ final class OdfValidatorImpl implements OdfValidator {
                 }
             }
             if (doc.isExtended()) {
-                result.getMessageLog().add(toValidate.toString(),
-                        FACTORY.getError("DOC-8", Messages.parameterListInstance().add("namespaces", Utils.collectNsPrefixes(
-                                OdfXmlDocuments.odfXmlDocumentOf(parseResult).getForeignNamespaces()))));
-            } else {
+                ParameterList params = Messages.parameterListInstance().add("namespaces", Utils.collectNsPrefixes(OdfXmlDocuments.odfXmlDocumentOf(parseResult)
+                                .getForeignNamespaces()));
+                result.getMessageLog().add(toValidate.toString(), FACTORY.getMessage("DOC-8", this.isExtended ? Severity.INFO : Severity.ERROR, params));
+            }
+            if (this.isExtended || !doc.isExtended()) {
                 final Schema schema = new OdfSchemaFactory().getSchema(OdfNamespaces.OFFICE, version);
                 parseResult = validator.validate(parseResult, Files.newInputStream(toValidate), schema);
             }

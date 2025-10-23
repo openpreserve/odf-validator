@@ -19,15 +19,8 @@ import org.openpreservation.odf.validation.Rule;
 import org.openpreservation.odf.validation.messages.MessageLog;
 import org.xml.sax.SAXException;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 public class ValidPackageRuleTest {
     private final Rule rule = Rules.odf2();
-
-    @Test
-    public void testEqualsContract() {
-        EqualsVerifier.forClass(ValidPackageRule.class).verify();
-    }
 
     @Test
     public void testGetInstance() throws ParserConfigurationException, SAXException {

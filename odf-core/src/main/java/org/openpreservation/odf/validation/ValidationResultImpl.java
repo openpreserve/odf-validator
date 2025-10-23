@@ -19,6 +19,7 @@ public final class ValidationResultImpl implements ValidationResult {
     static final ValidationResult of(final String name) {
         return ValidationResultImpl.of(name, Messages.messageLogInstance());
     }
+
     static final ValidationResult of(final String name, final MessageLog documentMessages) {
         return new ValidationResultImpl(name, documentMessages);
     }

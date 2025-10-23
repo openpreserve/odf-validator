@@ -33,11 +33,11 @@ public class PackageParserTest {
     @Test
     public void testParseNullFile() throws ParserConfigurationException, SAXException {
         PackageParser parser = OdfPackages.getPackageParser();
-        File file = null;
+        Path path = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    parser.parsePackage(file.toPath());
+                    parser.parsePackage(path);
                 });
     }
 

@@ -39,8 +39,10 @@ class CliValidator implements Callable<Integer> {
     private static final MessageFactory FACTORY = Messages
             .getInstance("org.openpreservation.odf.apps.messages.Messages");
 
-    @Option(names = { "-p", "--profile" }, description = "Validate using extended Spreadsheet preservation profile.")
+    @Option(names = { "-p", "--profile" }, description = "Validate using additional Spreadsheet preservation profile.")
     private boolean profileFlag;
+    @Option(names = { "-e", "--extended" }, description = "Process XML documents to allow for extended document validation.")
+    private boolean extendedFlag;
     @Option(names = { "-d", "--debug" }, description = "Enable debug output.")
     private boolean debugFlag;
     @Option(names = { "-v" }, description = { "Specify multiple -v options to increase verbosity.",
@@ -50,12 +52,13 @@ class CliValidator implements Callable<Integer> {
     private File[] toValidateFiles;
     @Option(names = { "--format" }, description = "Output results as TEXT, JSON or XML.", defaultValue = "TEXT")
     private ValidationReports.FormatOption format = ValidationReports.FormatOption.TEXT;
-    private final OdfValidator validator = OdfValidators.getOdfValidator();
+    private OdfValidator validator;
     private MessageLog appMessages = Messages.messageLogInstance();
 
     @Override
     public Integer call() throws JsonProcessingException {
         Integer retStatus = 0;
+        this.validator = OdfValidators.getOdfValidator(this.extendedFlag);
         DebugInfo debugInfo = DebugInfo.create(this.debugFlag, this.verbosity != null ? this.verbosity : new boolean[0]);
         for (File file : this.toValidateFiles) {
             Path toValidate = file.toPath();
@@ -97,7 +100,7 @@ class CliValidator implements Callable<Integer> {
 
     private ValidationReport profilePath(final Path path) {
         try {
-            final Profile dnaProfile = Rules.getDnaProfile();
+            final Profile dnaProfile = Rules.getDnaProfile(this.extendedFlag);
             return validator.profile(path, dnaProfile);
         } catch (IllegalArgumentException | FileNotFoundException e) {
             this.logMessage(path, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
