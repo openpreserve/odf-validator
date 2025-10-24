@@ -26,7 +26,7 @@ public final class DebugInfo {
     public static final DebugInfo create(boolean debugFlag, boolean[] verbosity) {
         return new DebugInfo(debugFlag, verbosity);
     }
-  
+
     /**
      * Output debug information to the console if debugFlag is set.
      */

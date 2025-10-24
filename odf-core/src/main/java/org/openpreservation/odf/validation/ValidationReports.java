@@ -59,7 +59,7 @@ public final class ValidationReports {
     /**
      * Get a string representation of the validation report in the specified format.
      *
-     * @param report the report to fromat, may contain multiple results
+     * @param report the report to format, may contain multiple results
      * @param format the format for the returned report, may be JSON, XML or TEXT
      * @return a string representation of the validation report in the specified format
      * @throws JsonProcessingException when there is an error during JSON or XML processing
