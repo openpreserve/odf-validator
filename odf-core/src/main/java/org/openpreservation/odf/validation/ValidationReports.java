@@ -1,8 +1,10 @@
 package org.openpreservation.odf.validation;
 
 import java.util.List;
+import java.util.Map;
 
 import org.openpreservation.odf.document.OpenDocument;
+import org.openpreservation.odf.validation.messages.Message;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +40,7 @@ public final class ValidationReports {
      * @throws JsonProcessingException
      *         if there is an error during JSON processing
      */
-    public static String reportToJson(final ValidationReport report) throws JsonProcessingException {
+    public static String getJsonReport(final ValidationReport report) throws JsonProcessingException {
         var jsonMapper = new ObjectMapper().registerModule(new JavaTimeModule()).enable(SerializationFeature.INDENT_OUTPUT);
         return jsonMapper.writeValueAsString(report);
     }
@@ -51,8 +53,23 @@ public final class ValidationReports {
      * @throws JsonProcessingException
      *         if there is an error during to XML processing
      */
-    public static String reportToXml(final ValidationReport report) throws JsonProcessingException {
+    public static String getXmlReport(final ValidationReport report) throws JsonProcessingException {
         var xmlMapper = new XmlMapper().registerModule(new JavaTimeModule()).enable(SerializationFeature.INDENT_OUTPUT);
         return xmlMapper.writeValueAsString(report);
+    }
+
+    public static String getReport(final ValidationReport report,
+                                final FormatOption format) throws JsonProcessingException {
+        if (format == FormatOption.JSON) {
+            return getJsonReport(report);
+        } else if (format == FormatOption.XML) {
+            return getXmlReport(report);
+        } else {
+            return report.toString();
+        }
+    }
+
+    public static enum FormatOption {
+        JSON, XML, TEXT
     }
 }
