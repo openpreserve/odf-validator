@@ -34,6 +34,11 @@ public class BuildVersionProvider implements IVersionProvider {
                 "Built: " + new SimpleDateFormat("yyyy-MM-dd").format(date) }; //$NON-NLS-1$
     }
 
+    /**
+     * Get a formatted string representing the application version.
+     *
+     * @return the version string
+     */
     public static String getVersionString() {
         return "v" + props.getProperty("release.version"); //$NON-NLS-1$
     }
@@ -46,7 +51,7 @@ public class BuildVersionProvider implements IVersionProvider {
             }
             return props;
         } catch (IOException excep) {
-            throw new IllegalStateException("Couldn't load build data resource:" + resourceName, excep); //$NON-NLS-1$
+            throw new IllegalStateException("Couldn't load build data resource: " + resourceName, excep); //$NON-NLS-1$
         }
     }
 

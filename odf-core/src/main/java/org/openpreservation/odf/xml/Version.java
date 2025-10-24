@@ -49,7 +49,7 @@ public enum Version {
                 prepend = ", ";
             }
         }
-        return sb.toString().trim();
+        return sb.toString();
     }
 
     /**
