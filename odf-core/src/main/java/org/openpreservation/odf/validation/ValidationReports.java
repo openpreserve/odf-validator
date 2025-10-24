@@ -1,10 +1,8 @@
 package org.openpreservation.odf.validation;
 
 import java.util.List;
-import java.util.Map;
 
 import org.openpreservation.odf.document.OpenDocument;
-import org.openpreservation.odf.validation.messages.Message;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

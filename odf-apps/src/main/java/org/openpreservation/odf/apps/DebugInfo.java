@@ -25,17 +25,15 @@ public final class DebugInfo {
             return;
         }
         ConsoleFormatter.info("Debug information:");
-        ConsoleFormatter.info(String.format("  OS name: %s", osName));
-        ConsoleFormatter.info(String.format("  OS version: %s", osVersion));
-        ConsoleFormatter.info(String.format("  OS architecture: %s", osArch));
+        ConsoleFormatter.info(String.format("  ODF Validator: %s", BuildVersionProvider.getVersionString()));
+        ConsoleFormatter.info(String.format("  OS name: %s, version: %s, architecture: %s", osName, osVersion, osArch));
         ConsoleFormatter.info(String.format("  Java version: %s", javaVersion));
-        ConsoleFormatter.info(String.format("  Java vendor: %s", javaVendor));
-        ConsoleFormatter.info(String.format("  Java home: %s", javaHome));
         if (verbosity.length > 0) {
+          ConsoleFormatter.info(String.format("  Java vendor: %s", javaVendor));
+          ConsoleFormatter.info(String.format("  Java home: %s", javaHome));
           ConsoleFormatter.info(String.format("  JVM Heap Size: %d", Runtime.getRuntime().totalMemory()));
           ConsoleFormatter.info(String.format("  JVM Max Heap Size: %d", Runtime.getRuntime().maxMemory()));
           ConsoleFormatter.info(String.format("  JVM Free Heap: %d", Runtime.getRuntime().freeMemory()));
-          ConsoleFormatter.info(String.format("  ODF Tools version: %s", BuildVersionProvider.getVersionString()));
         }
     }
 
