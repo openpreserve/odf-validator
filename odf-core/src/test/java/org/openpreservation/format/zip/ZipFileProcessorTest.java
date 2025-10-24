@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.junit.Test;
 import org.openpreservation.odf.fmt.TestFiles;
@@ -116,17 +117,6 @@ public class ZipFileProcessorTest {
     }
 
     @Test
-    public void testGetCachedEntryNames() throws IOException, URISyntaxException {
-        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
-        List<String> entries = processor.getCachedEntryNames();
-        assertNotNull("Cached entries should be an empty list", entries);
-        assertTrue("Cached entries should be an empty list", entries.isEmpty());
-        processor.getEntryInputStream("settings.xml");
-        entries = processor.getCachedEntryNames();
-        assertEquals("Cached entries should have a single entry empty list", 1, entries.size());
-    }
-
-    @Test
     public void testGetCachedEntry() throws IOException, URISyntaxException {
         ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
         InputStream is = processor.getEntryInputStream("mimetype");
@@ -143,7 +133,15 @@ public class ZipFileProcessorTest {
         ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
         InputStream is = processor.getEntryInputStream("mimetype");
         assertNotNull("Cached entry stream should not be null.", is);
-        InputStream nullStream = processor.getEntryInputStream("notThere");
-        assertNull("Cached entry stream should be null.", nullStream);
+    }
+
+    @Test
+    public void testGetMisssingEntryInputStream() throws IOException, URISyntaxException {
+        ZipArchiveCache processor = Zips.zipArchiveCacheInstance(new File(TestFiles.EMPTY_ODS.toURI()));
+        assertThrows("NoSuchElementException expected",
+                NoSuchElementException.class,
+                () -> {
+                    processor.getEntryInputStream("notThere");
+                });
     }
 }
