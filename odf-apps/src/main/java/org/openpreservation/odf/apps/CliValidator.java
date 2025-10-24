@@ -52,12 +52,11 @@ class CliValidator implements Callable<Integer> {
     private ValidationReports.FormatOption format = ValidationReports.FormatOption.TEXT;
     private final OdfValidator validator = OdfValidators.getOdfValidator();
     private MessageLog appMessages = Messages.messageLogInstance();
-    private final DebugInfo debugInfo = DebugInfo.create(this.debugFlag, this.verbosity);
 
     @Override
     public Integer call() throws JsonProcessingException {
         Integer retStatus = 0;
-        debugInfo.outputDebugInfo();
+        DebugInfo debugInfo = DebugInfo.create(this.debugFlag, this.verbosity != null ? this.verbosity : new boolean[0]);
         for (File file : this.toValidateFiles) {
             Path toValidate = file.toPath();
             this.appMessages = Messages.messageLogInstance();

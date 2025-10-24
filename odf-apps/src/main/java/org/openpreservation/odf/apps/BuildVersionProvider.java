@@ -9,6 +9,11 @@ import java.util.Properties;
 
 import picocli.CommandLine.IVersionProvider;
 
+/**
+ * A version provider that reads build version information from a properties
+ * resource. This resource file is generated during the build process. If the
+ * resource cannot be found or read, an IllegalStateException is thrown.
+ */
 public class BuildVersionProvider implements IVersionProvider {
     private static final String RAW_DATE_FORMAT = "${maven.build.timestamp.format}";
     private static final Properties props = fromResource("org/openpreservation/odf/apps/build.properties");
@@ -34,6 +39,11 @@ public class BuildVersionProvider implements IVersionProvider {
                 "Built: " + new SimpleDateFormat("yyyy-MM-dd").format(date) }; //$NON-NLS-1$
     }
 
+    /**
+     * Get a formatted string representing the application version.
+     *
+     * @return the version string
+     */
     public static String getVersionString() {
         return "v" + props.getProperty("release.version"); //$NON-NLS-1$
     }
@@ -46,7 +56,7 @@ public class BuildVersionProvider implements IVersionProvider {
             }
             return props;
         } catch (IOException excep) {
-            throw new IllegalStateException("Couldn't load build data resource:" + resourceName, excep); //$NON-NLS-1$
+            throw new IllegalStateException("Couldn't load build data resource: " + resourceName, excep); //$NON-NLS-1$
         }
     }
 

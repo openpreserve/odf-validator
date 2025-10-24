@@ -1,10 +1,8 @@
 package org.openpreservation.odf.validation;
 
 import java.util.List;
-import java.util.Map;
 
 import org.openpreservation.odf.document.OpenDocument;
-import org.openpreservation.odf.validation.messages.Message;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +56,14 @@ public final class ValidationReports {
         return xmlMapper.writeValueAsString(report);
     }
 
+    /**
+     * Get a string representation of the validation report in the specified format.
+     *
+     * @param report the report to format, may contain multiple results
+     * @param format the format for the returned report, may be JSON, XML or TEXT
+     * @return a string representation of the validation report in the specified format
+     * @throws JsonProcessingException when there is an error during JSON or XML processing
+     */
     public static String getReport(final ValidationReport report,
                                 final FormatOption format) throws JsonProcessingException {
         if (format == FormatOption.JSON) {
@@ -69,6 +75,14 @@ public final class ValidationReports {
         }
     }
 
+    /**
+     * Specifies the output format for validation reports.
+     * <ul>
+     *   <li>{@link #JSON} - Output the report in JSON format.</li>
+     *   <li>{@link #XML} - Output the report in XML format.</li>
+     *   <li>{@link #TEXT} - Output the report as plain text.</li>
+     * </ul>
+     */
     public static enum FormatOption {
         JSON, XML, TEXT
     }
