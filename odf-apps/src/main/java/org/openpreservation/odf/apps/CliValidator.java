@@ -41,29 +41,43 @@ class CliValidator implements Callable<Integer> {
 
     @Option(names = { "-p", "--profile" }, description = "Validate using extended Spreadsheet preservation profile.")
     private boolean profileFlag;
+    @Option(names = { "-d", "--debug" }, description = "Enable debug output.")
+    private boolean debugFlag;
+    @Option(names = { "-v" }, description = { "Specify multiple -v options to increase verbosity.",
+                                              "For example, `-v -v -v` or `-vvv`"})
+    private boolean[] verbosity;
     @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format spreadsheet files to validate.")
     private File[] toValidateFiles;
     @Option(names = { "--format" }, description = "Output results as TEXT, JSON or XML.", defaultValue = "TEXT")
-    private FormatOption format = FormatOption.TEXT;
+    private ValidationReports.FormatOption format = ValidationReports.FormatOption.TEXT;
     private final OdfValidator validator = OdfValidators.getOdfValidator();
     private MessageLog appMessages = Messages.messageLogInstance();
 
     @Override
     public Integer call() throws JsonProcessingException {
         Integer retStatus = 0;
+        DebugInfo debugInfo = DebugInfo.create(this.debugFlag, this.verbosity != null ? this.verbosity : new boolean[0]);
         for (File file : this.toValidateFiles) {
             Path toValidate = file.toPath();
             this.appMessages = Messages.messageLogInstance();
             ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", Messages.parameterListInstance().add("file", toValidate.toString())));
-            ValidationReport validationResult = (!this.profileFlag) ? validatePath(toValidate) : profilePath(toValidate);
-            if (validationResult != null) {
-                retStatus = outputValidationReport(toValidate, validationResult, this.format);
+            try {
+                ValidationReport validationResult = (!this.profileFlag) ? validatePath(toValidate) : profilePath(toValidate);
+                if (validationResult != null) {
+                    retStatus = outputValidationReport(toValidate, validationResult, this.format);
+                }
+            } catch (Throwable t) {
+                ConsoleFormatter.colourise(toValidate, FACTORY.getFatal("SYS-4", Messages.parameterListInstance().add("file", toValidate.toString())));
+                ConsoleFormatter.error(String.format("An unexpected error occurred during validation: %s", t.toString()));
+                debugInfo.outputDebugInfo();
+                throw t;
             }
             if (this.appMessages.hasErrors()) {
                 retStatus = Math.max(retStatus,
                         processCheckList(this.appMessages.getChecks()));
             }
         }
+        debugInfo.outputDebugInfo();
         return retStatus;
     }
 
@@ -108,7 +122,7 @@ class CliValidator implements Callable<Integer> {
         return status;
     }
 
-    private static Integer outputValidationReport(final Path path, final ValidationReport report, FormatOption format) throws JsonProcessingException {
+    private static Integer outputValidationReport(final Path path, final ValidationReport report, ValidationReports.FormatOption format) throws JsonProcessingException {
         ParameterList parameters = Messages.parameterListInstance().add("file", path.toString()).add("format", "bold");
         ConsoleFormatter.colourise(FACTORY.getInfo("APP-4", parameters));
         if (report.getChecks().isEmpty()) {
@@ -120,12 +134,10 @@ class CliValidator implements Callable<Integer> {
         for (ValidationResult result : report.getValidationResults()) {
             profileMessages.add(result.getMessageLog().getMessages());
         }
-        if (format == FormatOption.JSON)
-            ConsoleFormatter.info(ValidationReports.reportToJson(report));
-        else if (format == FormatOption.XML)
-            ConsoleFormatter.info(ValidationReports.reportToXml(report));
-        else
+        if (format == ValidationReports.FormatOption.TEXT)
             outputText(report);
+        else
+            ConsoleFormatter.info(ValidationReports.getReport(report, format));
         outputSummary(report.isEncrypted(), profileMessages);
         return status;
     }
@@ -165,9 +177,5 @@ class CliValidator implements Callable<Integer> {
 
     private final void logMessage(final Path path, final Message message) {
         this.appMessages.add(path.toString(), message);
-    }
-
-    static private enum FormatOption {
-        JSON, XML, TEXT
     }
 }

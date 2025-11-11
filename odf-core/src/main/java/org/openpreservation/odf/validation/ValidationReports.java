@@ -38,7 +38,7 @@ public final class ValidationReports {
      * @throws JsonProcessingException
      *         if there is an error during JSON processing
      */
-    public static String reportToJson(final ValidationReport report) throws JsonProcessingException {
+    public static String getJsonReport(final ValidationReport report) throws JsonProcessingException {
         var jsonMapper = new ObjectMapper().registerModule(new JavaTimeModule()).enable(SerializationFeature.INDENT_OUTPUT);
         return jsonMapper.writeValueAsString(report);
     }
@@ -51,8 +51,39 @@ public final class ValidationReports {
      * @throws JsonProcessingException
      *         if there is an error during to XML processing
      */
-    public static String reportToXml(final ValidationReport report) throws JsonProcessingException {
+    public static String getXmlReport(final ValidationReport report) throws JsonProcessingException {
         var xmlMapper = new XmlMapper().registerModule(new JavaTimeModule()).enable(SerializationFeature.INDENT_OUTPUT);
         return xmlMapper.writeValueAsString(report);
+    }
+
+    /**
+     * Get a string representation of the validation report in the specified format.
+     *
+     * @param report the report to format, may contain multiple results
+     * @param format the format for the returned report, may be JSON, XML or TEXT
+     * @return a string representation of the validation report in the specified format
+     * @throws JsonProcessingException when there is an error during JSON or XML processing
+     */
+    public static String getReport(final ValidationReport report,
+                                final FormatOption format) throws JsonProcessingException {
+        if (format == FormatOption.JSON) {
+            return getJsonReport(report);
+        } else if (format == FormatOption.XML) {
+            return getXmlReport(report);
+        } else {
+            return report.toString();
+        }
+    }
+
+    /**
+     * Specifies the output format for validation reports.
+     * <ul>
+     *   <li>{@link #JSON} - Output the report in JSON format.</li>
+     *   <li>{@link #XML} - Output the report in XML format.</li>
+     *   <li>{@link #TEXT} - Output the report as plain text.</li>
+     * </ul>
+     */
+    public static enum FormatOption {
+        JSON, XML, TEXT
     }
 }
