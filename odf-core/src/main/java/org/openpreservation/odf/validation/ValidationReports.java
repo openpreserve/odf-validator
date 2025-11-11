@@ -65,7 +65,7 @@ public final class ValidationReports {
      * @throws JsonProcessingException when there is an error during JSON or XML processing
      */
     public static String getReport(final ValidationReport report,
-                                final FormatOption format) throws JsonProcessingException {
+                                   final FormatOption format) throws JsonProcessingException {
         if (format == FormatOption.JSON) {
             return getJsonReport(report);
         } else if (format == FormatOption.XML) {

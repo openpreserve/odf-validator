@@ -11,28 +11,33 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.apache.commons.compress.archivers.zip.ZipFile.Builder;
 import org.openpreservation.utils.Checks;
 
 /**
  * An implementation of {@link ZipArchiveCache} that caches the contents of the
  * archive and provides access to the <code>InputStream</code>s.
  */
-public final class ZipFileProcessor implements ZipArchiveCache {
+public final class ZipFileProcessor implements ZipArchiveCache, AutoCloseable {
     private final Path path;
     private final Map<String, ZipArchiveEntry> entryCache;
     private final Map<String, byte[]> byteCache = new HashMap<>();
+    private long currentCacheSize = 0;
     private String firstEntryName = null;
+    private static final long MAX_CACHE_SIZE = Runtime.getRuntime().maxMemory() / 4;
+    private static final long MAX_ITEM_SIZE = MAX_CACHE_SIZE / 20;
+    private final ZipFile zipFile;
 
     private ZipFileProcessor(final Path path) throws IOException {
         super();
         this.path = path;
+        this.zipFile = new ZipFile.Builder().setSeekableByteChannel(Files.newByteChannel(path)).get();
         this.entryCache = cache(path);
     }
 
@@ -51,15 +56,13 @@ public final class ZipFileProcessor implements ZipArchiveCache {
 
     private final Map<String, ZipArchiveEntry> cache(final Path path) throws IOException {
         Map<String, ZipArchiveEntry> result = new HashMap<>();
-        try (ZipFile zipFile = new Builder().setSeekableByteChannel(Files.newByteChannel(path)).get()) {
-            Enumeration<ZipArchiveEntry> entries = zipFile.getEntriesInPhysicalOrder();
-            while (entries.hasMoreElements()) {
-                ZipArchiveEntry entry = entries.nextElement();
-                if (firstEntryName == null) {
-                    firstEntryName = entry.getName();
-                }
-                result.put(entry.getName(), entry);
+        Enumeration<ZipArchiveEntry> entries = zipFile.getEntriesInPhysicalOrder();
+        while (entries.hasMoreElements()) {
+            ZipArchiveEntry entry = entries.nextElement();
+            if (firstEntryName == null) {
+                firstEntryName = entry.getName();
             }
+            result.put(entry.getName(), entry);
         }
         return result;
     }
@@ -103,32 +106,42 @@ public final class ZipFileProcessor implements ZipArchiveCache {
     }
 
     @Override
-    public List<String> getCachedEntryNames() {
-        return this.byteCache.keySet().stream().collect(Collectors.toList());
-    }
-
-    @Override
-    public InputStream getEntryInputStream(String entryName) throws IOException {
+    public InputStream getEntryInputStream(String entryName) throws IOException, NoSuchElementException {
         Objects.requireNonNull(entryName, String.format(Checks.NOT_NULL, "entryName", "String"));
         if (!this.entryCache.containsKey(entryName)) {
-            return null;
+            throw new NoSuchElementException(String.format("Entry %s not found in zip file", entryName));
         }
+        return retrieveEntryInputStream(entryName);
+    }
+
+    private final InputStream retrieveEntryInputStream(final String entryName) throws IOException, NoSuchElementException {
         if (!this.byteCache.containsKey(entryName)) {
-            try (ZipFile zipFile = new ZipFile.Builder().setSeekableByteChannel(Files.newByteChannel(this.path))
-                    .get()) {
-                ZipArchiveEntry entry = zipFile.getEntry(entryName);
-                if (entry == null) {
-                    return null;
-                }
-                InputStream is = zipFile.getInputStream(entry);
-                try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-                    is.transferTo(bos);
-                    this.byteCache.put(entryName,
-                            bos.toByteArray());
-                }
+            ZipArchiveEntry entry = zipFile.getEntry(entryName);
+            if (entry == null) {
+                throw new NoSuchElementException(String.format("Entry %s not found in zip file", entryName));
             }
+            return cacheEntryInputStream(entry);
         }
         return new ByteArrayInputStream(this.byteCache.get(entryName));
     }
 
+    private final InputStream cacheEntryInputStream(final ZipArchiveEntry entry)
+            throws IOException {
+        InputStream is = zipFile.getInputStream(entry);
+        if (entry.getSize() > MAX_ITEM_SIZE || (this.currentCacheSize + entry.getSize()) > MAX_CACHE_SIZE) {
+            return is;
+        }
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            is.transferTo(bos);
+            this.byteCache.put(entry.getName(),
+                    bos.toByteArray());
+            this.currentCacheSize += bos.size();
+        }
+        return new ByteArrayInputStream(this.byteCache.get(entry.getName()));
+    }
+
+    @Override
+    public void close() throws Exception {
+        this.zipFile.close();
+    }
 }

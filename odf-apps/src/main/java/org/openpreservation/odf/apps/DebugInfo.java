@@ -42,9 +42,9 @@ public final class DebugInfo {
         if (verbosity.length > 0) {
             ConsoleFormatter.info(String.format("  Java vendor: %s", javaVendor));
             ConsoleFormatter.info(String.format("  Java home: %s", javaHome));
-            ConsoleFormatter.info(String.format("  JVM Heap Size: %d", Runtime.getRuntime().totalMemory()));
-            ConsoleFormatter.info(String.format("  JVM Max Heap Size: %d", Runtime.getRuntime().maxMemory()));
-            ConsoleFormatter.info(String.format("  JVM Free Heap: %d", Runtime.getRuntime().freeMemory()));
+            ConsoleFormatter.info(String.format("  JVM Heap Size: %d MB", Runtime.getRuntime().totalMemory() / (1024 * 1024)));
+            ConsoleFormatter.info(String.format("  JVM Max Heap Size: %d MB", Runtime.getRuntime().maxMemory() / (1024 * 1024)));
+            ConsoleFormatter.info(String.format("  JVM Free Heap: %d MB", Runtime.getRuntime().freeMemory() / (1024 * 1024)));
         }
     }
 

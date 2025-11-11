@@ -12,6 +12,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -145,16 +146,16 @@ final class PackageParserImpl implements PackageParser {
         Version detectedVersion = Version.UNKNOWN;
         for (final String versionPath : VERSION_FILE_PATHS) {
             try (InputStream is = this.cache.getEntryInputStream(versionPath)) {
-                if (is != null) {
-                    ParseResult result = XmlParsers.getNonValidatingParser().parse(is);
-                    detectedVersion = Version.fromVersion(
-                            result.getRootAttributeValue(String.format("%s:version", result.getRootPrefix())));
-                    if (!Version.UNKNOWN.equals(detectedVersion)) {
-                        return detectedVersion;
-                    }
+                ParseResult result = XmlParsers.getNonValidatingParser().parse(is);
+                detectedVersion = Version.fromVersion(
+                        result.getRootAttributeValue(String.format("%s:version", result.getRootPrefix())));
+                if (!Version.UNKNOWN.equals(detectedVersion)) {
+                    return detectedVersion;
                 }
             } catch (ParserConfigurationException | SAXException e) {
                 throw new IOException(e);
+            } catch (NoSuchElementException e) {
+                // Ignore and continue
             }
         }
         return detectedVersion;
