@@ -2,13 +2,17 @@ package org.openpreservation.format.xml;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.openpreservation.odf.validation.messages.Messages;
 import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
+import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLFilter;
+import org.xml.sax.XMLReader;
 
 final class XmlUtils {
     private static final String SAX_FEATURE_PREFIX = "http://xml.org/sax/features/";
@@ -32,8 +36,26 @@ final class XmlUtils {
         return factory;
     }
 
+    static final XMLReader getSAXReader()
+            throws SAXNotRecognizedException, SAXNotSupportedException, ParserConfigurationException, SAXException {
+        final SAXParser parser = XmlUtils.getNonValidatingFactory().newSAXParser();
+        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "false");
+        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "false");
+        return parser.getXMLReader();
+    }
+    
+    static final XMLReader getFilteredSAXReader(XMLFilter filter)
+            throws SAXNotRecognizedException, SAXNotSupportedException, ParserConfigurationException, SAXException {
+        final SAXParser parser = XmlUtils.getNonValidatingFactory().newSAXParser();
+        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "false");
+        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "false");
+        filter.setParent(parser.getXMLReader());
+        return filter;
+    }
+
     static ParameterList excepToParameterList(SAXParseException e) {
-        return Messages.parameterListInstance().clear().add("line", Integer.toString(e.getLineNumber())).add("column", Integer.toString(e.getColumnNumber()))
+        return Messages.parameterListInstance().clear().add("line", Integer.toString(e.getLineNumber()))
+                .add("column", Integer.toString(e.getColumnNumber()))
                 .add("message", e.getMessage());
     }
 }

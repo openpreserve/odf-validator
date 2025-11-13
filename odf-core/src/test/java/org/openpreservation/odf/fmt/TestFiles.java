@@ -75,6 +75,10 @@ public class TestFiles {
     public static final URL CONTENT_SVG = ClassLoader.getSystemResource(XML_TEST_ROOT + "content_svg.xml");
     public static final URL LOEXT_EXTENDED_CONFORMANCE = ClassLoader
             .getSystemResource(XML_TEST_ROOT + "loext_ext_cnfrm.xml");
+    public static final URL EXTENDED_CONFORMANCE_INVALID = ClassLoader
+            .getSystemResource(XML_TEST_ROOT + "extended_invalid.xml");
+    public static final URL EXTENDED_CONFORMANCE_VALID = ClassLoader
+            .getSystemResource(XML_TEST_ROOT + "extended_valid.xml");
 
     public static final URL EMPTY = ClassLoader.getSystemResource(FILE_TEST_ROOT + "empty.file");
     public static final URL STYLES_ONLY_DOC = ClassLoader.getSystemResource(DOCUMENT_TEST_ROOT + "styles_only_doc.ods");

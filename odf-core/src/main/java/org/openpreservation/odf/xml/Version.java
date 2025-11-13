@@ -26,6 +26,11 @@ public enum Version {
     ODF_13("1.3"),
 
     /**
+     * ODF version 1.4.
+     */
+    ODF_14("1.4"),
+
+    /**
      * Unknown version.
      */
     UNKNOWN("unknown");
@@ -34,6 +39,18 @@ public enum Version {
      * The version string.
      */
     public final String version;
+
+    public static final String supportedVersions() {
+        StringBuilder sb = new StringBuilder();
+        String prepend = "";
+        for (Version v : Version.values()) {
+            if (v != UNKNOWN) {
+                sb.append(prepend).append(v.version);
+                prepend = ", ";
+            }
+        }
+        return sb.toString();
+    }
 
     /**
      * Constructs a {@code Version} enum constant with the specified version string.

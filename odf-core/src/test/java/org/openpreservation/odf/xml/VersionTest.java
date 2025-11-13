@@ -11,6 +11,7 @@ public class VersionTest {
         assertSame(Version.ODF_11, Version.fromVersion("1.1"));
         assertSame(Version.ODF_12, Version.fromVersion("1.2"));
         assertSame(Version.ODF_13, Version.fromVersion("1.3"));
-        assertSame(Version.UNKNOWN, Version.fromVersion("1.4"));
+        assertSame(Version.ODF_14, Version.fromVersion("1.4"));
+        assertSame(Version.UNKNOWN, Version.fromVersion("1.5"));
     }
 }

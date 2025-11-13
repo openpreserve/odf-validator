@@ -13,13 +13,15 @@ import org.junit.Test;
 import org.openpreservation.odf.fmt.TestFiles;
 import org.openpreservation.odf.xml.OdfNamespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
+import org.openpreservation.odf.xml.Version;
+import org.openpreservation.odf.xml.ExtendedConformanceFilter;
 import org.xml.sax.SAXException;
 
 public class XmlValidatorTest {
     private XmlParserImpl xmlParser = new XmlParserImpl();
     private XmlValidator xmlValidator = new XmlValidator();
     private OdfSchemaFactory odfSchemaFactory = new OdfSchemaFactory();
-    private Schema schema = odfSchemaFactory.getSchema(OdfNamespaces.OFFICE);
+    private Schema schema = odfSchemaFactory.getSchema(OdfNamespaces.OFFICE, Version.ODF_13);
 
     public XmlValidatorTest() throws ParserConfigurationException, SAXException {
     }
@@ -72,6 +74,67 @@ public class XmlValidatorTest {
         XmlValidationResult validationResult = xmlValidator.validate(parseResult,
                 TestFiles.FLAT_NOT_VALID.openStream(),
                 schema);
+        assertNotNull("Validation result is not null", validationResult);
+        assertTrue("Validation result should be well formed", validationResult.isWellFormed());
+        assertFalse("Validation result should NOT be valid", validationResult.isValid());
+    }
+
+    @Test
+    public void testExtendedConformanceValidation()
+            throws IOException, SAXException, ParserConfigurationException {
+        ParseResult parseResult = xmlParser.parse(TestFiles.LOEXT_EXTENDED_CONFORMANCE.openStream());
+        assertNotNull("Parse result is not null", parseResult);
+        assertTrue("Parse result should be well formed", parseResult.isWellFormed());
+        XmlValidationResult validationResult = xmlValidator.validate(parseResult,
+                TestFiles.LOEXT_EXTENDED_CONFORMANCE.openStream(),
+                schema);
+        assertNotNull("Validation result is not null", validationResult);
+        assertTrue("Validation result should be well formed", validationResult.isWellFormed());
+        assertFalse("Validation result should NOT be valid", validationResult.isValid());
+        validationResult = xmlValidator.validate(parseResult,
+                TestFiles.LOEXT_EXTENDED_CONFORMANCE.openStream(),
+                schema, new ExtendedConformanceFilter(Version.ODF_13));
+        assertNotNull("Validation result is not null", validationResult);
+        assertTrue("Validation result should be well formed", validationResult.isWellFormed());
+        assertTrue("Validation result should be valid", validationResult.isValid());
+    }
+
+    @Test
+    public void testExtendedConformanceValid()
+            throws IOException, SAXException, ParserConfigurationException {
+
+        ParseResult parseResult = xmlParser.parse(TestFiles.EXTENDED_CONFORMANCE_VALID.openStream());
+        assertNotNull("Parse result is not null", parseResult);
+        assertTrue("Parse result should be well formed", parseResult.isWellFormed());
+        XmlValidationResult validationResult = xmlValidator.validate(parseResult,
+                TestFiles.EXTENDED_CONFORMANCE_VALID.openStream(),
+                schema);
+        assertNotNull("Validation result is not null", validationResult);
+        assertTrue("Validation result should be well formed", validationResult.isWellFormed());
+        assertFalse("Validation result should NOT be valid", validationResult.isValid());
+        validationResult = xmlValidator.validate(parseResult,
+                TestFiles.EXTENDED_CONFORMANCE_VALID.openStream(),
+                schema, new ExtendedConformanceFilter(Version.ODF_13));
+        assertNotNull("Validation result is not null", validationResult);
+        assertTrue("Validation result should be well formed", validationResult.isWellFormed());
+        assertTrue("Validation result should be valid", validationResult.isValid());
+    }
+
+    @Test
+    public void testExtendedConformanceInvalid()
+            throws IOException, SAXException, ParserConfigurationException {
+        ParseResult parseResult = xmlParser.parse(TestFiles.EXTENDED_CONFORMANCE_INVALID.openStream());
+        assertNotNull("Parse result is not null", parseResult);
+        assertTrue("Parse result should be well formed", parseResult.isWellFormed());
+        XmlValidationResult validationResult = xmlValidator.validate(parseResult,
+                TestFiles.EXTENDED_CONFORMANCE_INVALID.openStream(),
+                schema);
+        assertNotNull("Validation result is not null", validationResult);
+        assertTrue("Validation result should be well formed", validationResult.isWellFormed());
+        assertFalse("Validation result should NOT be valid", validationResult.isValid());
+        validationResult = xmlValidator.validate(parseResult,
+                TestFiles.EXTENDED_CONFORMANCE_INVALID.openStream(),
+                schema, new ExtendedConformanceFilter(Version.ODF_13));
         assertNotNull("Validation result is not null", validationResult);
         assertTrue("Validation result should be well formed", validationResult.isWellFormed());
         assertFalse("Validation result should NOT be valid", validationResult.isValid());

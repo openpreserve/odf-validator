@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.MessageFactory;
@@ -40,11 +37,7 @@ final class XmlParserImpl implements XmlParser {
      * @throws SAXException                 if the parser can not be created
      */
     XmlParserImpl() throws ParserConfigurationException, SAXException {
-        final SAXParserFactory nonValidatingFactory = XmlUtils.getNonValidatingFactory();
-        final SAXParser parser = nonValidatingFactory.newSAXParser();
-        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "false");
-        parser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "false");
-        this.reader = parser.getXMLReader();
+        this.reader = XmlUtils.getSAXReader();
         this.reader.setEntityResolver(new DummyEntityResolver());
     }
 

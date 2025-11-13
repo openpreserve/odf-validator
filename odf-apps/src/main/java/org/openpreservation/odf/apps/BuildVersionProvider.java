@@ -9,14 +9,19 @@ import java.util.Properties;
 
 import picocli.CommandLine.IVersionProvider;
 
+/**
+ * A version provider that reads build version information from a properties
+ * resource. This resource file is generated during the build process. If the
+ * resource cannot be found or read, an IllegalStateException is thrown.
+ */
 public class BuildVersionProvider implements IVersionProvider {
     private static final String RAW_DATE_FORMAT = "${maven.build.timestamp.format}";
+    private static final Properties props = fromResource("org/openpreservation/odf/apps/build.properties");
 
     @Override
     public String[] getVersion() throws Exception {
-        Properties props = fromResource("org/openpreservation/odf/apps/build.properties");
         String name = props.getProperty("project.name"); //$NON-NLS-1$
-        String version = props.getProperty("release.version"); //$NON-NLS-1$
+        String version = getVersionString();
         String dateFormat = props.getProperty("date.format"); //$NON-NLS-1$
         Date date = new Date();
         if (!dateFormat.equals(RAW_DATE_FORMAT)) {
@@ -30,8 +35,17 @@ public class BuildVersionProvider implements IVersionProvider {
                  */
             }
         }
-        return new String[] { name + " v" + version, //$NON-NLS-1$
+        return new String[] { name + " " + version, //$NON-NLS-1$
                 "Built: " + new SimpleDateFormat("yyyy-MM-dd").format(date) }; //$NON-NLS-1$
+    }
+
+    /**
+     * Get a formatted string representing the application version.
+     *
+     * @return the version string
+     */
+    public static String getVersionString() {
+        return "v" + props.getProperty("release.version"); //$NON-NLS-1$
     }
 
     private static Properties fromResource(final String resourceName) {
@@ -42,7 +56,7 @@ public class BuildVersionProvider implements IVersionProvider {
             }
             return props;
         } catch (IOException excep) {
-            throw new IllegalStateException("Couldn't load resource:" + resourceName, excep); //$NON-NLS-1$
+            throw new IllegalStateException("Couldn't load build data resource: " + resourceName, excep); //$NON-NLS-1$
         }
     }
 

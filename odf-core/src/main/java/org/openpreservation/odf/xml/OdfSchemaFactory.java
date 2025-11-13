@@ -22,6 +22,7 @@ public class OdfSchemaFactory {
 
     private static final String SCHEMA_ROOT = "org/openpreservation/odf/schema/";
     private static final String ODF_ROOT = SCHEMA_ROOT + "odf/";
+    private static final String ODF_14_ROOT = ODF_ROOT + "1.4/";
     private static final String ODF_13_ROOT = ODF_ROOT + "1.3/";
     private static final String ODF_12_ROOT = ODF_ROOT + "1.2/";
     private static final String ODF_11_ROOT = ODF_ROOT + "1.1/";
@@ -32,6 +33,11 @@ public class OdfSchemaFactory {
     private static final String SCHEMA_NAME_STRICT = "strict-schema.rng";
     private static final String SCHEMA_NAME_METADATA = "metadata.owl";
     private static final String SCHEMA_NAME_PACKAGE_METADATA = "package-metadata.owl";
+    private static final String SCHEMA_PATH_DSIG_14 = ODF_14_ROOT + SCHEMA_NAME_DSIG;
+    private static final String SCHEMA_PATH_MANIFEST_14 = ODF_14_ROOT + SCHEMA_NAME_MANIFEST;
+    private static final String SCHEMA_PATH_ODF_14 = ODF_14_ROOT + SCHEMA_NAME;
+    private static final String SCHEMA_PATH_METADATA_14 = ODF_14_ROOT + SCHEMA_NAME_METADATA;
+    private static final String SCHEMA_PATH_PACKAGE_METADATA_14 = ODF_14_ROOT + SCHEMA_NAME_PACKAGE_METADATA;
     private static final String SCHEMA_PATH_DSIG_13 = ODF_13_ROOT + SCHEMA_NAME_DSIG;
     private static final String SCHEMA_PATH_MANIFEST_13 = ODF_13_ROOT + SCHEMA_NAME_MANIFEST;
     private static final String SCHEMA_PATH_ODF_13 = ODF_13_ROOT + SCHEMA_NAME;
@@ -53,10 +59,21 @@ public class OdfSchemaFactory {
 
     private static final Map<Version, Map<OdfNamespaces, String>> schemaMap() {
         final Map<Version, Map<OdfNamespaces, String>> map = new EnumMap<>(Version.class);
+        map.put(Version.ODF_14, schemaMap14());
         map.put(Version.ODF_13, schemaMap13());
         map.put(Version.ODF_12, schemaMap12());
         map.put(Version.ODF_11, schemaMap11());
         map.put(Version.ODF_10, schemaMap10());
+        return map;
+    }
+
+    private static final Map<OdfNamespaces, String> schemaMap14() {
+        final Map<OdfNamespaces, String> map = new EnumMap<>(OdfNamespaces.class);
+        map.put(OdfNamespaces.DSIG, SCHEMA_PATH_DSIG_14);
+        map.put(OdfNamespaces.MANIFEST, SCHEMA_PATH_MANIFEST_14);
+        map.put(OdfNamespaces.ODF, SCHEMA_PATH_METADATA_14);
+        map.put(OdfNamespaces.PKG, SCHEMA_PATH_PACKAGE_METADATA_14);
+        map.put(OdfNamespaces.OFFICE, SCHEMA_PATH_ODF_14);
         return map;
     }
 
@@ -102,10 +119,6 @@ public class OdfSchemaFactory {
 
     private final SchemaFactory rngSchemaFactory = getSchemaFactory();
 
-    public final Schema getSchema(final OdfNamespaces namespace) {
-        return getSchemas(EnumSet.of(namespace), Version.ODF_13);
-    }
-
     public final Schema getSchema(final OdfNamespaces namespace, final Version version) {
         Objects.requireNonNull(namespace, String.format(Checks.NOT_NULL, "namespace", "Namspaces"));
         Objects.requireNonNull(version, String.format(Checks.NOT_NULL, "version", "Version"));
@@ -132,7 +145,11 @@ public class OdfSchemaFactory {
     private final Source[] getSources(final Set<OdfNamespaces> namespaces, final Version version) {
         final List<Source> sources = new ArrayList<>();
         for (final OdfNamespaces namespace : namespaces) {
-            final String schemaPath = SCHEMA_LOCATION_MAP.get(version).get(namespace);
+            Map<OdfNamespaces, String> schemaMap = SCHEMA_LOCATION_MAP.get(version);
+            if (schemaMap == null) {
+                throw new IllegalArgumentException("No schemas found for ODF version: " + version.version + ", supported versions are: " + Version.supportedVersions());
+            }
+            final String schemaPath = schemaMap.get(namespace);
             if (schemaPath == null) {
                 continue;
             }

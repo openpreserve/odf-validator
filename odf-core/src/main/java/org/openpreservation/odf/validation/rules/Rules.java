@@ -16,14 +16,20 @@ public class Rules {
     static final String ODF5_SCHEMATRON = "org/openpreservation/odf/core/odf/validation/rules/odf-5.sch";
     static final String ODF7_SCHEMATRON = "org/openpreservation/odf/core/odf/validation/rules/odf-7.sch";
     static final List<Rule> SET_RULES = Arrays.asList(odf1(), odf2(), odf3(), odf4(), odf5(), odf6(), odf7(), odf8(), odf9());
+    static final List<Rule> EXTENDED_RULES = Arrays.asList(odf1(), extendedOdf2(), odf3(), odf4(), odf5(), odf6(), odf7(), odf8(), odf9());
     static final Set<Rule> DNA_RULES = new LinkedHashSet<>(SET_RULES);
+    static final Set<Rule> EXTENDED_DNA_RULES = new LinkedHashSet<>(EXTENDED_RULES);
 
     public static final Rule odf1() {
         return EncryptionRule.getInstance(Severity.ERROR);
     }
 
     public static final Rule odf2() {
-        return ValidPackageRule.getInstance(Severity.ERROR);
+        return ValidPackageRule.getInstance(Severity.ERROR, false);
+    }
+
+    public static final Rule extendedOdf2() {
+        return ValidPackageRule.getInstance(Severity.ERROR, true);
     }
 
     public static final Rule odf3() {
@@ -62,9 +68,9 @@ public class Rules {
         return SubDocumentRule.getInstance(Severity.WARNING);
     }
 
-    public static final Profile getDnaProfile() throws ParserConfigurationException, SAXException {
+    public static final Profile getDnaProfile(final boolean isExtended) throws ParserConfigurationException, SAXException {
         return ProfileImpl.of("DNA", "DNA ODF Spreadsheets Preservation Specification",
-                "Extended validation for OpenDocument spreadsheets.", DNA_RULES);
+                "Extended validation for OpenDocument spreadsheets.", isExtended ? EXTENDED_DNA_RULES : DNA_RULES, isExtended);
     }
 
     private Rules() {

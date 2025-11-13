@@ -27,16 +27,19 @@ import org.openpreservation.odf.validation.messages.Messages;
 import org.xml.sax.SAXException;
 
 final class ProfileImpl extends AbstractProfile {
-    private final ValidatingParser validatingParser = OdfValidators.getValidatingParser();
+    private final ValidatingParser validatingParser;
+    private final boolean isExtended;
 
-    static final ProfileImpl of(final String id, final String name, final String description, final Set<Rule> rules)
+    static final ProfileImpl of(final String id, final String name, final String description, final Set<Rule> rules, final boolean isExtended)
             throws ParserConfigurationException, SAXException {
-        return new ProfileImpl(id, name, description, rules);
+        return new ProfileImpl(id, name, description, rules, isExtended);
     }
 
-    private ProfileImpl(final String id, final String name, final String description, final Set<Rule> rules)
+    private ProfileImpl(final String id, final String name, final String description, final Set<Rule> rules, final boolean isExtended)
             throws ParserConfigurationException, SAXException {
         super(id, name, description, rules);
+        this.isExtended = isExtended;
+        this.validatingParser = OdfValidators.getValidatingParser(isExtended);
     }
 
     @Override
@@ -46,7 +49,7 @@ final class ProfileImpl extends AbstractProfile {
             final MessageLog messages = Messages.messageLogInstance();
             ValidationResult result = document.isPackage()
                     ? this.validatingParser.validatePackage(document.getPackage())
-                    : OdfValidators.getOdfValidator().validate(document);
+                    : OdfValidators.getOdfValidator(this.isExtended).validate(document);
              messages.add(getRulesetMessages(document,
                     this.rules.stream().filter(Rule::isPrerequisite).collect(Collectors.toList())));
             if (!messages.hasErrors()) {
