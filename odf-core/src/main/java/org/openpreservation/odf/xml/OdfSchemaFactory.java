@@ -119,10 +119,6 @@ public class OdfSchemaFactory {
 
     private final SchemaFactory rngSchemaFactory = getSchemaFactory();
 
-    public final Schema getSchema(final OdfNamespaces namespace) {
-        return getSchemas(EnumSet.of(namespace), Version.ODF_13);
-    }
-
     public final Schema getSchema(final OdfNamespaces namespace, final Version version) {
         Objects.requireNonNull(namespace, String.format(Checks.NOT_NULL, "namespace", "Namspaces"));
         Objects.requireNonNull(version, String.format(Checks.NOT_NULL, "version", "Version"));

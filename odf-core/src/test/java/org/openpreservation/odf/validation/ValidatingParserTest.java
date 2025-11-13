@@ -50,11 +50,11 @@ public class ValidatingParserTest {
     @Test
     public void testParseNullFile() throws ParserConfigurationException, SAXException {
         ValidatingParser parser = OdfValidators.getValidatingParser();
-        File file = null;
+        Path path = null;
         assertThrows("NullPointerException expected",
                 NullPointerException.class,
                 () -> {
-                    parser.parsePackage(file.toPath());
+                    parser.parsePackage(path);
                 });
     }
 

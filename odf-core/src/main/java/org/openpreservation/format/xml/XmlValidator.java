@@ -5,18 +5,22 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.MessageFactory;
 import org.openpreservation.odf.validation.messages.Messages;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLFilter;
 
 /**
- * Simple class to wrap XML schema vaidaton.
+ * Simple class to wrap XML schema validation.
  */
 public final class XmlValidator {
     private static final MessageFactory FACTORY = Messages.getInstance();
@@ -47,14 +51,41 @@ public final class XmlValidator {
         if (!parseResult.isWellFormed()) {
             return XmlValidationResultImpl.of(parseResult, false, new ArrayList<>());
         }
-        final List<Message> messages = validateSource(new StreamSource(toValidate), schema);
+        final List<Message> messages = validateSource(new SAXSource(new InputSource(toValidate)), schema);
         if (!this.isWellFormed) {
             return XmlValidationResultImpl.of(ParseResultImpl.invertWellFormed(parseResult), false, messages);
         }
         return XmlValidationResultImpl.of(parseResult, isValid(messages), messages);
     }
 
-    private List<Message> validateSource(final StreamSource toValidate, final Schema schema) throws IOException {
+    /**
+     * Validate the supplied InputStream against the supplied schema.
+     *
+     * @param parseResult the {@link ParseResult} obtained form parsign the file
+     *                    using {@link XmlParserImpl}
+     * @param toValidate  an <code>InputStream</code> to validate
+     * @param schema      the {@link Schema} to validate against
+     * @return a {@link XmlValidationResult} containing the result of the validation
+     * @throws IOException if there is an error reading supplied
+     *                     <code>InputStream</code>.
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     */
+    public XmlValidationResult validate(final ParseResult parseResult, final InputStream toValidate, final Schema schema, final XMLFilter filter)
+            throws IOException, SAXException, ParserConfigurationException {
+        if (!parseResult.isWellFormed()) {
+            return XmlValidationResultImpl.of(parseResult, false, new ArrayList<>());
+        }
+        final List<Message> messages = validateSource(new SAXSource(XmlUtils.getFilteredSAXReader(filter),
+                                                      new InputSource(toValidate)),
+                                                      schema);
+        if (!this.isWellFormed) {
+            return XmlValidationResultImpl.of(ParseResultImpl.invertWellFormed(parseResult), false, messages);
+        }
+        return XmlValidationResultImpl.of(parseResult, isValid(messages), messages);
+    }
+
+    private List<Message> validateSource(final Source toValidate, final Schema schema) throws IOException {
         final List<Message> messages = new ArrayList<>();
         final Validator validator = schema.newValidator();
         final MessageHandler handler = new MessageHandler("XML-4");

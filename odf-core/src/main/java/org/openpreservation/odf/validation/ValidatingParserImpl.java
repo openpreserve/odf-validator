@@ -28,6 +28,9 @@ import org.openpreservation.odf.pkg.PackageParser;
 import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.MessageFactory;
 import org.openpreservation.odf.validation.messages.Messages;
+import org.openpreservation.odf.validation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
+import org.openpreservation.odf.xml.ExtendedConformanceFilter;
 import org.openpreservation.odf.xml.OdfNamespaces;
 import org.openpreservation.odf.xml.OdfSchemaFactory;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
@@ -40,18 +43,20 @@ final class ValidatingParserImpl implements ValidatingParser {
     private static final MessageFactory FACTORY = Messages.getInstance();
     private static final OdfSchemaFactory SCHEMA_FACTORY = new OdfSchemaFactory();
 
+    private final boolean isExtended;
     private final XmlValidator validator;
     private final PackageParser packageParser;
     private final Map<String, XmlValidationResult> results = new HashMap<>();
 
-    static final ValidatingParserImpl getInstance()
+    static final ValidatingParserImpl getInstance(final boolean isExtended)
             throws ParserConfigurationException, SAXException {
-        return new ValidatingParserImpl();
+        return new ValidatingParserImpl(isExtended);
     }
 
-    private ValidatingParserImpl()
+    private ValidatingParserImpl(final boolean isExtended)
             throws ParserConfigurationException, SAXException {
         super();
+        this.isExtended = isExtended;
         this.packageParser = OdfPackages.getPackageParser();
         this.validator = new XmlValidator();
     }
@@ -132,10 +137,12 @@ final class ValidatingParserImpl implements ValidatingParser {
         List<Message> messageList = new ArrayList<>();
         OdfNamespaces ns = OdfNamespaces.fromId(parseResult.getRootNamespace().getId());
         if (OdfXmlDocuments.odfXmlDocumentOf(parseResult).isExtended()) {
-            messageList
-                    .add(FACTORY.getError("DOC-8", Messages.parameterListInstance().add("namespaces", Utils.collectNsPrefixes(OdfXmlDocuments.odfXmlDocumentOf(parseResult)
-                            .getForeignNamespaces()))));
-            return messageList;
+            ParameterList params = Messages.parameterListInstance().add("namespaces", Utils.collectNsPrefixes(OdfXmlDocuments.odfXmlDocumentOf(parseResult)
+                            .getForeignNamespaces()));
+            messageList.add(FACTORY.getMessage("DOC-8", this.isExtended ? Severity.INFO : Severity.ERROR, params));
+            if (!this.isExtended) {
+                return messageList;
+            }
         }
         Version version = getVersionFromPath(odfPackage, xmlPath);
         if (version == Version.UNKNOWN) {
@@ -146,11 +153,14 @@ final class ValidatingParserImpl implements ValidatingParser {
                         version);
         if (schema != null) {
             try {
-                XmlValidationResult validationResult = this.validator.validate(parseResult,
-                        odfPackage.getEntryXmlStream(xmlPath), schema);
+                XmlValidationResult validationResult = (this.isExtended) ?
+                            this.validator.validate(parseResult, odfPackage.getEntryXmlStream(xmlPath), schema, new ExtendedConformanceFilter(version)) :
+                            this.validator.validate(parseResult, odfPackage.getEntryXmlStream(xmlPath), schema);
                 this.results.put(xmlPath, validationResult);
             } catch (IOException e) {
                 messageList.add(FACTORY.getError("CORE-3", Messages.parameterListInstance().add("message", e.getMessage()).add("xmlPath", xmlPath)));
+            } catch (SAXException | ParserConfigurationException e) {
+                messageList.add(FACTORY.getError("CORE-4", Messages.parameterListInstance().add("message", e.getMessage()).add("xmlPath", xmlPath)));
             }
         }
         return messageList;

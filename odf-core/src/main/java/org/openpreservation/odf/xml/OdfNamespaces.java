@@ -2,7 +2,9 @@ package org.openpreservation.odf.xml;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Set;
 
 import org.openpreservation.format.xml.Namespace;
 import org.openpreservation.utils.Checks;
@@ -104,6 +106,9 @@ public enum OdfNamespaces implements Namespace {
         final URI uri = URI.create(id);
         return fromId(uri);
     }
+
+    public static final Set<OdfNamespaces> ODF_NAMESPACES_1_1 = EnumSet.of(OFFICE, STYLE, TEXT, TABLE, DRAW, FO, DC, META, NUMBER, SVG, CHART, DR3D, FORM, PRESENTATION, SMIL, CONFIG, SCRIPT, XLINK, XFORMS);
+    public static final Set<OdfNamespaces> ODF_NAMESPACES_1_2 = EnumSet.of(OFFICE, STYLE, TEXT, TABLE, DRAW, FO, DC, META, NUMBER, SVG, CHART, DR3D, FORM, PRESENTATION, SMIL, CONFIG, SCRIPT, XLINK, XFORMS, XHTML, GRDDL, DB, XMLNS);
 
     /**
      * Get an instance of OdfNamespaces from a namespace ID URI.
