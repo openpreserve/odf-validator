@@ -22,8 +22,8 @@ public class OdfValidators {
     /**
      * Get either an extended or non-extended validating parser instance.
      *
-     * @return a validating parser instance
      * @param isExtended whether to enable extended validation/conformance
+     * @return a validating parser instance
      * @throws ParserConfigurationException
      * @throws SAXException
      */

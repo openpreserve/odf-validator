@@ -213,7 +213,7 @@
         </table:table-row>
         <table:table-row table:style-name="ro2">
           <table:table-cell office:value-type="string" calcext:value-type="string">
-            <text:p>Embeded object as icon</text:p>
+            <text:p>Embedded object as icon</text:p>
           </table:table-cell>
         </table:table-row>
         <table:table-row table:style-name="ro2" table:number-rows-repeated="3">
