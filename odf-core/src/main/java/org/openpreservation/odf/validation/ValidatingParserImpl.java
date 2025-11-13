@@ -159,7 +159,7 @@ final class ValidatingParserImpl implements ValidatingParser {
                 this.results.put(xmlPath, validationResult);
             } catch (IOException e) {
                 messageList.add(FACTORY.getError("CORE-3", Messages.parameterListInstance().add("message", e.getMessage()).add("xmlPath", xmlPath)));
-            } catch (SAXException |ParserConfigurationException e) {
+            } catch (SAXException | ParserConfigurationException e) {
                 messageList.add(FACTORY.getError("CORE-4", Messages.parameterListInstance().add("message", e.getMessage()).add("xmlPath", xmlPath)));
             }
         }
