@@ -2,7 +2,6 @@ package org.openpreservation.odf.validation;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,12 +9,10 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.validation.Schema;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.xml.XmlParsers;
-import org.openpreservation.format.xml.XmlValidator;
 import org.openpreservation.odf.Source;
 import org.openpreservation.odf.document.Documents;
 import org.openpreservation.odf.document.OpenDocument;
@@ -24,15 +21,9 @@ import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.messages.Message;
-import org.openpreservation.odf.validation.messages.Message.Severity;
 import org.openpreservation.odf.validation.messages.MessageFactory;
 import org.openpreservation.odf.validation.messages.Messages;
-import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
-import org.openpreservation.odf.xml.OdfNamespaces;
-import org.openpreservation.odf.xml.OdfSchemaFactory;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
-import org.openpreservation.odf.xml.Version;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
