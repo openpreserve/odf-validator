@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
 import org.openpreservation.odf.validation.Check;
 import org.openpreservation.odf.validation.OdfValidator;
@@ -30,28 +31,49 @@ import org.xml.sax.SAXException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import picocli.CommandLine;
+import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "odf-validator", mixinStandardHelpOptions = true, versionProvider = BuildVersionProvider.class, description = "Validates Open Document Format spreadsheets.")
+@Command(name = "odf-validator",
+         mixinStandardHelpOptions = true,
+         versionProvider = BuildVersionProvider.class,
+         sortOptions = false,
+         headerHeading = "Usage:%n",
+         synopsisHeading = "%n",
+         descriptionHeading = "%nDescription:%n%n",
+         parameterListHeading = "%nParameters:%n",
+         optionListHeading = "Options:%n",
+         header = "Validates Open Document Format documents.",
+         description = "Validates Open Document Format documents against the appropriate ODF specifications. May optionally include additional preservation checks.")
 class CliValidator implements Callable<Integer> {
     private static final MessageFactory FACTORY = Messages
             .getInstance("org.openpreservation.odf.apps.messages.Messages");
 
-    @Option(names = { "-p", "--profile" }, description = "Validate using additional Spreadsheet preservation profile.")
-    private boolean profileFlag;
+    @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format document files to validate.")
+    private File[] toValidateFiles;
     @Option(names = { "-e", "--extended" }, description = "Process XML documents to allow for extended document validation.")
     private boolean extendedFlag;
+
+    @ArgGroup(exclusive = true, multiplicity = "0..1", heading = "%nFormat Options (mutually exclusive):%n")
+    FormatOptions formatOptions = new CliValidator.FormatOptions();
+
+    static class FormatOptions {
+        @Option(names = { "-f", "--format" }, description = {"Validate a particular ODF format only", "This value can be an extension, a MIME type, or a document element name, e.g. spreadsheet."}, defaultValue = "UNKNOWN", converter = FormatsConverter.class)
+        private Formats format = Formats.UNKNOWN;
+        @Option(names = { "-p", "--profile" }, description = {"Validate using additional Spreadsheet preservation profile.", "Cannot be used with the format option as Spreadsheet is forced by the profile."})
+        private boolean profileFlag;
+    }
+
+    @Option(names = { "-o", "--output" }, description = "Output results as TEXT, JSON or XML.", defaultValue = "TEXT")
+    private ValidationReports.FormatOption outputFormat = ValidationReports.FormatOption.TEXT;
     @Option(names = { "-d", "--debug" }, description = "Enable debug output.")
     private boolean debugFlag;
     @Option(names = { "-v" }, description = { "Specify multiple -v options to increase verbosity.",
                                               "For example, `-v -v -v` or `-vvv`"})
     private boolean[] verbosity;
-    @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format spreadsheet files to validate.")
-    private File[] toValidateFiles;
-    @Option(names = { "--format" }, description = "Output results as TEXT, JSON or XML.", defaultValue = "TEXT")
-    private ValidationReports.FormatOption format = ValidationReports.FormatOption.TEXT;
+
     private OdfValidator validator;
     private MessageLog appMessages = Messages.messageLogInstance();
 
@@ -65,9 +87,9 @@ class CliValidator implements Callable<Integer> {
             this.appMessages = Messages.messageLogInstance();
             ConsoleFormatter.colourise(FACTORY.getInfo("APP-1", Messages.parameterListInstance().add("file", toValidate.toString())));
             try {
-                ValidationReport validationResult = (!this.profileFlag) ? validatePath(toValidate) : profilePath(toValidate);
+                ValidationReport validationResult = (!this.formatOptions.profileFlag) ? validatePath(toValidate) : profilePath(toValidate);
                 if (validationResult != null) {
-                    retStatus = outputValidationReport(toValidate, validationResult, this.format);
+                    retStatus = outputValidationReport(toValidate, validationResult, this.outputFormat);
                 }
             } catch (Throwable t) {
                 ConsoleFormatter.colourise(toValidate, FACTORY.getFatal("SYS-4", Messages.parameterListInstance().add("file", toValidate.toString())));
@@ -86,7 +108,7 @@ class CliValidator implements Callable<Integer> {
 
     private ValidationReport validatePath(final Path toValidate) {
         try {
-            return validator.validate(toValidate);
+            return (this.formatOptions.format != Formats.UNKNOWN) ? validator.validate(toValidate, this.formatOptions.format) : validator.validate(toValidate);
         } catch (IllegalArgumentException | FileNotFoundException e) {
             this.logMessage(toValidate, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
             e.printStackTrace();
