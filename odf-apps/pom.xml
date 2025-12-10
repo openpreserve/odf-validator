@@ -12,8 +12,8 @@
   <artifactId>odf-apps</artifactId>
   <packaging>jar</packaging>
 
-  <name>ODF spreadsheet validator applications.</name>
-  <description>Applications for open source validation of Open Document Format spreadsheets.</description>
+  <name>ODF Document validator applications.</name>
+  <description>Applications for open source validation of Open Document Format documents.</description>
 
   <properties>
     <picocli.version>4.7.0</picocli.version>

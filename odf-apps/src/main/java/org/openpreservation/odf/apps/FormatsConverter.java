@@ -21,18 +21,28 @@ public class FormatsConverter implements ITypeConverter<Formats> {
         try {
             dt = DocumentType.valueOf(search.toUpperCase());
         } catch (final IllegalArgumentException e) {
+            /**
+             * Simply means that the document type was not found by name, continue searching.
+             */
         }
         if (dt != null) {
-          return dt.getFormats().iterator().next();
+            return getFirstFormatFromDocumentType(dt);
         }
         dt = DocumentType.getTypeByBodyElement(search);
         if (dt != null) {
-          return dt.getFormats().iterator().next();
+            return getFirstFormatFromDocumentType(dt);
         }
         dt = DocumentType.getTypeByMimeString(search);
         if (dt != null) {
-          return dt.getFormats().iterator().next();
+            return getFirstFormatFromDocumentType(dt);
         }
         return Formats.UNKNOWN;
+    }
+
+    final static private Formats getFirstFormatFromDocumentType(final DocumentType dt) {
+        // NOTE: If the DocumentType has multiple associated formats, this will select the first format in the set,
+        // which may not align with user expectations. To ensure a specific format is chosen, specify the format
+        // extension or MIME type directly instead of the document type name.
+        return dt.getFormats().iterator().next();
     }
 }

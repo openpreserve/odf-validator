@@ -13,8 +13,8 @@
   <artifactId>odf-core</artifactId>
   <packaging>jar</packaging>
 
-  <name>ODF spreadsheet validator core library.</name>
-  <description>API and library for open source validation of Open Document Format spreadsheets.</description>
+  <name>ODF document validator core library.</name>
+  <description>API and library for open source validation of Open Document Format documents.</description>
 
   <dependencies>
     <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->

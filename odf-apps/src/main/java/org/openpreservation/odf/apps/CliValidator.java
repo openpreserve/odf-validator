@@ -51,7 +51,7 @@ class CliValidator implements Callable<Integer> {
     private static final MessageFactory FACTORY = Messages
             .getInstance("org.openpreservation.odf.apps.messages.Messages");
 
-    @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format spreadsheet files to validate.")
+    @Parameters(paramLabel = "FILE", arity = "1..*", description = "A list of Open Document Format document files to validate.")
     private File[] toValidateFiles;
     @Option(names = { "-e", "--extended" }, description = "Process XML documents to allow for extended document validation.")
     private boolean extendedFlag;
