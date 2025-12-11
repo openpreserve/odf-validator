@@ -10,7 +10,7 @@
 
   <groupId>org.openpreservation.odf</groupId>
   <artifactId>odf-validator</artifactId>
-  <version>0.18.5</version>
+  <version>0.20-alpha-2</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -19,8 +19,8 @@
     <module>odf-reporting</module>
   </modules>
 
-  <name>ODF spreadsheet validator.</name>
-  <description>Open source validation of Open Document Format spreadsheets.</description>
+  <name>ODF Document validator.</name>
+  <description>Open source validation of Open Document Format documents.</description>
   <url>https://github.com/openpreserve/odf-validator/</url>
   <inceptionYear>2022</inceptionYear>
   <organization>

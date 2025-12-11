@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.openpreservation.odf</groupId>
     <artifactId>odf-validator</artifactId>
-    <version>0.18.5</version>
+    <version>0.20-alpha-2</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -13,8 +13,8 @@
   <artifactId>odf-reporting</artifactId>
   <packaging>jar</packaging>
 
-  <name>ODF spreadsheet validator core library.</name>
-  <description>API and library for open source validation of Open Document Format spreadsheets.</description>
+  <name>ODF document validator project reporting.</name>
+  <description>Project reporting for open source validation of Open Document Format documents.</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

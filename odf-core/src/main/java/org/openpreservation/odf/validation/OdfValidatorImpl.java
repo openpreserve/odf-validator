@@ -2,18 +2,17 @@ package org.openpreservation.odf.validation;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.validation.Schema;
 
 import org.openpreservation.format.xml.ParseResult;
 import org.openpreservation.format.xml.XmlParser;
 import org.openpreservation.format.xml.XmlParsers;
-import org.openpreservation.format.xml.XmlValidator;
 import org.openpreservation.odf.Source;
 import org.openpreservation.odf.document.Documents;
 import org.openpreservation.odf.document.OpenDocument;
@@ -21,21 +20,17 @@ import org.openpreservation.odf.fmt.Formats;
 import org.openpreservation.odf.pkg.OdfPackage;
 import org.openpreservation.odf.pkg.OdfPackages;
 import org.openpreservation.odf.pkg.PackageParser.ParseException;
-import org.openpreservation.odf.validation.messages.Message.Severity;
+import org.openpreservation.odf.validation.messages.Message;
 import org.openpreservation.odf.validation.messages.MessageFactory;
 import org.openpreservation.odf.validation.messages.Messages;
-import org.openpreservation.odf.validation.messages.Parameter.ParameterList;
-import org.openpreservation.odf.xml.OdfNamespaces;
-import org.openpreservation.odf.xml.OdfSchemaFactory;
-import org.openpreservation.odf.xml.OdfXmlDocument;
 import org.openpreservation.odf.xml.OdfXmlDocuments;
-import org.openpreservation.odf.xml.Version;
 import org.openpreservation.utils.Checks;
 import org.xml.sax.SAXException;
 
 final class OdfValidatorImpl implements OdfValidator {
     private static final String TAG_DOC = "office:document";
     private static final String TO_VAL_STRING = "toValidate";
+    private static final String ODF_SPECS = "ODF Specification";
     private static final MessageFactory FACTORY = Messages.getInstance();
 
     private static final ValidationResult notOdf(final Path toValidate) {
@@ -69,10 +64,10 @@ final class OdfValidatorImpl implements OdfValidator {
             if (detectedFmt != legal) {
                 report.getValidationResults().get(0).getMessageLog()
                         .add(toValidate.toString(),
-                             FACTORY.getError("DOC-7",
-                                              Messages.parameterListInstance()
-                                              .add("expectedMime", legal.mime)
-                                              .add("detectedMime", detectedFmt.mime)));
+                                FACTORY.getError("DOC-7",
+                                        Messages.parameterListInstance()
+                                                .add("expectedMime", legal.mime)
+                                                .add("detectedMime", detectedFmt.mime)));
             }
         }
         return report;
@@ -116,50 +111,30 @@ final class OdfValidatorImpl implements OdfValidator {
             return notOdf(toValidate.getPath());
         }
         final ParseResult parseResult = toValidate.getDocument().getXmlDocument().getParseResult();
-        return validateParseResult(toValidate.getPath(), parseResult);
+        List<Message> messages = new ArrayList<>(OdfXmlValidator.getDocInfoMessages(
+            OdfXmlDocuments.odfXmlDocumentOf(parseResult)));
+        messages.addAll(OdfXmlValidator.getInstance(this.isExtended).validate(toValidate.getPath(), parseResult));
+        return ValidationResultImpl.of(ODF_SPECS, Messages.messageLogInstance(toValidate.getPath().toString(),
+                messages));
     }
 
     private ValidationReport validatePackage(final Path toValidate)
             throws ParserConfigurationException, SAXException, ParseException, FileNotFoundException {
         final OdfPackage pckg = OdfPackages.getPackageParser().parsePackage(toValidate);
-        return ValidationReportImpl.of(toValidate.toString(), pckg, Collections.singletonList(OdfValidators.getValidatingParser(this.isExtended).validatePackage(pckg)));
+        return ValidationReportImpl.of(toValidate.toString(), pckg,
+                Collections.singletonList(OdfValidators.getValidatingParser(this.isExtended).validatePackage(pckg)));
     }
 
     private ValidationReport validateOpenDocumentXml(final Path toValidate)
             throws ParserConfigurationException, SAXException, IOException {
         final XmlParser checker = XmlParsers.getNonValidatingParser();
         final ParseResult parseResult = checker.parse(toValidate);
-        return ValidationReportImpl.of(toValidate.toString(), OdfXmlDocuments.odfXmlDocumentOf(parseResult), Collections.singletonList(validateParseResult(toValidate, parseResult)));
-    }
-
-    private ValidationResult validateParseResult(final Path toValidate, ParseResult parseResult)
-            throws IOException {
-        final ValidationResult result = ValidationResultImpl.of("ODF Specification");
-        if (parseResult.isWellFormed()) {
-            Version version = Version.ODF_13;
-            final OdfXmlDocument doc = OdfXmlDocuments.odfXmlDocumentOf(parseResult);
-            final XmlValidator validator = new XmlValidator();
-            if (parseResult.isRootName(TAG_DOC)) {
-                result.getMessageLog().add(toValidate.toString(), FACTORY.getInfo("DOC-2", Messages.parameterListInstance().add("version", doc.getVersion().version)));
-                if (doc.getFormat().isPackage()) {
-                    result.getMessageLog().add(toValidate.toString(), FACTORY.getInfo("DOC-3", Messages.parameterListInstance().add("mimetype", doc.getFormat().mime)));
-                } else {
-                    result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-4", Messages.parameterListInstance().add("mimetype", doc.getFormat().mime)));
-                }
-            }
-            if (doc.isExtended()) {
-                ParameterList params = Messages.parameterListInstance().add("namespaces", Utils.collectNsPrefixes(OdfXmlDocuments.odfXmlDocumentOf(parseResult)
-                                .getForeignNamespaces()));
-                result.getMessageLog().add(toValidate.toString(), FACTORY.getMessage("DOC-8", this.isExtended ? Severity.INFO : Severity.ERROR, params));
-            }
-            if (this.isExtended || !doc.isExtended()) {
-                final Schema schema = new OdfSchemaFactory().getSchema(OdfNamespaces.OFFICE, version);
-                parseResult = validator.validate(parseResult, Files.newInputStream(toValidate), schema);
-            }
-        } else {
-            result.getMessageLog().add(toValidate.toString(), FACTORY.getError("DOC-1"));
-        }
-        result.getMessageLog().add(toValidate.toString(), parseResult.getMessages());
-        return result;
+        List<Message> messages = new ArrayList<>(OdfXmlValidator.getDocInfoMessages(
+                OdfXmlDocuments.odfXmlDocumentOf(parseResult)));
+        messages.addAll(OdfXmlValidator.getInstance(this.isExtended).validate(toValidate, parseResult));
+        return ValidationReportImpl.of(toValidate.toString(),
+                OdfXmlDocuments.odfXmlDocumentOf(parseResult), Collections.singletonList(
+                        ValidationResultImpl.of(ODF_SPECS, Messages.messageLogInstance(toValidate.toString(),
+                                messages))));
     }
 }
