@@ -2,6 +2,7 @@
 
 Read more about:
 
+* [Quick start for installing/building the software](#quick-start)
 * [Using the command line software](./usage/).
 * [A list of validation checks performed by the software](./validation/).
 * [More details of the detection of validation conditions](./detection/).
@@ -13,25 +14,36 @@ Read more about:
 
 ## File format support
 
-The validator currently supports validation of spreadsheets with extensions .fods, .ods and .ots.
+The validator validates Open Document Format documents of all formats. It supports all versions at time of writing, from v1.0 to v1.4.
 
-## Validation regulations references
+## ODF validation references
 
 * [OASIS OpenDocument Format](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=office)
 * [OPF Spreadsheets Preservation Specification](https://github.com/opf-labs/Spreadsheets-Preservation-Specification)
 
 You may read more about the technical details of the validation checks [here](./validation/).
 
-## Quick Start
+## Quick start
 
-For developer instructions with Maven locations and examples please see [DEVELOPER.md](./developer/).
+### Installation
 
-### Prerequisites
+Download the latest version of the validator. The latest builds can be found on the [GitHub releases page](https://github.com/openpreserve/odf-validator/releases/tag/v0.20-alpha-2). The software is available in four packages, a JAR file that requires a Java JRE v11 or greater, or platform specific executables for Windows, MacOS and Linux.
 
-To run the software you'll need a [Java 8](https://www.java.com/en/download/manual.jsp) JRE or newer.
-To build the software you'll need a [Java 8](https://www.oracle.com/java/technologies/downloads/#java17) JDK or newer [Maven 3.4](https://maven.apache.org/download.cgi) or higher.
+* [Java JAR, built using Java JDK 11](https://github.com/openpreserve/odf-validator/releases/download/v0.20-alpha-2/odf-validator-0.20-alpha-2-all.jar)
+* [Windows executable, built using GraalVM](https://github.com/openpreserve/odf-validator/releases/download/v0.20-alpha-2/odf-validator-0.20-alpha-2-windows)
+* [MacOS (Apple Silicon) executable, built using GraalVM](https://github.com/openpreserve/odf-validator/releases/download/v0.20-alpha-2/odf-validator-0.20-alpha-2-mac)
+* [Linux executable, built using GraalVM](https://github.com/openpreserve/odf-validator/releases/download/v0.20-alpha-2/odf-validator-0.20-alpha-2-linux)
 
-### Getting the software
+Simply download the appropriate package, make it executable and run it from the command line.
+
+### Building the odf-validator
+
+#### Prerequisites
+
+To run the software you'll need a [Java 11](https://www.java.com/en/download/manual.jsp) JRE or newer.
+To build the software you'll need a [Java 11](https://www.oracle.com/java/technologies/downloads/#java17) JDK or newer [Maven 3.4](https://maven.apache.org/download.cgi) or higher.
+
+#### Getting the software
 
 Clone [this GitHub repository](https://github.com/opf-labs/odf-validator.git) and move into the directory:
 
@@ -40,7 +52,7 @@ git clone https://github.com/opf-labs/odf-validator.git
 cd odf-validator
 ```
 
-### Building the software
+#### Building the software
 
 Now use Maven to build, test and package the software:
 
@@ -48,7 +60,7 @@ Now use Maven to build, test and package the software:
 mvn clean package
 ```
 
-### Running the software
+#### Running the software
 
 You can now use the accompanying shell script to run the software, for Windows user there is a batch file:
 
