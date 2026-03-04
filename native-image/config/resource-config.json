@@ -22,6 +22,8 @@
     "pattern":"\\Qorg/openpreservation/odf/schema/odf/1.3/schema.rng\\E"
   }, {
     "pattern":"\\Qorg/xmlresolver/catalog.xml\\E"
+  }, {
+    "pattern":"\\Qorg/openpreservation/odf/apps/build.properties\\E"
   }]},
   "bundles":[{
     "name":"org.openpreservation.odf.apps.messages.Messages",
