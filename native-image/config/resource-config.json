@@ -29,5 +29,8 @@
   }, {
     "name":"org.openpreservation.odf.messages.Messages",
     "locales":[""]
+  }, {
+    "name":"com.thaiopensource.datatype.xsd.resources.Messages",
+    "locales":[""]
   }]
 }
