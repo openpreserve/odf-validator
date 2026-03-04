@@ -223,7 +223,9 @@ final class OdfPackageImpl implements OdfPackage {
         Set<FileEntry> entries = new HashSet<>();
         if (this.manifest != null) {
             for (FileEntry entry : this.manifest.getEntriesByMediaType("text/xml")) {
-                entries.add(entry);
+                if (this.archive != null && this.archive.getZipEntry(entry.getFullPath()) != null) {
+                    entries.add(entry);
+                }
             }
         }
         return entries;
