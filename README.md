@@ -1,6 +1,6 @@
 # ODF Validator
 
-Latest version is 0.20-alpha-2.
+Latest version is 0.20-beta-1.
 
 The project website is available here: <http://odf.openpreservation.org/>.
 
