@@ -68,6 +68,10 @@ public class Rules {
         return SubDocumentRule.getInstance(Severity.WARNING);
     }
 
+    public static final Profile getDnaProfile() throws ParserConfigurationException, SAXException {
+        return getDnaProfile(false);
+    }
+
     public static final Profile getDnaProfile(final boolean isExtended) throws ParserConfigurationException, SAXException {
         return ProfileImpl.of("DNA", "DNA ODF Spreadsheets Preservation Specification",
                 "Extended validation for OpenDocument spreadsheets.", isExtended ? EXTENDED_DNA_RULES : DNA_RULES, isExtended);
