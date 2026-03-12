@@ -111,11 +111,9 @@ class CliValidator implements Callable<Integer> {
             return (this.formatOptions.format != Formats.UNKNOWN) ? validator.validate(toValidate, this.formatOptions.format) : validator.validate(toValidate);
         } catch (IllegalArgumentException | FileNotFoundException e) {
             this.logMessage(toValidate, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
-            e.printStackTrace();
         } catch (ParseException e) {
             this.logMessage(toValidate, Messages.getMessageInstance("SYS-1", Severity.ERROR,
                     "Package could not be parsed, due to an exception.", e.getMessage()));
-            e.printStackTrace();
         }
         return null;
     }
@@ -126,11 +124,9 @@ class CliValidator implements Callable<Integer> {
             return validator.profile(path, dnaProfile);
         } catch (IllegalArgumentException | FileNotFoundException e) {
             this.logMessage(path, Messages.getMessageInstance("APP-2", Severity.ERROR, e.getMessage()));
-            e.printStackTrace();
         } catch (ParseException | ParserConfigurationException | SAXException e) {
             this.logMessage(path, Messages.getMessageInstance("SYS-1", Severity.ERROR,
                     "Package could not be parsed, due to an exception.", e.getMessage()));
-            e.printStackTrace();
         }
         return null;
     }

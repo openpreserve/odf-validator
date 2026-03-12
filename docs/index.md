@@ -27,12 +27,12 @@ You may read more about the technical details of the validation checks [here](./
 
 ### Installation
 
-Download the latest version of the validator. The latest builds can be found on the [GitHub releases page](https://github.com/openpreserve/odf-validator/releases/tag/v0.20-alpha-2). The software is available in four packages, a JAR file that requires a Java JRE v11 or greater, or platform specific executables for Windows, MacOS and Linux.
+Download the latest version of the validator. The latest builds can be found on the [GitHub releases page](https://github.com/openpreserve/odf-validator/releases/tag/v0.20-beta-1). The software is available in four packages, a JAR file that requires a Java JRE v11 or greater, or platform specific executables for Windows, MacOS and Linux.
 
-* [Java JAR, built using Java JDK 11](https://github.com/openpreserve/odf-validator/releases/download/v0.20-alpha-2/odf-validator-0.20-alpha-2-all.jar)
-* [Windows executable, built using GraalVM](https://github.com/openpreserve/odf-validator/releases/download/v0.20-alpha-2/odf-validator-0.20-alpha-2-windows)
-* [MacOS (Apple Silicon) executable, built using GraalVM](https://github.com/openpreserve/odf-validator/releases/download/v0.20-alpha-2/odf-validator-0.20-alpha-2-mac)
-* [Linux executable, built using GraalVM](https://github.com/openpreserve/odf-validator/releases/download/v0.20-alpha-2/odf-validator-0.20-alpha-2-linux)
+* [Java JAR, built using Java JDK 11](https://github.com/openpreserve/odf-validator/releases/download/v0.20-beta-1/odf-validator-0.20-beta-1-all.jar)
+* [Windows executable, built using GraalVM](https://github.com/openpreserve/odf-validator/releases/download/v0.20-beta-1/odf-validator-0.20-beta-1-windows)
+* [MacOS (Apple Silicon) executable, built using GraalVM](https://github.com/openpreserve/odf-validator/releases/download/v0.20-beta-1/odf-validator-0.20-beta-1-mac)
+* [Linux executable, built using GraalVM](https://github.com/openpreserve/odf-validator/releases/download/v0.20-beta-1/odf-validator-0.20-beta-1-linux)
 
 Simply download the appropriate package, make it executable and run it from the command line.
 

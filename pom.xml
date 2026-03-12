@@ -10,7 +10,7 @@
 
   <groupId>org.openpreservation.odf</groupId>
   <artifactId>odf-validator</artifactId>
-  <version>0.20-alpha-2</version>
+  <version>0.20-beta-1</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -470,6 +470,22 @@
         </repository>
       </distributionManagement>
     </profile>
+    <profile>
+      <id>central</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
 
   </profiles>
 
