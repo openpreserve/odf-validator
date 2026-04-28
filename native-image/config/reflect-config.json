@@ -254,7 +254,7 @@
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"getFilename","parameterTypes":[] }, {"name":"getFormat","parameterTypes":[] }, {"name":"getValidationResults","parameterTypes":[] }, {"name":"getVersionString","parameterTypes":[] }, {"name":"isEncrypted","parameterTypes":[] }]
+  "methods":[{"name":"getFilename","parameterTypes":[] }, {"name":"getFormat","parameterTypes":[] }, {"name":"getValidationResults","parameterTypes":[] }, {"name":"getVersionString","parameterTypes":[] }, {"name":"isEncrypted","parameterTypes":[] }, {"name":"isValid","parameterTypes":[] }]
 },
 {
   "name":"org.openpreservation.odf.validation.ValidationResult",
@@ -281,7 +281,7 @@
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"getId","parameterTypes":[] }, {"name":"getMessage","parameterTypes":[] }, {"name":"getParameters","parameterTypes":[] }, {"name":"getSeverity","parameterTypes":[] }, {"name":"getSubMessage","parameterTypes":[] }, {"name":"getTimestamp","parameterTypes":[] }]
+  "methods":[{"name":"getId","parameterTypes":[] }, {"name":"getMessage","parameterTypes":[] }, {"name":"getParameters","parameterTypes":[] }, {"name":"getSeverity","parameterTypes":[] }, {"name":"getSubMessage","parameterTypes":[] }, {"name":"getTimestamp","parameterTypes":[] }, {"name":"getTitle","parameterTypes":[] }, {"name":"getText","parameterTypes":[] }]
 },
 {
   "name":"org.openpreservation.odf.validation.messages.Parameter",
